@@ -34,6 +34,7 @@
   # supported file systems, so we can mount any removable disks with these filesystems
   boot.supportedFilesystems = [
     "ext4"
+    "bcachefs"
     "btrfs"
     "xfs"
     "ntfs"
