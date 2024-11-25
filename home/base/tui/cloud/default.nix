@@ -30,8 +30,8 @@
     google-cloud-sdk
 
     # cloud tools that nix do not have cache for.
-    terraform
-    terraformer # generate terraform configs from existing cloud resources
-    packer # machine image builder
+    #terraform
+    #terraformer # generate terraform configs from existing cloud resources
+    #packer # machine image builder
   ];
 }
