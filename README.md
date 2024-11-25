@@ -120,7 +120,7 @@ For NixOS:
 
 ```bash
 # deploy one of the configuration based on the hostname
-sudo nixos-rebuild switch --flake .#ai-hyprland
+sudo nixos-rebuild switch --flake .#eva
 
 # deploy via `just`(a command runner with similar syntax to make) & Justfile
 just hypr  # deploy my pc with hyprland compositor

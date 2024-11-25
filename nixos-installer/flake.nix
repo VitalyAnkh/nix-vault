@@ -1,5 +1,5 @@
 {
-  description = "NixOS configuration of Ryan Yin";
+  description = "NixOS configuration of VitalyR";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-24.11";
@@ -15,16 +15,16 @@
     ...
   }: {
     nixosConfigurations = {
-      ai = nixpkgs.lib.nixosSystem {
+      eva = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         specialArgs =
           inputs
           // {
-            myvars.username = "ryan";
-            myvars.userfullname = "Ryan Yin";
+            myvars.username = "vitalyr";
+            myvars.userfullname = "VitalyR";
           };
         modules = [
-          {networking.hostName = "ai";}
+          {networking.hostName = "eva";}
 
           ./configuration.nix
 
@@ -33,8 +33,8 @@
           ../modules/nixos/base/user-group.nix
           ../modules/nixos/base/networking.nix
 
-          ../hosts/idols-ai/hardware-configuration.nix
-          ../hosts/idols-ai/impermanence.nix
+          ../hosts/eva/hardware-configuration.nix
+          ../hosts/eva/impermanence.nix
         ];
       };
 
@@ -43,8 +43,8 @@
         specialArgs =
           inputs
           // {
-            myvars.username = "ryan";
-            myvars.userfullname = "Ryan Yin";
+            myvars.username = "vitalyr";
+            myvars.userfullname = "VitalyR";
           };
         modules = [
           # Building on a USB installer is buggy, lack of disk space, memory, trublesome to setup substituteers, etc.
@@ -64,7 +64,7 @@
           ../modules/nixos/base/networking.nix
 
           ../hosts/12kingdoms-shoukei/hardware-configuration.nix
-          ../hosts/idols-ai/impermanence.nix
+          ../hosts/eva/impermanence.nix
         ];
       };
     };
