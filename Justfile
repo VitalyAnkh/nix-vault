@@ -105,7 +105,7 @@ repair-store *paths:
 hypr mode="default":
   #!/usr/bin/env nu
   use {{utils_nu}} *;
-  nixos-switch ai-hyprland {{mode}}
+  nixos-switch eva {{mode}}
 
 [linux]
 [group('desktop')]

@@ -11,14 +11,14 @@
   ...
 } @ args: let
   # 星野 アイ, Hoshino Ai
-  name = "ai";
+  name = "eva";
   base-modules = {
     nixos-modules = map mylib.relativeToRoot [
       # common
       "secrets/nixos.nix"
       "modules/nixos/desktop.nix"
       # host specific
-      "hosts/idols-${name}"
+      "hosts/${name}"
       # nixos hardening
       # "hardening/profiles/default.nix"
       "hardening/nixpaks"
@@ -28,7 +28,7 @@
       # common
       "home/linux/gui.nix"
       # host specific
-      "hosts/idols-${name}/home.nix"
+      "hosts/${name}/home.nix"
     ];
   };
 
@@ -51,11 +51,11 @@
 in {
   nixosConfigurations = {
     # host with hyprland compositor
-    "${name}-hyprland" = mylib.nixosSystem (modules-hyprland // args);
+    "${name}" = mylib.nixosSystem (modules-hyprland // args);
   };
 
   # generate iso image for hosts with desktop environment
   packages = {
-    "${name}-hyprland" = inputs.self.nixosConfigurations."${name}-hyprland".config.formats.iso;
+    "${name}" = inputs.self.nixosConfigurations."${name}".config.formats.iso;
   };
 }
