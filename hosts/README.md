@@ -64,7 +64,7 @@ cool!
 
 [Oshi no Ko 【推しの子】 - Wikipedia](https://en.wikipedia.org/wiki/Oshi_no_Ko):
 
-![](/_img/idols-famaily.webp) ![](/_img/idols-ai.webp)
+![](/_img/idols-famaily.webp) ![](/_img/eva.webp)
 
 [The Rolling Girls【ローリング☆ガールズ】 - Wikipedia](https://en.wikipedia.org/wiki/The_Rolling_Girls):
 
