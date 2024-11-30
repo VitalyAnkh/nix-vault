@@ -23,8 +23,8 @@
 
   home.packages = [
     # pkgs.firefox-wayland
-    pkgs.nixpaks.firefox
-    pkgs.nixpaks.firefox-desktop-item
+    #pkgs.nixpaks.firefox
+    #pkgs.nixpaks.firefox-desktop-item
   ];
 
   programs = {
