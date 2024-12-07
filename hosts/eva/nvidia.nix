@@ -12,7 +12,7 @@
   ];
   services.xserver.videoDrivers = ["nvidia"]; # will install nvidia-vaapi-driver by default
   hardware.nvidia = {
-    open = false;
+    open = true;
     # Optionally, you may need to select the appropriate driver version for your specific GPU.
     # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/os-specific/linux/nvidia-x11/default.nix
     # package = config.boot.kernelPackages.nvidiaPackages.stable;
@@ -30,7 +30,7 @@
   };
   # disable cudasupport before this issue get fixed:
   # https://github.com/NixOS/nixpkgs/issues/338315
-  nixpkgs.config.cudaSupport = false;
+  nixpkgs.config.cudaSupport = true;
 
   nixpkgs.overlays = [
     (_: super: {

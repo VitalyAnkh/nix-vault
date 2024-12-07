@@ -54,8 +54,8 @@
     # the following directories will be passed to /persistent/home/$USER
     users.vitalyr = {
       directories = [
-        "codes"
-        "nix-config"
+        "projects"
+        "nix-vault"
         "tmp"
 
         "Downloads"
