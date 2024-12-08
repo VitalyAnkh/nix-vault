@@ -26,4 +26,6 @@
           IdentitiesOnly yes
     '';
   };
+
+  programs.fish.enable = true;
 }
