@@ -14,8 +14,11 @@ in {
     ./nvidia.nix
 
     ./impermanence.nix
-    ./secureboot.nix
+    #./boot.nix
+    #./secureboot.nix
   ];
+
+  boot.loader.systemd-boot.enable = true;
 
   networking = {
     inherit hostName;
