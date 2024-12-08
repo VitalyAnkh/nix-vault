@@ -1,6 +1,7 @@
 {pkgs, xremap-flake, ...}: {
   # Use xremap to swap Ctrl and CapsLock 
-  xremap-flake.nixosModules.default
+  imports = [      
+        xremap-flake.nixosModules.default
         /* This is effectively an inline module */
         {
 
@@ -25,4 +26,5 @@
             #}
           ];
         }
+   ];
 }
