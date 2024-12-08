@@ -12,8 +12,9 @@
     inkscape # vector graphics
     krita # digital painting
     musescore # music notation
-    # reaper # audio production
-    # sonic-pi # music programming
+    reaper # audio production
+    sonic-pi # music programming
+    supercollider
 
     # 2d game design
     ldtk # A modern, versatile 2D level editor
@@ -56,7 +57,7 @@
         obs-vintage-filter
         obs-command-source
         obs-move-transition
-        obs-backgroundremoval
+        #obs-backgroundremoval
         # advanced-scene-switcher
         obs-pipewire-audio-capture
       ];
