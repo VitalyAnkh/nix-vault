@@ -24,6 +24,13 @@ in {
     inherit shellAliases;
   };
 
+  programs.fish = {
+    enable = true;
+    package = pkgs-unstable.fish;
+    #configFile.source = ./config.nu;
+    inherit shellAliases;
+  };
+
   programs.bash = {
     enable = true;
     enableCompletion = true;
