@@ -37,7 +37,6 @@
       blender = super.blender.override {
         # https://nixos.org/manual/nixpkgs/unstable/#opt-cudaSupport
         cudaSupport = true;
-        waylandSupport = true;
       };
 
       # ffmpeg-full = super.ffmpeg-full.override {

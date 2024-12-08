@@ -10,7 +10,6 @@
   genSpecialArgs,
   ...
 } @ args: let
-  # 星野 アイ, Hoshino Ai
   name = "eva";
   base-modules = {
     nixos-modules = map mylib.relativeToRoot [

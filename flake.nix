@@ -90,9 +90,17 @@
 
     nix-gaming.url = "github:fufexan/nix-gaming";
 
+    # use xremap to map some keys
+    xremap-flake.url = "github:xremap/nix-flake";
+
     disko = {
       url = "github:nix-community/disko/v1.9.0";
       inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # use firefox-nightly
+    firefox = {
+      url = "github:nix-community/flake-firefox-nightly";
     };
 
     # add git hooks to format nix code before commit
