@@ -64,6 +64,11 @@
         "Documents"
         "Videos"
 
+	# warp-terminal config
+	".config/warp-terminal"
+
+	".config/clash-nyanpasu"
+
         {
           directory = ".gnupg";
           mode = "0700";
