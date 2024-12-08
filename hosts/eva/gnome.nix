@@ -5,5 +5,7 @@
     gnomeExtensions.quake-terminal
     gnomeExtensions.clipboard-history
     gnomeExtensions.kimpanel
+    clash-verge-rev
+    clash-nyanpasu
   ];
 }
