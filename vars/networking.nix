@@ -31,7 +31,7 @@
     # ============================================
     eva = {
       # Desktop PC
-      iface = "enp5s0";
+      iface = "wlp14s0";
       ipv4 = "192.168.5.100";
     };
     aquamarine = {
