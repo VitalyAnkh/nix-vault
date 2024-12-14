@@ -21,7 +21,7 @@ patch:
   # 如果要以Caps Lock 切换到西文模式，默认输出小写字母，请置 ascii_composer/good_old_caps_lock: false
   # 如果要以Caps Lock 切换到西文模式，默认输出大写字母，请置 ascii_composer/good_old_caps_lock: true
 
-  ascii_composer/good_old_caps_lock: true
+  ascii_composer/good_old_caps_lock: false
   ascii_composer/switch_key:
     Caps_Lock: noop
     Shift_L: commit_code
