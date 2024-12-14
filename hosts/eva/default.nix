@@ -16,6 +16,7 @@ in {
     ./impermanence.nix
     #./boot.nix
     #./secureboot.nix
+    ./gnome.nix
   ];
 
   boot.loader.systemd-boot.enable = true;
