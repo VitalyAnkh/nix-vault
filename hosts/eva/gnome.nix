@@ -7,5 +7,6 @@
     gnomeExtensions.kimpanel
     clash-verge-rev
     clash-nyanpasu
+    warp-terminal
   ];
 }
