@@ -32,7 +32,7 @@
     eva = {
       # Desktop PC
       iface = "wlp14s0";
-      ipv4 = "192.168.5.100";
+      ipv4 = "192.168.31.7";
     };
     aquamarine = {
       # VM
