@@ -124,6 +124,7 @@
       enableBashIntegration = true;
       enableZshIntegration = true;
       enableNushellIntegration = true;
+      enableFishIntegration = true;
     };
 
     # Atuin replaces your existing shell history with a SQLite database,
@@ -135,6 +136,7 @@
       enableBashIntegration = true;
       enableZshIntegration = true;
       enableNushellIntegration = true;
+      enableFishIntegration = true;
     };
   };
 }
