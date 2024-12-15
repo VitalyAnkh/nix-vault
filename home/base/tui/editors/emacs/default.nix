@@ -28,7 +28,8 @@ with lib; let
     epkgs.vterm
   ]));
   # to make this symlink work, we need to git clone this repo to your home directory.
-  configPath = "${config.home.homeDirectory}/nix-config/home/base/tui/editors/emacs/doom";
+  #configPath = "${config.home.homeDirectory}/nix-config/home/base/tui/editors/emacs/doom";
+  configPath = "${config.home.homeDirectory}/projects/dev/emacs-projects/doom";
 in {
   options.modules.editors.emacs = {
     enable = mkEnableOption "Emacs Editor";
