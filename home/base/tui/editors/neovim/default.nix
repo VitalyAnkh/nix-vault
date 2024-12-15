@@ -17,7 +17,8 @@ let
   };
   # the path to nvim directory
   # to make this symlink work, we need to git clone this repo to your home directory.
-  configPath = "${config.home.homeDirectory}/nix-config/home/base/tui/editors/neovim/nvim";
+  # It assumes this nix config is located in $HOME/projects/dev/nix/nix-vault.
+  configPath = "${config.home.homeDirectory}/projects/dev/nix/nix-vault/home/base/tui/editors/neovim/nvim";
 in {
   xdg.configFile."nvim".source = config.lib.file.mkOutOfStoreSymlink configPath;
 
