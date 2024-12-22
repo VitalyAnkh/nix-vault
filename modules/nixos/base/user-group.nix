@@ -33,7 +33,7 @@
     inherit (myvars) initialHashedPassword;
     home = "/home/${myvars.username}";
     isNormalUser = true;
-    shell = pkgs-unstable.fish;
+    #shell = pkgs-unstable.fish;
     extraGroups = [
       myvars.username
       "users"

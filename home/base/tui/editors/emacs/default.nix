@@ -65,6 +65,7 @@ in {
 
       programs.bash.bashrcExtra = envExtra;
       programs.zsh.envExtra = envExtra;
+      #programs.fish.envExtra = envExtra;
       home.shellAliases = shellAliases;
       programs.nushell.shellAliases = shellAliases;
 
@@ -88,7 +89,7 @@ in {
         # Do not use emacs-nox here, which makes the mouse wheel work abnormally in terminal mode.
         # pgtk (pure gtk) build add native support for wayland.
         # https://www.gnu.org/savannah-checkouts/gnu/emacs/emacs.html#Releases
-        emacsPkg = myEmacsPackagesFor pkgs.emacs29-pgtk;
+        emacsPkg = myEmacsPackagesFor pkgs.emacs30-pgtk;
       in {
         home.packages = [emacsPkg];
         services.emacs = {
