@@ -24,12 +24,21 @@
       source-han-sans # 思源黑体
       source-han-serif # 思源宋体
 
+      lxgw-wenkai-screen
+      lxgw-wenkai-tc
+      lxgw-neoxihei
+      libertine-g
+      texlivePackages.libertine
+      texlivePackages.typewriter
       # nerdfonts
       # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/pkgs/data/fonts/nerdfonts/shas.nix
       nerd-fonts.symbols-only
       nerd-fonts.fira-code
       nerd-fonts.jetbrains-mono
       nerd-fonts.iosevka
+      alegreya
+      overpass
+      ibm-plex
       julia-mono
       dejavu_fonts
     ];
