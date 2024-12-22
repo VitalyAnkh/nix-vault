@@ -34,6 +34,7 @@
     nushell # nushell
     git # used by nix flakes
     git-lfs # used by huggingface models
+    gettext
 
     # archives
     zip
