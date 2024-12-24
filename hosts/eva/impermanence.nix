@@ -64,10 +64,10 @@
         "Documents"
         "Videos"
 
-	# warp-terminal config
-	".config/warp-terminal"
+        # warp-terminal config
+        ".config/warp-terminal"
 
-	".config/clash-nyanpasu"
+        ".config/clash-nyanpasu"
 
         {
           directory = ".gnupg";

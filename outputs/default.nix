@@ -132,7 +132,7 @@ in {
           bashInteractive
           # fix `cc` replaced by clang, which causes nvim-treesitter compilation error
           gcc
-	  clang-tools
+          clang-tools
           # Nix-related
           alejandra
           deadnix
