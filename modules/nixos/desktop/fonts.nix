@@ -24,12 +24,17 @@
       source-han-sans # 思源黑体
       source-han-serif # 思源宋体
 
+      # 霞鹜
       lxgw-wenkai-screen
       lxgw-wenkai-tc
       lxgw-neoxihei
-      libertine-g
+
+      # Linux Libertine serif font and Linux Biolinum sans font
+      libertine
       texlivePackages.libertine
+
       texlivePackages.typewriter
+
       # nerdfonts
       # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/pkgs/data/fonts/nerdfonts/shas.nix
       nerd-fonts.symbols-only
