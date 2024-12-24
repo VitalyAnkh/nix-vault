@@ -35,14 +35,14 @@ in {
         wlr.enable = true;
         extraPortals = with pkgs; [
           xdg-desktop-portal-wlr
-	  xdg-desktop-portal-gnome
+          xdg-desktop-portal-gnome
         ];
       };
 
       services = {
         xserver.enable = true;
-	xserver.displayManager.gdm.enable = true;
-	xserver.desktopManager.gnome.enable = true;
+        xserver.displayManager.gdm.enable = true;
+        xserver.desktopManager.gnome.enable = true;
 
         # https://wiki.archlinux.org/title/Greetd
         #greetd = {
@@ -58,7 +58,6 @@ in {
         #    };
         #  };
         #};
-
       };
 
       # fix https://github.com/ryan4yin/nix-config/issues/10
