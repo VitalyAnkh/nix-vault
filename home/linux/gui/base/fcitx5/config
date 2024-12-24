@@ -1,66 +1,62 @@
 [Hotkey]
-# Enumerate when press trigger key repeatedly
+# 反复按切换键时进行轮换
 EnumerateWithTriggerKeys=True
-# Temporally switch between first and current Input Method
+# 临时在当前和第一个输入法之间切换
 AltTriggerKeys=
-# Enumerate Input Method Forward
+# 向前切换输入法
 EnumerateForwardKeys=
-# Enumerate Input Method Backward
-EnumerateBackwardKeys=
-# Skip first input method while enumerating
+# 轮换输入法时跳过第一个输入法
 EnumerateSkipFirst=False
-# Activate Input Method
+# 激活输入法
 ActivateKeys=
+# 取消激活输入法
+DeactivateKeys=
+# 默认跳转前一个候选词
+PrevCandidate=
+# 默认跳转下一个候选词
+NextCandidate=
 
 [Hotkey/TriggerKeys]
+0=Control+asciicircum
+
+[Hotkey/EnumerateBackwardKeys]
 0=Control+asterisk
 
 [Hotkey/EnumerateGroupForwardKeys]
-0=Super+space
+0=Alt+Shift+space
 
 [Hotkey/EnumerateGroupBackwardKeys]
 0=Shift+Super+space
 
-[Hotkey/DeactivateKeys]
-0=Hangul_Romaja
-
 [Hotkey/PrevPage]
-0=Up
+0=Tab
 
 [Hotkey/NextPage]
-0=Down
-
-[Hotkey/PrevCandidate]
-0=Shift+Tab
-
-[Hotkey/NextCandidate]
-0=Tab
+0=Control+Tab
 
 [Hotkey/TogglePreedit]
 0=Control+Alt+P
 
 [Behavior]
-# Active By Default
+# 默认状态为激活
 ActiveByDefault=False
-# Reset state on Focus In
-resetStateWhenFocusIn=No
-# Share Input State
+# 共享输入状态
 ShareInputState=No
-# Show preedit in application
+# 在程序中显示预编辑文本
 PreeditEnabledByDefault=True
-# Show Input Method Information when switch input method
-ShowInputMethodInformation=True
-# Show Input Method Information when changing focus
+# 切换输入法时显示输入法信息
+ShowInputMethodInformation=False
+# 在焦点更改时显示输入法信息
 showInputMethodInformationWhenFocusIn=False
-# Show compact input method information
+# 显示紧凑的输入法信息
 CompactInputMethodInformation=True
-# Show first input method information
+# 显示第一个输入法的信息
 ShowFirstInputMethodInformation=True
-# Default page size
+# 默认页大小
 DefaultPageSize=9
-# Override Xkb Option
+# 覆盖 Xkb 选项
 OverrideXkbOption=False
-# Custom Xkb Option
+# 自定义 Xkb 选项
 CustomXkbOption=
 # Force Enabled Addons
 EnabledAddons=
@@ -68,10 +64,4 @@ EnabledAddons=
 DisabledAddons=
 # Preload input method to be used by default
 PreloadInputMethod=True
-# Allow input method in the password field
-AllowInputMethodForPassword=False
-# Show preedit text when typing password
-ShowPreeditForPassword=False
-# Interval of saving user data in minutes
-AutoSavePeriod=30
 
