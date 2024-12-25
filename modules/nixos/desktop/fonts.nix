@@ -32,6 +32,8 @@
       # Linux Libertine serif font and Linux Biolinum sans font
       libertine
       texlivePackages.libertine
+      # Libertinus, successor of Linux Libertine
+      libertinus
 
       texlivePackages.typewriter
 
