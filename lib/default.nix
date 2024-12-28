@@ -27,5 +27,5 @@
         )
         (builtins.readDir path)));
 
-  callPackageFromDirectory = import ./callPackageFromDirectory.nix { inherit lib; };
+  callPackageFromDirectory = import ./callPackageFromDirectory.nix {inherit lib;};
 }
