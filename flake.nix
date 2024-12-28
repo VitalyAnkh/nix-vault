@@ -93,12 +93,6 @@
     # use xremap to map some keys
     xremap-flake.url = "github:xremap/nix-flake";
 
-    # use emacs-overlay to customize emacs build
-    emacs-overlay = {
-      url = "github:nix-community/emacs-overlay";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
-    };
-
     disko = {
       url = "github:nix-community/disko/v1.9.0";
       inputs.nixpkgs.follows = "nixpkgs";
