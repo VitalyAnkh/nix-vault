@@ -11,6 +11,7 @@
   lib,
   pkgs,
   doomemacs,
+  emacs-overlay,
   ...
 }:
 with lib; let
@@ -27,6 +28,41 @@ with lib; let
   myEmacsPackagesFor = emacs: ((pkgs.emacsPackagesFor emacs).emacsWithPackages (epkgs: [
     epkgs.vterm
   ]));
+  # emacsPgtkIgc = emacs-overlay.emacs-git.overrideAttrs (old: {
+  emacsPgtkIgc = emacs-overlay.packages.${pkgs.system}.emacs-git.overrideAttrs (old: {
+    name = "emacs-igc-git";
+
+    src = pkgs.fetchFromGitHub {
+      owner = "emacs-mirror";
+      repo = "emacs";
+      rev = "42731228d24c37edb2dc848c3a74d5c932a817ef";
+      sha256 = "mLTLxypbnc7UcKzRkN9tNY6/g4v+cMsTSJBUZkU/YeA=";
+    };
+
+    buildInputs = old.buildInputs ++ [pkgs.mps pkgs.gtk3];
+
+    configureFlags = [
+      #"--disable-build-details"
+      "--with-modules"
+      #"--with-x-toolkit=gtk3"
+      "--with-pgtk"
+      "--with-cairo"
+      "--with-xft"
+      "--with-sqlite3=yes"
+      "--with-compress-install"
+      "--with-toolkit-scroll-bars"
+      "--with-native-compilation"
+      "--without-imagemagick"
+      "--with-mailutils"
+      "--with-small-ja-dic"
+      "--with-tree-sitter"
+      "--with-xinput2"
+      "--without-xwidgets" # Needed for it to compile properly for some reason
+      "--with-dbus"
+      "--with-selinux"
+      "--with-mps=yes"
+    ];
+  });
   # to make this symlink work, we need to git clone this repo to your home directory.
   #configPath = "${config.home.homeDirectory}/nix-config/home/base/tui/editors/emacs/doom";
   configPath = "${config.home.homeDirectory}/projects/dev/emacs-projects/doom";
@@ -89,7 +125,8 @@ in {
         # Do not use emacs-nox here, which makes the mouse wheel work abnormally in terminal mode.
         # pgtk (pure gtk) build add native support for wayland.
         # https://www.gnu.org/savannah-checkouts/gnu/emacs/emacs.html#Releases
-        emacsPkg = myEmacsPackagesFor pkgs.emacs30-pgtk;
+        # emacsPkg = myEmacsPackagesFor pkgs.emacs30-pgtk;
+        emacsPkg = emacsPgtkIgc;
       in {
         home.packages = [emacsPkg];
         services.emacs = {
@@ -108,7 +145,8 @@ in {
       let
         # macport adds some native features based on GNU Emacs 29
         # https://bitbucket.org/mituharu/emacs-mac/src/master/README-mac
-        emacsPkg = myEmacsPackagesFor pkgs.emacs29;
+        # emacsPkg = myEmacsPackagesFor pkgs.emacs29;
+        emacsPkg = emacsPgtkIgc;
       in {
         home.packages = [emacsPkg];
         launchd.enable = true;
