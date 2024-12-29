@@ -2,7 +2,7 @@
   lib,
   rustPlatform,
   source-emacs-lsp-booster,
-  emacs,
+  pkgs,
   ...
 }:
 rustPlatform.buildRustPackage rec {
@@ -13,7 +13,7 @@ rustPlatform.buildRustPackage rec {
 
   cargoHash = "sha256-CvIJ56QrIzQULFeXYQXTpX9PoGx1/DWtgwzfJ+mljEI=";
 
-  nativeCheckInputs = [emacs]; # tests/bytecode_test
+  nativeCheckInputs = [pkgs.emacs-master-igc-pgtk]; # tests/bytecode_test
 
   meta = with lib; {
     description = "Emacs LSP performance booster";

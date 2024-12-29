@@ -92,7 +92,7 @@ in {
         # emacsPkg = myEmacsPackagesFor pkgs.emacs30-pgtk;
         emacsPkg = pkgs.emacs-master-igc-pgtk;
       in {
-        home.packages = [emacsPkg];
+        home.packages = [emacsPkg pkgs.emacs-lsp-booster];
         services.emacs = {
           enable = true;
           package = emacsPkg;
@@ -112,7 +112,7 @@ in {
         # emacsPkg = myEmacsPackagesFor pkgs.emacs29;
         emacsPkg = pkgs.emacs-master-igc-pgtk;
       in {
-        home.packages = [emacsPkg];
+        home.packages = [emacsPkg pkgs.emacs-lsp-booster];
         launchd.enable = true;
         launchd.agents.emacs = {
           enable = true;
