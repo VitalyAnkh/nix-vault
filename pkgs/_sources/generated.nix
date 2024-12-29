@@ -5,15 +5,27 @@
   fetchFromGitHub,
   dockerTools,
 }: {
+  source-emacs-lsp-booster = {
+    pname = "source-emacs-lsp-booster";
+    version = "59f42abb419829f5bcde103d0b18616779ea05f3";
+    src = fetchFromGitHub {
+      owner = "blahgeek";
+      repo = "emacs-lsp-booster";
+      rev = "59f42abb419829f5bcde103d0b18616779ea05f3";
+      fetchSubmodules = false;
+      sha256 = "sha256-xAkYVzDf5fRUQQf3qZ5jicngPemfGdbDknjawlz/A+Q=";
+    };
+    date = "2024-11-30";
+  };
   source-emacs-master-igc = {
     pname = "source-emacs-master-igc";
-    version = "bd2da5282db50676d97b65f1d61101aafbc9a3ff";
+    version = "ae6924ac7e76c40bb2c1e99dda60fbad5a971046";
     src = fetchFromGitHub {
       owner = "emacs-mirror";
       repo = "emacs";
-      rev = "bd2da5282db50676d97b65f1d61101aafbc9a3ff";
+      rev = "ae6924ac7e76c40bb2c1e99dda60fbad5a971046";
       fetchSubmodules = false;
-      sha256 = "sha256-C8UCfYmF4nrJgwMQCbkziCUSPtFYxBuAjDCLyg6zkbQ=";
+      sha256 = "sha256-8OXP/9vVTz1AMK94czTAbi1SJCEgxNv4EV47jxUupdo=";
     };
     date = "2024-12-28";
   };

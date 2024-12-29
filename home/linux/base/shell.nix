@@ -24,6 +24,9 @@ in rec {
     # set default applications
     BROWSER = "firefox-nightly";
 
+    # for faster emacs lsp
+    LSP_USE_PLISTS = "true";
+
     # enable scrolling in git diff
     DELTA_PAGER = "less -R";
   };
