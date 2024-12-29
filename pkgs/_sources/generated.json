@@ -1,22 +1,42 @@
 {
-    "source-emacs-master-igc": {
-        "cargoLocks": null,
-        "date": "2024-12-28",
-        "extract": null,
-        "name": "source-emacs-master-igc",
-        "passthru": null,
-        "pinned": false,
-        "src": {
-            "deepClone": false,
-            "fetchSubmodules": false,
-            "leaveDotGit": false,
-            "name": null,
-            "owner": "emacs-mirror",
-            "repo": "emacs",
-            "rev": "bd2da5282db50676d97b65f1d61101aafbc9a3ff",
-            "sha256": "sha256-C8UCfYmF4nrJgwMQCbkziCUSPtFYxBuAjDCLyg6zkbQ=",
-            "type": "github"
-        },
-        "version": "bd2da5282db50676d97b65f1d61101aafbc9a3ff"
-    }
+  "source-emacs-lsp-booster": {
+    "cargoLocks": null,
+    "date": "2024-11-30",
+    "extract": null,
+    "name": "source-emacs-lsp-booster",
+    "passthru": null,
+    "pinned": false,
+    "src": {
+      "deepClone": false,
+      "fetchSubmodules": false,
+      "leaveDotGit": false,
+      "name": null,
+      "owner": "blahgeek",
+      "repo": "emacs-lsp-booster",
+      "rev": "59f42abb419829f5bcde103d0b18616779ea05f3",
+      "sha256": "sha256-xAkYVzDf5fRUQQf3qZ5jicngPemfGdbDknjawlz/A+Q=",
+      "type": "github"
+    },
+    "version": "59f42abb419829f5bcde103d0b18616779ea05f3"
+  },
+  "source-emacs-master-igc": {
+    "cargoLocks": null,
+    "date": "2024-12-28",
+    "extract": null,
+    "name": "source-emacs-master-igc",
+    "passthru": null,
+    "pinned": false,
+    "src": {
+      "deepClone": false,
+      "fetchSubmodules": false,
+      "leaveDotGit": false,
+      "name": null,
+      "owner": "emacs-mirror",
+      "repo": "emacs",
+      "rev": "ae6924ac7e76c40bb2c1e99dda60fbad5a971046",
+      "sha256": "sha256-8OXP/9vVTz1AMK94czTAbi1SJCEgxNv4EV47jxUupdo=",
+      "type": "github"
+    },
+    "version": "ae6924ac7e76c40bb2c1e99dda60fbad5a971046"
+  }
 }

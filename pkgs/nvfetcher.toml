@@ -2,3 +2,8 @@
 src.git = "https://github.com/emacs-mirror/emacs.git"
 src.branch = "scratch/igc"
 fetch.github = "emacs-mirror/emacs"
+
+[source-emacs-lsp-booster]
+src.git = "https://github.com/blahgeek/emacs-lsp-booster.git"
+src.branch = "master"
+fetch.github = "blahgeek/emacs-lsp-booster"
