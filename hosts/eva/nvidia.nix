@@ -34,14 +34,14 @@
 
   nixpkgs.overlays = [
     (_: super: {
-      blender = super.blender.override {
+      blender = pkgs-unstable.blender.override {
         # https://nixos.org/manual/nixpkgs/unstable/#opt-cudaSupport
         cudaSupport = true;
       };
 
-      # ffmpeg-full = super.ffmpeg-full.override {
-      #   withNvcodec = true;
-      # };
+      ffmpeg-full = super.ffmpeg-full.override {
+        withNvcodec = true;
+      };
     })
   ];
 }
