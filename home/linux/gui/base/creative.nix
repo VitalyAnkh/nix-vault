@@ -26,6 +26,7 @@
     # kicad     # 3d printing, eletrical engineering
 
     pkgs.nutstore-client
+    pkgs.nutstore-nautilus
 
     # fpga
     pkgs-unstable.python312Packages.apycula # gowin fpga
