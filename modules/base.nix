@@ -42,6 +42,7 @@
     git-lfs # used by huggingface models
     gettext
     nvfetcher
+    valgrind
 
     # archives
     zip

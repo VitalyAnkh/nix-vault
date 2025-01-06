@@ -1,28 +1,31 @@
 {
   pkgs,
   pkgs-unstable,
-  # pkgs-stable,
   nur-ryan4yin,
   ...
 }: {
   home.packages = with pkgs; [
     # creative
-    blender # 3d modeling
+    pkgs-unstable.blender # 3d modeling
     # gimp      # image editing, I prefer using figma in browser instead of this one
     inkscape # vector graphics
-    krita # digital painting
+    pkgs-unstable.krita # digital painting
     musescore # music notation
-    reaper # audio production
-    sonic-pi # music programming
-    supercollider
+    pkgs-unstable.reaper # audio production
+    pkgs-unstable.sonic-pi # music programming
+    pkgs-unstable.supercollider
 
     # 2d game design
-    ldtk # A modern, versatile 2D level editor
+    pkgs-unstable.ldtk # A modern, versatile 2D level editor
     #aseprite # Animated sprite editor & pixel art tool
-    godot_4
+    pkgs-unstable.godot_4
+
+    pkgs-unstable.freecad-wayland
 
     # this app consumes a lot of storage, so do not install it currently
     # kicad     # 3d printing, eletrical engineering
+
+    pkgs.nutstore-client
 
     # fpga
     pkgs-unstable.python312Packages.apycula # gowin fpga
