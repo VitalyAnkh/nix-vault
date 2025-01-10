@@ -64,6 +64,9 @@
         "Documents"
         "Videos"
 
+        # Nutstore sync folder
+        "nutstore_files"
+
         # warp-terminal config
         ".config/warp-terminal"
 
