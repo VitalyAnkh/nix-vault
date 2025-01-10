@@ -9,5 +9,6 @@
     clash-nyanpasu
     warp-terminal
     zotero
+    okular
   ];
 }
