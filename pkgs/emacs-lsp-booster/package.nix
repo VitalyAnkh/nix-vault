@@ -5,13 +5,13 @@
   pkgs,
   ...
 }:
-rustPlatform.buildRustPackage rec {
+rustPlatform.buildRustPackage {
   pname = "emacs-lsp-booster";
   version = "0.2.1";
 
   inherit (source-emacs-lsp-booster) src;
 
-  cargoHash = "sha256-CvIJ56QrIzQULFeXYQXTpX9PoGx1/DWtgwzfJ+mljEI=";
+  cargoHash = "sha256-9XGxmJxNN2+Gr+GP/BnTPYF+aKHKeaAsw86vo35WgHg=";
 
   nativeCheckInputs = [pkgs.emacs-master-igc-pgtk]; # tests/bytecode_test
 
