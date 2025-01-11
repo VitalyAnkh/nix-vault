@@ -12,9 +12,9 @@
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
 
-  #boot.loader.efi.canTouchEfiVariables = true;
-  #boot.loader.efi.efiSysMountPoint = "/boot";
-  #boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader.efi.efiSysMountPoint = "/boot";
+  boot.loader.systemd-boot.enable = true;
 
   boot.kernelPackages = pkgs.linuxPackages_latest;
   #boot.kernelPackages = pkgs.linuxPackages_xanmod_latest;
@@ -29,7 +29,7 @@
   boot.tmp.cleanOnBoot = true;
 
   # Enable binfmt emulation of aarch64-linux, this is required for cross compilation.
-  #boot.binfmt.emulatedSystems = ["aarch64-linux" "riscv64-linux"];
+  boot.binfmt.emulatedSystems = ["aarch64-linux" "riscv64-linux"];
 
   # fileSystems."/" = {
   #   device = "UUID=49cfe182-ff8a-4825-adbd-de98622d6ec1";
