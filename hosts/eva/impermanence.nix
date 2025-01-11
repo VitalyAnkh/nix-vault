@@ -66,6 +66,7 @@
 
         # Nutstore sync folder
         "nutstore_files"
+        "Nutstore Files"
 
         # warp-terminal config
         ".config/warp-terminal"
