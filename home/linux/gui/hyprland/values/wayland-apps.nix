@@ -61,7 +61,7 @@
     };
 
     vscode = {
-      enable = true;
+      enable = false;
       # let vscode sync and update its configuration & extensions across devices, using github account.
       userSettings = {};
       package =

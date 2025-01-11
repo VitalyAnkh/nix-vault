@@ -12,6 +12,10 @@
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
 
+  #boot.loader.efi.canTouchEfiVariables = true;
+  #boot.loader.efi.efiSysMountPoint = "/boot";
+  #boot.loader.systemd-boot.enable = true;
+
   boot.kernelPackages = pkgs.linuxPackages_latest;
   #boot.kernelPackages = pkgs.linuxPackages_xanmod_latest;
 
@@ -21,15 +25,65 @@
   #boot.kernelModules = [ "kvm-amd" "nvidia" ];
   boot.extraModulePackages = [];
 
-  fileSystems."/" = {
-    device = "UUID=49cfe182-ff8a-4825-adbd-de98622d6ec1";
-    fsType = "bcachefs";
-  };
+  # clear /tmp on boot to get a stateless /tmp directory.
+  boot.tmp.cleanOnBoot = true;
+
+  # Enable binfmt emulation of aarch64-linux, this is required for cross compilation.
+  #boot.binfmt.emulatedSystems = ["aarch64-linux" "riscv64-linux"];
+
+  # fileSystems."/" = {
+  #   device = "UUID=49cfe182-ff8a-4825-adbd-de98622d6ec1";
+  #   fsType = "bcachefs";
+  # };
 
   fileSystems."/boot" = {
     device = "/dev/disk/by-uuid/1336-2446";
     fsType = "vfat";
     options = ["fmask=0022" "dmask=0022"];
+  };
+
+  # stateless file system
+  # equal to `mount -t tmpfs tmpfs /`
+  fileSystems."/" = {
+    device = "tmpfs";
+    fsType = "tmpfs";
+    # set mode to 755, otherwise systemd will set it to 777, which cause problems.
+    # relatime: Update inode access times relative to modify or change time.
+    options = ["relatime" "mode=755"];
+  };
+
+  fileSystems."/nix" = {
+    device = "UUID=49cfe182-ff8a-4825-adbd-de98622d6ec1";
+    fsType = "bcachefs";
+    options = ["subvol=@nix" "noatime" "compress=zstd"];
+  };
+
+  # for guix store, which use `/gnu/store` as its store directory.
+  fileSystems."/gnu" = {
+    # device = "/dev/disk/by-uuid/1167076c-dee1-486c-83c1-4b1af37555cd";
+    device = "UUID=49cfe182-ff8a-4825-adbd-de98622d6ec1";
+    fsType = "bcachefs";
+    options = ["subvol=@guix" "noatime" "compress=zstd"];
+  };
+
+  fileSystems."/persistent" = {
+    device = "UUID=49cfe182-ff8a-4825-adbd-de98622d6ec1";
+    fsType = "bcachefs";
+    options = ["subvol=@persistent" "compress=zstd"];
+    # impermanence's data is required for booting.
+    neededForBoot = true;
+  };
+
+  fileSystems."/snapshots" = {
+    device = "UUID=49cfe182-ff8a-4825-adbd-de98622d6ec1";
+    fsType = "bcachefs";
+    options = ["subvol=@snapshots" "compress=zstd"];
+  };
+
+  fileSystems."/tmp" = {
+    device = "UUID=49cfe182-ff8a-4825-adbd-de98622d6ec1";
+    fsType = "bcachefs";
+    options = ["subvol=@tmp" "compress=zstd"];
   };
 
   swapDevices = [];
