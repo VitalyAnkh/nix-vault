@@ -14,7 +14,7 @@ b.nix} 最终会得到 pkgs.a pkgs.b
 ```toml
 [source-emacs-master-igc]
 src.git = "https://github.com/emacs-mirror/emacs.git"
-src.branch = "scratch/igc"
+src.branch = "feature/igc"
 fetch.github = "emacs-mirror/emacs"
 ```
 
