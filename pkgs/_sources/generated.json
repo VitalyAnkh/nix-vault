@@ -1,42 +1,42 @@
 {
-  "source-emacs-lsp-booster": {
-    "cargoLocks": null,
-    "date": "2025-01-07",
-    "extract": null,
-    "name": "source-emacs-lsp-booster",
-    "passthru": null,
-    "pinned": false,
-    "src": {
-      "deepClone": false,
-      "fetchSubmodules": false,
-      "leaveDotGit": false,
-      "name": null,
-      "owner": "blahgeek",
-      "repo": "emacs-lsp-booster",
-      "rev": "5f702a2699f306a3958ff1996a2b1a625f0cee0b",
-      "sha256": "sha256-R9v+hCma/FfYdR+fvZ0vmtVk4dm+bPBacwV1QCc6X+8=",
-      "type": "github"
+    "source-emacs-lsp-booster": {
+        "cargoLocks": null,
+        "date": "2025-01-07",
+        "extract": null,
+        "name": "source-emacs-lsp-booster",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "deepClone": false,
+            "fetchSubmodules": false,
+            "leaveDotGit": false,
+            "name": null,
+            "owner": "blahgeek",
+            "repo": "emacs-lsp-booster",
+            "rev": "5f702a2699f306a3958ff1996a2b1a625f0cee0b",
+            "sha256": "sha256-R9v+hCma/FfYdR+fvZ0vmtVk4dm+bPBacwV1QCc6X+8=",
+            "type": "github"
+        },
+        "version": "5f702a2699f306a3958ff1996a2b1a625f0cee0b"
     },
-    "version": "5f702a2699f306a3958ff1996a2b1a625f0cee0b"
-  },
-  "source-emacs-master-igc": {
-    "cargoLocks": null,
-    "date": "2025-01-10",
-    "extract": null,
-    "name": "source-emacs-master-igc",
-    "passthru": null,
-    "pinned": false,
-    "src": {
-      "deepClone": false,
-      "fetchSubmodules": false,
-      "leaveDotGit": false,
-      "name": null,
-      "owner": "emacs-mirror",
-      "repo": "emacs",
-      "rev": "b1621769ee9508a308c6ba8f4d27baf8c4049db1",
-      "sha256": "sha256-pWP3SmUMhWg7mVsQJ0YTWg0jJGLrTG4ode30dAzVDAg=",
-      "type": "github"
-    },
-    "version": "b1621769ee9508a308c6ba8f4d27baf8c4049db1"
-  }
+    "source-emacs-master-igc": {
+        "cargoLocks": null,
+        "date": "2025-03-02",
+        "extract": null,
+        "name": "source-emacs-master-igc",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "deepClone": false,
+            "fetchSubmodules": false,
+            "leaveDotGit": false,
+            "name": null,
+            "owner": "emacs-mirror",
+            "repo": "emacs",
+            "rev": "9a657e1dabc196e60dcf48435d48fb51aef3c60d",
+            "sha256": "sha256-r/ZWwKc/RReYFoakq3RmBDKKNKsIdCP/R3vIK7HtcF4=",
+            "type": "github"
+        },
+        "version": "9a657e1dabc196e60dcf48435d48fb51aef3c60d"
+    }
 }

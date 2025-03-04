@@ -14,6 +14,6 @@
     daed
     warp-terminal
     zotero
-    okular
+    kdePackages.okular
   ];
 }
