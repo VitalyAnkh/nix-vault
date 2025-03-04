@@ -7,7 +7,8 @@
   pkgs,
   modulesPath,
   ...
-}: {
+}:
+{
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
@@ -19,17 +20,32 @@
   boot.kernelPackages = pkgs.linuxPackages_latest;
   #boot.kernelPackages = pkgs.linuxPackages_xanmod_latest;
 
-  boot.initrd.availableKernelModules = ["nvme" "xhci_pci" "ahci" "thunderbolt" "usb_storage" "usbhid" "sd_mod"];
-  boot.initrd.kernelModules = [];
-  boot.kernelModules = ["kvm-amd" "nvidia" "nvidia-uvm"];
+  boot.initrd.availableKernelModules = [
+    "nvme"
+    "xhci_pci"
+    "ahci"
+    "thunderbolt"
+    "usb_storage"
+    "usbhid"
+    "sd_mod"
+  ];
+  boot.initrd.kernelModules = [ ];
+  boot.kernelModules = [
+    "kvm-amd"
+    "nvidia"
+    "nvidia-uvm"
+  ];
   #boot.kernelModules = [ "kvm-amd" "nvidia" ];
-  boot.extraModulePackages = [];
+  boot.extraModulePackages = [ ];
 
   # clear /tmp on boot to get a stateless /tmp directory.
   boot.tmp.cleanOnBoot = true;
 
   # Enable binfmt emulation of aarch64-linux, this is required for cross compilation.
-  boot.binfmt.emulatedSystems = ["aarch64-linux" "riscv64-linux"];
+  boot.binfmt.emulatedSystems = [
+    "aarch64-linux"
+    "riscv64-linux"
+  ];
 
   # fileSystems."/" = {
   #   device = "UUID=49cfe182-ff8a-4825-adbd-de98622d6ec1";
@@ -39,7 +55,10 @@
   fileSystems."/boot" = {
     device = "/dev/disk/by-uuid/1336-2446";
     fsType = "vfat";
-    options = ["fmask=0022" "dmask=0022"];
+    options = [
+      "fmask=0022"
+      "dmask=0022"
+    ];
   };
 
   # stateless file system
@@ -49,13 +68,20 @@
     fsType = "tmpfs";
     # set mode to 755, otherwise systemd will set it to 777, which cause problems.
     # relatime: Update inode access times relative to modify or change time.
-    options = ["relatime" "mode=755"];
+    options = [
+      "relatime"
+      "mode=755"
+    ];
   };
 
   fileSystems."/nix" = {
     device = "UUID=49cfe182-ff8a-4825-adbd-de98622d6ec1";
     fsType = "bcachefs";
-    options = ["subvol=@nix" "noatime" "compress=zstd"];
+    options = [
+      "subvol=@nix"
+      "noatime"
+      "compress=zstd"
+    ];
   };
 
   # for guix store, which use `/gnu/store` as its store directory.
@@ -63,13 +89,20 @@
     # device = "/dev/disk/by-uuid/1167076c-dee1-486c-83c1-4b1af37555cd";
     device = "UUID=49cfe182-ff8a-4825-adbd-de98622d6ec1";
     fsType = "bcachefs";
-    options = ["subvol=@guix" "noatime" "compress=zstd"];
+    options = [
+      "subvol=@guix"
+      "noatime"
+      "compress=zstd"
+    ];
   };
 
   fileSystems."/persistent" = {
     device = "UUID=49cfe182-ff8a-4825-adbd-de98622d6ec1";
     fsType = "bcachefs";
-    options = ["subvol=@persistent" "compress=zstd"];
+    options = [
+      "subvol=@persistent"
+      "compress=zstd"
+    ];
     # impermanence's data is required for booting.
     neededForBoot = true;
   };
@@ -77,16 +110,22 @@
   fileSystems."/snapshots" = {
     device = "UUID=49cfe182-ff8a-4825-adbd-de98622d6ec1";
     fsType = "bcachefs";
-    options = ["subvol=@snapshots" "compress=zstd"];
+    options = [
+      "subvol=@snapshots"
+      "compress=zstd"
+    ];
   };
 
   fileSystems."/tmp" = {
     device = "UUID=49cfe182-ff8a-4825-adbd-de98622d6ec1";
     fsType = "bcachefs";
-    options = ["subvol=@tmp" "compress=zstd"];
+    options = [
+      "subvol=@tmp"
+      "compress=zstd"
+    ];
   };
 
-  swapDevices = [];
+  swapDevices = [ ];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
   # (the default) this is the recommended approach. When using systemd-networkd it's
@@ -97,6 +136,6 @@
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
-  hardware.pulseaudio.enable = false;
+  services.pulseaudio.enable = false;
   hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.beta;
 }

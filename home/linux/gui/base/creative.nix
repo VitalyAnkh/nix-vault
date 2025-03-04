@@ -3,7 +3,8 @@
   pkgs-unstable,
   nur-ryan4yin,
   ...
-}: {
+}:
+{
   home.packages = with pkgs; [
     # creative
     pkgs-unstable.blender # 3d modeling
@@ -26,7 +27,7 @@
     # kicad     # 3d printing, eletrical engineering
 
     pkgs.nutstore-client
-    pkgs.nutstore-nautilus
+    #pkgs.nutstore-nautilus
 
     # fpga
     pkgs-unstable.python312Packages.apycula # gowin fpga
