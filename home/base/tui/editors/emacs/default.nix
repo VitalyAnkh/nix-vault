@@ -46,7 +46,6 @@ in {
         ## Optional dependencies
         fd # faster projectile indexing
         imagemagick # for image-dired
-        fd # faster projectile indexing
         zstd # for undo-fu-session/undo-tree compression
 
         # go-mode
