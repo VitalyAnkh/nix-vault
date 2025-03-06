@@ -71,7 +71,13 @@
         # warp-terminal config
         ".config/warp-terminal"
 
+        # gnome configurations
+        ".config/dconf"
+
         ".config/clash-nyanpasu"
+        ".config/nekoray"
+        ".config/hiddify"
+        ".config/flclash"
 
         {
           directory = ".gnupg";

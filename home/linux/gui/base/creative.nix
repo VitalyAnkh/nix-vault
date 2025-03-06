@@ -3,8 +3,7 @@
   pkgs-unstable,
   nur-ryan4yin,
   ...
-}:
-{
+}: {
   home.packages = with pkgs; [
     # creative
     pkgs-unstable.blender # 3d modeling

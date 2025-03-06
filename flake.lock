@@ -423,11 +423,11 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1741050860,
-        "narHash": "sha256-EoVuocfTrH+wgTsxIPHfkVX98WawW7a81qK3I6uEEWI=",
+        "lastModified": 1741101616,
+        "narHash": "sha256-QLYuoHQPju8ncJPcR9YSmO1TYgGhNkf79ASVmS17+Gg=",
         "owner": "nix-community",
         "repo": "flake-firefox-nightly",
-        "rev": "22e14ebeb61b47d5d3cbbcceddab350e33e2d8b7",
+        "rev": "0e44168a087dbdec1ff375fd2acddfb9b6799857",
         "type": "github"
       },
       "original": {
@@ -802,11 +802,11 @@
         "zig2nix": "zig2nix"
       },
       "locked": {
-        "lastModified": 1740954062,
-        "narHash": "sha256-VVsSwi1sTVCL0fijNHqw1hv/546acgxxrTAChl/K254=",
+        "lastModified": 1741102560,
+        "narHash": "sha256-ICmSAbBjPlvTTjs6QH4dO2yZ96tZOY6Zppk6vtrcIks=",
         "owner": "ghostty-org",
         "repo": "ghostty",
-        "rev": "ee8ae196ee0fad3824c7ae9eac947f2128b4ae4f",
+        "rev": "66e8d919572fddc5fd145eb563a555deeb249b35",
         "type": "github"
       },
       "original": {
@@ -1393,12 +1393,12 @@
         "rev": "97e4d47b1b1935811b6bacdcc50dd4855be03198",
         "shallow": true,
         "type": "git",
-        "url": "ssh://git@github.com/VitalyAnkh/vr-nix-secrets.git"
+        "url": "https://git@github.com/VitalyAnkh/vr-nix-secrets.git"
       },
       "original": {
         "shallow": true,
         "type": "git",
-        "url": "ssh://git@github.com/VitalyAnkh/vr-nix-secrets.git"
+        "url": "https://git@github.com/VitalyAnkh/vr-nix-secrets.git"
       }
     },
     "nix": {

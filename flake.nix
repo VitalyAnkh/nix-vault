@@ -84,6 +84,7 @@
       # lock with git commit at 0.15.0
       #url = "github:ryantm/agenix/564595d0ad4be7277e07fa63b5a991b3c645655d";
       # replaced with a type-safe reimplementation to get a better error message and less bugs.
+
       url = "github:yaxitech/ragenix";
       # url = "github:ryan4yin/ragenix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -144,7 +145,7 @@
     # my private secrets, it's a private repository, you need to replace it with your own.
     # use ssh protocol to authenticate via ssh-agent/ssh-key, and shallow clone to save time
     mysecrets = {
-      url = "git+ssh://git@github.com/VitalyAnkh/vr-nix-secrets.git?shallow=1";
+      url = "git+https://git@github.com/VitalyAnkh/vr-nix-secrets.git?shallow=1";
       flake = false;
     };
 
