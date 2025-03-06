@@ -6,7 +6,7 @@
 }: {
   home.packages = with pkgs; [
     # creative
-    pkgs-unstable.blender # 3d modeling
+    #pkgs-unstable.blender # 3d modeling
     # gimp      # image editing, I prefer using figma in browser instead of this one
     inkscape # vector graphics
     pkgs-unstable.krita # digital painting
@@ -23,10 +23,12 @@
     pkgs-unstable.freecad-wayland
 
     # this app consumes a lot of storage, so do not install it currently
-    # kicad     # 3d printing, eletrical engineering
+    kicad # 3d printing, eletrical engineering
 
     pkgs.nutstore-client
     #pkgs.nutstore-nautilus
+
+    pkgs-unstable.tailscale
 
     # fpga
     pkgs-unstable.python312Packages.apycula # gowin fpga
