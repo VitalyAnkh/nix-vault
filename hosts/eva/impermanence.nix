@@ -75,7 +75,6 @@
         ".config/dconf"
 
         ".config/clash-nyanpasu"
-        ".config/nekoray"
         ".config/hiddify"
         ".config/flclash"
 

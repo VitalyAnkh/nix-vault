@@ -1,5 +1,6 @@
 {pkgs-unstable, ...}: {
   environment.systemPackages = with pkgs-unstable; [
+    digital
     gnomeExtensions.appindicator
     #gnome-extension-manager
     gnomeExtensions.quake-terminal
@@ -9,10 +10,11 @@
     clash-nyanpasu
     hiddify-app
     flclash
-    nekoray
+    kdiskmark
     daed
     warp-terminal
     zotero
     kdePackages.okular
+    v2rayn
   ];
 }

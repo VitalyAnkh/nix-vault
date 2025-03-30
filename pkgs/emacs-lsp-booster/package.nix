@@ -11,7 +11,7 @@ rustPlatform.buildRustPackage {
 
   inherit (source-emacs-lsp-booster) src;
 
-  cargoHash = "sha256-9XGxmJxNN2+Gr+GP/BnTPYF+aKHKeaAsw86vo35WgHg=";
+  cargoHash = "sha256-7AQAe3uTLXY44nk/RSucCpxdvOjxvk4z8UaFDa6Pcs0=";
 
   nativeCheckInputs = [pkgs.emacs-master-igc-pgtk]; # tests/bytecode_test
 
