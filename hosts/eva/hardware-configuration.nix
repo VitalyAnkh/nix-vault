@@ -44,7 +44,7 @@
   fileSystems."/nix" = {
     device = "/dev/disk/by-uuid/8072ac84-5bee-42f2-861f-555b862148ad";
     fsType = "btrfs";
-    options = ["subvol=@nix" "compress-force=zstd:1" "noatime"];
+    options = ["subvol=@nix" "compress-force=zstd:5" "noatime"];
   };
 
   fileSystems."/gnu" = {
@@ -68,7 +68,7 @@
   fileSystems."/persistent" = {
     device = "/dev/disk/by-uuid/8072ac84-5bee-42f2-861f-555b862148ad";
     fsType = "btrfs";
-    options = ["subvol=@persistent" "noatime" "compress-force=zstd:1"];
+    options = ["subvol=@persistent" "noatime" "compress-force=zstd:5"];
     neededForBoot = true;
   };
 

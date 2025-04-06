@@ -2,7 +2,7 @@
   environment.systemPackages = with pkgs-unstable; [
     digital
     gnomeExtensions.appindicator
-    #gnome-extension-manager
+    gnome-extension-manager
     gnomeExtensions.quake-terminal
     gnomeExtensions.clipboard-history
     gnomeExtensions.kimpanel
@@ -11,10 +11,12 @@
     hiddify-app
     flclash
     kdiskmark
-    daed
+    #daed
     warp-terminal
     zotero
     kdePackages.okular
+    v2raya
     v2rayn
+    zulip
   ];
 }
