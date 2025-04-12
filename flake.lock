@@ -420,11 +420,11 @@
     "doomemacs": {
       "flake": false,
       "locked": {
-        "lastModified": 1743912279,
-        "narHash": "sha256-94E3HFKl/EeUTRPJPlGikrFK5wJxCAjr2BvENf7uS1s=",
+        "lastModified": 1744400981,
+        "narHash": "sha256-8bBhEmytBSPksB04vhcx0XUTW0wES0A5RATcvluTveg=",
         "owner": "doomemacs",
         "repo": "doomemacs",
-        "rev": "90b64a031395711f97c8dd5e52415a8848775ddd",
+        "rev": "c6f749e67c13342007f6aeaa4a81e6fdb00f529f",
         "type": "github"
       },
       "original": {

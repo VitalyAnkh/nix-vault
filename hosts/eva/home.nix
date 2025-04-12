@@ -19,11 +19,14 @@
   programs.ssh = {
     enable = true;
     extraConfig = ''
-      Host github.com
-          IdentityFile ~/.ssh/eva
-          # Specifies that ssh should only use the identity file explicitly configured above
-          # required to prevent sending default identity files first.
-          IdentitiesOnly yes
+         Host github.com
+             IdentityFile ~/.ssh/eva
+             # Specifies that ssh should only use the identity file explicitly configured above
+             # required to prevent sending default identity files first.
+             IdentitiesOnly yes
+      Hostname ssh.github.com
+      Port 443
+      User git
     '';
   };
 
