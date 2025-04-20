@@ -3,7 +3,8 @@
 My editors:
 
 1. Neovim
-2. Helix
+2. Emacs
+3. Helix
 
 And `Zellij` for a smooth and stable terminal experience.
 
