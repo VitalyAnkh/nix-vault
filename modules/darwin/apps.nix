@@ -158,6 +158,7 @@ in {
       "google-chrome"
       "visual-studio-code"
       "zed" # zed editor
+      "cursor" # an AI code editor
       "aerospace" # an i3-like tiling window manager for macOS
       "ghostty" # terminal emulator
 
@@ -181,7 +182,6 @@ in {
       "tencent-lemon" # macOS cleaner
       "neteasemusic" # music
       "blender@lts" # 3D creation suite
-      "ibkr"
       "mihomo-party" # transparent proxy tool
 
       # Development

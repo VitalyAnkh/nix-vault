@@ -13,7 +13,7 @@
     enable = true;
     package =
       if pkgs.stdenv.isDarwin
-      then pkgs.emptyDirectory # pkgs.ghostty is currently broken on darwin
+      then pkgs.hello # pkgs.ghostty is currently broken on darwin
       else pkgs.ghostty; # the stable version
     # package = ghostty.packages.${pkgs.system}.default; # the latest version
     enableBashIntegration = false;
