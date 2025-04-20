@@ -7,6 +7,9 @@
       ];
     };
   };
+  modules.editors.emacs = {
+    enable = true;
+  };
 
   programs.ssh.matchBlocks."github.com".identityFile = "${config.home.homeDirectory}/.ssh/idols-ai";
 }
