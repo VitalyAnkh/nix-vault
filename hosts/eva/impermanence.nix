@@ -64,6 +64,9 @@
         "Documents"
         "Videos"
 
+        # android tools
+        "Android"
+
         # Nutstore sync folder
         "nutstore_files"
         "Nutstore Files"

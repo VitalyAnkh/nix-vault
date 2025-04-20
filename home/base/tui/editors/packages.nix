@@ -20,6 +20,9 @@
       deadnix # Find and remove unused code in .nix source files
       alejandra # Nix Code Formatter
 
+      #android-studio-full
+      android-studio-tools
+
       #-- nickel lang
       nickel
 
@@ -103,6 +106,8 @@
       #pkgs-unstable.cargo # rust package manager
       #pkgs-unstable.rustfmt
       #pkgs-unstable.clippy # rust linter
+
+      pkgs-unstable.devenv
 
       #-- golang
       go
