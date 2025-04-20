@@ -2,12 +2,16 @@
   pkgs,
   pkgs-unstable,
   nur-ryan4yin,
+  blender-bin,
   ...
 }: {
   home.packages = with pkgs; [
     # creative
+
     #pkgs-unstable.blender # 3d modeling
-    # gimp      # image editing, I prefer using figma in browser instead of this one
+    # https://github.com/edolstra/nix-warez/blob/master/blender/flake.nix
+    blender-bin.packages.${pkgs.system}.blender_4_4 # 3d modeling
+    # gimp      # image editing, I prefer using figma/penpot in browser instead of this one
     inkscape # vector graphics
     pkgs-unstable.krita # digital painting
     musescore # music notation
@@ -23,7 +27,7 @@
     pkgs-unstable.freecad-wayland
 
     # this app consumes a lot of storage, so do not install it currently
-    kicad # 3d printing, eletrical engineering
+    pkgs-unstable.kicad # 3d printing, eletrical engineering
 
     pkgs.nutstore-client
     #pkgs.nutstore-nautilus
@@ -31,7 +35,7 @@
     pkgs-unstable.tailscale
 
     # fpga
-    pkgs-unstable.python312Packages.apycula # gowin fpga
+    pkgs-unstable.python313Packages.apycula # gowin fpga
     pkgs-unstable.yosys # fpga synthesis
     pkgs-unstable.nextpnr # fpga place and route
     pkgs-unstable.openfpgaloader # fpga programming
@@ -47,7 +51,7 @@
         wlrobs
         # obs-ndi
         obs-vaapi
-        #obs-nvfbc
+        # obs-nvfbc
         obs-teleport
         # obs-hyperion
         #droidcam-obs
