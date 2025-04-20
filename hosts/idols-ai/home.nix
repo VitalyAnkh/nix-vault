@@ -12,6 +12,9 @@
       };
     };
   };
+  modules.editors.emacs = {
+    enable = true;
+  };
 
   programs.ssh = {
     enable = true;
