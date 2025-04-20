@@ -161,6 +161,17 @@
       flake = false;
     };
 
+    polybar-themes = {
+      url = "github:adi1090x/polybar-themes";
+      flake = false;
+    };
+
+    # doom-emacs is a configuration framework for GNU Emacs.
+    doomemacs = {
+      url = "github:doomemacs/doomemacs";
+      flake = false;
+    };
+
     ########################  My own repositories  #########################################
 
     # my private secrets, it's a private repository, you need to replace it with your own.
