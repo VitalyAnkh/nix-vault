@@ -79,6 +79,15 @@
             pyquery
             pyyaml
             boto3
+
+            ## emacs's lsp-bridge dependenciesge
+            # epc
+            # orjson
+            # sexpdata
+            # six
+            # setuptools
+            # paramiko
+            # rapidfuzz
           ]
       ))
 
