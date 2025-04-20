@@ -89,7 +89,7 @@ in {
         # pgtk (pure gtk) build add native support for wayland.
         # https://www.gnu.org/savannah-checkouts/gnu/emacs/emacs.html#Releases
         # emacsPkg = myEmacsPackagesFor pkgs.emacs30-pgtk;
-        emacsPkg = pkgs.emacs-master-igc-pgtk;
+        emacsPkg = pkgs.emacs-master-pgtk-with-igc;
       in {
         home.packages = [emacsPkg pkgs.emacs-lsp-booster];
         services.emacs = {
@@ -109,7 +109,7 @@ in {
         # macport adds some native features based on GNU Emacs 29
         # https://bitbucket.org/mituharu/emacs-mac/src/master/README-mac
         # emacsPkg = myEmacsPackagesFor pkgs.emacs29;
-        emacsPkg = pkgs.emacs-master-igc-pgtk;
+        emacsPkg = pkgs.emacs-master-pgtk-with-igc;
       in {
         home.packages = [emacsPkg pkgs.emacs-lsp-booster];
         launchd.enable = true;

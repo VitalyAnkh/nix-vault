@@ -16,13 +16,13 @@
     pkgs-unstable.krita # digital painting
     musescore # music notation
     pkgs-unstable.reaper # audio production
-    pkgs-unstable.sonic-pi # music programming
+    #pkgs-unstable.sonic-pi # music programming
     pkgs-unstable.supercollider
 
     # 2d game design
     pkgs-unstable.ldtk # A modern, versatile 2D level editor
     #aseprite # Animated sprite editor & pixel art tool
-    pkgs-unstable.godot_4
+    # pkgs.godot_4
 
     pkgs-unstable.freecad-wayland
 
@@ -37,7 +37,7 @@
     # fpga
     pkgs-unstable.python313Packages.apycula # gowin fpga
     pkgs-unstable.yosys # fpga synthesis
-    pkgs-unstable.nextpnr # fpga place and route
+    #pkgs.nextpnr # fpga place and route
     pkgs-unstable.openfpgaloader # fpga programming
     #nur-ryan4yin.packages.${pkgs.system}.gowin-eda-edu-ide # app: `gowin-env` => `gw_ide` / `gw_pack` / ...
   ];
@@ -64,7 +64,7 @@
         obs-shaderfilter
         obs-source-record
         obs-livesplit-one
-        looking-glass-obs
+        #looking-glass-obs
         obs-vintage-filter
         obs-command-source
         obs-move-transition
