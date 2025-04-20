@@ -69,7 +69,7 @@ You don't have to go through the pain I've experienced again! Check out my
 | **File Manager**            | [Yazi][Yazi] + [thunar][thunar]                                                                                     |
 | **Shell**                   | [Nushell][Nushell] + [Starship][Starship]                                                                           |
 | **Media Player**            | [mpv][mpv]                                                                                                          |
-| **Text Editor**             | [Neovim][Neovim]                                                                                                    |
+| **Text Editor**             | [Neovim][Neovim] + [DoomEmacs][DoomEmacs]                                                                           |
 | **Fonts**                   | [Nerd fonts][Nerd fonts]                                                                                            |
 | **Image Viewer**            | [imv][imv]                                                                                                          |
 | **Screenshot Software**     | [hyprshot][hyprshot]                                                                                                |
@@ -79,15 +79,21 @@ You don't have to go through the pain I've experienced again! Check out my
 
 Wallpapers: https://github.com/ryan4yin/wallpapers
 
-## Hyprland + AstroNvim
+## Hyprland + AstroNvim + DoomEmacs
 
 ![](./_img/hyprland_2023-07-29_1.webp)
 
 ![](./_img/hyprland_2023-07-29_2.webp)
 
+![](./_img/emacs-2024-01-07.webp)
+
 ## Neovim
 
 See [./home/base/tui/editors/neovim/](./home/base/tui/editors/neovim/) for details.
+
+## Emacs
+
+See [./home/base/tui/editors/emacs/](./home/base/tui/editors/emacs/) for details.
 
 ## Secrets Management
 
@@ -190,6 +196,10 @@ Other dotfiles that inspired me:
 [Neovim]: https://github.com/neovim/neovim
 [AstroNvim]: https://github.com/AstroNvim/AstroNvim
 [Hyprshot]: https://github.com/Gustash/Hyprshot
+[DoomEmacs]: https://github.com/doomemacs/doomemacs
+[flameshot]: https://github.com/flameshot-org/flameshot
+[grim]: https://github.com/emersion/grim
+[flameshot]: https://github.com/flameshot-org/flameshot
 [imv]: https://sr.ht/~exec64/imv/
 [OBS]: https://obsproject.com
 [Mako]: https://github.com/emersion/mako
