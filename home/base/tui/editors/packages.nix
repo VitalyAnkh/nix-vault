@@ -11,10 +11,16 @@
       [
         #-- nix
         nil
-        nixd
+        # rnix-lsp
+        # nixd
         statix # Lints and suggestions for the nix programming language
         deadnix # Find and remove unused code in .nix source files
-        nixfmt # Nix Code Formatter
+        alejandra # Nix Code Formatter
+        nixfmt-tree
+        nixfmt-rfc-style # Nix Code Formatter
+
+        #android-studio-full
+        android-studio-tools
 
         #-- nickel lang
         nickel
@@ -53,15 +59,19 @@
           gnumake
           checkmake
           # c/c++ compiler, required by nvim-treesitter!
-          gcc
+          # gcc
           gdb
           # c/c++ tools with clang-tools, the unwrapped version won't
           # add alias like `cc` and `c++`, so that it won't conflict with gcc
           # llvmPackages.clang-unwrapped
+          clang
+          mold
+          sccache
           clang-tools
           lldb
           vscode-extensions.vadimcn.vscode-lldb.adapter # codelldb - debugger
 
+          deno
           #-- python
           (python313.withPackages (
             ps: with ps; [
@@ -85,40 +95,29 @@
               # misc
               protobuf # protocol buffer compiler
               numpy
+              ## emacs's lsp-bridge dependenciesge
+              # epc
+              # orjson
+              # sexpdata
+              # six
+              # setuptools
+              # paramiko
+              # rapidfuzz
             ]
           ))
 
           #-- rust
           # we'd better use the rust-overlays for rust development
-          pkgs-master.rustc
-          pkgs-master.rust-analyzer
-          pkgs-master.cargo # rust package manager
-          pkgs-master.rustfmt
-          pkgs-master.clippy # rust linter
+          # pkgs-master.rustc
+          # pkgs-master.rust-analyzer
+          # pkgs-master.cargo # rust package manager
+          # pkgs-master.rustfmt
+          # pkgs-master.clippy # rust linter
+          pkgs-unstable.rustup
 
-          #-- golang
-          go
-          gomodifytags
-          iferr # generate error handling code for go
-          impl # generate function implementation for go
-          gotools # contains tools like: godoc, goimports, etc.
-          gopls # go language server
-          delve # go debugger
+          pkgs-unstable.elan
 
-          # -- java
-          jdk17
-          gradle
-          maven
-          spring-boot-cli
-          jdt-language-server
-
-          #-- zig
-          zls
-
-          #-- lua
-          stylua
-          lua-language-server
-
+          pkgs-unstable.devenv
           #-- bash
           nodePackages.bash-language-server
           shellcheck
@@ -134,17 +133,62 @@
         nodePackages."@tailwindcss/language-server"
         emmet-ls
       ]
+      ++ [
+        proselint # English prose linter
+
+        pkgs-unstable.typst
+        pkgs-unstable.tinymist
+
+        #-- golang
+        go
+        gomodifytags
+        iferr # generate error handling code for go
+        impl # generate function implementation for go
+        gotools # contains tools like: godoc, goimports, etc.
+        gopls # go language server
+        delve # go debugger
+
+        # -- java
+        jdk23
+        gradle
+        maven
+        spring-boot-cli
+        jdt-language-server
+
+        #-- zig
+        zls
+
+        #-- lua
+        stylua
+        lua-language-server
+
+        #-- bash
+        nodePackages.bash-language-server
+        shellcheck
+        shfmt
+      ]
+      #-*- Web Development -*-#
+      ++ [
+        nodePackages.nodejs
+        nodePackages.typescript
+        nodePackages.typescript-language-server
+        # HTML/CSS/JSON/ESLint language servers extracted from vscode
+        nodePackages.vscode-langservers-extracted
+        nodePackages."@tailwindcss/language-server"
+        emmet-ls
+      ]
       # -*- Lisp like Languages -*-#
-      # ++ [
-      #   guile
-      #   racket-minimal
-      #   fnlfmt # fennel
-      #   (
-      #     if pkgs.stdenv.isLinux && pkgs.stdenv.isx86
-      #     then pkgs-master.akkuPackages.scheme-langserver
-      #     else pkgs.emptyDirectory
-      #   )
-      # ]
+      ++ [
+        guile
+        racket-minimal
+        fnlfmt # fennel
+        (
+          if pkgs.stdenv.isLinux && pkgs.stdenv.isx86 then
+            pkgs-master.akkuPackages.scheme-langserver
+          else
+            pkgs.emptyDirectory
+        )
+      ]
       ++ [
         proselint # English prose linter
 
