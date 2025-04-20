@@ -11,6 +11,8 @@
 
 Some plugins:
 
+- Emacs
+  - [parinfer-rusT-mode](https://github.com/justinbarclay/parinfer-rust-mode)
 - Neovim
   - [parinfer-rust](https://github.com/eraserhd/parinfer-rust)
   - <https://github.com/Olical/conjure>
