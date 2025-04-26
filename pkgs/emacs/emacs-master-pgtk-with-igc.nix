@@ -12,6 +12,7 @@
 in
   (emacs30.override {
     stdenv = ccacheStdenv;
+    withPgtk = true;
     # toolkit = "lucid";
     # withCairo = false;
   }).overrideAttrs (
@@ -24,7 +25,6 @@ in
         old.configureFlags
         ++ [
           "--with-mps=yes"
-          "--with-pgtk=true"
         ];
       patches = [];
       postPatch =

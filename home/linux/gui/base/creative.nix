@@ -23,7 +23,7 @@
     # 2d game design
     pkgs-unstable.ldtk # A modern, versatile 2D level editor
     #aseprite # Animated sprite editor & pixel art tool
-    # pkgs.godot_4
+    pkgs-unstable.godot_4
 
     pkgs-unstable.freecad-wayland
 

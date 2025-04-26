@@ -107,6 +107,8 @@
       #pkgs-unstable.rustfmt
       #pkgs-unstable.clippy # rust linter
 
+      pkgs-unstable.elan
+
       pkgs-unstable.devenv
 
       #-- golang
