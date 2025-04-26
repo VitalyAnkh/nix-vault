@@ -130,6 +130,8 @@
       url = "github:ghostty-org/ghostty";
     };
 
+    nicpkgs.url = "github:nicball/nicpkgs";
+
     blender-bin.url = "github:edolstra/nix-warez?dir=blender";
 
     ########################  Some non-flake repositories  #########################################

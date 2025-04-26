@@ -42,6 +42,10 @@
       "/var/log"
       "/var/lib"
 
+      # TODO: for proxy apps run with sudo
+      "/root/.local"
+      "/root/.config"
+
       # created by modules/nixos/misc/fhs-fonts.nix
       # for flatpak apps
       # "/usr/share/fonts"

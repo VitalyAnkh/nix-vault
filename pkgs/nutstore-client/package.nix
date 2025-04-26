@@ -11,15 +11,15 @@
   gobject-introspection,
   libnotify,
   libappindicator-gtk3,
-  webkitgtk,
+  pkgs,
   xorg,
   alsa-lib,
   autoPatchelfHook,
 }: let
-  version = "6.3.6";
+  version = "6.4.1";
   src = fetchzip {
-    url = "https://pkg-cdn.jianguoyun.com/static/exe/st/${version}/nutstore_client-${version}-linux-x86_64-public.tar.gz";
-    sha256 = "sha256-PgRCIk6CEb3mycRjv+EXouhsufMp/LKRnqYIvJ2qEqM=";
+    url = "https://pkg-cdn.jianguoyun.com/static/exe/ex/${version}/nutstore_client-${version}-linux-x86_64-public.tar.gz";
+    sha256 = "sha256-SzBqjhvV30kB1gwmcdv58PXmydHgbkSZ4ewCzEvPhkY=";
     stripRoot = false;
   };
   native-libs = stdenv.mkDerivation {
@@ -43,7 +43,7 @@ in
       gobject-introspection
       libnotify
       libappindicator-gtk3
-      webkitgtk
+      pkgs.webkitgtk
 
       (python3.withPackages (p: with p; [pygobject3]))
 
