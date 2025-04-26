@@ -4,6 +4,8 @@
     insomnia # REST client
     wireshark # network analyzer
 
+    xorg.xeyes
+
     # IDEs
     jetbrains-toolbox
   ];
