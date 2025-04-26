@@ -3,6 +3,7 @@
   pkgs-unstable,
   nur-ryan4yin,
   blender-bin,
+  nicpkgs,
   ...
 }: {
   home.packages = with pkgs; [
@@ -30,6 +31,9 @@
     pkgs-unstable.kicad # 3d printing, eletrical engineering
 
     pkgs.nutstore-client
+    # nicpkgs.packages.${pkgs.system}.nutstore-client
+    nicpkgs.packages.${pkgs.system}.nutstore-nautilus
+    # pkgs.nutstore-client
     #pkgs.nutstore-nautilus
 
     pkgs-unstable.tailscale
