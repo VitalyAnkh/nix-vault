@@ -8,13 +8,15 @@
 } @ args: {
   nixpkgs.overlays = [
     nuenv.overlays.default
-    (final: prev: let
-      sources = prev.callPackage ../pkgs/_sources/generated.nix {};
-    in
-      mylib.callPackageFromDirectory {
-        callPackage = prev.lib.callPackageWith (prev // sources);
-        directory = ../pkgs;
-      })
+    (
+      final: prev: let
+        sources = prev.callPackage ../pkgs/_sources/generated.nix {};
+      in
+        mylib.callPackageFromDirectory {
+          callPackage = prev.lib.callPackageWith (prev // sources);
+          directory = ../pkgs;
+        }
+    )
   ];
 
   # Add my private PKI's CA certificate to the system-wide trust store.
