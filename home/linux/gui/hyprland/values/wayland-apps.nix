@@ -57,14 +57,14 @@
         "--enable-wayland-ime"
 
         # enable hardware acceleration - vulkan api
-        # "--enable-features=Vulkan"
+        "--enable-features=Vulkan"
       ];
     };
 
     vscode = {
       enable = false;
       # let vscode sync and update its configuration & extensions across devices, using github account.
-      userSettings = {};
+      profiles.default.userSettings = {};
       package =
         pkgs.vscode.override
         {

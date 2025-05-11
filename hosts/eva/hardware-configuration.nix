@@ -98,5 +98,7 @@
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 
   services.pulseaudio.enable = false;
+  # VR_TODO
+  services.nixseparatedebuginfod.enable = true;
   hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.beta;
 }

@@ -23,18 +23,17 @@
     # 2d game design
     pkgs-unstable.ldtk # A modern, versatile 2D level editor
     aseprite # Animated sprite editor & pixel art tool
-    # pkgs.godot_4
+    pkgs-unstable.godot_4
 
     pkgs-unstable.freecad-wayland
 
     # this app consumes a lot of storage, so do not install it currently
     pkgs-unstable.kicad # 3d printing, eletrical engineering
 
-    # pkgs.nutstore-client
     nicpkgs.packages.${pkgs.system}.nutstore-client
     nicpkgs.packages.${pkgs.system}.nutstore-nautilus
     # pkgs.nutstore-client
-    #pkgs.nutstore-nautilus
+    # pkgs.nutstore-nautilus
 
     pkgs-unstable.tailscale
 
