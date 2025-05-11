@@ -61,7 +61,7 @@
       checkmake
       # c/c++ compiler, required by nvim-treesitter!
       gcc
-      gdb
+      (lib.hiPrio gdb)
       # c/c++ tools with clang-tools, the unwrapped version won't
       # add alias like `cc` and `c++`, so that it won't conflict with gcc
       # llvmPackages.clang-unwrapped
@@ -121,7 +121,7 @@
       delve # go debugger
 
       # -- java
-      jdk17
+      jdk23
       gradle
       maven
       spring-boot-cli
