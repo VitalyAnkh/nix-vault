@@ -43,7 +43,7 @@
       "/var/log"
       "/var/lib"
 
-      # TODO: for proxy apps run with sudo
+      # VR_TODO: for proxy apps run with sudo
       "/root/.local"
       "/root/.config"
 
@@ -75,6 +75,9 @@
         # Nutstore sync folder
         "nutstore_files"
         "Nutstore Files"
+
+        # lean prover
+        ".elan"
 
         # warp-terminal config
         ".config/warp-terminal"
