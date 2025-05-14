@@ -7,6 +7,10 @@
 
     xorg.xeyes
 
+    ninja
+    uv
+    trash-cli
+
     # IDEs
     jetbrains-toolbox
   ];
