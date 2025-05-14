@@ -2,13 +2,12 @@
   pkgs,
   daeuniverse,
   ...
-}: {
+}:
+{
   imports = [
     daeuniverse.nixosModules.dae
     daeuniverse.nixosModules.daed
-    /*
-    This is effectively an inline module
-    */
+    # This is effectively an inline module
     {
       services.daed = {
         enable = true;

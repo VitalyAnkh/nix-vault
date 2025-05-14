@@ -2,7 +2,8 @@
   pkgs,
   nur-ryan4yin,
   ...
-}: {
+}:
+{
   # refer to https://codeberg.org/dnkl/foot/src/branch/master/foot.ini
   xdg.configFile."foot/foot.ini".text =
     ''
@@ -19,7 +20,9 @@
       [mouse]
       hide-when-typing=yes
     ''
-    + (builtins.readFile "${nur-ryan4yin.packages.${pkgs.system}.catppuccin-foot}/catppuccin-mocha.conf");
+    + (builtins.readFile "${
+      nur-ryan4yin.packages.${pkgs.system}.catppuccin-foot
+    }/catppuccin-mocha.conf");
 
   home.packages = [
     #firefox-wayland
@@ -64,26 +67,24 @@
     vscode = {
       enable = false;
       # let vscode sync and update its configuration & extensions across devices, using github account.
-      profiles.default.userSettings = {};
-      package =
-        pkgs.vscode.override
-        {
-          isInsiders = false;
-          # https://wiki.archlinux.org/title/Wayland#Electron
-          commandLineArgs = [
-            "--ozone-platform-hint=auto"
-            "--ozone-platform=wayland"
-            # make it use GTK_IM_MODULE if it runs with Gtk4, so fcitx5 can work with it.
-            # (only supported by chromium/chrome at this time, not electron)
-            "--gtk-version=4"
-            # make it use text-input-v1, which works for kwin 5.27 and weston
-            "--enable-wayland-ime"
+      profiles.default.userSettings = { };
+      package = pkgs.vscode.override {
+        isInsiders = false;
+        # https://wiki.archlinux.org/title/Wayland#Electron
+        commandLineArgs = [
+          "--ozone-platform-hint=auto"
+          "--ozone-platform=wayland"
+          # make it use GTK_IM_MODULE if it runs with Gtk4, so fcitx5 can work with it.
+          # (only supported by chromium/chrome at this time, not electron)
+          "--gtk-version=4"
+          # make it use text-input-v1, which works for kwin 5.27 and weston
+          "--enable-wayland-ime"
 
-            # TODO: fix https://github.com/microsoft/vscode/issues/187436
-            # still not works...
-            "--password-store=gnome" # use gnome-keyring as password store
-          ];
-        };
+          # TODO: fix https://github.com/microsoft/vscode/issues/187436
+          # still not works...
+          "--password-store=gnome" # use gnome-keyring as password store
+        ];
+      };
     };
   };
 }

@@ -8,15 +8,28 @@
   pkgs,
   modulesPath,
   ...
-}: {
+}:
+{
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
 
-  boot.initrd.availableKernelModules = ["nvme" "xhci_pci" "ahci" "thunderbolt" "usbhid" "usb_storage" "sd_mod"];
-  boot.initrd.kernelModules = [];
-  boot.kernelModules = ["kvm-amd" "nvidia" "nvidia-uvm"];
-  boot.extraModulePackages = [];
+  boot.initrd.availableKernelModules = [
+    "nvme"
+    "xhci_pci"
+    "ahci"
+    "thunderbolt"
+    "usbhid"
+    "usb_storage"
+    "sd_mod"
+  ];
+  boot.initrd.kernelModules = [ ];
+  boot.kernelModules = [
+    "kvm-amd"
+    "nvidia"
+    "nvidia-uvm"
+  ];
+  boot.extraModulePackages = [ ];
 
   boot.loader.systemd-boot.enable = true;
 
@@ -38,53 +51,67 @@
   fileSystems."/" = {
     device = "tmpfs";
     fsType = "tmpfs";
-    options = ["relatime" "mode=755"];
+    options = [
+      "relatime"
+      "mode=755"
+    ];
   };
 
   fileSystems."/nix" = {
     device = "/dev/disk/by-uuid/8072ac84-5bee-42f2-861f-555b862148ad";
     fsType = "btrfs";
-    options = ["subvol=@nix" "compress-force=zstd:5" "noatime"];
+    options = [
+      "subvol=@nix"
+      "compress-force=zstd:5"
+      "noatime"
+    ];
   };
 
   fileSystems."/gnu" = {
     device = "/dev/disk/by-uuid/8072ac84-5bee-42f2-861f-555b862148ad";
     fsType = "btrfs";
-    options = ["subvol=@guix"];
+    options = [ "subvol=@guix" ];
   };
 
   fileSystems."/tmp" = {
     device = "/dev/disk/by-uuid/8072ac84-5bee-42f2-861f-555b862148ad";
     fsType = "btrfs";
-    options = ["subvol=@tmp"];
+    options = [ "subvol=@tmp" ];
   };
 
   fileSystems."/swap" = {
     device = "/dev/disk/by-uuid/8072ac84-5bee-42f2-861f-555b862148ad";
     fsType = "btrfs";
-    options = ["subvol=@swap"];
+    options = [ "subvol=@swap" ];
   };
 
   fileSystems."/persistent" = {
     device = "/dev/disk/by-uuid/8072ac84-5bee-42f2-861f-555b862148ad";
     fsType = "btrfs";
-    options = ["subvol=@persistent" "noatime" "compress-force=zstd:5"];
+    options = [
+      "subvol=@persistent"
+      "noatime"
+      "compress-force=zstd:5"
+    ];
     neededForBoot = true;
   };
 
   fileSystems."/snapshots" = {
     device = "/dev/disk/by-uuid/8072ac84-5bee-42f2-861f-555b862148ad";
     fsType = "btrfs";
-    options = ["subvol=@snapshots"];
+    options = [ "subvol=@snapshots" ];
   };
 
   fileSystems."/boot" = {
     device = "/dev/disk/by-uuid/B6B9-C35A";
     fsType = "vfat";
-    options = ["fmask=0022" "dmask=0022"];
+    options = [
+      "fmask=0022"
+      "dmask=0022"
+    ];
   };
 
-  swapDevices = [];
+  swapDevices = [ ];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
   # (the default) this is the recommended approach. When using systemd-networkd it's

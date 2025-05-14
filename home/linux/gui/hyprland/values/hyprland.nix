@@ -3,9 +3,11 @@
   lib,
   nur-ryan4yin,
   ...
-}: let
+}:
+let
   package = pkgs.hyprland;
-in {
+in
+{
   # NOTE:
   # We have to enable hyprland/i3's systemd user service in home-manager,
   # so that gammastep/wallpaper-switcher's user service can be start correctly!
@@ -31,7 +33,7 @@ in {
     # gammastep/wallpaper-switcher need this to be enabled.
     systemd = {
       enable = true;
-      variables = ["--all"];
+      variables = [ "--all" ];
     };
   };
 

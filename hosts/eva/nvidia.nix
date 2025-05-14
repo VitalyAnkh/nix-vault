@@ -1,4 +1,5 @@
-{pkgs-unstable, ...}: {
+{ pkgs-unstable, ... }:
+{
   # ===============================================================================================
   # for Nvidia GPU
   # ===============================================================================================
@@ -10,7 +11,7 @@
     # enabling it is required to make Wayland compositors function properly.
     "nvidia-drm.fbdev=1"
   ];
-  services.xserver.videoDrivers = ["nvidia"]; # will install nvidia-vaapi-driver by default
+  services.xserver.videoDrivers = [ "nvidia" ]; # will install nvidia-vaapi-driver by default
   hardware.nvidia = {
     open = true;
     # Optionally, you may need to select the appropriate driver version for your specific GPU.

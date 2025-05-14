@@ -10,7 +10,8 @@
 #############################################################
 let
   hostName = "kana"; # Define your hostname.
-in {
+in
+{
   imports = mylib.scanPaths ./.;
 
   # supported file systems, so we can mount any removable disks with these filesystems
@@ -25,7 +26,7 @@ in {
     "exfat"
   ];
 
-  boot.kernelModules = ["kvm-amd"];
+  boot.kernelModules = [ "kvm-amd" ];
   boot.extraModprobeConfig = "options kvm_amd nested=1"; # for amd cpu
 
   networking = {

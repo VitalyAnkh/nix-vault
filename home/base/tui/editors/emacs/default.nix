@@ -13,7 +13,8 @@
   doomemacs,
   ...
 }:
-with lib; let
+with lib;
+let
   cfg = config.modules.editors.emacs;
   envExtra = lib.mkAfter ''
     export PATH="${config.xdg.configHome}/emacs/bin:$PATH"
@@ -24,13 +25,16 @@ with lib; let
   };
   librime-dir = "${config.xdg.dataHome}/emacs/librime";
   parinfer-rust-lib-dir = "${config.xdg.dataHome}/emacs/parinfer-rust";
-  myEmacsPackagesFor = emacs: ((pkgs.emacsPackagesFor emacs).emacsWithPackages (epkgs: [
-    epkgs.vterm
-  ]));
+  myEmacsPackagesFor =
+    emacs:
+    ((pkgs.emacsPackagesFor emacs).emacsWithPackages (epkgs: [
+      epkgs.vterm
+    ]));
   # to make this symlink work, we need to git clone this repo to your home directory.
   #configPath = "${config.home.homeDirectory}/nix-config/home/base/tui/editors/emacs/doom";
   configPath = "${config.home.homeDirectory}/projects/dev/emacs-projects/doom";
-in {
+in
+{
   options.modules.editors.emacs = {
     enable = mkEnableOption "Emacs Editor";
   };
@@ -40,7 +44,7 @@ in {
       home.packages = with pkgs; [
         ## Doom dependencies
         git
-        (ripgrep.override {withPCRE2 = true;})
+        (ripgrep.override { withPCRE2 = true; })
         gnutls # for TLS connectivity
 
         ## Optional dependencies
@@ -70,7 +74,7 @@ in {
 
       xdg.configFile."doom".source = config.lib.file.mkOutOfStoreSymlink configPath;
 
-      home.activation.installDoomEmacs = lib.hm.dag.entryAfter ["writeBoundary"] ''
+      home.activation.installDoomEmacs = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
         ${pkgs.rsync}/bin/rsync -avz --chmod=D2755,F744 ${doomemacs}/ ${config.xdg.configHome}/emacs/
 
         # librime for emacs-rime
@@ -90,14 +94,18 @@ in {
         # https://www.gnu.org/savannah-checkouts/gnu/emacs/emacs.html#Releases
         # emacsPkg = myEmacsPackagesFor pkgs.emacs30-pgtk;
         emacsPkg = pkgs.emacs-master-pgtk-with-igc;
-      in {
-        home.packages = [emacsPkg pkgs.emacs-lsp-booster];
+      in
+      {
+        home.packages = [
+          emacsPkg
+          pkgs.emacs-lsp-booster
+        ];
         services.emacs = {
           enable = true;
           package = emacsPkg;
           client = {
             enable = true;
-            arguments = [" --create-frame"];
+            arguments = [ " --create-frame" ];
           };
           startWithUserSession = true;
         };
@@ -110,8 +118,12 @@ in {
         # https://bitbucket.org/mituharu/emacs-mac/src/master/README-mac
         # emacsPkg = myEmacsPackagesFor pkgs.emacs29;
         emacsPkg = pkgs.emacs-master-pgtk-with-igc;
-      in {
-        home.packages = [emacsPkg pkgs.emacs-lsp-booster];
+      in
+      {
+        home.packages = [
+          emacsPkg
+          pkgs.emacs-lsp-booster
+        ];
         launchd.enable = true;
         launchd.agents.emacs = {
           enable = true;

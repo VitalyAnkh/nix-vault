@@ -2,7 +2,8 @@
   impermanence,
   pkgs,
   ...
-}: {
+}:
+{
   imports = [
     impermanence.nixosModules.impermanence
   ];
@@ -124,7 +125,7 @@
 
         # doom-emacs
         ".config/emacs"
-        "org" #  org files
+        "org" # org files
 
         # vscode
         ".vscode"

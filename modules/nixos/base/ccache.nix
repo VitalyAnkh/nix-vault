@@ -1,4 +1,5 @@
-{config, ...}: {
+{ config, ... }:
+{
   programs.ccache.enable = true;
 
   nixpkgs.overlays = [
@@ -29,5 +30,5 @@
     })
   ];
 
-  nix.settings.extra-sandbox-paths = [config.programs.ccache.cacheDir];
+  nix.settings.extra-sandbox-paths = [ config.programs.ccache.cacheDir ];
 }

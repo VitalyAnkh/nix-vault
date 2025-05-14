@@ -5,7 +5,8 @@
   myvars,
   disko,
   ...
-}: let
+}:
+let
   # MoreFine - S500Plus
   hostName = "kubevirt-shoryu"; # Define your hostname.
 
@@ -38,17 +39,16 @@
     # so we should not disable flannel here.
     disableFlannel = false;
   };
-in {
-  imports =
-    (mylib.scanPaths ./.)
-    ++ [
-      disko.nixosModules.default
-      ../disko-config/kubevirt-disko-fs.nix
-      ./hardware-configuration.nix
-      ./impermanence.nix
-      coreModule
-      k3sModule
-    ];
+in
+{
+  imports = (mylib.scanPaths ./.) ++ [
+    disko.nixosModules.default
+    ../disko-config/kubevirt-disko-fs.nix
+    ./hardware-configuration.nix
+    ./impermanence.nix
+    coreModule
+    k3sModule
+  ];
 
   boot.kernelParams = [
     # disable transparent hugepage(allocate hugepages dynamically)

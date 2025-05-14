@@ -5,7 +5,8 @@
   blender-bin,
   nicpkgs,
   ...
-}: {
+}:
+{
   home.packages = with pkgs; [
     # creative
 

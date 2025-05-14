@@ -4,7 +4,8 @@
   pkgs,
   pkgs-unstable,
   ...
-}: {
+}:
+{
   # add user's shell into /etc/shells
   environment.shells = with pkgs; [
     bashInteractive

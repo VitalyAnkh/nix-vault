@@ -2,12 +2,14 @@
   pkgs,
   masterHost,
   tokenFile,
-  nodeLabels ? [],
+  nodeLabels ? [ ],
   ...
-}: let
+}:
+let
   package = pkgs.k3s;
-in {
-  environment.systemPackages = [package];
+in
+{
+  environment.systemPackages = [ package ];
   services.k3s = {
     enable = true;
     inherit package tokenFile;
@@ -15,13 +17,12 @@ in {
     role = "agent";
     serverAddr = "https://${masterHost}:6443";
     # https://docs.k3s.io/cli/agent
-    extraFlags = let
-      flagList =
-        [
+    extraFlags =
+      let
+        flagList = [
           "--data-dir /var/lib/rancher/k3s"
-        ]
-        ++ (map (label: "--node-label=${label}") nodeLabels);
-    in
+        ] ++ (map (label: "--node-label=${label}") nodeLabels);
+      in
       pkgs.lib.concatStringsSep " " flagList;
   };
 }

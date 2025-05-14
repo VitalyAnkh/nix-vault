@@ -4,7 +4,8 @@
   myvars,
   mylib,
   ...
-}: let
+}:
+let
   hostName = "k3s-test-1-master-3"; # define your hostname.
 
   coreModule = mylib.genKubeVirtGuestModule {
@@ -19,11 +20,10 @@
     # so that the API server can always be accessed even if some nodes are down
     masterHost = "test-cluster-1.writefor.fun";
   };
-in {
-  imports =
-    (mylib.scanPaths ./.)
-    ++ [
-      coreModule
-      k3sModule
-    ];
+in
+{
+  imports = (mylib.scanPaths ./.) ++ [
+    coreModule
+    k3sModule
+  ];
 }

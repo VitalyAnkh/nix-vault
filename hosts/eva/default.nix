@@ -1,4 +1,4 @@
-{myvars, ...}:
+{ myvars, ... }:
 #############################################################
 #
 # EVA - my main computer, with NixOS + 9950x + RTX 4090 GPU, for gaming & daily use
@@ -6,7 +6,8 @@
 #############################################################
 let
   hostName = "eva"; # Define your hostname.
-in {
+in
+{
   imports = [
     ./netdev-mount.nix
     # Include the results of the hardware scan.

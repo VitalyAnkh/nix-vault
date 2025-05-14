@@ -1,6 +1,8 @@
-{pkgs, ...}: let
+{ pkgs, ... }:
+let
   firejailWrapper = import ./firejailWrapper.nix pkgs;
-in {
+in
+{
   programs.firejail.enable = true;
 
   # Add firejailed Apps into nixsuper, and reference them in home-manager or other nixos modules

@@ -6,7 +6,8 @@ _:
 #############################################################
 let
   hostname = "harmonica";
-in {
+in
+{
   networking.hostName = hostname;
   networking.computerName = hostname;
   system.defaults.smb.NetBIOSName = hostname;

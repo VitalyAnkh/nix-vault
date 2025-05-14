@@ -1,7 +1,9 @@
-{config, ...}: let
-  dataDir = ["/data/apps/minio/data"];
+{ config, ... }:
+let
+  dataDir = [ "/data/apps/minio/data" ];
   configDir = "/data/apps/minio/config";
-in {
+in
+{
   # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/services/web-servers/minio.nix
   services.minio = {
     enable = true;

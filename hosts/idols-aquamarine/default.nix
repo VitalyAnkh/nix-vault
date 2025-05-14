@@ -13,12 +13,11 @@
 #############################################################
 let
   hostName = "aquamarine"; # Define your hostname.
-in {
-  imports =
-    (mylib.scanPaths ./.)
-    ++ [
-      disko.nixosModules.default
-    ];
+in
+{
+  imports = (mylib.scanPaths ./.) ++ [
+    disko.nixosModules.default
+  ];
 
   # supported file systems, so we can mount any removable disks with these filesystems
   boot.supportedFilesystems = [
@@ -38,7 +37,7 @@ in {
   zramSwap.memoryPercent = lib.mkForce 100;
 
   boot.kernelPackages = pkgs.linuxPackages_latest;
-  boot.kernelModules = ["kvm-amd"];
+  boot.kernelModules = [ "kvm-amd" ];
   boot.extraModprobeConfig = "options kvm_amd nested=1"; # for amd cpu
 
   networking = {

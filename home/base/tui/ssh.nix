@@ -1,4 +1,5 @@
-{mysecrets, ...}: {
+{ mysecrets, ... }:
+{
   home.file.".ssh/romantic.pub".source = "${mysecrets}/public/romantic.pub";
 
   programs.ssh = {

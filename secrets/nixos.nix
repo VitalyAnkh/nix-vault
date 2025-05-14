@@ -7,7 +7,8 @@
   myvars,
   ...
 }:
-with lib; let
+with lib;
+let
   cfg = config.modules.secrets;
 
   enabledServerSecrets =
@@ -30,7 +31,8 @@ with lib; let
     mode = "0500";
     owner = myvars.username;
   };
-in {
+in
+{
   imports = [
     agenix.nixosModules.default
   ];
@@ -56,15 +58,16 @@ in {
 
       # if you changed this key, you need to regenerate all encrypt files from the decrypt contents!
       age.identityPaths =
-        if cfg.impermanence.enable
-        then [
-          # To decrypt secrets on boot, this key should exists when the system is booting,
-          # so we should use the real key file path(prefixed by `/persistent/`) here, instead of the path mounted by impermanence.
-          "/persistent/etc/ssh/ssh_host_ed25519_key" # Linux
-        ]
-        else [
-          "/etc/ssh/ssh_host_ed25519_key"
-        ];
+        if cfg.impermanence.enable then
+          [
+            # To decrypt secrets on boot, this key should exists when the system is booting,
+            # so we should use the real key file path(prefixed by `/persistent/`) here, instead of the path mounted by impermanence.
+            "/persistent/etc/ssh/ssh_host_ed25519_key" # Linux
+          ]
+        else
+          [
+            "/etc/ssh/ssh_host_ed25519_key"
+          ];
 
       # secrets that are used by all nixos hosts
       age.secrets = {
@@ -92,58 +95,44 @@ in {
         # ---------------------------------------------
 
         # .age means the decrypted file is still encrypted by age(via a passphrase)
-        "ryan4yin-gpg-subkeys.priv.age" =
-          {
-            file = "${mysecrets}/ryan4yin-gpg-subkeys-2024-01-27.priv.age.age";
-          }
-          // noaccess;
+        "ryan4yin-gpg-subkeys.priv.age" = {
+          file = "${mysecrets}/ryan4yin-gpg-subkeys-2024-01-27.priv.age.age";
+        } // noaccess;
 
         # ---------------------------------------------
         # only root can read this file.
         # ---------------------------------------------
 
-        "wg-business.conf" =
-          {
-            file = "${mysecrets}/wg-business.conf.age";
-          }
-          // high_security;
+        "wg-business.conf" = {
+          file = "${mysecrets}/wg-business.conf.age";
+        } // high_security;
 
         # Used only by NixOS Modules
         # smb-credentials is referenced in /etc/fstab, by ../hosts/ai/cifs-mount.nix
-        "smb-credentials" =
-          {
-            file = "${mysecrets}/smb-credentials.age";
-          }
-          // high_security;
+        "smb-credentials" = {
+          file = "${mysecrets}/smb-credentials.age";
+        } // high_security;
 
-        "rclone.conf" =
-          {
-            file = "${mysecrets}/rclone.conf.age";
-          }
-          // high_security;
+        "rclone.conf" = {
+          file = "${mysecrets}/rclone.conf.age";
+        } // high_security;
 
         # ---------------------------------------------
         # user can read this file.
         # ---------------------------------------------
 
-        "ssh-key-romantic" =
-          {
-            file = "${mysecrets}/ssh-key-romantic.age";
-          }
-          // user_readable;
+        "ssh-key-romantic" = {
+          file = "${mysecrets}/ssh-key-romantic.age";
+        } // user_readable;
 
         # alias-for-work
-        "alias-for-work.nushell" =
-          {
-            file = "${mysecrets}/alias-for-work.nushell.age";
-          }
-          // user_readable;
+        "alias-for-work.nushell" = {
+          file = "${mysecrets}/alias-for-work.nushell.age";
+        } // user_readable;
 
-        "alias-for-work.bash" =
-          {
-            file = "${mysecrets}/alias-for-work.bash.age";
-          }
-          // user_readable;
+        "alias-for-work.bash" = {
+          file = "${mysecrets}/alias-for-work.bash.age";
+        } // user_readable;
       };
 
       # place secrets in /etc/
@@ -183,21 +172,17 @@ in {
 
     (mkIf cfg.server.network.enable {
       age.secrets = {
-        "dae-subscription.dae" =
-          {
-            file = "${mysecrets}/server/dae-subscription.dae.age";
-          }
-          // high_security;
+        "dae-subscription.dae" = {
+          file = "${mysecrets}/server/dae-subscription.dae.age";
+        } // high_security;
       };
     })
 
     (mkIf cfg.server.application.enable {
       age.secrets = {
-        "transmission-credentials.json" =
-          {
-            file = "${mysecrets}/server/transmission-credentials.json.age";
-          }
-          // high_security;
+        "transmission-credentials.json" = {
+          file = "${mysecrets}/server/transmission-credentials.json.age";
+        } // high_security;
 
         "sftpgo.env" = {
           file = "${mysecrets}/server/sftpgo.env.age";
@@ -220,27 +205,21 @@ in {
           owner = "grafana";
         };
 
-        "alertmanager.env" =
-          {
-            file = "${mysecrets}/server/alertmanager.env.age";
-          }
-          // high_security;
+        "alertmanager.env" = {
+          file = "${mysecrets}/server/alertmanager.env.age";
+        } // high_security;
       };
     })
 
     (mkIf cfg.server.kubernetes.enable {
       age.secrets = {
-        "k3s-prod-1-token" =
-          {
-            file = "${mysecrets}/server/k3s-prod-1-token.age";
-          }
-          // high_security;
+        "k3s-prod-1-token" = {
+          file = "${mysecrets}/server/k3s-prod-1-token.age";
+        } // high_security;
 
-        "k3s-test-1-token" =
-          {
-            file = "${mysecrets}/server/k3s-test-1-token.age";
-          }
-          // high_security;
+        "k3s-test-1-token" = {
+          file = "${mysecrets}/server/k3s-test-1-token.age";
+        } // high_security;
       };
     })
 
