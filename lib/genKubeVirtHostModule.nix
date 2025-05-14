@@ -3,9 +3,11 @@
   hostName,
   networking,
   ...
-}: let
+}:
+let
   inherit (networking.hostsAddr.${hostName}) iface;
-in {
+in
+{
   # supported file systems, so we can mount any removable disks with these filesystems
   boot.supportedFilesystems = [
     "ext4"
@@ -19,7 +21,10 @@ in {
     "nfs" # required by longhorn
   ];
 
-  boot.kernelModules = ["kvm-amd" "vfio-pci"];
+  boot.kernelModules = [
+    "kvm-amd"
+    "vfio-pci"
+  ];
   boot.extraModprobeConfig = "options kvm_amd nested=1"; # for amd cpu
 
   boot.kernel.sysctl = {
@@ -79,7 +84,7 @@ in {
     ovsbr1 = {
       # Attach the interfaces to OVS bridge
       # This interface should not used by the host itself!
-      interfaces.${iface} = {};
+      interfaces.${iface} = { };
     };
   };
   networking = {

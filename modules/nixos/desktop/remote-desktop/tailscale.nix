@@ -30,7 +30,7 @@
 # =============================================================
 {
   # make the tailscale command usable to users
-  environment.systemPackages = [pkgs-unstable.tailscale];
+  environment.systemPackages = [ pkgs-unstable.tailscale ];
 
   # enable the tailscale service
   services.tailscale = {

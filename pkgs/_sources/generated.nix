@@ -4,7 +4,8 @@
   fetchurl,
   fetchFromGitHub,
   dockerTools,
-}: {
+}:
+{
   source-emacs-lsp-booster = {
     pname = "source-emacs-lsp-booster";
     version = "5f702a2699f306a3958ff1996a2b1a625f0cee0b";

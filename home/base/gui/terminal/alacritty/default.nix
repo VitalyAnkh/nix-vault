@@ -42,20 +42,29 @@
         history = 10000;
       };
       font = {
-        bold = {family = "JetBrainsMono Nerd Font";};
-        italic = {family = "JetBrainsMono Nerd Font";};
-        normal = {family = "JetBrainsMono Nerd Font";};
-        bold_italic = {family = "JetBrainsMono Nerd Font";};
-        size =
-          if pkgs.stdenv.isDarwin
-          then 14
-          else 13;
+        bold = {
+          family = "JetBrainsMono Nerd Font";
+        };
+        italic = {
+          family = "JetBrainsMono Nerd Font";
+        };
+        normal = {
+          family = "JetBrainsMono Nerd Font";
+        };
+        bold_italic = {
+          family = "JetBrainsMono Nerd Font";
+        };
+        size = if pkgs.stdenv.isDarwin then 14 else 13;
       };
       terminal = {
         # Spawn a nushell in login mode via `bash`
         shell = {
           program = "${pkgs.bash}/bin/bash";
-          args = ["--login" "-c" "nu --login --interactive"];
+          args = [
+            "--login"
+            "-c"
+            "nu --login --interactive"
+          ];
         };
         # Controls the ability to write to the system clipboard with the OSC 52 escape sequence.
         # It's used by zellij to copy text to the system clipboard.

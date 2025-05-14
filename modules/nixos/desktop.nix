@@ -5,10 +5,12 @@
   myvars,
   ...
 }:
-with lib; let
+with lib;
+let
   cfgWayland = config.modules.desktop.wayland;
   cfgXorg = config.modules.desktop.xorg;
-in {
+in
+{
   imports = [
     ./base
     ../base.nix

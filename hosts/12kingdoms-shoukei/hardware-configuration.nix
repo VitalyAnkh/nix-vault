@@ -7,19 +7,26 @@
   pkgs,
   modulesPath,
   ...
-}: {
+}:
+{
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
 
   hardware.firmware = [
-    (import ./brcm-firmware {inherit pkgs;})
+    (import ./brcm-firmware { inherit pkgs; })
   ];
 
-  boot.initrd.availableKernelModules = ["xhci_pci" "nvme" "usbhid" "usb_storage" "sd_mod"];
-  boot.initrd.kernelModules = [];
-  boot.kernelModules = ["kvm-intel"];
-  boot.extraModulePackages = [];
+  boot.initrd.availableKernelModules = [
+    "xhci_pci"
+    "nvme"
+    "usbhid"
+    "usb_storage"
+    "sd_mod"
+  ];
+  boot.initrd.kernelModules = [ ];
+  boot.kernelModules = [ "kvm-intel" ];
+  boot.extraModulePackages = [ ];
 
   # Use the EFI boot loader.
   boot.loader.efi.canTouchEfiVariables = true;
@@ -28,7 +35,10 @@
   boot.loader.systemd-boot.enable = true;
 
   # Enable binfmt emulation of aarch64-linux, this is required for cross compilation.
-  boot.binfmt.emulatedSystems = ["aarch64-linux" "riscv64-linux"];
+  boot.binfmt.emulatedSystems = [
+    "aarch64-linux"
+    "riscv64-linux"
+  ];
   # supported file systems, so we can mount any removable disks with these filesystems
   boot.supportedFilesystems = lib.mkForce [
     "ext4"
@@ -66,7 +76,10 @@
     fsType = "tmpfs";
     # set mode to 755, otherwise systemd will set it to 777, which cause problems.
     # relatime: Update inode access times relative to modify or change time.
-    options = ["relatime" "mode=755"];
+    options = [
+      "relatime"
+      "mode=755"
+    ];
   };
 
   fileSystems."/boot" = {
@@ -77,19 +90,31 @@
   fileSystems."/nix" = {
     device = "/dev/disk/by-uuid/2f4db246-e65d-4808-8ab4-5365f9dea1ef";
     fsType = "btrfs";
-    options = ["subvol=@nix" "noatime" "compress-force=zstd:1"];
+    options = [
+      "subvol=@nix"
+      "noatime"
+      "compress-force=zstd:1"
+    ];
   };
 
   fileSystems."/tmp" = {
     device = "/dev/disk/by-uuid/2f4db246-e65d-4808-8ab4-5365f9dea1ef";
     fsType = "btrfs";
-    options = ["subvol=@tmp" "noatime" "compress-force=zstd:1"];
+    options = [
+      "subvol=@tmp"
+      "noatime"
+      "compress-force=zstd:1"
+    ];
   };
 
   fileSystems."/persistent" = {
     device = "/dev/disk/by-uuid/2f4db246-e65d-4808-8ab4-5365f9dea1ef";
     fsType = "btrfs";
-    options = ["subvol=@persistent" "noatime" "compress-force=zstd:1"];
+    options = [
+      "subvol=@persistent"
+      "noatime"
+      "compress-force=zstd:1"
+    ];
     # impermanence's data is required for booting.
     neededForBoot = true;
   };
@@ -97,28 +122,38 @@
   fileSystems."/snapshots" = {
     device = "/dev/disk/by-uuid/2f4db246-e65d-4808-8ab4-5365f9dea1ef";
     fsType = "btrfs";
-    options = ["subvol=@snapshots" "noatime" "compress-force=zstd:1"];
+    options = [
+      "subvol=@snapshots"
+      "noatime"
+      "compress-force=zstd:1"
+    ];
   };
 
   # mount swap subvolume in readonly mode.
   fileSystems."/swap" = {
     device = "/dev/disk/by-uuid/2f4db246-e65d-4808-8ab4-5365f9dea1ef";
     fsType = "btrfs";
-    options = ["subvol=@swap" "ro"];
+    options = [
+      "subvol=@swap"
+      "ro"
+    ];
   };
 
   # remount swapfile in read-write mode
   fileSystems."/swap/swapfile" = {
     # the swapfile is located in /swap subvolume, so we need to mount /swap first.
-    depends = ["/swap"];
+    depends = [ "/swap" ];
 
     device = "/swap/swapfile";
     fsType = "none";
-    options = ["bind" "rw"];
+    options = [
+      "bind"
+      "rw"
+    ];
   };
 
   swapDevices = [
-    {device = "/swap/swapfile";}
+    { device = "/swap/swapfile"; }
   ];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking

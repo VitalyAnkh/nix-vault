@@ -11,17 +11,18 @@
 #############################################################
 let
   hostName = "shoukei"; # Define your hostname.
-in {
+in
+{
   imports = [
     nixos-hardware.nixosModules.apple-t2
     ./apple-set-os-loader.nix
-    {hardware.myapple-t2.enableAppleSetOsLoader = true;}
+    { hardware.myapple-t2.enableAppleSetOsLoader = true; }
 
     ./hardware-configuration.nix
     ../eva/impermanence.nix
   ];
 
-  boot.kernelModules = ["kvm-amd"];
+  boot.kernelModules = [ "kvm-amd" ];
   boot.extraModprobeConfig = "options kvm_amd nested=1"; # for amd cpu
 
   networking = {

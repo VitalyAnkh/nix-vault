@@ -1,4 +1,5 @@
-{lib}: rec {
+{ lib }:
+rec {
   mainGateway = "192.168.5.1"; # main router
   # use suzi as the default gateway
   # it's a subrouter with a transparent proxy
@@ -136,22 +137,17 @@
     };
   };
 
-  hostsInterface =
-    lib.attrsets.mapAttrs
-    (
-      key: val: {
-        interfaces."${val.iface}" = {
-          useDHCP = false;
-          ipv4.addresses = [
-            {
-              inherit prefixLength;
-              address = val.ipv4;
-            }
-          ];
-        };
-      }
-    )
-    hostsAddr;
+  hostsInterface = lib.attrsets.mapAttrs (key: val: {
+    interfaces."${val.iface}" = {
+      useDHCP = false;
+      ipv4.addresses = [
+        {
+          inherit prefixLength;
+          address = val.ipv4;
+        }
+      ];
+    };
+  }) hostsAddr;
 
   ssh = {
     # define the host alias for remote builders
@@ -166,17 +162,15 @@
     #     Port 22
     #   ...
     # '';
-    extraConfig =
-      lib.attrsets.foldlAttrs
-      (acc: host: val:
-        acc
-        + ''
-          Host ${host}
-            HostName ${val.ipv4}
-            Port 22
-        '')
-      ""
-      hostsAddr;
+    extraConfig = lib.attrsets.foldlAttrs (
+      acc: host: val:
+      acc
+      + ''
+        Host ${host}
+          HostName ${val.ipv4}
+          Port 22
+      ''
+    ) "" hostsAddr;
 
     # define the host key for remote builders so that nix can verify all the remote builders
     # this config will be written to /etc/ssh/ssh_known_hosts
@@ -188,14 +182,17 @@
       #   { x = "a"; y = "b"; }
       #     => { x = "bar-a"; y = "bar-b"; }
       lib.attrsets.mapAttrs
-      (host: value: {
-        hostNames = [host hostsAddr.${host}.ipv4];
-        publicKey = value.publicKey;
-      })
-      {
-        aquamarine.publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEOXFhFu9Duzp6ZBE288gDZ6VLrNaeWL4kDrFUh9Neic root@aquamarine";
-        # ruby.publicKey = "";
-        # kana.publicKey = "";
-      };
+        (host: value: {
+          hostNames = [
+            host
+            hostsAddr.${host}.ipv4
+          ];
+          publicKey = value.publicKey;
+        })
+        {
+          aquamarine.publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEOXFhFu9Duzp6ZBE288gDZ6VLrNaeWL4kDrFUh9Neic root@aquamarine";
+          # ruby.publicKey = "";
+          # kana.publicKey = "";
+        };
   };
 }

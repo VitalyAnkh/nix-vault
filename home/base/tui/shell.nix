@@ -2,9 +2,11 @@
   config,
   pkgs-unstable,
   ...
-}: let
+}:
+let
   inherit (pkgs-unstable) nu_scripts;
-in {
+in
+{
   programs.bash = {
     # load the alias file for work
     bashrcExtra = ''

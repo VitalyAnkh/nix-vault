@@ -1,7 +1,8 @@
 {
   lib,
   outputs,
-}: let
+}:
+let
   specialExpected = {
     "eva" = "eva";
     #"ai-hyprland" = "ai";
@@ -13,4 +14,5 @@
   otherHostsNames = builtins.attrNames otherHosts;
   # other hosts's hostName is the same as the nixosConfigurations name
   otherExpected = lib.genAttrs otherHostsNames (name: name);
-in (specialExpected // otherExpected)
+in
+(specialExpected // otherExpected)

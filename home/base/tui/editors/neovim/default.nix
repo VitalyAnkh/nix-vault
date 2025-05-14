@@ -19,7 +19,8 @@ let
   # to make this symlink work, we need to git clone this repo to your home directory.
   # It assumes this nix config is located in $HOME/projects/dev/nix/nix-vault.
   configPath = "${config.home.homeDirectory}/projects/dev/nix/nix-vault/home/base/tui/editors/neovim/nvim";
-in {
+in
+{
   xdg.configFile."nvim".source = config.lib.file.mkOutOfStoreSymlink configPath;
 
   home.shellAliases = shellAliases;
@@ -45,14 +46,20 @@ in {
         "--suffix"
         "LIBRARY_PATH"
         ":"
-        "${lib.makeLibraryPath [stdenv.cc.cc zlib]}"
+        "${lib.makeLibraryPath [
+          stdenv.cc.cc
+          zlib
+        ]}"
 
         # PKG_CONFIG_PATH is used by pkg-config before compilation to search directories
         # containing .pc files that describe the libraries that need to be linked to your program.
         "--suffix"
         "PKG_CONFIG_PATH"
         ":"
-        "${lib.makeSearchPathOutput "dev" "lib/pkgconfig" [stdenv.cc.cc zlib]}"
+        "${lib.makeSearchPathOutput "dev" "lib/pkgconfig" [
+          stdenv.cc.cc
+          zlib
+        ]}"
       ];
 
       # Currently we use lazy.nvim as neovim's package manager, so comment this one.

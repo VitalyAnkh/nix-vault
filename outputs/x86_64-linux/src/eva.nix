@@ -9,7 +9,8 @@
   system,
   genSpecialArgs,
   ...
-} @ args: let
+}@args:
+let
   name = "eva";
   base-modules = {
     nixos-modules = map mylib.relativeToRoot [
@@ -32,22 +33,19 @@
   };
 
   modules-hyprland = {
-    nixos-modules =
-      [
-        {
-          modules.desktop.wayland.enable = true;
-          modules.secrets.desktop.enable = true;
-          modules.secrets.impermanence.enable = true;
-        }
-      ]
-      ++ base-modules.nixos-modules;
-    home-modules =
-      [
-        {modules.desktop.hyprland.enable = true;}
-      ]
-      ++ base-modules.home-modules;
+    nixos-modules = [
+      {
+        modules.desktop.wayland.enable = true;
+        modules.secrets.desktop.enable = true;
+        modules.secrets.impermanence.enable = true;
+      }
+    ] ++ base-modules.nixos-modules;
+    home-modules = [
+      { modules.desktop.hyprland.enable = true; }
+    ] ++ base-modules.home-modules;
   };
-in {
+in
+{
   nixosConfigurations = {
     # host with hyprland compositor
     "${name}" = mylib.nixosSystem (modules-hyprland // args);

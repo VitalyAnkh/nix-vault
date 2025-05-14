@@ -2,7 +2,8 @@
   pkgs,
   pkgs-unstable,
   ...
-}: {
+}:
+{
   home.packages = with pkgs; [
     waybar # the status bar
     swaybg # the wallpaper

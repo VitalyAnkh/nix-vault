@@ -3,7 +3,8 @@
   config,
   lib,
   ...
-}: let
+}:
+let
   t2Cfg = config.hardware.myapple-t2;
   efiPrefix = config.boot.loader.efi.efiSysMountPoint;
 
@@ -15,7 +16,7 @@
       rev = "r33.9856dc4";
       sha256 = "hvwqfoF989PfDRrwU0BMi69nFjPeOmSaD6vR6jIRK2Y=";
     };
-    buildInputs = [pkgs.gnu-efi];
+    buildInputs = [ pkgs.gnu-efi ];
     buildPhase = ''
       substituteInPlace Makefile --replace "/usr" '$(GNU_EFI)'
       export GNU_EFI=${pkgs.gnu-efi}
@@ -25,7 +26,8 @@
       install -D bootx64_silent.efi $out/bootx64.efi
     '';
   };
-in {
+in
+{
   options = {
     hardware.myapple-t2.enableAppleSetOsLoader = lib.mkOption {
       default = false;
@@ -54,8 +56,9 @@ in {
     '';
 
     # Enable the iGPU by default if present
-    environment.etc."modprobe.d/apple-gmux.conf".text = lib.optionalString t2Cfg.enableAppleSetOsLoader ''
-      options apple-gmux force_igd=y
-    '';
+    environment.etc."modprobe.d/apple-gmux.conf".text =
+      lib.optionalString t2Cfg.enableAppleSetOsLoader ''
+        options apple-gmux force_igd=y
+      '';
   };
 }
