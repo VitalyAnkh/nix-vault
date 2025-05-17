@@ -58,6 +58,8 @@
       enableZshIntegration = true;
       enableBashIntegration = true;
       enableNushellIntegration = true;
+      # VR_TODO: it's not needed, but why?
+      # enableFishIntegration = true;
     };
   };
 }

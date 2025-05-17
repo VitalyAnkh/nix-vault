@@ -3,6 +3,7 @@ rec {
   mainGateway = "192.168.5.1"; # main router
   # use suzi as the default gateway
   # it's a subrouter with a transparent proxy
+  # VR_TODO: what the default gateway should be?
   defaultGateway = "192.168.10.0";
   nameservers = [
     "119.29.29.29" # DNSPod

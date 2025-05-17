@@ -18,6 +18,52 @@ utils_nu := absolute_path("utils.nu")
 default:
     @just --list
 
+[group('dev')]
+config_latest_llvm:
+  #!/usr/bin/env bash
+  echo "==== config llvm-project ===="
+  cd $HOME/projects/dev/cpp/llvm-project/
+  git pull
+  rm build/CMakeCache.txt
+  rm build/NATIVE/CMakeCache.txt
+  # -DMLIR_ENABLE_SYCL_RUNNER=1 \
+  # -DMLIR_ENABLE_CUDA_CUSPARSE=1 \
+  # plugin-api.h locates in /usr/include, to build LLVMgold.so plugin
+  cmake -G Ninja -B build ./llvm \
+    -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+    -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+    -DCMAKE_C_COMPILER_LAUNCHER=sccache \
+    -DCMAKE_CXX_COMPILER_LAUNCHER=sccache \
+    -DCMAKE_CXX_COMPILER=clang++ \
+    -DCMAKE_C_COMPILER=clang \
+    -DCMAKE_EXE_LINKER_FLAGS_INIT="-fuse-ld=mold" \
+    -DCMAKE_MODULE_LINKER_FLAGS_INIT="-fuse-ld=mold" \
+    -DCMAKE_SHARED_LINKER_FLAGS_INIT="-fuse-ld=mold" \
+    -DCMAKE_INSTALL_PREFIX=$HOME/.local/opt/llvm@latest \
+    -DLLVM_CCACHE_BUILD=ON \
+    -DLLVM_USE_LINKER=mold \
+    -DCMAKE_CXX_LINK_FLAGS="-Wl,-rpath,$LD_LIBRARY_PATH" \
+    -DLLVM_TARGETS_TO_BUILD="X86;NVPTX;RISCV;AMDGPU" \
+    -DLLVM_ENABLE_PROJECTS="clang;flang;llvm;mlir;lld;clang-tools-extra;lldb;pstl;bolt" \
+    -DLLVM_ENABLE_RUNTIMES="openmp;compiler-rt;libcxx;libc;libcxxabi;libunwind;offload" \
+    -DMLIR_ENABLE_BINDINGS_PYTHON=ON \
+    -DMLIR_ENABLE_CUDA_RUNNER=1 \
+    -DMLIR_ENABLE_VULKAN_RUNNER=1 \
+    -DMLIR_ENABLE_SPIRV_CPU_RUNNER=1 \
+    -DMLIR_INCLUDE_INTEGRATION_TESTS=1 \
+    -DMLIR_RUN_CUDA_TENSOR_CORE_TESTS=1 \
+    -DLLVM_LIT_ARGS=-v \
+    -DLLVM_HAS_NVPTX_TARGET=1 \
+    -DLLVM_OPTIMIZED_TABLEGEN=ON \
+    -DLLVM_BUILD_UTILS=ON \
+    -DLLVM_BUILD_TOOLS=ON \
+    -DLLVM_INSTALL_UTILS=ON \
+    -DLLVM_ENABLE_ASSERTIONS=ON \
+    -DCMAKE_CXX_STANDARD=17
+    # -DMLIR_ENABLE_CUDA_CUSPARSELT=1 \
+    # -DLLVM_BINUTILS_INCDIR=/usr/include \
+  echo "==== config llvm-project done ===="
+
 # Run eval tests
 [group('nix')]
 test:

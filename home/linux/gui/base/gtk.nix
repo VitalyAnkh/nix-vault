@@ -40,18 +40,21 @@
     gtk2.configLocation = "${config.xdg.configHome}/gtk-2.0/gtkrc";
 
     iconTheme = {
-      name = "Papirus-Dark";
-      package = pkgs.papirus-icon-theme;
+      name = "fluent-light";
+      package = pkgs.fluent-icon-theme.override {
+        colorVariants = [ "pink" ];
+      };
     };
 
     theme = {
-      # https://github.com/catppuccin/gtk
-      name = "catppuccin-macchiato-pink-compact";
-      package = pkgs.catppuccin-gtk.override {
-        # https://github.com/NixOS/nixpkgs/blob/nixos-23.05/pkgs/data/themes/catppuccin-gtk/default.nix
-        accents = [ "pink" ];
-        size = "compact";
-        variant = "macchiato";
+      # https://github.com/vinceliuice/Fluent-gtk-theme
+      name = "fluent-light-pink-compact";
+      package = pkgs.fluent-gtk-theme.override {
+        # https://github.com/NixOS/nixpkgs/blob/nixos-25.05/pkgs/by-name/fl/fluent-gtk-theme/package.nix
+        themeVariants = [ "pink" ];
+        colorVariants = [ "light" ];
+        sizeVariants = [ "compact" ];
+        tweaks = [ "round" ];
       };
     };
   };
