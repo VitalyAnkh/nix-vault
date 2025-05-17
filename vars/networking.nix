@@ -3,7 +3,7 @@ rec {
   mainGateway = "192.168.5.1"; # main router
   # use suzi as the default gateway
   # it's a subrouter with a transparent proxy
-  defaultGateway = "192.168.5.178";
+  defaultGateway = "192.168.10.0";
   nameservers = [
     "119.29.29.29" # DNSPod
     "223.5.5.5" # AliDNS
@@ -33,7 +33,7 @@ rec {
     eva = {
       # Desktop PC
       iface = "wlp14s0";
-      ipv4 = "192.168.31.7";
+      ipv4 = "192.168.10.1";
     };
     aquamarine = {
       # VM

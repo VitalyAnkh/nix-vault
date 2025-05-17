@@ -124,7 +124,7 @@ in
     pre-commit-check = pre-commit-hooks.lib.${system}.run {
       src = mylib.relativeToRoot ".";
       hooks = {
-        nixfmt-rfc-style.enable = true; # formatter
+        treefmt.enable = true; # formatter
         # Source code spell checker
         typos = {
           enable = true;

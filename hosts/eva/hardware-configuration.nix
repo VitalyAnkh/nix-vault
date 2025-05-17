@@ -23,6 +23,9 @@
     "usb_storage"
     "sd_mod"
   ];
+  boot.extraModprobeConfig = ''
+    options nvidia_modeset vblank_sem_control=0
+  '';
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [
     "kvm-amd"
