@@ -20,7 +20,5 @@
   # 2. Or just use hardware security keys like Yubikey/CanoKey.
   sshAuthorizedKeys = [
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAI7hWDjjuTEXcd1pckYak39KkQWtuI/jvVeDgAz0CwP vitalyr@eva"
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFIznBmtZlMcVUL+uPFltLTNa8Y1J0aT1E36AXQV07su ryan@fern"
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPwZ9MdotnyhxIJrI4gmVshExHiZOx+FGFhcW7BaYkfR ryan@harmonica"
   ];
 }
