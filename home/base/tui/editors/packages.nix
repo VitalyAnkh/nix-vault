@@ -63,14 +63,15 @@
           gnumake
           checkmake
           # c/c++ compiler, required by nvim-treesitter!
-          gcc
+          # gcc
           (lib.hiPrio gdb)
           # c/c++ tools with clang-tools, the unwrapped version won't
           # add alias like `cc` and `c++`, so that it won't conflict with gcc
-          llvmPackages.clang-unwrapped
+          # llvmPackages.clang-unwrapped
+          clang
           mold
           sccache
-          # clang-tools
+          clang-tools
           lldb
           vscode-extensions.vadimcn.vscode-lldb.adapter # codelldb - debugger
 

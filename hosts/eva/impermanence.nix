@@ -79,6 +79,9 @@
         # lean prover
         ".elan"
 
+        # some cache, like clipboard history, sccache
+        ".cache"
+
         # warp-terminal config
         ".config/warp-terminal"
 
