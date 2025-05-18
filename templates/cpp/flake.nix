@@ -4,7 +4,8 @@
   # Flake inputs
   inputs = {
     # Latest stable Nixpkgs
-    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0";
+    # nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0";
+    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
   };
 
   # Flake outputs
@@ -46,6 +47,7 @@
               ccache
               gcc # The GNU Compiler Collection
               clang
+              # llvmPackages_20.clang
               cmake
               ninja
               ffmpeg
@@ -70,12 +72,18 @@
               stdenv.cc
               binutils
               uv
+              vulkan-volk
+              vulkan-tools
+              vulkan-loader
+              vulkan-helper
+              vulkan-validation-layers
+              vulkan-utility-libraries
               python312Packages.pybind11
               python312Packages.nanobind
             ];
 
             shellHook = ''
-              export LD_LIBRARY_PATH="${pkgs.linuxPackages.nvidia_x11}/lib:$LD_LIBRARY_PATH"
+              export LD_LIBRARY_PATH="${pkgs.stdenv.cc.cc.lib.outPath}/lib:${pkgs.linuxPackages.nvidia_x11}/lib:${pkgs.zlib}/lib:$LD_LIBRARY_PATH"
               export CUDA_PATH=${pkgs.cudatoolkit}
               export EXTRA_LDFLAGS="-L/lib -L${pkgs.linuxPackages.nvidia_x11}/lib"
               export EXTRA_CCFLAGS="-I/usr/include"
