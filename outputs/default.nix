@@ -141,7 +141,7 @@ in
           };
         };
         # deadnix.enable = true; # detect unused variable bindings in `*.nix`
-        # statix.enable = true; # lints and suggestions for Nix code(auto suggestions)
+        statix.enable = true; # lints and suggestions for Nix code(auto suggestions)
       };
     };
   });

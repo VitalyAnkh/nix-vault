@@ -19,6 +19,14 @@
       source = ./config;
       force = true;
     };
+    "fcitx5/conf/pinyin.conf" = {
+      source = ./pinyin.conf;
+      force = true;
+    };
+    "fcitx5/conf/cloudpinyin.conf" = {
+      source = ./cloudpinyin.conf;
+      force = true;
+    };
     "fcitx5/conf/classicui.conf".source = ./classicui.conf;
   };
 

@@ -1,6 +1,6 @@
 { config, ... }:
 let
-  hostName = "ai"; # Define your hostname.
+  hostName = "eva"; # Define your hostname.
 in
 {
   modules.desktop = {
