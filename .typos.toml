@@ -1,7 +1,7 @@
 [files]
 ignore-dot = true
 ignore-files = true
-extend-exclude = ["themes/", "data/", "static-surprises/", "resources/"]
+extend-exclude = ["themes/", "data/", "static-surprises/", "resources/", "pinyin.conf"]
 
 [default]
 binary = false
