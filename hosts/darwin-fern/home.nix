@@ -1,3 +1,7 @@
+{ config, ... }:
+let
+  hostName = "fern";
+in
 {
   programs.ssh = {
     enable = true;

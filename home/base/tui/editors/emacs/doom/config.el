@@ -47,7 +47,7 @@
 ;;   https://github.com/doomemacs/themes
 (setq doom-theme 'doom-dracula) ;; doom-one doom-dracula doom-nord
 (if (eq system-type 'darwin)
-    ;; Transparent Backgroud - for macOS
+    ;; Transparent Background - for macOS
     ;;(set-frame-parameter (selected-frame) 'alpha '(<active> . <inactive>))
     ;;(set-frame-parameter (selected-frame) 'alpha <both>)
     (progn
@@ -109,7 +109,7 @@
   :config
   (setq nushell-enable-auto-indent 1))
 (after! vterm
-  (setq vterm-shell "nu")) ; use nushell by defualt
+  (setq vterm-shell "nu")) ; use nushell by default
 
 ;; emacs-rime
 (use-package! rime
