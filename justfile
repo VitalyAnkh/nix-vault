@@ -48,7 +48,6 @@ config_latest_llvm:
     -DLLVM_ENABLE_RUNTIMES="openmp;compiler-rt;libcxx;libc;libcxxabi;libunwind;offload" \
     -DMLIR_ENABLE_BINDINGS_PYTHON=ON \
     -DMLIR_ENABLE_CUDA_RUNNER=1 \
-    -DMLIR_ENABLE_VULKAN_RUNNER=1 \
     -DMLIR_ENABLE_SPIRV_CPU_RUNNER=1 \
     -DMLIR_INCLUDE_INTEGRATION_TESTS=1 \
     -DMLIR_RUN_CUDA_TENSOR_CORE_TESTS=1 \
@@ -62,7 +61,17 @@ config_latest_llvm:
     -DCMAKE_CXX_STANDARD=17
     # -DMLIR_ENABLE_CUDA_CUSPARSELT=1 \
     # -DLLVM_BINUTILS_INCDIR=/usr/include \
+    # -DMLIR_ENABLE_VULKAN_RUNNER=1 \
   echo "==== config llvm-project done ===="
+
+install_latest_llvm:
+  #!/usr/bin/env bash
+  echo "==== build newest llvm ===="
+  cd $HOME/projects/dev/cpp/llvm-project/build
+  cmake --build . -j$(nproc)
+  cmake --install $HOME/projects/dev/cpp/llvm-project/build
+  # ln -s /usr/local/opt/llvm@latest /usr/local/opt/llvm
+  echo "==== build newest llvm done ===="
 
 # Run eval tests
 [group('nix')]
