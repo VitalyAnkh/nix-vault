@@ -39,6 +39,8 @@
     # solve coding extercises - learn by doing
     exercism
 
+    wakatime-cli
+
     # Automatically trims your branches whose tracking remote refs are merged or gone
     # It's really useful when you work on a project for a long time.
     git-trim
