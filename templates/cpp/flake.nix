@@ -6,11 +6,16 @@
     # Latest stable Nixpkgs
     # nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0";
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.11";
   };
 
   # Flake outputs
   outputs =
-    { self, nixpkgs }:
+    {
+      self,
+      nixpkgs,
+      nixpkgs-stable,
+    }:
     let
       # Systems supported
       allSystems = [
@@ -32,13 +37,19 @@
               config.cudaSupport = true;
               config.cudaVersion = "12";
             };
+            pkgs-stable = import nixpkgs-stable {
+              inherit system;
+              config.allowUnfree = true;
+              config.cudaSupport = true;
+              config.cudaVersion = "12";
+            };
           }
         );
     in
     {
       # Development environment output
       devShells = forAllSystems (
-        { pkgs }:
+        { pkgs, pkgs-stable }:
         {
           default = pkgs.mkShell {
             # The Nix packages provided in the environment
@@ -46,9 +57,12 @@
               boost # The Boost libraries
               ccache
               gcc # The GNU Compiler Collection
+              gcc_multi
+              glibc_multi
               clang
               # llvmPackages_20.clang
-              cmake
+              # pkgs-stable.cmake
+              python313Packages.cmake
               ninja
               ffmpeg
               fmt.dev

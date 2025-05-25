@@ -1,6 +1,8 @@
-{config, ...}: let
+{ config, ... }:
+let
   hostName = "shoukei"; # Define your hostname.
-in {
+in
+{
   modules.desktop.hyprland = {
     nvidia = false;
     settings = {
@@ -13,5 +15,6 @@ in {
     };
   };
 
-  programs.ssh.matchBlocks."github.com".identityFile = "${config.home.homeDirectory}/.ssh/${hostName}";
+  programs.ssh.matchBlocks."github.com".identityFile =
+    "${config.home.homeDirectory}/.ssh/${hostName}";
 }

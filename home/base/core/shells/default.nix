@@ -7,7 +7,9 @@ let
   shellAliases = {
     k = "kubectl";
     ec = "emacsclient --create-frame";
-    j = "just";
+    j = "just -f ~/nix-vault/justfile";
+    ncpp = "nix develop ~/nix-vault/templates/cpp";
+    nrust = "nix develop ~/nix-vault/templates/bevy";
 
     urldecode = "python3 -c 'import sys, urllib.parse as ul; print(ul.unquote_plus(sys.stdin.read()))'";
     urlencode = "python3 -c 'import sys, urllib.parse as ul; print(ul.quote_plus(sys.stdin.read()))'";
