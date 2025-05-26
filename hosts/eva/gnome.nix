@@ -9,7 +9,7 @@
     gnomeExtensions.kimpanel
     clash-verge-rev
     clash-nyanpasu
-    hiddify-app
+    # hiddify-app
     flclash
     kdiskmark
     mihomo-party

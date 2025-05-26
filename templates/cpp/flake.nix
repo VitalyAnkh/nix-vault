@@ -13,7 +13,6 @@
     {
       self,
       nixpkgs,
-      nixpkgs-stable,
     }:
     let
       # Systems supported
