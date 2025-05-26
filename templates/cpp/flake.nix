@@ -6,7 +6,6 @@
     # Latest stable Nixpkgs
     # nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0";
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.11";
   };
 
   # Flake outputs
@@ -37,19 +36,13 @@
               config.cudaSupport = true;
               config.cudaVersion = "12";
             };
-            pkgs-stable = import nixpkgs-stable {
-              inherit system;
-              config.allowUnfree = true;
-              config.cudaSupport = true;
-              config.cudaVersion = "12";
-            };
           }
         );
     in
     {
       # Development environment output
       devShells = forAllSystems (
-        { pkgs, pkgs-stable }:
+        { pkgs }:
         {
           default = pkgs.mkShell {
             # The Nix packages provided in the environment
@@ -103,6 +96,8 @@
               export EXTRA_CCFLAGS="-I/usr/include"
               export CMAKE_PREFIX_PATH="${pkgs.fmt.dev}:$CMAKE_PREFIX_PATH"
               export PKG_CONFIG_PATH="${pkgs.fmt.dev}/lib/pkgconfig:$PKG_CONFIG_PATH"
+              export NIX_CFLAGS_COMPILE="-isystem ${pkgs.glibc_multi.dev}/include $NIX_CFLAGS_COMPILE"
+              export NIX_LDFLAGS="-L${pkgs.glibc_multi.out}/lib $NIX_LDFLAGS"
             '';
 
           };
