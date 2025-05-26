@@ -11,7 +11,11 @@
     libnotify
     wireguard-tools # manage wireguard vpn manually, via wg-quick
 
-    ventoy # create bootable usb
+    # create bootable usb
+    # insecure for now, see:
+    # https://github.com/ventoy/Ventoy/issues/2795
+    # https://github.com/ventoy/Ventoy/issues/3224
+    # ventoy
     virt-viewer # vnc connect to VM, used by kubevirt
 
     pkgs-unstable.cudaPackages.cudatoolkit

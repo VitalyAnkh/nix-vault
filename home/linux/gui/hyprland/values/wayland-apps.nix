@@ -65,9 +65,7 @@
     };
 
     vscode = {
-      enable = false;
-      # let vscode sync and update its configuration & extensions across devices, using github account.
-      profiles.default.userSettings = { };
+      enable = true;
       package = pkgs.vscode.override {
         isInsiders = false;
         # https://wiki.archlinux.org/title/Wayland#Electron
