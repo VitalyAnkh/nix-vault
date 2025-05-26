@@ -6,7 +6,6 @@
 {
   home.packages = with pkgs; [
     # Misc
-    tldr
     cowsay
     gnupg
     gnumake
@@ -100,6 +99,22 @@
         "fg+" = "#cdd6f4";
         "prompt" = "#cba6f7";
         "hl+" = "#f38ba8";
+      };
+    };
+
+    # very fast version of tldr in Rust
+    tealdeer = {
+      enable = true;
+      enableAutoUpdates = true;
+      settings = {
+        display = {
+          compact = false;
+          use_pager = true;
+        };
+        updates = {
+          auto_update = false;
+          auto_update_interval_hours = 720;
+        };
       };
     };
 

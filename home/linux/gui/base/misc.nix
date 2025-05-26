@@ -20,7 +20,6 @@
 
     # misc
     flameshot
-    ventoy # multi-boot usb creator
 
     # my custom hardened packages
     #pkgs.nixpaks.qq
