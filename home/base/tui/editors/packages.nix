@@ -64,7 +64,7 @@
           checkmake
           # c/c++ compiler, required by nvim-treesitter!
           # gcc
-          (lib.hiPrio gdb)
+          gdb
           # c/c++ tools with clang-tools, the unwrapped version won't
           # add alias like `cc` and `c++`, so that it won't conflict with gcc
           # llvmPackages.clang-unwrapped
@@ -74,6 +74,8 @@
           clang-tools
           lldb
           vscode-extensions.vadimcn.vscode-lldb.adapter # codelldb - debugger
+
+          deno
 
           #-- python
           pyright # python language server
@@ -115,6 +117,9 @@
           pkgs-unstable.elan
 
           pkgs-unstable.devenv
+
+          pkgs-unstable.typst
+          pkgs-unstable.tinymist
 
           #-- golang
           go
