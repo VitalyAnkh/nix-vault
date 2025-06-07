@@ -7,6 +7,7 @@
     gnomeExtensions.quake-terminal
     gnomeExtensions.clipboard-history
     gnomeExtensions.kimpanel
+    gnomeExtensions.user-themes
     clash-verge-rev
     clash-nyanpasu
     # hiddify-app
@@ -18,7 +19,6 @@
     zotero
     kdePackages.okular
     v2raya
-    v2rayn
     zulip
   ];
 }

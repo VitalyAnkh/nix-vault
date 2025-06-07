@@ -72,6 +72,8 @@
         # android tools
         "Android"
 
+        "Zotero"
+
         # Nutstore sync folder
         "nutstore_files"
         "Nutstore Files"
@@ -165,6 +167,7 @@
 
         # others
         ".config/blender"
+        ".config/godot"
         ".config/LDtk"
 
         # IM

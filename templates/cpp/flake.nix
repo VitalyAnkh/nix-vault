@@ -37,6 +37,11 @@
             };
           }
         );
+      clangDrv = nixpkgs.runCommand "local-clang" { } ''
+        mkdir -p $out/bin
+        cp ${./build/bin/clang} $out/bin/
+      '';
+      customStdenv = nixpkgs.overrideCC nixpkgs.stdenv clangDrv;
     in
     {
       # Development environment output
@@ -44,6 +49,7 @@
         { pkgs }:
         {
           default = pkgs.mkShell {
+            stdenv = customStdenv;
             # The Nix packages provided in the environment
             packages = with pkgs; [
               boost # The Boost libraries
@@ -92,7 +98,7 @@
               export LD_LIBRARY_PATH="${pkgs.stdenv.cc.cc.lib.outPath}/lib:${pkgs.linuxPackages.nvidia_x11}/lib:${pkgs.zlib}/lib:$LD_LIBRARY_PATH"
               export CUDA_PATH=${pkgs.cudatoolkit}
               export EXTRA_LDFLAGS="-L/lib -L${pkgs.linuxPackages.nvidia_x11}/lib"
-              export EXTRA_CCFLAGS="-I/usr/include"
+              export EXTRA_CCFLAGS="-I/usr/include -isystem ${pkgs.glibc_multi.dev}/include"
               export CMAKE_PREFIX_PATH="${pkgs.fmt.dev}:$CMAKE_PREFIX_PATH"
               export PKG_CONFIG_PATH="${pkgs.fmt.dev}/lib/pkgconfig:$PKG_CONFIG_PATH"
               export NIX_CFLAGS_COMPILE="-isystem ${pkgs.glibc_multi.dev}/include $NIX_CFLAGS_COMPILE"

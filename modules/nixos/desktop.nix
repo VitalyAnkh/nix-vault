@@ -43,8 +43,8 @@ in
 
       services = {
         xserver.enable = true;
-        xserver.displayManager.gdm.enable = true;
-        xserver.desktopManager.gnome.enable = true;
+        displayManager.gdm.enable = true;
+        desktopManager.gnome.enable = true;
 
         # https://wiki.archlinux.org/title/Greetd
         #greetd = {

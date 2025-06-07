@@ -18,9 +18,10 @@
     # ventoy
     virt-viewer # vnc connect to VM, used by kubevirt
 
-    pkgs-unstable.cudaPackages.cudatoolkit
+    (lib.hiPrio pkgs-unstable.cudaPackages.cudatoolkit)
     pkgs-unstable.cudaPackages.nsight_systems
-    (lib.hiPrio pkgs-unstable.cudaPackages.nsight_compute)
+    pkgs-unstable.cudaPackages.nsight_compute
+    # (lib.hiPrio pkgs-unstable.cudaPackages.nsight_compute)
   ];
 
   # auto mount usb drives
