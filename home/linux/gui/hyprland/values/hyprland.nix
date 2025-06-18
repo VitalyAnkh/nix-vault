@@ -23,22 +23,22 @@ in
     };
 
   # status bar
-  programs.waybar = {
-    enable = true;
-    systemd.enable = true;
-  };
+  # programs.waybar = {
+  #   enable = true;
+  #   systemd.enable = true;
+  # };
 
   # screen locker
-  programs.hyprlock.enable = true;
+  # programs.hyprlock.enable = true;
 
   # Logout Menu
-  programs.wlogout.enable = true;
+  # programs.wlogout.enable = true;
 
   # Hyprland idle daemon
-  services.hypridle.enable = true;
+  # services.hypridle.enable = true;
 
   # notification daemon, the same as dunst
-  services.mako.enable = true;
+  # services.mako.enable = true;
 
   # NOTE:
   # We have to enable hyprland/i3's systemd user service in home-manager,
@@ -82,8 +82,8 @@ in
 
   # NOTE: this executable is used by greetd to start a wayland session when system boot up
   # with such a vendor-no-locking script, we can switch to another wayland compositor without modifying greetd's config in NixOS module
-  home.file.".wayland-session" = {
-    source = "${package}/bin/Hyprland";
-    executable = true;
-  };
+  # home.file.".wayland-session" = {
+  #   source = "${package}/bin/Hyprland";
+  #   executable = true;
+  # };
 }

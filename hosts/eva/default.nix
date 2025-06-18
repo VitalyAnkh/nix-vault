@@ -1,4 +1,4 @@
-{ myvars, ... }:
+{ myvars, lib, ... }:
 #############################################################
 #
 # EVA - my main computer, with NixOS + 9950x + RTX 4090 GPU, for gaming & daily use
@@ -31,12 +31,12 @@ in
     inherit hostName;
 
     # we use networkd instead
-    networkmanager.enable = false; # provides nmcli/nmtui for wifi adjustment
-    useDHCP = false;
+    networkmanager.enable = true; # provides nmcli/nmtui for wifi adjustment
+    useDHCP = lib.mkForce true;
   };
 
-  networking.useNetworkd = true;
-  systemd.network.enable = true;
+  # networking.useNetworkd = true;
+  # systemd.network.enable = true;
 
   systemd.network.networks."10-${iface}" = {
     matchConfig.Name = [ iface ];
