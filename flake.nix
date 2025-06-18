@@ -84,11 +84,11 @@
     };
     # secrets management
     agenix = {
-      # lock with git commit at 0.15.0
-      #url = "github:ryantm/agenix/564595d0ad4be7277e07fa63b5a991b3c645655d";
+      # lock with git commit at May 18, 2025
+      url = "github:ryantm/agenix/4835b1dc898959d8547a871ef484930675cb47f1";
       # replaced with a type-safe reimplementation to get a better error message and less bugs.
 
-      url = "github:yaxitech/ragenix";
+      # url = "github:yaxitech/ragenix";
       # url = "github:ryan4yin/ragenix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
@@ -165,6 +165,8 @@
     };
 
     nur-ryan4yin.url = "github:ryan4yin/nur-packages";
-    nur-ataraxiasjel.url = "github:AtaraxiaSjel/nur";
+
+    # for waydroid
+    # nur-ataraxiasjel.url = "github:AtaraxiaSjel/nur";
   };
 }

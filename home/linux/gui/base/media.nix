@@ -21,6 +21,8 @@
     vdpauinfo
     vulkan-tools
     glxinfo
+
+    (zoom-us.override { hyprlandXdgDesktopPortalSupport = true; })
   ];
 
   # https://github.com/catppuccin/cava

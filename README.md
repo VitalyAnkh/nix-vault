@@ -68,12 +68,11 @@ You don't have to go through the pain I've experienced again! Check out my
 | **System resource monitor** | [Btop][Btop]                                                                                                        |
 | **File Manager**            | [Yazi][Yazi] + [thunar][thunar]                                                                                     |
 | **Shell**                   | [Nushell][Nushell] + [Starship][Starship]                                                                           |
-| **Music Player**            | [mpd][mpd], [ncmpcpp][ncmpcpp], [mpc][mpc]                                                                          |
 | **Media Player**            | [mpv][mpv]                                                                                                          |
 | **Text Editor**             | [Neovim][Neovim] + [DoomEmacs][DoomEmacs]                                                                           |
 | **Fonts**                   | [Nerd fonts][Nerd fonts]                                                                                            |
 | **Image Viewer**            | [imv][imv]                                                                                                          |
-| **Screenshot Software**     | [flameshot][flameshot] + [grim][grim]                                                                               |
+| **Screenshot Software**     | [hyprshot][hyprshot]                                                                                                |
 | **Screen Recording**        | [OBS][OBS]                                                                                                          |
 | **Filesystem & Encryption** | tmpfs on `/`, [Btrfs][Btrfs] subvolumes on a [LUKS][LUKS] encrypted partition for persistent, unlock via passphrase |
 | **Secure Boot**             | [lanzaboote][lanzaboote]                                                                                            |
@@ -178,6 +177,7 @@ Other dotfiles that inspired me:
     journey.
   - [HeinzDev/Hyprland-dotfiles](https://github.com/HeinzDev/Hyprland-dotfiles): Refer to the waybar
     configuration here.
+  - [Zeioth/zeioth-hyprland-config](https://github.com/Zeioth/zeioth-hyprland-config)
   - [linuxmobile/kaku](https://github.com/linuxmobile/kaku)
 - Neovim/AstroNvim
   - [maxbrunet/dotfiles](https://github.com/maxbrunet/dotfiles): astronvim with nix flakes.
@@ -199,6 +199,7 @@ Other dotfiles that inspired me:
 [Zellij]: https://github.com/zellij-org/zellij
 [Neovim]: https://github.com/neovim/neovim
 [AstroNvim]: https://github.com/AstroNvim/AstroNvim
+[Hyprshot]: https://github.com/Gustash/Hyprshot
 [DoomEmacs]: https://github.com/doomemacs/doomemacs
 [flameshot]: https://github.com/flameshot-org/flameshot
 [grim]: https://github.com/emersion/grim
@@ -208,10 +209,6 @@ Other dotfiles that inspired me:
 [Mako]: https://github.com/emersion/mako
 [Nerd fonts]: https://github.com/ryanoasis/nerd-fonts
 [catppuccin]: https://github.com/catppuccin/catppuccin
-[mpd]: https://github.com/MusicPlayerDaemon/MPD
-[ncmpcpp]: https://github.com/ncmpcpp/ncmpcpp
-[mpc]: https://github.com/MusicPlayerDaemon/mpc
-[Netease-cloud-music-gtk]: https://github.com/gmg137/netease-cloud-music-gtk
 [NetworkManager]: https://wiki.gnome.org/Projects/NetworkManager
 [wl-clipboard]: https://github.com/bugaevc/wl-clipboard
 [GDM]: https://wiki.archlinux.org/title/GDM

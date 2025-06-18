@@ -61,6 +61,7 @@
       directories = [
         "projects"
         "nix-vault"
+
         "tmp"
 
         "Downloads"
@@ -107,6 +108,8 @@
         ".config/pulse"
         ".pki"
         ".steam" # steam games
+        ".var" # flatpak app's data
+        ".terraform.d/plugin-cache" # terraform's plugin cache
 
         # cloud native
         {
@@ -116,6 +119,10 @@
         }
         {
           directory = ".aws";
+          mode = "0700";
+        }
+        {
+          directory = ".config/gcloud";
           mode = "0700";
         }
         {
@@ -130,6 +137,7 @@
         # remote desktop
         ".config/remmina"
         ".config/freerdp"
+        ".zoom"
 
         # doom-emacs
         ".config/emacs"
@@ -137,9 +145,13 @@
 
         # vscode
         ".vscode"
+        ".config/Code"
         ".vscode-insiders"
-        ".config/Code/User"
-        ".config/Code - Insiders/User"
+        ".config/Code - Insiders"
+
+        # cursor ai editor
+        ".cursor"
+        ".config/Cursor"
 
         # zed editor
         ".config/zed"
@@ -147,6 +159,10 @@
         # browsers
         ".mozilla"
         ".config/google-chrome"
+
+        # Joplin
+        ".config/joplin" # tui client
+        ".config/Joplin" # joplin-desktop
 
         # neovim / remmina / flatpak / ...
         ".local/share"
@@ -177,6 +193,8 @@
       files = [
         ".wakatime.cfg"
         ".config/nushell/history.txt"
+        ".config/zoomus.conf"
+        ".config/zoom.conf"
       ];
     };
   };

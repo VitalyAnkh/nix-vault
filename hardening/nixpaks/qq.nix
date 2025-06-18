@@ -50,10 +50,11 @@ mkNixPak {
           ))
           (sloth.mkdir (
             sloth.concat [
-              sloth.xdgDownloadDir
+              sloth.xdgDocumentsDir
               "/QQ"
             ]
           ))
+          sloth.xdgDownloadDir
         ];
         sockets = {
           x11 = false;

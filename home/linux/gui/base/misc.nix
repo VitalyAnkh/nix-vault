@@ -18,16 +18,11 @@
     remmina
     freerdp # required by remmina
 
-    # misc
-    flameshot
-
     # my custom hardened packages
-    #pkgs.nixpaks.qq
-    #pkgs.nixpaks.qq-desktop-item
-
-    wechat-uos
-    # pkgs.nixpaks.wechat-uos
-    # pkgs.nixpaks.wechat-uos-desktop-item
+    pkgs.nixpaks.qq
+    pkgs.nixpaks.qq-desktop-item
+    # qqmusic
+    # wechat-uos
   ];
 
   # GitHub CLI tool
