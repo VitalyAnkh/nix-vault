@@ -13,5 +13,6 @@
 
     # IDEs
     jetbrains-toolbox
+    # jetbrains.idea-community
   ];
 }

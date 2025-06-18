@@ -4,6 +4,9 @@
   ...
 }:
 {
+  # https://developer.hashicorp.com/terraform/cli/config/config-file
+  home.file.".terraformrc".source = ./terraformrc;
+
   home.packages = with pkgs; [
     # infrastructure as code
     # pulumi

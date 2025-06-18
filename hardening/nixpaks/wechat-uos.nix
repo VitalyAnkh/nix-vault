@@ -65,12 +65,7 @@ mkNixPak {
               "/WeChat_Data/"
             ]
           ))
-          (sloth.mkdir (
-            sloth.concat [
-              sloth.xdgDownloadDir
-              "/WeChat"
-            ]
-          ))
+          sloth.xdgDownloadDir
         ];
         sockets = {
           x11 = false;

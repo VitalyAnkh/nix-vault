@@ -34,7 +34,10 @@
       # let `xdg-open` to open the url with the correct application.
       defaultApplications =
         let
-          browser = [ "firefox.desktop" ];
+          browser = [
+            "google-chrome.desktop"
+            "firefox.desktop"
+          ];
           editor = [
             "nvim.desktop"
             "Helix.desktop"
@@ -69,6 +72,8 @@
           # https://github.com/microsoft/vscode/issues/146408
           "x-scheme-handler/vscode" = [ "code-url-handler.desktop" ]; # open `vscode://` url with `code-url-handler.desktop`
           "x-scheme-handler/vscode-insiders" = [ "code-insiders-url-handler.desktop" ]; # open `vscode-insiders://` url with `code-insiders-url-handler.desktop`
+          "x-scheme-handler/zoommtg" = [ "Zoom.desktop" ];
+
           # all other unknown schemes will be opened by this default application.
           # "x-scheme-handler/unknown" = editor;
 
@@ -81,6 +86,8 @@
           "image/jpeg" = [ "imv-dir.desktop" ];
           "image/png" = [ "imv-dir.desktop" ];
           "image/webp" = [ "imv-dir.desktop" ];
+
+          "inode/directory" = [ "yazi.desktop" ];
         };
 
       associations.removed = {

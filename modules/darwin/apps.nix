@@ -33,12 +33,19 @@ let
     # HOMEBREW_CORE_GIT_REMOTE = "https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/homebrew-core.git";
     # HOMEBREW_PIP_INDEX_URL = "https://pypi.tuna.tsinghua.edu.cn/simple";
 
-    # nju mirror
-    HOMEBREW_API_DOMAIN = "https://mirror.nju.edu.cn/homebrew-bottles/api";
-    HOMEBREW_BOTTLE_DOMAIN = "https://mirror.nju.edu.cn/homebrew-bottles";
-    HOMEBREW_BREW_GIT_REMOTE = "https://mirror.nju.edu.cn/git/homebrew/brew.git";
-    HOMEBREW_CORE_GIT_REMOTE = "https://mirror.nju.edu.cn/git/homebrew/homebrew-core.git";
+    # bfsu mirror
+    HOMEBREW_API_DOMAIN = "https://mirrors.bfsu.edu.cn/homebrew-bottles/api";
+    HOMEBREW_BOTTLE_DOMAIN = "https://mirrors.bfsu.edu.cn/homebrew-bottles";
+    HOMEBREW_BREW_GIT_REMOTE = "https://mirrors.bfsu.edu.cn/git/homebrew/brew.git";
+    HOMEBREW_CORE_GIT_REMOTE = "https://mirrors.bfsu.edu.cn/git/homebrew/homebrew-core.git";
     HOMEBREW_PIP_INDEX_URL = "https://pypi.tuna.tsinghua.edu.cn/simple";
+
+    # nju mirror
+    # HOMEBREW_API_DOMAIN = "https://mirror.nju.edu.cn/homebrew-bottles/api";
+    # HOMEBREW_BOTTLE_DOMAIN = "https://mirror.nju.edu.cn/homebrew-bottles";
+    # HOMEBREW_BREW_GIT_REMOTE = "https://mirror.nju.edu.cn/git/homebrew/brew.git";
+    # HOMEBREW_CORE_GIT_REMOTE = "https://mirror.nju.edu.cn/git/homebrew/homebrew-core.git";
+    # HOMEBREW_PIP_INDEX_URL = "https://pypi.tuna.tsinghua.edu.cn/simple";
   };
 
   local_proxy_env = {
@@ -131,7 +138,7 @@ in
       #  https://github.com/tailscale/tailscale/wiki/Tailscaled-on-macOS#run-the-tailscaled-daemon
       # 1. `sudo tailscaled install-system-daemon`
       # 2. `tailscale up --accept-routes`
-      "tailscale" # tailscale
+      # "tailscale" # tailscale cli version
 
       # https://github.com/rgcr/m-cli
       "m-cli" #  Swiss Army Knife for macOS
@@ -152,14 +159,19 @@ in
       "squirrel" # input method for Chinese, rime-squirrel
       "firefox"
       "google-chrome"
+
+      # code editor
       "visual-studio-code"
-      # "zed" # zed editor
-      # "cursor" # an AI code editor
+      # "zed"
+      "cursor" # cursor ai editor
+
       "aerospace" # an i3-like tiling window manager for macOS
       "ghostty" # terminal emulator
 
       # https://joplinapp.org/help/
       "joplin" # note taking app
+
+      "tailscale" # tailscale macos app (with gui)
 
       # AI
       "lm-studio"
@@ -180,6 +192,8 @@ in
       "iina" # video player
       # "raycast" # (HotKey: alt/option + space)search, calculate and run scripts(with many plugins)
       "stats" # beautiful system status monitor in menu bar
+      "jordanbaird-ice" # Powerful menu bar manager for macOS
+
       # "reaper"  # audio editor
       # "sonic-pi" # music programming
       # "tencent-lemon" # macOS cleaner

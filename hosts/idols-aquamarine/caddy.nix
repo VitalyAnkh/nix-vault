@@ -83,11 +83,6 @@ in
       encode zstd gzip
       reverse_proxy http://localhost:9090
     '';
-    # Do not redirect to https for api path
-    virtualHosts."http://prometheus.writefor.fun/api/v1/write".extraConfig = ''
-      encode zstd gzip
-      reverse_proxy http://localhost:9090
-    '';
     virtualHosts."alertmanager.writefor.fun".extraConfig = ''
       ${hostCommonConfig}
       encode zstd gzip
@@ -125,6 +120,11 @@ in
         }
       }
     '';
+    # Allow http access for specific api (do not redirect to https)
+    # virtualHosts."http://xxx.writefor.fun/a/b/c".extraConfig = ''
+    #   encode zstd gzip
+    #   reverse_proxy http://localhost:9090
+    # '';
   };
   networking.firewall.allowedTCPPorts = [
     80

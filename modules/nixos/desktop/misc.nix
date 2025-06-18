@@ -6,6 +6,8 @@
   ...
 }:
 {
+  services.flatpak.enable = true;
+
   # add user's shell into /etc/shells
   environment.shells = with pkgs; [
     bashInteractive

@@ -116,9 +116,6 @@
     "agenix/alias-for-work.nushell" = {
       source = config.age.secrets."alias-for-work.nushell".path;
     };
-    "agenix/alias-for-work.bash" = {
-      source = config.age.secrets."alias-for-work.bash".path;
-    };
   };
 
   # both the original file and the symlink should be readable and executable by the user

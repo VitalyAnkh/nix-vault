@@ -1,13 +1,20 @@
 { lib }:
 rec {
   mainGateway = "192.168.5.1"; # main router
+  mainGateway6 = "fe80::5"; # main router's link-local address
   # use suzi as the default gateway
   # it's a subrouter with a transparent proxy
   # VR_TODO: what the default gateway should be?
   defaultGateway = "192.168.10.0";
+  # defaultGateway = "192.168.5.178";
+  defaultGateway6 = "fe80::8";
   nameservers = [
+    # IPv4
     "119.29.29.29" # DNSPod
     "223.5.5.5" # AliDNS
+    # IPv6
+    "2400:3200::1" # Alidns
+    "2606:4700:4700::1111" # Cloudflare
   ];
   prefixLength = 24;
 
@@ -33,8 +40,12 @@ rec {
     # ============================================
     eva = {
       # Desktop PC
+      # VR_TODO: what the ipv6 address should be?
       iface = "wlp14s0";
       ipv4 = "192.168.10.1";
+      # iface = "enp5s0";
+      # ipv4 = "192.168.5.100";
+      ipv6 = "fe80::10"; # Link-local Address
     };
     aquamarine = {
       # VM
@@ -81,6 +92,7 @@ rec {
     suzi = {
       iface = "enp2s0"; # fake iface, it's not used by the host
       ipv4 = "192.168.5.178";
+      ipv6 = "fe80::8"; # Link-local Address, can be used as default gateway
     };
     mitsuha = {
       iface = "enp2s0"; # fake iface, it's not used by the host

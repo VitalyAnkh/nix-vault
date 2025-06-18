@@ -1,10 +1,11 @@
-{ pkgs-unstable, ... }:
+{ pkgs-unstable, config, ... }:
 {
   # ===============================================================================================
   # for Nvidia GPU
+  # https://wiki.nixos.org/wiki/NVIDIA
+  # https://wiki.hyprland.org/Nvidia/
   # ===============================================================================================
 
-  # https://wiki.hyprland.org/Nvidia/
   boot.kernelParams = [
     # Since NVIDIA does not load kernel mode setting by default,
     # enabling it is required to make Wayland compositors function properly.
@@ -13,10 +14,11 @@
   ];
   services.xserver.videoDrivers = [ "nvidia" ]; # will install nvidia-vaapi-driver by default
   hardware.nvidia = {
+    # Open-source kernel modules are preferred over and planned to steadily replace proprietary modules
     open = true;
     # Optionally, you may need to select the appropriate driver version for your specific GPU.
     # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/os-specific/linux/nvidia-x11/default.nix
-    # package = config.boot.kernelPackages.nvidiaPackages.stable;
+    package = config.boot.kernelPackages.nvidiaPackages.beta;
 
     # required by most wayland compositors!
     modesetting.enable = true;
@@ -55,4 +57,12 @@
   #     };
   #   })
   # ];
+
+  nixpkgs.overlays = [
+    (_: super: {
+      # ffmpeg-full = super.ffmpeg-full.override {
+      #   withNvcodec = true;
+      # };
+    })
+  ];
 }
