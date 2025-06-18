@@ -36,10 +36,20 @@
     k6 # load testing tool
     protobuf # protocol buffer compiler
 
+    # web tools
+    pkgs-unstable.pnpm
+    pkgs-unstable.bun
+
+    pkgs-unstable.meson
+    pkgs-unstable.mesonlsp
+
     # solve coding extercises - learn by doing
     exercism
 
     wakatime-cli
+
+    # openai codex
+    pkgs-unstable.codex
 
     duckdb
 
