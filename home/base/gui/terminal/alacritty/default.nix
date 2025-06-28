@@ -44,16 +44,16 @@
       };
       font = {
         bold = {
-          family = "JetBrainsMono Nerd Font";
+          family = "Maple Mono NF CN";
         };
         italic = {
-          family = "JetBrainsMono Nerd Font";
+          family = "Maple Mono NF CN";
         };
         normal = {
-          family = "JetBrainsMono Nerd Font";
+          family = "Maple Mono NF CN";
         };
         bold_italic = {
-          family = "JetBrainsMono Nerd Font";
+          family = "Maple Mono NF CN";
         };
         size = if pkgs.stdenv.isDarwin then 14 else 13;
       };

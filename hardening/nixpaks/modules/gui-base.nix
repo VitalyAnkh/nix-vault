@@ -20,8 +20,11 @@ in
       "org.gtk.vfs.*" = "talk";
       "org.gtk.vfs" = "talk";
       "ca.desrt.dconf" = "talk";
-      "org.freedesktop.portal.*" = "talk";
       "org.a11y.Bus" = "talk";
+
+      # for default portal & gtk/hyprland's portal
+      "org.freedesktop.portal.*" = "talk";
+      "org.freedesktop.impl.portal.desktop.*" = "talk";
     };
     # https://github.com/nixpak/nixpak/blob/master/modules/gpu.nix
     # 1. bind readonly - /run/opengl-driver
@@ -74,11 +77,17 @@ in
         "/etc/static/egl"
       ];
       bind.dev = [
+        "/dev/shm" # Shared Memory
+
         # seems required when using nvidia as primary gpu
         "/dev/nvidia0"
         "/dev/nvidiactl"
         "/dev/nvidia-modeset"
         "/dev/nvidia-uvm"
+      ];
+
+      tmpfs = [
+        "/tmp"
       ];
 
       env = {

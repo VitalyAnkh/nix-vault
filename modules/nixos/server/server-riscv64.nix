@@ -13,6 +13,6 @@
     ../base/ssh.nix
     ../base/user-group.nix
 
-    ../../base.nix
+    ../../base
   ];
 }

@@ -53,31 +53,17 @@ mkNixPak {
               "/.xwechat"
             ]
           ))
-          (sloth.mkdir (
-            sloth.concat [
-              sloth.xdgDocumentsDir
-              "/xwechat_files"
-            ]
-          ))
-          (sloth.mkdir (
-            sloth.concat [
-              sloth.xdgDocumentsDir
-              "/WeChat_Data/"
-            ]
-          ))
+
+          sloth.xdgDocumentsDir
           sloth.xdgDownloadDir
+          sloth.xdgMusicDir
+          sloth.xdgVideosDir
         ];
         sockets = {
           x11 = false;
           wayland = true;
           pipewire = true;
         };
-        bind.dev = [
-          "/dev/shm" # Shared Memory
-        ];
-        tmpfs = [
-          "/tmp"
-        ];
 
         env = {
           # Hidpi scale

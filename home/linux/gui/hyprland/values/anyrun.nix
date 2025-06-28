@@ -31,12 +31,11 @@
   #     @define-color fg-col #D9E0EE;
   #     @define-color fg-col2 #F28FAD;
 
-  #     * {
-  #       transition: 200ms ease;
-  #       font-family: "JetBrainsMono Nerd Font";
-  #       font-size: 1.3rem;
-  #     }
-
+  # * {
+  #   transition: 200ms ease;
+  #   font-family: "Maple Mono NF CN";
+  #   font-size: 1.3rem;
+  # }
   #     #window {
   #       background: transparent;
   #     }
@@ -53,11 +52,11 @@
   #       background-color: @bg-col;
   #     }
 
-  #     /* anyrun's output matches entries - Base */
-  #     #match {
-  #       color: @fg-col;
-  #       background: @bg-col;
-  #     }
+  # anyrun's output matches entries - Base
+  #match {
+  #   color: @fg-col;
+  #   background: @bg-col;
+  # }
 
   #     /* anyrun's selected entry - Red */
   #     #match:selected {
