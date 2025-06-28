@@ -96,6 +96,7 @@
               vulkan-utility-libraries
               python313Packages.pybind11
               python313Packages.nanobind
+              pkg-config
             ];
 
             shellHook = ''
@@ -109,8 +110,8 @@
               # export NIX_CFLAGS_COMPILE=" -isystem ${pkgs.glibc.dev}/include -isystem ${pkgs.glibc_multi.dev}/include $NIX_CFLAGS_COMPILE"
               # export NIX_CFLAGS_COMPILE=" -isystem ${pkgs.glibc.dev}/include $NIX_CFLAGS_COMPILE"
               export NIX_LDFLAGS="-L${pkgs.glibc_multi.out}/lib $NIX_LDFLAGS"
-              export CPLUS_INCLUDE_PATH="${pkgs.stdenv.cc.cc}/include/c++/${pkgs.stdenv.cc.cc.version}:${pkgs.stdenv.cc.cc}/include/c++/${pkgs.stdenv.cc.cc.version}/x86_64-unknown-linux-gnu"
-              export CPATH="${pkgs.glibc.dev}/include:$CPATH"
+              # export CPLUS_INCLUDE_PATH="${pkgs.stdenv.cc.cc}/include/c++/${pkgs.stdenv.cc.cc.version}:${pkgs.stdenv.cc.cc}/include/c++/${pkgs.stdenv.cc.cc.version}/x86_64-unknown-linux-gnu"
+              # export CPATH="${pkgs.glibc.dev}/include:$CPATH"
               export CUDAFLAGS+=" -idirafter ${pkgs.glibc.dev}/include"
               # export LLVM_CLANG_PATH="${pkgs.clang}/bin/clang++"
               export NVCC_CCBIN="${pkgs.clang}/bin/clang++"
