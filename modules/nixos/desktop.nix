@@ -12,7 +12,7 @@ in
 {
   imports = [
     ./base
-    ../base.nix
+    ../base
 
     ./desktop
   ];

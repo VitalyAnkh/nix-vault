@@ -54,6 +54,18 @@
     "riscv64-linux"
   ];
 
+  # supported file systems, so we can mount any removable disks with these filesystems
+  boot.supportedFilesystems = [
+    "ext4"
+    "bcachefs"
+    "btrfs"
+    "xfs"
+    "ntfs"
+    "fat"
+    "vfat"
+    "exfat"
+  ];
+
   fileSystems."/" = {
     device = "tmpfs";
     fsType = "tmpfs";
