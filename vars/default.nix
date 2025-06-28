@@ -19,7 +19,10 @@
   #    2. Never leave the device and never sent over the network.
   # 2. Or just use hardware security keys like Yubikey/CanoKey.
   mainSshAuthorizedKeys = [
+    # ssh key on eva, Gigabyte X870E, AMD Ryzen 9 9950x
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAI7hWDjjuTEXcd1pckYak39KkQWtuI/jvVeDgAz0CwP vitalyr@eva"
+    # ssh key on rex, Lenovo Y9000P
+    "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC84JOgYyYEbDQ8+jFE86xw8CIkRaek5ksgib0U4v3UIuPDimdjAmp+6ffg/f2ceP0XeG6sPJu4EKyvpK6YH80MqBRmJg8zEWViaICpge3E9Hhi7zW5KwYMlAICIR/bvkdXhP03heazPT9IbtAOoYNKyCgHRJ78suU1MwNzPcdG8TIFcye9BT1iDTtfCYp4TSo3W6opqAnoOKhafbAbh0bUpXpkC7ns+vBRBiI/lSwCpUJqogjycAfyZLTF3sa9I083to4D5FxOT80vTOaNE/9/H0+C4ogaBOVC0owz0LqUbSLwU/XWJHDBzmzyiJvrK6iEP8Y9Ud6XiEU5qGBCAYk2L08AgeMVDeXmkvvWZ/OTdwUU7978lMex+aMjWGGOoOyCaQ3+PnMInVKBF0ikPNIU3cJbWB/ZEm5fig+25rI0yBYwotRjEjoLrhOxpR+mn+6UifFyf1m3gZWFVCdLjeKtw42D9B52+om25A38/czD+UqrRh8zCu2FxrthOZ0woDM= vitalyr"
   ];
   secondaryAuthorizedKeys = [
     # "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMzYT0Fpcp681eHY5FJV2G8Mve53iX3hMOLGbVvfL+TF ryan@romantic"

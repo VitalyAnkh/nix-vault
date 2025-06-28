@@ -1,10 +1,10 @@
 {
-  pkgs,
+  pkgs-unstable,
   nur-ryan4yin,
   ...
 }:
 {
-  home.packages = with pkgs; [
+  home.packages = with pkgs-unstable; [
     # Misc
     cowsay
     gnupg
@@ -70,15 +70,15 @@
       enable = true;
       config = {
         pager = "less -FR";
-        theme = "catppuccin-mocha";
+        # theme = "catppuccin-mocha";
       };
-      themes = {
-        # https://raw.githubusercontent.com/catppuccin/bat/main/Catppuccin-mocha.tmTheme
-        catppuccin-mocha = {
-          src = nur-ryan4yin.packages.${pkgs.system}.catppuccin-bat;
-          file = "Catppuccin-mocha.tmTheme";
-        };
-      };
+      # themes = {
+      #   # https://raw.githubusercontent.com/catppuccin/bat/main/Catppuccin-mocha.tmTheme
+      #   catppuccin-mocha = {
+      #     src = nur-ryan4yin.packages.${pkgs.system}.catppuccin-bat;
+      #     file = "Catppuccin-mocha.tmTheme";
+      #   };
+      # };
     };
 
     # A command-line fuzzy finder
@@ -86,20 +86,20 @@
       enable = true;
       # https://github.com/catppuccin/fzf
       # catppuccin-mocha
-      colors = {
-        "bg+" = "#313244";
-        "bg" = "#1e1e2e";
-        "spinner" = "#f5e0dc";
-        "hl" = "#f38ba8";
-        "fg" = "#cdd6f4";
-        "header" = "#f38ba8";
-        "info" = "#cba6f7";
-        "pointer" = "#f5e0dc";
-        "marker" = "#f5e0dc";
-        "fg+" = "#cdd6f4";
-        "prompt" = "#cba6f7";
-        "hl+" = "#f38ba8";
-      };
+      # colors = {
+      #   "bg+" = "#313244";
+      #   "bg" = "#1e1e2e";
+      #   "spinner" = "#f5e0dc";
+      #   "hl" = "#f38ba8";
+      #   "fg" = "#cdd6f4";
+      #   "header" = "#f38ba8";
+      #   "info" = "#cba6f7";
+      #   "pointer" = "#f5e0dc";
+      #   "marker" = "#f5e0dc";
+      #   "fg+" = "#cdd6f4";
+      #   "prompt" = "#cba6f7";
+      #   "hl+" = "#f38ba8";
+      # };
     };
 
     # very fast version of tldr in Rust

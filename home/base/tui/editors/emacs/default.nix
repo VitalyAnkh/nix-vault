@@ -68,7 +68,7 @@ in
 
       programs.bash.bashrcExtra = envExtra;
       programs.zsh.envExtra = envExtra;
-      #programs.fish.envExtra = envExtra;
+      # programs.fish.envExtra = envExtra;
       home.shellAliases = shellAliases;
       programs.nushell.shellAliases = shellAliases;
 
@@ -100,15 +100,15 @@ in
           emacsPkg
           pkgs.emacs-lsp-booster
         ];
-        services.emacs = {
-          enable = true;
-          package = emacsPkg;
-          client = {
-            enable = true;
-            arguments = [ " --create-frame" ];
-          };
-          startWithUserSession = true;
-        };
+        # services.emacs = {
+        #   enable = true;
+        #   package = emacsPkg;
+        #   client = {
+        #     enable = true;
+        #     arguments = [ " --create-frame" ];
+        #   };
+        #   startWithUserSession = true;
+        # };
       }
     ))
 

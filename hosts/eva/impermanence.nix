@@ -61,6 +61,7 @@
       directories = [
         "projects"
         "nix-vault"
+        # "vr-nix-secrets"
 
         "tmp"
 
@@ -72,6 +73,12 @@
 
         # android tools
         "Android"
+        # Android Studio
+        ".config/Google"
+        ".android"
+
+        # google gemini
+        ".gemini"
 
         "Zotero"
 
@@ -165,7 +172,9 @@
         ".config/Joplin" # joplin-desktop
 
         # neovim / remmina / flatpak / ...
+        # XDG_DATA_HOME
         ".local/share"
+        # XDG_STATE_HOME
         ".local/state"
 
         # language package managers

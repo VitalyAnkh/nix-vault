@@ -22,10 +22,10 @@
 
     # required by most wayland compositors!
     modesetting.enable = true;
-    # powerManagement = {
-    #   enable = true;
-    #   finegrained = true;
-    # };
+    powerManagement = {
+      enable = true;
+      # finegrained = true;
+    };
     # prime = {
     #   offload.enable = true;
     #   # Bus ID of the NVIDIA GPU. You can find it using lspci, either under 3D or VGA

@@ -26,10 +26,15 @@ rec {
     # set default applications
     BROWSER = "firefox-nightly";
 
+    # for pnpm
+    PNPM_HOME = d + "/pnpm";
+
     # for faster emacs lsp
     LSP_USE_PLISTS = "true";
 
     # enable scrolling in git diff
     DELTA_PAGER = "less -R";
+
+    # PATH = "/home/${myvars.username}/.local/share/pnpm/";
   };
 }
