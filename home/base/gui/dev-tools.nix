@@ -9,6 +9,8 @@
     insomnia # REST client
     wireshark # network analyzer
 
+    bottom
+
     xorg.xeyes
 
     ninja
@@ -20,7 +22,8 @@
     # jetbrains.idea-community
 
     # AI cli tools
-    nur-ryan4yin.packages.${pkgs.system}.gemini-cli
+    # install gemini-cli with pnpm add -g @google/gemini-cli
+    # nur-ryan4yin.packages.${pkgs.system}.gemini-cli
     k8sgpt
     kubectl-ai # an ai helper opensourced by google
   ];
