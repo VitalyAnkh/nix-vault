@@ -30,7 +30,6 @@ config_latest_llvm:
   # -DMLIR_ENABLE_CUDA_CUSPARSE=1 \
   # plugin-api.h locates in /usr/include, to build LLVMgold.so plugin
   cmake -G Ninja -B build ./llvm \
-    -DCMAKE_BUILD_TYPE=RelWithDebInfo \
     -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
     -DCMAKE_C_COMPILER_LAUNCHER=sccache \
     -DCMAKE_CXX_COMPILER_LAUNCHER=sccache \
@@ -40,11 +39,12 @@ config_latest_llvm:
     -DCMAKE_MODULE_LINKER_FLAGS_INIT="-fuse-ld=mold" \
     -DCMAKE_SHARED_LINKER_FLAGS_INIT="-fuse-ld=mold" \
     -DCMAKE_INSTALL_PREFIX=$HOME/.local/opt/llvm@latest \
+    -DCMAKE_BUILD_TYPE=RelWithDebInfo \
     -DLLVM_CCACHE_BUILD=ON \
     -DLLVM_USE_LINKER=mold \
     -DCMAKE_CXX_LINK_FLAGS="-Wl,-rpath,$LD_LIBRARY_PATH" \
     -DLLVM_TARGETS_TO_BUILD="X86;NVPTX;RISCV;AMDGPU" \
-    -DLLVM_ENABLE_PROJECTS="clang;flang;llvm;mlir;lld;clang-tools-extra;lldb;pstl;bolt" \
+    -DLLVM_ENABLE_PROJECTS="clang;flang;llvm;mlir;lld;clang-tools-extra;lldb;bolt" \
     -DLLVM_ENABLE_RUNTIMES="openmp;compiler-rt;libcxx;libc;libcxxabi;libunwind;offload" \
     -DMLIR_ENABLE_BINDINGS_PYTHON=ON \
     -DMLIR_ENABLE_CUDA_RUNNER=1 \
@@ -72,6 +72,8 @@ install_latest_llvm:
   cmake --install $HOME/projects/dev/cpp/llvm-project/build
   # ln -s /usr/local/opt/llvm@latest /usr/local/opt/llvm
   echo "==== build newest llvm done ===="
+
+llvm_latest: config_latest_llvm install_latest_llvm
 
 # Run eval tests
 [group('nix')]
@@ -484,10 +486,10 @@ review pr:
   gh workflow run review.yml --repo ryan4yin/nixpkgs-review-gha -f post-result=true -f pr={{pr}}
 
 # Run package tests for PR
-[linux]
-[group('nixpkgs')]
-test pr pname:
-  gh workflow run review.yml --repo ryan4yin/nixpkgs-review-gha -f post-result=true -f pr={{pr}} -f extra-args="-p {{pname}}.passthru.tests"
+# [linux]
+# [group('nixpkgs')]
+# test pr pname:
+#   gh workflow run review.yml --repo ryan4yin/nixpkgs-review-gha -f post-result=true -f pr={{pr}} -f extra-args="-p {{pname}}.passthru.tests"
 
 # View the summary of a workflow
 [linux]
