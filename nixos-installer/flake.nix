@@ -3,7 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
-    impermanence.url = "github:nix-community/impermanence";
+    preservation.url = "github:nix-community/preservation";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     nuenv.url = "github:DeterminateSystems/nuenv";
   };
@@ -34,7 +34,7 @@
             ../modules/nixos/base/networking.nix
 
             ../hosts/eva/hardware-configuration.nix
-            ../hosts/eva/impermanence.nix
+            ../hosts/eva/preservation.nix
           ];
         };
 
@@ -66,6 +66,7 @@
 
             ../hosts/12kingdoms-shoukei/hardware-configuration.nix
             ../hosts/eva/impermanence.nix
+            ../hosts/eva/preservation.nix
           ];
         };
       };

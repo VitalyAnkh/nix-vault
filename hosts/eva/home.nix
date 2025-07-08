@@ -7,7 +7,7 @@ in
     hyprland = {
       nvidia = true;
       settings.source = [
-        "${config.home.homeDirectory}/nix-config/hosts/idols-ai/hypr-hardware.conf"
+        "${config.home.homeDirectory}/nix-config/hosts/${hostName}/hypr-hardware.conf"
       ];
     };
   };

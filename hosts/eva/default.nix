@@ -19,7 +19,7 @@ in
     ./hardware-configuration.nix
     ./nvidia.nix
 
-    ./impermanence.nix
+    ./preservation.nix
     #./boot.nix
     #./secureboot.nix
     ./gnome.nix
@@ -63,9 +63,6 @@ in
     ];
     linkConfig.RequiredForOnline = "routable";
   };
-
-  # conflict with feature: containerd-snapshotter
-  # virtualisation.docker.storageDriver = "btrfs";
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

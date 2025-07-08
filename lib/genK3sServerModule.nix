@@ -11,6 +11,7 @@
   masterHost,
   clusterInit ? false,
   kubeletExtraArgs ? [ ],
+  k3sExtraArgs ? [ ],
   nodeLabels ? [ ],
   nodeTaints ? [ ],
   disableFlannel ? true,
@@ -76,7 +77,8 @@ in
           ++ (map (label: "--node-label=${label}") nodeLabels)
           ++ (map (taint: "--node-taint=${taint}") nodeTaints)
           ++ (map (arg: "--kubelet-arg=${arg}") kubeletExtraArgs)
-          ++ (lib.optionals disableFlannel [ "--flannel-backend=none" ]);
+          ++ (lib.optionals disableFlannel [ "--flannel-backend=none" ])
+          ++ k3sExtraArgs;
       in
       lib.concatStringsSep " " flagList;
   };

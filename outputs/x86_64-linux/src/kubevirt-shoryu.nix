@@ -30,7 +30,7 @@ let
       ++ [
         {
           modules.secrets.server.kubernetes.enable = true;
-          modules.secrets.impermanence.enable = true;
+          modules.secrets.preservation.enable = true;
         }
       ];
     # home-modules = map mylib.relativeToRoot [

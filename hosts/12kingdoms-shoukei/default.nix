@@ -19,7 +19,7 @@ in
     { hardware.myapple-t2.enableAppleSetOsLoader = true; }
 
     ./hardware-configuration.nix
-    ../eva/impermanence.nix
+    ../eva/preservation.nix
   ];
 
   boot.kernelModules = [ "kvm-amd" ];
