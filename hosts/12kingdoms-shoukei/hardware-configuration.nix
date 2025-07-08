@@ -115,7 +115,7 @@
       "noatime"
       "compress-force=zstd:1"
     ];
-    # impermanence's data is required for booting.
+    # preservation's data is required for booting.
     neededForBoot = true;
   };
 

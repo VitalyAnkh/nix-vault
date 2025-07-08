@@ -111,6 +111,7 @@
       "noatime"
       "compress-force=zstd:5"
     ];
+    # preservation's data is required for booting.
     neededForBoot = true;
   };
 
