@@ -49,7 +49,7 @@
     wakatime-cli
 
     # openai codex
-    pkgs-unstable.codex
+    # pkgs-unstable.codex
 
     duckdb
 

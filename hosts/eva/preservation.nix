@@ -108,7 +108,6 @@ in
         # ======================================
         "projects"
         "nix-vault"
-        # "vr-nix-secrets"
         "tmp"
 
         # android tools
@@ -121,6 +120,7 @@ in
         ".gemini"
 
         "Zotero"
+        ".zotero"
 
         # Nutstore sync folder
         "nutstore_files"
