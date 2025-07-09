@@ -1,4 +1,5 @@
-{pkgs, ...}: {
+{ pkgs, ... }:
+{
   # for security reasons, do not load neovim's user config
   # since EDITOR may be used to edit some critical files
   environment.variables.EDITOR = "nvim --clean";
@@ -12,6 +13,9 @@
     nushell # nushell
     git # used by nix flakes
     git-lfs # used by huggingface models
+
+    # use nvfetcher with nix-vault/pkgs/
+    nvfetcher
 
     # archives
     zip

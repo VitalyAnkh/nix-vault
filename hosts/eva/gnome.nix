@@ -8,6 +8,7 @@
     gnomeExtensions.clipboard-history
     gnomeExtensions.kimpanel
     gnomeExtensions.user-themes
+    gnome-screenshot
     clash-verge-rev
     clash-nyanpasu
     # hiddify-app
