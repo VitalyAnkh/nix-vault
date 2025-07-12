@@ -62,12 +62,20 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # https://github.com/catppuccin/nix
+    catppuccin = {
+      url = "github:catppuccin/nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     lanzaboote = {
       url = "github:nix-community/lanzaboote/v0.4.2";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    preservation.url = "github:nix-community/preservation";
+    preservation = {
+      url = "github:nix-community/preservation";
+    };
 
     # community wayland nixpkgs
     # nixpkgs-wayland.url = "github:nix-community/nixpkgs-wayland";
@@ -93,7 +101,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nix-gaming.url = "github:fufexan/nix-gaming";
+    nix-gaming = {
+      url = "github:fufexan/nix-gaming";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # use xremap to map some keys
     xremap-flake.url = "github:xremap/nix-flake";
@@ -116,7 +127,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nuenv.url = "github:DeterminateSystems/nuenv";
+    nuenv = {
+      url = "github:DeterminateSystems/nuenv";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     haumea = {
       url = "github:nix-community/haumea/v0.2.2";
@@ -134,7 +148,10 @@
 
     nicpkgs.url = "github:nicball/nicpkgs";
 
-    blender-bin.url = "github:edolstra/nix-warez?dir=blender";
+    blender-bin = {
+      url = "github:edolstra/nix-warez?dir=blender";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     ########################  Some non-flake repositories  #########################################
 

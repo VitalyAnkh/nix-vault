@@ -29,9 +29,6 @@
     package = pkgs-unstable.alacritty;
     # https://alacritty.org/config-alacritty.html
     settings = {
-      general.import = [
-        ./catppuccin-mocha.toml
-      ];
       window = {
         opacity = 0.93;
         startup_mode = "Maximized"; # Maximized window

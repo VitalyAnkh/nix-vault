@@ -1,19 +1,9 @@
+{ pkgs, ... }:
 {
-  pkgs,
-  nur-ryan4yin,
-  ...
-}:
-{
-  # https://github.com/catppuccin/helix
-  xdg.configFile."helix/themes".source = "${
-    nur-ryan4yin.packages.${pkgs.system}.catppuccin-helix
-  }/themes/default";
-
   programs.helix = {
     enable = true;
     package = pkgs.helix;
     settings = {
-      theme = "catppuccin_mocha";
       editor = {
         line-number = "relative";
         cursorline = true;

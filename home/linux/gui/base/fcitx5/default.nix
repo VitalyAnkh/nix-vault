@@ -1,13 +1,8 @@
 {
   pkgs,
-  nur-ryan4yin,
   ...
 }:
 {
-  # home.file.".local/share/fcitx5/themes".source = "${
-  #   nur-ryan4yin.packages.${pkgs.system}.catppuccin-fcitx5
-  # }/src";
-
   xdg.configFile = {
     "fcitx5/profile" = {
       source = ./profile;
@@ -27,7 +22,6 @@
       source = ./cloudpinyin.conf;
       force = true;
     };
-    "fcitx5/conf/classicui.conf".source = ./classicui.conf;
   };
 
   i18n.inputMethod = {

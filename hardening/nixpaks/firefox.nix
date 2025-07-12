@@ -62,7 +62,6 @@ mkNixPak {
           sloth.xdgVideosDir
         ];
         bind.ro = [
-          # To actually make Firefox run
           "/sys/bus/pci"
           [
             "${config.app.package}/lib/firefox"

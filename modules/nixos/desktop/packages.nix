@@ -9,10 +9,6 @@
 
   environment.systemPackages = with pkgs; [
     wl-clipboard
-    qbittorrent-enhanced
-    mpv
-    mpvc
-    vlc
     # VR_TODO: replace "x86_64-linux" with proper variable
     firefox.packages.x86_64-linux.firefox-nightly-bin
   ];
