@@ -77,7 +77,7 @@
     #   signByDefault = true;
     # };
 
-    # A syntax-highlighting pager in Rust(2019 ~ Now)
+    # A syntax-highlighting pager for git, diff, grep, and blame output
     delta = {
       enable = true;
       options = {
@@ -117,4 +117,10 @@
       foreach = "submodule foreach";
     };
   };
+
+  # Git terminal UI (written in go).
+  programs.lazygit.enable = true;
+
+  # Yet another Git TUI (written in rust).
+  programs.gitui.enable = true;
 }
