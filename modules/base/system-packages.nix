@@ -13,6 +13,7 @@
     nushell # nushell
     git # used by nix flakes
     git-lfs # used by huggingface models
+    pv
 
     # use nvfetcher with nix-vault/pkgs/
     nvfetcher

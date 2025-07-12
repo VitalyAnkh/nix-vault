@@ -120,7 +120,7 @@ in
         ".gemini"
 
         "Zotero"
-        ".zotero"
+        # ".zotero"
 
         # Nutstore sync folder
         "nutstore_files"
@@ -187,6 +187,15 @@ in
         ".config/Joplin" # joplin-desktop
 
         ".local/share/jupyter"
+
+        # qbittorrent
+        ".config/qBittorrent"
+        ".local/share/qBittorrent"
+
+        # vlc
+        "~/.config/vlc/"
+        # mpv
+        "~/.config/mpv/"
 
         # ======================================
         # Cloud Native
