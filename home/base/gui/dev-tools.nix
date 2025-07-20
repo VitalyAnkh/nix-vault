@@ -1,30 +1,27 @@
+{ pkgs, ... }:
 {
-  pkgs,
-  nur-ryan4yin,
-  ...
-}:
-{
-  home.packages = with pkgs; [
-    mitmproxy # http/https proxy tool
-    insomnia # REST client
-    wireshark # network analyzer
+  home.packages =
+    with pkgs;
+    [
+      mitmproxy # http/https proxy tool
+      wireshark # network analyzer
 
-    bottom
+      bottom
 
-    xorg.xeyes
+      xorg.xeyes
 
-    ninja
-    uv
-    trash-cli
+      ninja
+      uv
+      trash-cli
 
-    # IDEs
-    jetbrains-toolbox
-    # jetbrains.idea-community
+      # IDEs
+      jetbrains-toolbox
 
-    # AI cli tools
-    # install gemini-cli with pnpm add -g @google/gemini-cli
-    # nur-ryan4yin.packages.${pkgs.system}.gemini-cli
-    k8sgpt
-    kubectl-ai # an ai helper opensourced by google
-  ];
+      # AI cli tools
+      k8sgpt
+      kubectl-ai # an ai helper opensourced by google
+    ]
+    ++ (lib.optionals pkgs.stdenv.isx86_64 [
+      insomnia # REST client
+    ]);
 }

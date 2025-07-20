@@ -9,14 +9,30 @@
 {
   appimageTools,
   fetchurl,
+  stdenvNoCC,
 }: let
   pname = "wechat";
   # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/by-name/we/wechat/package.nix
-  version = "4.0.1.11";
-  src = fetchurl {
-    url = "https://web.archive.org/web/20250512110825if_/https://dldir1v6.qq.com/weixin/Universal/Linux/WeChatLinux_x86_64.AppImage";
-    hash = "sha256-gBWcNQ1o1AZfNsmu1Vi1Kilqv3YbR+wqOod4XYAeVKo=";
+  sources = {
+    aarch64-linux = {
+      version = "4.0.1.11";
+      src = fetchurl {
+        url = "https://web.archive.org/web/20250512112413if_/https://dldir1v6.qq.com/weixin/Universal/Linux/WeChatLinux_arm64.AppImage";
+        hash = "sha256-Rg+FWNgOPC02ILUskQqQmlz1qNb9AMdvLcRWv7NQhGk=";
+      };
+    };
+    x86_64-linux = {
+      version = "4.0.1.11";
+      src = fetchurl {
+        url = "https://web.archive.org/web/20250512110825if_/https://dldir1v6.qq.com/weixin/Universal/Linux/WeChatLinux_x86_64.AppImage";
+        hash = "sha256-gBWcNQ1o1AZfNsmu1Vi1Kilqv3YbR+wqOod4XYAeVKo=";
+      };
+    };
   };
+
+  inherit (stdenvNoCC.hostPlatform) system;
+  inherit (sources.${system} or (throw "Unsupported system: ${system}")) version src;
+
   # https://github.com/NixOS/nixpkgs/blob/master/pkgs/by-name/we/wechat/linux.nix
   appimageContents = appimageTools.extract {
     inherit pname version src;
@@ -65,8 +81,12 @@ in
       "--bind \${WECHAT_HOME_DIR} \${HOME}"
       "--bind \${WECHAT_FILES_DIR} \${WECHAT_FILES_DIR}"
       "--chdir \${HOME}"
-      "--setenv QT_QPA_PLATFORM wayland"
+      # wechat-universal only supports xcb
+      "--setenv QT_QPA_PLATFORM xcb"
       "--setenv QT_AUTO_SCREEN_SCALE_FACTOR 1"
+      # use fcitx as IME
+      "--setenv QT_IM_MODULE fcitx"
+      "--setenv GTK_IM_MODULE fcitx"
     ];
     chdirToPwd = false;
     unshareNet = false;

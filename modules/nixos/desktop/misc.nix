@@ -3,15 +3,17 @@
   lib,
   pkgs,
   pkgs-unstable,
+  firefox,
   ...
 }:
 {
   services.flatpak.enable = true;
+  boot.loader.timeout = lib.mkForce 10; # wait for x seconds to select the boot entry
 
   # add user's shell into /etc/shells
   environment.shells = with pkgs; [
     bashInteractive
-    pkgs-unstable.nushell
+    nushell
   ];
   # set user's default shell system-wide
   users.defaultUserShell = pkgs.bashInteractive;
@@ -27,7 +29,9 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+    firefox.packages.${pkgs.system}.firefox-nightly-bin
     gnumake
+    wl-clipboard
   ];
 
   services = {

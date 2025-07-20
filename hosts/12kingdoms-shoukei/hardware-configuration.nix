@@ -6,39 +6,48 @@
   lib,
   pkgs,
   modulesPath,
+  nixos-apple-silicon,
+  # my-asahi-firmware,
   ...
 }:
+let
+  device = "/dev/disk/by-uuid/c2e8b249-240e-4eef-bf4e-81e7dbbf4887";
+in
 {
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
+    nixos-apple-silicon.nixosModules.default
   ];
 
-  hardware.firmware = [
-    (import ./brcm-firmware { inherit pkgs; })
-  ];
+  # Specify path to peripheral firmware files.
+  hardware.asahi = {
+    enable = true;
+    # peripheralFirmwareDirectory = "${my-asahi-firmware}/macbook-pro-m2-a2338";
 
-  boot.initrd.availableKernelModules = [
-    "xhci_pci"
-    "nvme"
-    "usbhid"
-    "usb_storage"
-    "sd_mod"
-  ];
-  boot.initrd.kernelModules = [ ];
-  boot.kernelModules = [ "kvm-intel" ];
-  boot.extraModulePackages = [ ];
+    # build the Asahi Linux Kernel with Rust support
+    withRust = true;
+    # use apple-silicon's GPU instead of CPU
+    useExperimentalGPUDriver = true;
+    # How to install the Asahi Mesa driver
+    experimentalGPUInstallMode = "driver"; # driver / replace(for non-flakes) / overlay
+  };
 
-  # Use the EFI boot loader.
-  boot.loader.efi.canTouchEfiVariables = true;
+  networking.wireless.iwd = {
+    enable = true;
+    settings.General.EnableNetworkConfiguration = true;
+  };
+
+  # Use the systemd-boot EFI boot loader.
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = false;
   # depending on how you configured your disk mounts, change this to /boot or /boot/efi.
   boot.loader.efi.efiSysMountPoint = "/boot";
-  boot.loader.systemd-boot.enable = true;
 
-  # Enable binfmt emulation of aarch64-linux, this is required for cross compilation.
-  boot.binfmt.emulatedSystems = [
-    "aarch64-linux"
-    "riscv64-linux"
-  ];
+  # For ` to < and ~ to > (for those with US keyboards)
+  # boot.extraModprobeConfig = ''
+  #   options hid_apple iso_layout=0
+  # '';
+
   # supported file systems, so we can mount any removable disks with these filesystems
   boot.supportedFilesystems = lib.mkForce [
     "ext4"
@@ -55,7 +64,7 @@
   boot.initrd = {
     # unlocked luks devices via a keyfile or prompt a passphrase.
     luks.devices."crypted-nixos" = {
-      device = "/dev/nvme0n1p4";
+      device = "/dev/disk/by-uuid/1c37820e-2501-46e4-bec4-27c28691a5b4";
       # the keyfile(or device partition) that should be used as the decryption key for the encrypted device.
       # if not specified, you will be prompted for a passphrase instead.
       #keyFile = "/root-part.key";
@@ -70,6 +79,15 @@
     };
   };
 
+  fileSystems."/boot" = {
+    device = "/dev/disk/by-uuid/01CE-1DFD";
+    fsType = "vfat";
+    options = [
+      "fmask=0022"
+      "dmask=0022"
+    ];
+  };
+
   # equal to `mount -t tmpfs tmpfs /`
   fileSystems."/" = {
     device = "tmpfs";
@@ -82,13 +100,8 @@
     ];
   };
 
-  fileSystems."/boot" = {
-    device = "/dev/nvme0n1p1";
-    fsType = "vfat";
-  };
-
   fileSystems."/nix" = {
-    device = "/dev/disk/by-uuid/2f4db246-e65d-4808-8ab4-5365f9dea1ef";
+    inherit device;
     fsType = "btrfs";
     options = [
       "subvol=@nix"
@@ -98,7 +111,7 @@
   };
 
   fileSystems."/tmp" = {
-    device = "/dev/disk/by-uuid/2f4db246-e65d-4808-8ab4-5365f9dea1ef";
+    inherit device;
     fsType = "btrfs";
     options = [
       "subvol=@tmp"
@@ -108,7 +121,7 @@
   };
 
   fileSystems."/persistent" = {
-    device = "/dev/disk/by-uuid/2f4db246-e65d-4808-8ab4-5365f9dea1ef";
+    inherit device;
     fsType = "btrfs";
     options = [
       "subvol=@persistent"
@@ -120,7 +133,7 @@
   };
 
   fileSystems."/snapshots" = {
-    device = "/dev/disk/by-uuid/2f4db246-e65d-4808-8ab4-5365f9dea1ef";
+    inherit device;
     fsType = "btrfs";
     options = [
       "subvol=@snapshots"
@@ -131,7 +144,7 @@
 
   # mount swap subvolume in readonly mode.
   fileSystems."/swap" = {
-    device = "/dev/disk/by-uuid/2f4db246-e65d-4808-8ab4-5365f9dea1ef";
+    inherit device;
     fsType = "btrfs";
     options = [
       "subvol=@swap"
@@ -161,9 +174,7 @@
   # still possible to use this option, but it's recommended to use it in conjunction
   # with explicit per-interface declarations with `networking.interfaces.<interface>.useDHCP`.
   networking.useDHCP = lib.mkDefault true;
-  # networking.interfaces.enp230s0f1u1.useDHCP = lib.mkDefault true;
-  # networking.interfaces.wlp229s0.useDHCP = lib.mkDefault true;
+  # networking.interfaces.wlan0.useDHCP = lib.mkDefault true;
 
-  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
-  hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+  nixpkgs.hostPlatform = lib.mkDefault "aarch64-linux";
 }

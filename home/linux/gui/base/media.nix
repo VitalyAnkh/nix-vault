@@ -6,26 +6,29 @@
 }:
 # media - control and enjoy audio/video
 {
-  home.packages = with pkgs-unstable; [
-    # audio control
-    pavucontrol
-    playerctl
-    pulsemixer
-    imv # simple image viewer
+  home.packages =
+    with pkgs-unstable;
+    [
+      # audio control
+      pavucontrol
+      playerctl
+      pulsemixer
+      imv # simple image viewer
 
-    # video/audio tools
-    libva-utils
-    vdpauinfo
-    vulkan-tools
-    glxinfo
-    nvitop
-    mpvc
-    vlc
+      # video/audio tools
+      libva-utils
+      vdpauinfo
+      vulkan-tools
+      glxinfo
+      nvitop
+      mpvc
+      vlc
 
-    qbittorrent-enhanced
-
-    (zoom-us.override { hyprlandXdgDesktopPortalSupport = true; })
-  ];
+      qbittorrent-enhanced
+    ]
+    ++ (lib.optionals pkgs.stdenv.isx86_64 [
+      (zoom-us.override { hyprlandXdgDesktopPortalSupport = true; })
+    ]);
 
   programs.mpv = {
     enable = true;
