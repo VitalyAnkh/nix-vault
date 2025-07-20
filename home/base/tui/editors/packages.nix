@@ -128,17 +128,6 @@
         nodePackages."@tailwindcss/language-server"
         emmet-ls
       ]
-      # -*- Lisp like Languages -*-#
-      # ++ [
-      #   guile
-      #   racket-minimal
-      #   fnlfmt # fennel
-      #   (
-      #     if pkgs.stdenv.isLinux && pkgs.stdenv.isx86
-      #     then pkgs-unstable.akkuPackages.scheme-langserver
-      #     else pkgs.emptyDirectory
-      #   )
-      # ]
       ++ [
         proselint # English prose linter
 
@@ -185,7 +174,7 @@
       ]
       # -*- Lisp like Languages -*-#
       ++ [
-        guile
+        # guile
         racket-minimal
         fnlfmt # fennel
         (if pkgs.stdenv.isDarwin then pkgs.emptyDirectory else pkgs-unstable.akkuPackages.scheme-langserver)

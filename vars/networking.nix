@@ -41,10 +41,10 @@ rec {
     eva = {
       # Desktop PC
       # VR_TODO: what the ipv6 address should be?
-      iface = "wlp14s0";
-      ipv4 = "192.168.10.1";
-      # iface = "enp5s0";
-      # ipv4 = "192.168.5.100";
+      # iface = "wlp14s0";
+      # ipv4 = "192.168.10.1";
+      iface = "enp15s0";
+      ipv4 = "192.168.31.126";
       ipv6 = "fe80::10"; # Link-local Address
     };
     aquamarine = {
