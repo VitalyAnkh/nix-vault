@@ -4,7 +4,7 @@
   ...
 }:
 {
-  home.packages = with pkgs; [
+  home.packages = with pkgs-unstable; [
     # GUI apps
     # e-book viewer(.epub/.mobi/...)
     # do not support .pdf
@@ -17,6 +17,8 @@
     # remote desktop(rdp connect)
     remmina
     freerdp # required by remmina
+
+    flameshot
 
     # my custom hardened packages
     pkgs.nixpaks.qq

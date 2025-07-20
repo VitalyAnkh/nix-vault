@@ -170,6 +170,11 @@ in
         ".vscode-insiders"
         ".config/Code - Insiders"
 
+        # nvidia profiling tools: nsight-system and nsight-compute
+        ".config/NVIDIA Corporation/"
+        ".nsightsystems"
+        ".nsightcompute"
+
         # cursor ai editor
         ".cursor"
         ".config/Cursor"
