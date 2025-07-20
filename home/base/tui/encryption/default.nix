@@ -6,7 +6,7 @@
 {
   home.packages = with pkgs; [
     age
-    pkgs-unstable.sops
+    sops
     rclone
   ];
 }

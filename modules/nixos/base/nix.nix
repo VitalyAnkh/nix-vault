@@ -1,6 +1,6 @@
 {
+  config,
   lib,
-  nixpkgs,
   ...
 }:
 {
@@ -19,4 +19,8 @@
   nix.settings.auto-optimise-store = true;
 
   nix.channel.enable = false; # remove nix-channel related tools & configs, we use flakes instead.
+
+  nix.extraOptions = ''
+    !include ${config.age.secrets.nix-access-tokens.path}
+  '';
 }

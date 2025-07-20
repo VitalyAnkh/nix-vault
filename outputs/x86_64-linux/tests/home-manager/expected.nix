@@ -6,7 +6,6 @@ let
   username = myvars.username;
   hosts = [
     "eva"
-    "shoukei-hyprland"
     "ruby"
     "k3s-prod-1-master-1"
   ];

@@ -1,12 +1,7 @@
-{
-  nixos-hardware,
-  myvars,
-  ...
-}:
+{ myvars, ... }:
 #############################################################
 #
-#  Shoukei - NixOS running on Macbook Pro 2020 I5 16G
-#   https://github.com/NixOS/nixos-hardware/tree/master/apple/t2
+#  Shoukei - NixOS running on Macbook Pro 2022 M2 16G
 #
 #############################################################
 let
@@ -14,20 +9,13 @@ let
 in
 {
   imports = [
-    nixos-hardware.nixosModules.apple-t2
-    ./apple-set-os-loader.nix
-    { hardware.myapple-t2.enableAppleSetOsLoader = true; }
-
     ./hardware-configuration.nix
-    ../eva/preservation.nix
+    ../idols-ai/preservation.nix
   ];
-
-  boot.kernelModules = [ "kvm-amd" ];
-  boot.extraModprobeConfig = "options kvm_amd nested=1"; # for amd cpu
 
   networking = {
     inherit hostName;
-    inherit (myvars.networking) defaultGateway nameservers;
+    inherit (myvars.networking) nameservers;
 
     # configures the network interface(include wireless) via `nmcli` & `nmtui`
     networkmanager.enable = true;
@@ -39,5 +27,5 @@ in
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "25.05"; # Did you read the comment?
+  system.stateVersion = "25.11"; # Did you read the comment?
 }

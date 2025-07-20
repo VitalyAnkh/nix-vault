@@ -49,7 +49,6 @@
       url = "github:lnl7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs-darwin";
     };
-    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
 
     # home-manager, used for managing user configuration
     home-manager = {
@@ -153,6 +152,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nixos-apple-silicon = {
+      # 2025-07-04
+      url = "github:nix-community/nixos-apple-silicon/eba4b40c816e5aff8951ae231ac237e8aab8ec1d";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     ########################  Some non-flake repositories  #########################################
 
     # doom-emacs is a configuration framework for GNU Emacs.
@@ -174,6 +179,11 @@
       url = "git+ssh://git@github.com/VitalyAnkh/vr-nix-secrets.git?shallow=1";
       flake = false;
     };
+
+    # my-asahi-firmware = {
+    #   url = "git+ssh://git@github.com/ryan4yin/asahi-firmware.git?shallow=1";
+    #   flake = false;
+    # };
 
     # my wallpapers
     wallpapers = {
