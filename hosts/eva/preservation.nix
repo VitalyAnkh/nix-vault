@@ -173,6 +173,9 @@ in
         ".vscode-insiders"
         ".config/Code - Insiders"
 
+        # godot
+        ".config/godot"
+
         # nvidia profiling tools: nsight-system and nsight-compute
         ".config/NVIDIA Corporation/"
         ".nsightsystems"
