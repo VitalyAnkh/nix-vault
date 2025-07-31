@@ -34,12 +34,11 @@ in
     # https://docs.k3s.io/cli/agent
     extraFlags =
       let
-        flagList =
-          [
-            "--data-dir /var/lib/rancher/k3s"
-          ]
-          ++ (map (label: "--node-label=${label}") nodeLabels)
-          ++ k3sExtraArgs;
+        flagList = [
+          "--data-dir /var/lib/rancher/k3s"
+        ]
+        ++ (map (label: "--node-label=${label}") nodeLabels)
+        ++ k3sExtraArgs;
       in
       pkgs.lib.concatStringsSep " " flagList;
   };

@@ -34,6 +34,13 @@ let
         # To use chrome, we need to allow the installation of non-free software
         config.allowUnfree = true;
       };
+
+      pkgs-x64 = import nixpkgs {
+        system = "x86_64-linux";
+
+        # To use chrome, we need to allow the installation of non-free software
+        config.allowUnfree = true;
+      };
     };
 
   # This is the args for all the haumea modules in this folder.
@@ -103,7 +110,8 @@ in
           map (it: it.colmenaMeta.nodeSpecialArgs or { }) nixosSystemValues
         );
       };
-  } // lib.attrsets.mergeAttrsList (map (it: it.colmena or { }) nixosSystemValues);
+  }
+  // lib.attrsets.mergeAttrsList (map (it: it.colmena or { }) nixosSystemValues);
 
   # macOS Hosts
   darwinConfigurations = lib.attrsets.mergeAttrsList (
@@ -123,7 +131,10 @@ in
     pre-commit-check = pre-commit-hooks.lib.${system}.run {
       src = mylib.relativeToRoot ".";
       hooks = {
-        treefmt.enable = true; # formatter
+        nixfmt-rfc-style = {
+          enable = true;
+          settings.width = 100;
+        };
         # Source code spell checker
         typos = {
           enable = true;
@@ -160,8 +171,7 @@ in
           gcc
           clang-tools
           # Nix-related
-          nixfmt-rfc-style
-          nixfmt-tree
+          nixfmt
           deadnix
           statix
           # spell checker
@@ -178,5 +188,5 @@ in
   );
 
   # Format the nix code in this flake
-  formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixfmt-tree);
+  formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixfmt);
 }

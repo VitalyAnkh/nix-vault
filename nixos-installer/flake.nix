@@ -55,7 +55,7 @@
         shoukei = nixpkgs.lib.nixosSystem {
           system = "aarch64-linux";
           specialArgs = inputs // {
-            inherit mylib myvars my-asahi-firmware;
+            # inherit mylib myvars my-asahi-firmware;
           };
           modules = [
             { networking.hostName = "shoukei"; }
@@ -69,7 +69,7 @@
             ../modules/nixos/base/ssh.nix
 
             ../hosts/12kingdoms-shoukei/hardware-configuration.nix
-            ../hosts/eva/impermanence.nix
+            # VR_TODO:
             ../hosts/eva/preservation.nix
           ];
         };

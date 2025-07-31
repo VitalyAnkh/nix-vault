@@ -6,7 +6,7 @@
 }:
 {
   # Linux Only Packages, not available on Darwin
-  home.packages = with pkgs; [
+  home.packages = with pkgs-unstable; [
     # misc
     libnotify
     wireguard-tools # manage wireguard vpn manually, via wg-quick
@@ -19,9 +19,8 @@
     virt-viewer # vnc connect to VM, used by kubevirt
 
     (lib.hiPrio pkgs-unstable.cudaPackages.cudatoolkit)
-    pkgs-unstable.cudaPackages.nsight_systems
-    pkgs-unstable.cudaPackages.nsight_compute
-    # (lib.hiPrio pkgs-unstable.cudaPackages.nsight_compute)
+    cudaPackages.nsight_systems
+    cudaPackages.nsight_compute
   ];
 
   # auto mount usb drives

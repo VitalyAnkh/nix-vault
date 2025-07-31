@@ -58,27 +58,26 @@ in
     # https://docs.k3s.io/cli/server
     extraFlags =
       let
-        flagList =
-          [
-            "--write-kubeconfig=${kubeconfigFile}"
-            "--write-kubeconfig-mode=644"
-            "--service-node-port-range=80-32767"
-            "--kube-apiserver-arg='--allow-privileged=true'" # required by kubevirt
-            "--data-dir /var/lib/rancher/k3s"
-            "--etcd-expose-metrics=true"
-            "--etcd-snapshot-schedule-cron='0 */12 * * *'"
-            # disable some features we don't need
-            "--disable-helm-controller" # we use fluxcd instead
-            "--disable=traefik" # deploy our own ingress controller instead
-            "--disable=servicelb" # we use kube-vip instead
-            "--disable-network-policy"
-            "--tls-san=${masterHost}"
-          ]
-          ++ (map (label: "--node-label=${label}") nodeLabels)
-          ++ (map (taint: "--node-taint=${taint}") nodeTaints)
-          ++ (map (arg: "--kubelet-arg=${arg}") kubeletExtraArgs)
-          ++ (lib.optionals disableFlannel [ "--flannel-backend=none" ])
-          ++ k3sExtraArgs;
+        flagList = [
+          "--write-kubeconfig=${kubeconfigFile}"
+          "--write-kubeconfig-mode=644"
+          "--service-node-port-range=80-32767"
+          "--kube-apiserver-arg='--allow-privileged=true'" # required by kubevirt
+          "--data-dir /var/lib/rancher/k3s"
+          "--etcd-expose-metrics=true"
+          "--etcd-snapshot-schedule-cron='0 */12 * * *'"
+          # disable some features we don't need
+          "--disable-helm-controller" # we use fluxcd instead
+          "--disable=traefik" # deploy our own ingress controller instead
+          "--disable=servicelb" # we use kube-vip instead
+          "--disable-network-policy"
+          "--tls-san=${masterHost}"
+        ]
+        ++ (map (label: "--node-label=${label}") nodeLabels)
+        ++ (map (taint: "--node-taint=${taint}") nodeTaints)
+        ++ (map (arg: "--kubelet-arg=${arg}") kubeletExtraArgs)
+        ++ (lib.optionals disableFlannel [ "--flannel-backend=none" ])
+        ++ k3sExtraArgs;
       in
       lib.concatStringsSep " " flagList;
   };
