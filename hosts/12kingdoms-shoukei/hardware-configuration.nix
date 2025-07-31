@@ -6,8 +6,6 @@
   lib,
   pkgs,
   modulesPath,
-  nixos-apple-silicon,
-  # my-asahi-firmware,
   ...
 }:
 let
@@ -16,26 +14,8 @@ in
 {
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
-    nixos-apple-silicon.nixosModules.default
+    ./apple-silicon.nix
   ];
-
-  # Specify path to peripheral firmware files.
-  hardware.asahi = {
-    enable = true;
-    # peripheralFirmwareDirectory = "${my-asahi-firmware}/macbook-pro-m2-a2338";
-
-    # build the Asahi Linux Kernel with Rust support
-    withRust = true;
-    # use apple-silicon's GPU instead of CPU
-    useExperimentalGPUDriver = true;
-    # How to install the Asahi Mesa driver
-    experimentalGPUInstallMode = "driver"; # driver / replace(for non-flakes) / overlay
-  };
-
-  networking.wireless.iwd = {
-    enable = true;
-    settings.General.EnableNetworkConfiguration = true;
-  };
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
@@ -43,11 +23,11 @@ in
   # depending on how you configured your disk mounts, change this to /boot or /boot/efi.
   boot.loader.efi.efiSysMountPoint = "/boot";
 
-  # For ` to < and ~ to > (for those with US keyboards)
-  # boot.extraModprobeConfig = ''
-  #   options hid_apple iso_layout=0
-  # '';
-
+  # Enable binfmt emulation of aarch64-linux, this is required for cross compilation.
+  boot.binfmt.emulatedSystems = [
+    "x86_64-linux"
+    "riscv64-linux"
+  ];
   # supported file systems, so we can mount any removable disks with these filesystems
   boot.supportedFilesystems = lib.mkForce [
     "ext4"

@@ -318,6 +318,8 @@ in
         ".mozilla"
         ".config/google-chrome"
         ".cache/google-chrome"
+        ".config/chromium"
+        ".cache/chromium"
 
         # ======================================
         # CLI data

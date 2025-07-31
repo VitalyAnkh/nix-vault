@@ -16,9 +16,6 @@ in
   networking = {
     inherit hostName;
     inherit (myvars.networking) nameservers;
-
-    # configures the network interface(include wireless) via `nmcli` & `nmtui`
-    networkmanager.enable = true;
   };
 
   # This value determines the NixOS release from which the default

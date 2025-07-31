@@ -40,10 +40,12 @@ let
         modules.secrets.desktop.enable = true;
         modules.secrets.preservation.enable = true;
       }
-    ] ++ base-modules.nixos-modules;
+    ]
+    ++ base-modules.nixos-modules;
     home-modules = [
       { modules.desktop.hyprland.enable = true; }
-    ] ++ base-modules.home-modules;
+    ]
+    ++ base-modules.home-modules;
   };
 in
 {

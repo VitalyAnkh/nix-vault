@@ -75,15 +75,14 @@ in
     # darwin only apps
     utm # virtual machine
   ];
-  environment.variables =
-    {
-      # Fix https://github.com/LnL7/nix-darwin/wiki/Terminfo-issues
-      TERMINFO_DIRS = map (path: path + "/share/terminfo") config.environment.profiles ++ [
-        "/usr/share/terminfo"
-      ];
-    }
-    # Set variables for you to manually install homebrew packages.
-    // homebrew_mirror_env;
+  environment.variables = {
+    # Fix https://github.com/LnL7/nix-darwin/wiki/Terminfo-issues
+    TERMINFO_DIRS = map (path: path + "/share/terminfo") config.environment.profiles ++ [
+      "/usr/share/terminfo"
+    ];
+  }
+  # Set variables for you to manually install homebrew packages.
+  // homebrew_mirror_env;
 
   # Set environment variables for nix-darwin before run `brew bundle`.
   system.activationScripts.homebrew.text = lib.mkBefore ''

@@ -43,10 +43,12 @@ let
         # TODO: remove this option
         nixpkgs.config.allowUnsupportedSstem = true;
       }
-    ] ++ base-modules.nixos-modules;
+    ]
+    ++ base-modules.nixos-modules;
     home-modules = [
       { modules.desktop.hyprland.enable = true; }
-    ] ++ base-modules.home-modules;
+    ]
+    ++ base-modules.home-modules;
   };
 in
 {

@@ -1,7 +1,7 @@
 { myvars, lib, ... }:
 #############################################################
 #
-# EVA - my main computer, with NixOS + 9950x + RTX 4090 GPU, for gaming & daily use
+# EVA - my main computer, with NixOS + 9950x + RTX 4070 Ti Super GPU, for gaming & daily use
 #
 #############################################################
 let
@@ -30,7 +30,9 @@ in
   networking = {
     inherit hostName;
 
-    # we use networkd instead
+    # VR_TODO:
+    # we use NetworkManager
+    # how to use networkd?
     networkmanager.enable = true; # provides nmcli/nmtui for wifi adjustment
     useDHCP = lib.mkForce true;
   };
