@@ -19,6 +19,7 @@ let
   goBin = "${config.home.homeDirectory}/go/bin";
   rustBin = "${config.home.homeDirectory}/.cargo/bin";
   npmBin = "${config.home.homeDirectory}/.npm/bin";
+  pnpmBin = "${config.home.homeDirectory}/.local/share/pnpm";
 in
 {
   # only works in bash/zsh, not nushell
@@ -35,14 +36,14 @@ in
     enable = true;
     enableCompletion = true;
     bashrcExtra = ''
-      export PATH="$PATH:${localBin}:${goBin}:${rustBin}:${npmBin}"
+      export PATH="$PATH:${localBin}:${pnpmBin}:${goBin}:${rustBin}:${npmBin}"
     '';
   };
 
   # NOTE: only works in bash/zsh, not nushell
   # home.shellAliases = shellAliases;
 
-  # NOTE: nushell will be launched in bash, so it can inherit all the eenvironment variables.
+  # NOTE: nushell will be launched in bash, so it can inherit all the environment variables.
   programs.nushell = {
     enable = true;
     package = pkgs-unstable.nushell;
