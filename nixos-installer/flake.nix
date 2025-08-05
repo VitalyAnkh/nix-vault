@@ -31,7 +31,7 @@
     in
     {
       nixosConfigurations = {
-        ai = nixpkgs.lib.nixosSystem {
+        eva = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           specialArgs = inputs // {
             inherit mylib myvars;
@@ -49,6 +49,27 @@
 
             ../hosts/eva/hardware-configuration.nix
             ../hosts/eva/preservation.nix
+          ];
+        };
+
+        muon = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = inputs // {
+            inherit mylib myvars;
+          };
+
+          modules = [
+            { networking.hostName = "muon"; }
+
+            ./configuration.nix
+
+            ../modules/base
+            ../modules/nixos/base/i18n.nix
+            ../modules/nixos/base/user-group.nix
+            ../modules/nixos/base/ssh.nix
+
+            ../hosts/muon/hardware-configuration.nix
+            ../hosts/muon/preservation.nix
           ];
         };
 
