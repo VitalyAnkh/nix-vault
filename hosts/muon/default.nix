@@ -29,6 +29,9 @@ in
 
   zramSwap.memoryPercent = lib.mkForce 20;
 
+  # Enable SSH password authentication for this host
+  services.openssh.settings.PasswordAuthentication = lib.mkForce true;
+
   networking = {
     inherit hostName;
 
