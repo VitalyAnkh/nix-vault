@@ -1,4 +1,8 @@
-{ myvars, ... }:
+{
+  lib,
+  myvars,
+  ...
+}:
 #############################################################
 #
 #  Shoukei - NixOS running on Macbook Pro 2022 M2 16G
@@ -11,8 +15,6 @@ in
   imports = [
     ./hardware-configuration.nix
     ../idols-ai/preservation.nix
-
-    ./clash-verge.nix
   ];
 
   networking = {
