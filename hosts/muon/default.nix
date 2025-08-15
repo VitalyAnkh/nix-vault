@@ -18,11 +18,19 @@ in
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
     ./nvidia.nix
+    ./users.nix  # Multi-user configuration for muon machine
 
     ./preservation.nix
     #./boot.nix
     #./secureboot.nix
     ./gnome.nix
+  ];
+
+  # Disable the global user-group.nix module since we have our own users.nix
+  # Disable the global key-remap.nix module since we have user-specific xremap
+  disabledModules = [ 
+    "../../modules/nixos/base/user-group.nix" 
+    "../../modules/nixos/base/key-remap.nix"
   ];
 
   boot.loader.systemd-boot.enable = true;
