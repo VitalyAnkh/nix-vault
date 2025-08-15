@@ -1,15 +1,12 @@
-{ xremap-flake, ... }:
+# This file configures xremap settings for the vitalyr user only
+# The xremap module is already imported by key-remap.nix
+{ pkgs, myvars, ... }:
 {
-  # Import xremap home-manager module
-  imports = [
-    xremap-flake.homeManagerModules.default
-  ];
-
-  # Configure xremap for user service (only for vitalyr user)
+  # Configure xremap as a system service with user restriction
   services.xremap = {
-    # Run as user service instead of system service
-    serviceMode = "user";
-    
+    # Specify the user under which the service runs
+    userName = myvars.username; # This will be "vitalyr"
+
     config = {
       # Modmap for single key rebinds
       modmap = [
