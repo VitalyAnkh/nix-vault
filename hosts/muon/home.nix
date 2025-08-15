@@ -3,9 +3,6 @@ let
   hostName = "muon"; # Define your hostname.
 in
 {
-  imports = [
-    ./xremap.nix  # User-specific xremap configuration
-  ];
   modules.desktop = {
     hyprland = {
       nvidia = true;
