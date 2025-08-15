@@ -208,9 +208,9 @@ in
         ".local/share/qBittorrent"
 
         # vlc
-        "~/.config/vlc/"
+        ".config/vlc/"
         # mpv
-        "~/.config/mpv/"
+        ".config/mpv/"
 
         # ======================================
         # Cloud Native
