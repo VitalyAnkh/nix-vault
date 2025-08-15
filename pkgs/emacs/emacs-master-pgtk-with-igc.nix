@@ -12,7 +12,7 @@ let
   source-emacs = source-emacs-master-igc;
 in
 (emacs30.override {
-  stdenv = ccacheStdenv;
+  #stdenv = ccacheStdenv;
   withPgtk = true;
   # toolkit = "lucid";
   # withCairo = false;
