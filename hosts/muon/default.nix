@@ -27,7 +27,7 @@ in
 
   boot.loader.systemd-boot.enable = true;
 
-  zramSwap.memoryPercent = lib.mkForce 20;
+  zramSwap.memoryPercent = lib.mkForce 10;
 
   # Enable SSH password authentication for this host
   services.openssh.settings.PasswordAuthentication = lib.mkForce true;
