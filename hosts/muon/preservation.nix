@@ -387,6 +387,9 @@ in
         }
       ];
     };
+  }
+  // {
+    users = (import ./preservation-users.nix).users;
   };
 
   # Create some directories with custom permissions.
@@ -409,6 +412,7 @@ in
         group = "users";
         mode = "0755";
       };
+      additionalUsers = import ./preservation-users.nix;
     in
     {
       "/home/${username}/.config".d = permission;
@@ -418,7 +422,8 @@ in
       "/home/${username}/.local/state".d = permission;
       "/home/${username}/.local/state/nix".d = permission;
       "/home/${username}/.terraform.d".d = permission;
-    };
+    }
+    // additionalUsers.tmpfiles;
 
   # systemd-machine-id-commit.service would fail but it is not relevant
   # in this specific setup for a persistent machine-id so we disable it
