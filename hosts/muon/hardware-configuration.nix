@@ -16,20 +16,21 @@
   ];
 
   boot.initrd.availableKernelModules = [
-    "nvme"
-    "thunderbolt"
     "xhci_pci"
     "ahci"
+    "nvme"
+    "thunderbolt"
     "usbhid"
     "usb_storage"
     "sd_mod"
   ];
+  boot.initrd.kernelModules = [ ];
+
   boot.extraModprobeConfig = ''
     options nvidia_modeset vblank_sem_control=0
   '';
-  boot.initrd.kernelModules = [ ];
   boot.kernelModules = [
-    "kvm-amd"
+    "kvm-intel"
     "nvidia"
     "nvidia-uvm"
   ];
@@ -73,53 +74,52 @@
   };
 
   fileSystems."/nix" = {
-    device = "/dev/disk/by-uuid/97058ddf-56de-4266-9379-ecc7b18cc835";
+    device = "/dev/disk/by-uuid/e2e594be-3bfc-4815-9011-7cc217c9cdf6";
     fsType = "btrfs";
     options = [
       "subvol=@nix"
-      "noatime"
       "compress-force=zstd:5"
+      "noatime"
     ];
   };
 
   fileSystems."/gnu" = {
-    device = "/dev/disk/by-uuid/97058ddf-56de-4266-9379-ecc7b18cc835";
+    device = "/dev/disk/by-uuid/e2e594be-3bfc-4815-9011-7cc217c9cdf6";
     fsType = "btrfs";
     options = [ "subvol=@guix" ];
   };
 
   fileSystems."/tmp" = {
-    device = "/dev/disk/by-uuid/97058ddf-56de-4266-9379-ecc7b18cc835";
+    device = "/dev/disk/by-uuid/e2e594be-3bfc-4815-9011-7cc217c9cdf6";
     fsType = "btrfs";
     options = [ "subvol=@tmp" ];
   };
 
   fileSystems."/swap" = {
-    device = "/dev/disk/by-uuid/97058ddf-56de-4266-9379-ecc7b18cc835";
+    device = "/dev/disk/by-uuid/e2e594be-3bfc-4815-9011-7cc217c9cdf6";
     fsType = "btrfs";
     options = [ "subvol=@swap" ];
   };
 
   fileSystems."/persistent" = {
-    device = "/dev/disk/by-uuid/97058ddf-56de-4266-9379-ecc7b18cc835";
+    device = "/dev/disk/by-uuid/e2e594be-3bfc-4815-9011-7cc217c9cdf6";
     fsType = "btrfs";
     options = [
       "subvol=@persistent"
       "noatime"
       "compress-force=zstd:5"
     ];
+    neededForBoot = true;
   };
 
   fileSystems."/snapshots" = {
-    device = "/dev/disk/by-uuid/97058ddf-56de-4266-9379-ecc7b18cc835";
+    device = "/dev/disk/by-uuid/e2e594be-3bfc-4815-9011-7cc217c9cdf6";
     fsType = "btrfs";
-    options = [
-      "subvol=@snapshots"
-    ];
+    options = [ "subvol=@snapshots" ];
   };
 
   fileSystems."/boot" = {
-    device = "/dev/disk/by-uuid/B3F1-B9A6";
+    device = "/dev/disk/by-uuid/B3CD-7DC6";
     fsType = "vfat";
     options = [
       "fmask=0022"
@@ -134,13 +134,14 @@
   # still possible to use this option, but it's recommended to use it in conjunction
   # with explicit per-interface declarations with `networking.interfaces.<interface>.useDHCP`.
   networking.useDHCP = lib.mkDefault true;
-  # networking.interfaces.enp3s0.useDHCP = lib.mkDefault true;
-  # networking.interfaces.enp5s0.useDHCP = lib.mkDefault true;
+  # networking.interfaces.eno1.useDHCP = lib.mkDefault true;
+  # networking.interfaces.eno2.useDHCP = lib.mkDefault true;
+  # networking.interfaces.enp0s20f0u4u2c2.useDHCP = lib.mkDefault true;
   # networking.interfaces.Meta.useDHCP = lib.mkDefault true;
-  # networking.interfaces.wlp4s0.useDHCP = lib.mkDefault true;
 
+  services.pulseaudio.enable = false;
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
-  hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
-  hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.beta;
+  # VR_TODO
   services.nixseparatedebuginfod.enable = true;
+  hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }
