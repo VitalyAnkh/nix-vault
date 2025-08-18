@@ -119,42 +119,89 @@ in
   );
 
   # Packages
-  packages = forAllSystems (system: allSystems.${system}.packages or { });
+  packages = forAllSystems (
+    system:
+    let
+      pkgs = import nixpkgs {
+        inherit system;
+        config.allowUnfree = true;
+        overlays = [
+          (
+            final: prev:
+            let
+              sources = prev.callPackage ../pkgs/_sources/generated.nix { };
+            in
+            mylib.callPackageFromDirectory {
+              callPackage = prev.lib.callPackageWith (prev // sources // (genSpecialArgs system));
+              directory = ../pkgs;
+            }
+          )
+        ];
+      };
+    in
+    (allSystems.${system}.packages or { })
+    // (
+      # Export all packages from pkgs/ directory
+      let
+        customPkgs = mylib.callPackageFromDirectory {
+          callPackage = pkgs.lib.callPackageWith (
+            pkgs // (pkgs.callPackage ../pkgs/_sources/generated.nix { }) // (genSpecialArgs system)
+          );
+          directory = ../pkgs;
+        };
+      in
+      customPkgs
+    )
+  );
 
   # Eval Tests for all NixOS & darwin systems.
   evalTests = lib.lists.all (it: it.evalTests == { }) allSystemValues;
 
-  checks = forAllSystems (system: {
-    # eval-tests per system
-    eval-tests = allSystems.${system}.evalTests == { };
+  checks = forAllSystems (
+    system:
+    let
+      pkgs = nixpkgs.legacyPackages.${system};
+    in
+    {
+      # eval-tests per system
+      eval-tests = pkgs.runCommand "eval-tests" { } ''
+        ${
+          if allSystems.${system}.evalTests == { } then
+            "echo 'All eval tests passed'"
+          else
+            "echo 'Eval tests failed'; exit 1"
+        }
+        touch $out
+      '';
 
-    pre-commit-check = pre-commit-hooks.lib.${system}.run {
-      src = mylib.relativeToRoot ".";
-      hooks = {
-        nixfmt-rfc-style = {
-          enable = true;
-          settings.width = 100;
-        };
-        # Source code spell checker
-        typos = {
-          enable = true;
-          settings = {
-            write = true; # Automatically fix typos
-            configPath = "./.typos.toml"; # relative to the flake root
+      pre-commit-check = pre-commit-hooks.lib.${system}.run {
+        src = mylib.relativeToRoot ".";
+        hooks = {
+          nixfmt-rfc-style = {
+            enable = true;
+            settings.width = 100;
           };
-        };
-        prettier = {
-          enable = true;
-          settings = {
-            write = true; # Automatically format files
-            configPath = "./.prettierrc.yaml"; # relative to the flake root
+          # Source code spell checker
+          typos = {
+            enable = true;
+            settings = {
+              write = true; # Automatically fix typos
+              configPath = "./.typos.toml"; # relative to the flake root
+            };
           };
+          prettier = {
+            enable = true;
+            settings = {
+              write = true; # Automatically format files
+              configPath = "./.prettierrc.yaml"; # relative to the flake root
+            };
+          };
+          # deadnix.enable = true; # detect unused variable bindings in `*.nix`
+          # statix.enable = true; # lints and suggestions for Nix code(auto suggestions)
         };
-        # deadnix.enable = true; # detect unused variable bindings in `*.nix`
-        # statix.enable = true; # lints and suggestions for Nix code(auto suggestions)
       };
-    };
-  });
+    }
+  );
 
   # Development Shells
   devShells = forAllSystems (
