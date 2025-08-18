@@ -100,7 +100,6 @@
             ];
 
             shellHook = ''
-              # export GCC_PREFIX="${pkgs.stdenv.cc.cc}"
               export LD_LIBRARY_PATH="${pkgs.stdenv.cc.cc.lib.outPath}/lib:${pkgs.linuxPackages.nvidia_x11}/lib:${pkgs.zlib}/lib:$LD_LIBRARY_PATH"
               export CUDA_PATH=${pkgs.cudatoolkit}
               export EXTRA_LDFLAGS="-L/lib -L${pkgs.linuxPackages.nvidia_x11}/lib"
@@ -108,7 +107,6 @@
               export CMAKE_PREFIX_PATH="${pkgs.glfw}:${pkgs.fmt.dev}:$CMAKE_PREFIX_PATH"
               export PKG_CONFIG_PATH="${pkgs.glfw}/lib/pkgconfig:${pkgs.fmt.dev}/lib/pkgconfig:$PKG_CONFIG_PATH"
               # export NIX_CFLAGS_COMPILE=" -isystem ${pkgs.glibc.dev}/include -isystem ${pkgs.glibc_multi.dev}/include $NIX_CFLAGS_COMPILE"
-              # export NIX_CFLAGS_COMPILE=" -isystem ${pkgs.glibc.dev}/include $NIX_CFLAGS_COMPILE"
               export NIX_LDFLAGS="-L${pkgs.glibc_multi.out}/lib $NIX_LDFLAGS"
               # export CPLUS_INCLUDE_PATH="${pkgs.stdenv.cc.cc}/include/c++/${pkgs.stdenv.cc.cc.version}:${pkgs.stdenv.cc.cc}/include/c++/${pkgs.stdenv.cc.cc.version}/x86_64-unknown-linux-gnu"
               # export CPATH="${pkgs.glibc.dev}/include:$CPATH"

@@ -49,9 +49,9 @@ rec {
     };
     muon = {
       # Desktop PC
-      iface = "wlp4s0";
-      ipv4 = "10.7.210.51";
-      ipv6 = "fe80::10"; # Link-local Address
+      iface = "eno2";
+      ipv4 = "10.7.220.9";
+      ipv6 = "fe80::c98c"; # Link-local Address
     };
     aquamarine = {
       # VM

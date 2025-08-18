@@ -16,7 +16,7 @@
       inkscape # vector graphics
       krita # digital painting
       musescore # music notation
-      reaper # audio production
+      # reaper # audio production
       # sonic-pi # music programming
 
       # 2d game design
