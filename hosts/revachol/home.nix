@@ -40,6 +40,13 @@ in
     curl
     wget
     nmap
+
+    # Custom packages from pkgs directory (added via overlay)
+    emacs-master-pgtk-with-igc
+    emacs-lsp-booster
+    fcitx5-rime
+    nutstore-client
+    # nutstore-nautilus # Only if using nautilus file manager
   ];
 
   # Shell aliases
