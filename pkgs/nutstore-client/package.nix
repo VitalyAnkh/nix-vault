@@ -49,7 +49,7 @@ stdenv.mkDerivation rec {
     gobject-introspection
     libnotify
     libappindicator-gtk3
-    pkgs.webkitgtk
+    pkgs.webkitgtk_6_0
 
     (python3.withPackages (p: with p; [ pygobject3 ]))
 
