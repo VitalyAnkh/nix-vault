@@ -22,6 +22,12 @@ in
     };
   };
 
+  # Disable man for it causing infinit recursion issue
+  programs.man = {
+    enable = false;
+    generateCaches = false;
+  };
+
   # Host-specific packages
   home.packages = with pkgs; [
     # Development tools that work on non-NixOS
