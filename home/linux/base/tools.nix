@@ -19,7 +19,7 @@
     virt-viewer # vnc connect to VM, used by kubevirt
 
     (lib.hiPrio pkgs-unstable.cudaPackages.cudatoolkit)
-    cudaPackages.nsight_systems
+    (lib.lowPrio pkgs-unstable.cudaPackages.nsight_systems)
     cudaPackages.nsight_compute
   ];
 
