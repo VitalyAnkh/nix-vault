@@ -19,6 +19,9 @@ let
     darwinConfigurations = lib.attrsets.mergeAttrsList (
       map (it: it.darwinConfigurations or { }) dataWithoutPaths
     );
+    homeConfigurations = lib.attrsets.mergeAttrsList (
+      map (it: it.homeConfigurations or { }) dataWithoutPaths
+    );
   };
 in
 outputs

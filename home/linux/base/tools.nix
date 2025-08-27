@@ -18,9 +18,13 @@
     # ventoy
     virt-viewer # vnc connect to VM, used by kubevirt
 
-    (lib.hiPrio pkgs-unstable.cudaPackages.cudatoolkit)
-    (lib.lowPrio pkgs-unstable.cudaPackages.nsight_systems)
-    cudaPackages.nsight_compute
+    # CUDA packages with proper priority to avoid conflicts
+    # cudatoolkit has highest priority (lowest number)
+    (lib.setPrio 10 cudaPackages.cudatoolkit)
+    # nsight_compute has medium priority
+    (lib.setPrio 20 cudaPackages.nsight_compute)
+    # nsight_systems has lowest priority (highest number)
+    (lib.setPrio 30 cudaPackages.nsight_systems)
   ];
 
   # auto mount usb drives

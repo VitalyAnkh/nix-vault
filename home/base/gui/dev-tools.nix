@@ -1,7 +1,7 @@
-{ pkgs, ... }:
+{ pkgs-unstable, ... }:
 {
   home.packages =
-    with pkgs;
+    with pkgs-unstable;
     [
       mitmproxy # http/https proxy tool
       wireshark # network analyzer
@@ -13,6 +13,9 @@
       ninja
       uv
       trash-cli
+
+      # use nvfetcher with nix-vault/pkgs/
+      nvfetcher
 
       # IDEs
       jetbrains-toolbox

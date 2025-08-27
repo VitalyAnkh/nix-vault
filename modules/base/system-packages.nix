@@ -15,9 +15,6 @@
     git-lfs # used by huggingface models
     pv
 
-    # use nvfetcher with nix-vault/pkgs/
-    nvfetcher
-
     # archives
     zip
     xz

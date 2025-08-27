@@ -56,6 +56,7 @@
           #-- c/c++
           cmake
           cmake-language-server
+          ninja
           gnumake
           checkmake
           # c/c++ compiler, required by nvim-treesitter!
