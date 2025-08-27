@@ -25,6 +25,7 @@ in
     #./boot.nix
     #./secureboot.nix
     ./gnome.nix
+    ./docker.nix # Use real Docker instead of Podman for this host
   ];
 
   # Disable the global user-group.nix module since we have our own users.nix

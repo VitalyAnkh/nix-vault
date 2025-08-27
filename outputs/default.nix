@@ -118,6 +118,11 @@ in
     map (it: it.darwinConfigurations or { }) darwinSystemValues
   );
 
+  # Standalone Home-Manager configurations for non-NixOS systems
+  homeConfigurations = lib.attrsets.mergeAttrsList (
+    map (it: it.homeConfigurations or { }) allSystemValues
+  );
+
   # Packages
   packages = forAllSystems (
     system:

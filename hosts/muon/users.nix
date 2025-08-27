@@ -14,7 +14,8 @@
     "xwu" = { };
     "cxu" = { };
     "zzhou" = { };
-    podman = { };
+    docker = { };  # Docker group for muon
+    podman = { };  # Keep podman group as well
     wireshark = { };
     # for android platform tools's udev rules
     adbusers = { };
@@ -35,7 +36,8 @@
       "users"
       "networkmanager"
       "wheel"
-      "podman"
+      "docker"  # Added docker group
+      "podman"  # Keep podman group as well
       "wireshark"
       "adbusers"
       "libvirtd"
@@ -53,7 +55,8 @@
       "users"
       "networkmanager"
       "wheel"
-      "podman"
+      "docker"  # Added docker group
+      "podman"  # Keep podman group as well
     ];
   };
 
@@ -68,7 +71,8 @@
       "users"
       "networkmanager"
       "wheel"
-      "podman"
+      "docker"  # Added docker group
+      "podman"  # Keep podman group as well
     ];
   };
 
@@ -83,7 +87,8 @@
       "users"
       "networkmanager"
       "wheel"
-      "podman"
+      "docker"  # Added docker group
+      "podman"  # Keep podman group as well
     ];
   };
 

@@ -49,8 +49,8 @@
 
   # boot.kernelPackages = pkgs-unstable.linuxPackages_latest;
   # boot.kernelPackages = pkgs-unstable.linuxPackages_xanmod_latest;
-  # boot.kernelPackages = pkgs-unstable.linuxPackages_zen;
-  boot.kernelPackages = pkgs-unstable.linuxPackages_lqx;
+  boot.kernelPackages = pkgs-unstable.linuxPackages_zen;
+  # boot.kernelPackages = pkgs-unstable.linuxPackages_lqx;
 
   # supported file systems, so we can mount any removable disks with these filesystems
   boot.supportedFilesystems = [

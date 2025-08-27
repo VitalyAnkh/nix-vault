@@ -3,6 +3,7 @@
   colmenaSystem = import ./colmenaSystem.nix;
   macosSystem = import ./macosSystem.nix;
   nixosSystem = import ./nixosSystem.nix;
+  homeManagerConfiguration = import ./homeManagerConfiguration.nix;
 
   attrs = import ./attrs.nix { inherit lib; };
 

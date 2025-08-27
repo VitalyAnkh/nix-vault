@@ -20,6 +20,7 @@ let
   rustBin = "${config.home.homeDirectory}/.cargo/bin";
   npmBin = "${config.home.homeDirectory}/.npm/bin";
   pnpmBin = "${config.home.homeDirectory}/.local/share/pnpm";
+  miniforgeBin = "${config.home.homeDirectory}/miniforge3/bin";
 in
 {
   # only works in bash/zsh, not nushell

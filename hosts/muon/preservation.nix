@@ -60,9 +60,9 @@ in
       }
 
       # containers
-      # "/var/lib/docker"
+      "/var/lib/docker" # Docker data directory (enabled for muon)
       "/var/lib/cni"
-      "/var/lib/containers"
+      "/var/lib/containers" # Podman directory (not needed for muon)
 
       # other data
       "/var/lib/flatpak"
@@ -89,307 +89,311 @@ in
     ];
 
     # the following directories will be passed to /persistent/home/$USER
-    users.${username} = {
-      commonMountOptions = [
-        "x-gvfs-hide"
-      ];
-      directories = [
-        # ======================================
-        # XDG Directories
-        # ======================================
+    users = {
+      ${username} = {
+        commonMountOptions = [
+          "x-gvfs-hide"
+        ];
+        directories = [
+          # ======================================
+          # XDG Directories
+          # ======================================
 
-        "Downloads"
-        "Music"
-        "Pictures"
-        "Documents"
-        "Videos"
+          "Downloads"
+          "Music"
+          "Pictures"
+          "Documents"
+          "Videos"
 
-        # ======================================
-        # Codes / Work / Playground
-        # ======================================
-        "projects"
-        "nix-vault"
-        "tmp"
+          # ======================================
+          # Codes / Work / Playground
+          # ======================================
+          "projects"
+          "nix-vault"
+          "tmp"
 
-        # android tools
-        "Android"
-        # Android Studio
-        ".config/Google"
-        ".android"
+          # android tools
+          "Android"
+          # Android Studio
+          ".config/Google"
+          ".android"
 
-        # google gemini
-        ".gemini"
+          # google gemini
+          ".gemini"
 
-        "Zotero"
-        # ".zotero"
+          "Zotero"
+          # ".zotero"
 
-        # Nutstore sync folder
-        "nutstore_files"
-        "Nutstore Files"
+          # Nutstore sync folder
+          "nutstore_files"
+          "Nutstore Files"
 
-        # lean prover
-        ".elan"
+          # lean prover
+          ".elan"
 
-        # some cache, like clipboard history, sccache
-        ".cache"
+          # some cache, like clipboard history, sccache
+          ".cache"
 
-        # warp-terminal config
-        ".config/warp-terminal"
+          # warp-terminal config
+          ".config/warp-terminal"
 
-        # gnome configurations
-        ".config/dconf"
+          # gnome configurations
+          ".config/dconf"
 
-        ".config/clash-nyanpasu"
-        ".config/hiddify"
-        ".config/flclash"
+          ".config/clash-nyanpasu"
+          ".config/hiddify"
+          ".config/flclash"
 
-        # ======================================
-        # Nix / Home Manager Profiles
-        # ======================================
+          # ======================================
+          # Nix / Home Manager Profiles
+          # ======================================
 
-        ".local/state/home-manager"
-        ".local/state/nix/profiles"
-        ".local/share/nix"
-        ".cache/nix"
-        ".cache/nixpkgs-review"
+          ".local/state/home-manager"
+          ".local/state/nix/profiles"
+          ".local/share/nix"
+          ".cache/nix"
+          ".cache/nixpkgs-review"
 
-        # ======================================
-        # IDE / Editors
-        # ======================================
+          # ======================================
+          # IDE / Editors
+          # ======================================
 
-        # doom-emacs
-        ".config/emacs"
-        ".local/share/doom"
-        ".local/share/emacs"
-        "org" # org files
+          # doom-emacs
+          ".config/emacs"
+          ".local/share/doom"
+          ".local/share/emacs"
+          "org" # org files
 
-        # neovim plugins(wakatime & copilot)
-        ".wakatime"
-        ".config/github-copilot"
+          # neovim plugins(wakatime & copilot)
+          ".wakatime"
+          ".config/github-copilot"
 
-        # vscode
-        ".vscode"
-        ".config/Code"
-        ".vscode-insiders"
-        ".config/Code - Insiders"
+          # vscode
+          ".vscode"
+          ".config/Code"
+          ".vscode-insiders"
+          ".config/Code - Insiders"
 
-        # godot
-        ".config/godot"
+          # godot
+          ".config/godot"
 
-        # nvidia profiling tools: nsight-system and nsight-compute
-        ".config/NVIDIA Corporation/"
-        ".nsightsystems"
-        ".nsightcompute"
+          # nvidia profiling tools: nsight-system and nsight-compute
+          ".config/NVIDIA Corporation/"
+          ".nsightsystems"
+          ".nsightcompute"
 
-        # cursor ai editor
-        ".cursor"
-        ".config/Cursor"
+          # cursor ai editor
+          ".cursor"
+          ".config/Cursor"
 
-        # zed editor
-        ".config/zed"
-        ".local/share/zed"
+          # zed editor
+          ".config/zed"
+          ".local/share/zed"
 
-        # ai agents
-        ".claude"
-        ".gemini"
+          # ai agents
+          ".claude"
+          ".gemini"
 
-        # nvim
-        ".local/share/nvim"
-        ".local/state/nvim"
+          # nvim
+          ".local/share/nvim"
+          ".local/state/nvim"
 
-        # Joplin
-        ".config/joplin" # tui client
-        ".config/Joplin" # joplin-desktop
+          # Joplin
+          ".config/joplin" # tui client
+          ".config/Joplin" # joplin-desktop
 
-        ".local/share/jupyter"
+          ".local/share/jupyter"
 
-        # qbittorrent
-        ".config/qBittorrent"
-        ".local/share/qBittorrent"
+          # qbittorrent
+          ".config/qBittorrent"
+          ".local/share/qBittorrent"
 
-        # vlc
-        ".config/vlc/"
-        # mpv
-        ".config/mpv/"
+          # vlc
+          ".config/vlc/"
+          # mpv
+          ".config/mpv/"
 
-        # ======================================
-        # Cloud Native
-        # ======================================
-        {
-          # pulumi - infrastructure as code
-          directory = ".pulumi";
-          mode = "0700";
-        }
-        {
-          directory = ".aws";
-          mode = "0700";
-        }
-        {
-          directory = ".aliyun";
-          mode = "0700";
-        }
-        {
-          directory = ".config/gcloud";
-          mode = "0700";
-        }
-        {
-          directory = ".docker";
-          mode = "0700";
-        }
-        {
-          directory = ".kube";
-          mode = "0700";
-        }
-        ".terraform.d/plugin-cache" # terraform's plugin cache
+          # ======================================
+          # Cloud Native
+          # ======================================
+          {
+            # pulumi - infrastructure as code
+            directory = ".pulumi";
+            mode = "0700";
+          }
+          {
+            directory = ".aws";
+            mode = "0700";
+          }
+          {
+            directory = ".aliyun";
+            mode = "0700";
+          }
+          {
+            directory = ".config/gcloud";
+            mode = "0700";
+          }
+          {
+            directory = ".docker";
+            mode = "0700";
+          }
+          {
+            directory = ".kube";
+            mode = "0700";
+          }
+          ".terraform.d/plugin-cache" # terraform's plugin cache
 
-        # ======================================
-        # language package managers
-        # ======================================
-        ".npm" # typsescript/javascript
-        "go"
-        ".cargo" # rust
-        ".rustup"
-        ".m2" # java maven
-        ".gradle" # java gradle
-        ".conda" # python generated by `conda-shell`
-        # python pipx
-        ".local/pipx"
-        ".local/bin"
-        # python uv
-        ".local/share/uv"
-        ".cache/uv"
+          # ======================================
+          # language package managers
+          # ======================================
+          ".npm" # typsescript/javascript
+          "go"
+          ".cargo" # rust
+          ".rustup"
+          ".m2" # java maven
+          ".gradle" # java gradle
+          ".conda" # python generated by `conda-shell`
+          # python pipx
+          ".local/pipx"
+          ".local/bin"
+          # python uv
+          ".local/share/uv"
+          ".cache/uv"
 
-        # ======================================
-        # Security
-        # ======================================
+          # ======================================
+          # Security
+          # ======================================
 
-        {
-          directory = ".gnupg";
-          mode = "0700";
-        }
-        {
-          directory = ".ssh";
-          mode = "0700";
-        }
-        {
-          directory = ".pki";
-          mode = "0700";
-        }
+          {
+            directory = ".gnupg";
+            mode = "0700";
+          }
+          {
+            directory = ".ssh";
+            mode = "0700";
+          }
+          {
+            directory = ".pki";
+            mode = "0700";
+          }
 
-        ".local/share/password-store"
-        # gnmome keyrings
-        ".local/share/keyrings"
+          ".local/share/password-store"
+          # gnmome keyrings
+          ".local/share/keyrings"
 
-        # ======================================
-        # Games / Media
-        # ======================================
+          # ======================================
+          # Games / Media
+          # ======================================
 
-        ".steam"
-        ".config/blender"
-        ".config/LDtk"
+          ".steam"
+          ".config/blender"
+          ".config/LDtk"
 
-        ".local/share/Steam"
-        ".local/share/PrismLauncher"
+          ".local/share/Steam"
+          ".local/share/PrismLauncher"
 
-        ".local/share/tiled"
-        ".local/share/GOG.com"
-        ".local/share/StardewValley"
-        ".local/share/feral-interactive"
+          ".local/share/tiled"
+          ".local/share/GOG.com"
+          ".local/share/StardewValley"
+          ".local/share/feral-interactive"
 
-        # ======================================
-        # Instant Messaging
-        # ======================================
-        ".config/QQ"
+          # ======================================
+          # Instant Messaging
+          # ======================================
+          ".config/QQ"
 
-        ".local/share/TelegramDesktop"
+          ".local/share/TelegramDesktop"
 
-        # ======================================
-        # Meeting / Remote Desktop
-        # ======================================
-        ".config/remmina"
-        ".config/freerdp"
-        ".zoom"
+          # ======================================
+          # Meeting / Remote Desktop
+          # ======================================
+          ".config/remmina"
+          ".config/freerdp"
+          ".zoom"
 
-        ".local/share/remmina"
+          ".local/share/remmina"
 
-        # ======================================
-        # browsers
-        # ======================================
-        ".mozilla"
-        ".config/google-chrome"
-        ".cache/google-chrome"
-        ".config/chromium"
-        ".cache/chromium"
+          # ======================================
+          # browsers
+          # ======================================
+          ".mozilla"
+          ".config/google-chrome"
+          ".cache/google-chrome"
+          ".config/chromium"
+          ".cache/chromium"
 
-        # ======================================
-        # CLI data
-        # ======================================
-        ".local/share/atuin"
-        ".local/share/zoxide"
-        ".local/share/direnv"
-        ".local/share/k9s"
-        ".cache/tealdeer" # tldr
+          # ======================================
+          # CLI data
+          # ======================================
+          ".local/share/atuin"
+          ".local/share/zoxide"
+          ".local/share/direnv"
+          ".local/share/k9s"
+          ".cache/tealdeer" # tldr
 
-        # ======================================
-        # Containers
-        # ======================================
-        ".local/share/containers"
-        ".local/share/flatpak"
-        # flatpak app's data
-        ".var"
+          # ======================================
+          # Containers
+          # ======================================
+          ".local/share/containers"
+          ".local/share/flatpak"
+          # flatpak app's data
+          ".var"
 
-        # ======================================
-        # xdg data home & state home
-        # Used by:
-        #  neovim, flatpak, autin, fcitx5, etc...
-        # ======================================
-        # XDG_DATA_HOME
-        ".local/share"
-        # XDG_STATE_HOME
-        ".local/state"
+          # ======================================
+          # xdg data home & state home
+          # Used by:
+          #  neovim, flatpak, autin, fcitx5, etc...
+          # ======================================
+          # XDG_DATA_HOME
+          ".local/share"
+          # XDG_STATE_HOME
+          ".local/state"
 
-        # ======================================
-        # Misc
-        # ======================================
+          # ======================================
+          # Misc
+          # ======================================
 
-        # Clash Verge Rev
-        ".local/share/io.github.clash-verge-rev.clash-verge-rev"
-        ".local/share/clash-verge"
+          # Clash Verge Rev
+          ".local/share/io.github.clash-verge-rev.clash-verge-rev"
+          ".local/share/clash-verge"
 
-        # Audio
-        ".config/pulse"
-        ".local/state/wireplumber"
+          # Audio
+          ".config/pulse"
+          ".local/state/wireplumber"
 
-        # flatpak app's data
-        ".var"
+          # flatpak app's data
+          ".var"
 
-        # Digital Painting
-        ".local/share/krita"
+          # Digital Painting
+          ".local/share/krita"
 
-        ".config/nushell"
-      ];
-      files = [
-        {
-          file = ".wakatime.cfg";
-          how = "symlink";
-        }
-        {
-          file = ".config/zoomus.conf";
-          how = "symlink";
-        }
-        {
-          file = ".config/zoom.conf";
-          how = "symlink";
-        }
-        {
-          file = ".claude.json";
-          how = "symlink";
-        }
-      ];
-    };
-  }
-  // {
-    users = (import ./preservation-users.nix).users;
+          ".config/nushell"
+        ];
+        files = [
+          {
+            file = ".wakatime.cfg";
+            how = "symlink";
+          }
+          {
+            file = ".config/zoomus.conf";
+            how = "symlink";
+          }
+          {
+            file = ".config/zoom.conf";
+            how = "symlink";
+          }
+          {
+            file = ".claude.json";
+            how = "symlink";
+          }
+        ];
+      };
+    }
+    // (import ./preservation-users.nix).users;
+    # CRITICAL FIX: Merge additional users WITH vitalyr's config
+    # The original bug was: users = (import ./preservation-users.nix).users;
+    # This REPLACED the entire users attribute, completely removing vitalyr's preservation!
+    # Now using // to properly merge additional users while keeping vitalyr's config
   };
 
   # Create some directories with custom permissions.

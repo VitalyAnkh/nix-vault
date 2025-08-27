@@ -21,7 +21,7 @@
   # 2. Or just use hardware security keys like Yubikey/CanoKey.
   mainSshAuthorizedKeys = [
     # ssh key on muon
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAII8p/mFG77H2cTJI5CfbzlhKLZ1PW3s3QRB/AN9U+io7 vitalyr@muon"
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMJGKbDEpsgY6KWpJPanPhh8yHCsWbskAU2VNL7QUkBe vitalyr@muon"
     # ssh key on eva, Gigabyte X870E, AMD Ryzen 9 9950x
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAI7hWDjjuTEXcd1pckYak39KkQWtuI/jvVeDgAz0CwP vitalyr@eva"
     # ssh key on rex, Lenovo Y9000P
