@@ -27,6 +27,22 @@ let
       directory = ../pkgs;
     };
 
+  # Nixpaks overlay for standalone home-manager (only for Linux)
+  nixpaksOverlay = 
+    if (lib.strings.hasInfix "linux" system) && (inputs ? nixpak) then
+      let
+        # Import the nixpaks module to extract its overlay
+        nixpaksModule = import (mylib.relativeToRoot "hardening/nixpaks/default.nix") {
+          # Pass dummy pkgs just for module structure - the actual overlay uses super
+          pkgs = import nixpkgs { inherit system; };
+          inherit (inputs) nixpak;
+        };
+      in
+        # Extract and return the overlay from the module
+        builtins.head nixpaksModule.nixpkgs.overlays
+    else
+      (_: _: {});
+
   # Determine which nixpkgs to use based on system
   pkgs =
     if (lib.strings.hasInfix "darwin" system) then
@@ -39,7 +55,7 @@ let
       import nixpkgs {
         inherit system;
         config.allowUnfree = true;
-        overlays = [ customOverlay ];
+        overlays = [ customOverlay nixpaksOverlay ];
       };
 in
 home-manager.lib.homeManagerConfiguration {
@@ -52,7 +68,7 @@ home-manager.lib.homeManagerConfiguration {
       # Basic home-manager settings
       home = {
         inherit username homeDirectory;
-        stateVersion = "25.11";
+        stateVersion = lib.mkDefault "25.11";
       };
 
       # Let home-manager manage itself
