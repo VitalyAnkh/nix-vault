@@ -10,7 +10,7 @@ in
 {
   imports = [
     ./hardware-configuration.nix
-    ../idols-ai/preservation.nix
+    ../eva/preservation.nix
 
     ./clash-verge.nix
   ];
