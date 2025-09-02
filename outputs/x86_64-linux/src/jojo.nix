@@ -12,11 +12,11 @@ let
 
   # Import common configurations from home-manager.nix
   home-manager-config = import ./home-manager.nix args;
-  inherit (home-manager-config) base-home-modules mkHomeConfig;
+  inherit (home-manager-config) base_home_modules mkHomeConfig;
 
   # Minimal modules for low-spec cloud host (TUI only, no GUI)
   minimal-modules = {
-    home-modules = base-home-modules ++ [
+    home-modules = base_home_modules ++ [
       # host specific configuration
       (mylib.relativeToRoot "hosts/${name}/home.nix")
       # No GUI modules - just use base TUI configuration
