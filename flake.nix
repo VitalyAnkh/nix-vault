@@ -61,6 +61,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # https://github.com/winapps-org/winapps
+    winapps = {
+      url = "github:winapps-org/winapps";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # https://github.com/catppuccin/nix
     catppuccin = {
       url = "github:catppuccin/nix";

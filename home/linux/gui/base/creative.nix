@@ -23,10 +23,17 @@
       aseprite # Animated sprite editor & pixel art tool
       pkgs-unstable.godot_4
 
+      pkgs-unstable.davinci-resolve-studio
+
       # this app consumes a lot of storage, so do not install it currently
       kicad # 3d printing, eletrical engineering
       nicpkgs.packages.${pkgs.system}.nutstore-client
       nicpkgs.packages.${pkgs.system}.nutstore-nautilus
+
+      pkgs-unstable.logisim-evolution
+      pkgs-unstable.bottles
+      pkgs-unstable.wineWowPackages.waylandFull
+      # pkgs-unstable.wineWowPackages.stagingFull
     ]
     ++ (lib.optionals pkgs.stdenv.isx86_64 [
       # https://github.com/edolstra/nix-warez/blob/master/blender/flake.nix
