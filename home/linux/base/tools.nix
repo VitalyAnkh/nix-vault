@@ -25,6 +25,9 @@
     (lib.setPrio 20 cudaPackages.nsight_compute)
     # nsight_systems has lowest priority (highest number)
     (lib.setPrio 30 cudaPackages.nsight_systems)
+
+    # cross compiling rust
+    # cargo-xwin
   ];
 
   # auto mount usb drives

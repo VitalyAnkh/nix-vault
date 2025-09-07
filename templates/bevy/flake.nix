@@ -68,6 +68,7 @@
                 xorg.libXi
                 xorg.libXrandr # To use the x11 feature
                 libxkbcommon
+                fontconfig
                 wayland # To use the wayland feature
               ])
               ++ (pkgs.lib.optionals pkgs.stdenv.isDarwin [

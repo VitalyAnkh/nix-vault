@@ -4,6 +4,7 @@
   pkgs,
   pkgs-unstable,
   firefox,
+  winapps,
   ...
 }:
 {
@@ -32,6 +33,8 @@
     firefox.packages.${pkgs.system}.firefox-nightly-bin
     gnumake
     wl-clipboard
+    winapps.packages."${system}".winapps
+    winapps.packages."${system}".winapps-launcher
   ];
 
   services = {
