@@ -10,7 +10,7 @@
   # nix.package = pkgs.nixVersions.latest;
 
   # https://lix.systems/add-to-config/
-  nix.package = pkgs.lix;
+  # nix.package = pkgs.lix;
 
   nix.settings = {
     # enable flakes globally
@@ -32,7 +32,7 @@
       # status: https://mirror.sjtu.edu.cn/
       # "https://mirror.sjtu.edu.cn/nix-channels/store"
       # others
-      # "https://mirrors.sustech.edu.cn/nix-channels/store"
+      "https://mirrors.sustech.edu.cn/nix-channels/store"
       "https://mirrors.tuna.tsinghua.edu.cn/nix-channels/store"
 
       "https://nix-community.cachix.org"

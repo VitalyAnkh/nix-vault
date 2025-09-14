@@ -14,7 +14,7 @@
 let
   hostName = "aquamarine"; # Define your hostname.
 
-  inherit (myvars.networking) defaultGateway defaultGateway6 nameservers;
+  inherit (myvars.networking) proxyGateway proxyGateway6 nameservers;
   inherit (myvars.networking.hostsAddr.${hostName}) iface ipv4;
   ipv4WithMask = "${ipv4}/24";
 in
@@ -40,7 +40,6 @@ in
   # This doesn’t define how much memory will be used by the zram swap devices.
   zramSwap.memoryPercent = lib.mkForce 100;
 
-  boot.kernelPackages = pkgs.linuxPackages_latest;
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModprobeConfig = "options kvm_amd nested=1"; # for amd cpu
 
@@ -67,11 +66,11 @@ in
     routes = [
       {
         Destination = "0.0.0.0/0";
-        Gateway = defaultGateway;
+        Gateway = proxyGateway;
       }
       {
         Destination = "::/0";
-        Gateway = defaultGateway6;
+        Gateway = proxyGateway6;
         GatewayOnLink = true; # it's a gateway on local link.
       }
     ];

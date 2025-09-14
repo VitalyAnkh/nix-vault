@@ -36,7 +36,7 @@
 
         #-- dockerfile
         hadolint # Dockerfile linter
-        nodePackages.dockerfile-language-server-nodejs
+        dockerfile-language-server
 
         #-- markdown
         marksman # language server for markdown

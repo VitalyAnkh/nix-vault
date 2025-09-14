@@ -42,6 +42,8 @@
 
     nixpkgs-ollama.url = "github:nixos/nixpkgs/nixos-unstable";
 
+    nixpkgs-patched.url = "github:ryan4yin/nixpkgs/nixos-unstable-patched";
+
     # for macos
     # nixpkgs-darwin.url = "github:nixos/nixpkgs/nixpkgs-25.05-darwin";
     nixpkgs-darwin.url = "github:nixos/nixpkgs/nixpkgs-unstable";
@@ -159,10 +161,12 @@
     };
 
     nixos-apple-silicon = {
-      # 2025-07-04
-      url = "github:nix-community/nixos-apple-silicon/eba4b40c816e5aff8951ae231ac237e8aab8ec1d";
+      # 2025-08-25 asahi-6.15.10-3
+      url = "github:nix-community/nixos-apple-silicon/b99bf9bf7445416fe55da09034fc4a6cd733805c";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    niri.url = "github:sodiboo/niri-flake";
 
     ########################  Some non-flake repositories  #########################################
 

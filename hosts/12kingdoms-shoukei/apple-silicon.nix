@@ -21,13 +21,31 @@
     enable = true;
     peripheralFirmwareDirectory = "${my-asahi-firmware}/macbook-pro-m2-a2338";
 
-    # build the Asahi Linux Kernel with Rust support
-    withRust = true;
-    # use apple-silicon's GPU instead of CPU
-    useExperimentalGPUDriver = true;
-    # How to install the Asahi Mesa driver
-    experimentalGPUInstallMode = "driver"; # driver / replace(for non-flakes) / overlay
+    # since mesa 25.1(already in nixpkgs), support for asahi is enabled by default.
   };
+
+  # Lid & PowerKey settings
+  #
+  # Suspend: Store system state to RAM - fast, requires minimal power to maintain RAM.
+  # Hibernate: Store system state & RAM to Disk, and then poweroff the system.
+  #
+  # NOTE: Hibernate is not supported by Asahi Linux.
+  services.logind.settings.Login = {
+    lidSwitch = "suspend";
+    lidSwitchExternalPower = "lock";
+    # 'Docked' means: more than one display is connected or the system is inserted in a docking station
+    lidSwitchDocked = "ignore";
+
+    powerKey = "suspend";
+    powerKeyLongPress = "poweroff";
+  };
+  systemd.targets.sleep.enable = true;
+  systemd.sleep.extraConfig = ''
+    AllowSuspend=yes
+    AllowHibernate=no
+    AllowSuspendThenHibernate=no
+    HibernateDelaySec=5min
+  '';
 
   # After adding this snippet, you need to restart the system for the touchbar to work.
   hardware.apple.touchBar = {

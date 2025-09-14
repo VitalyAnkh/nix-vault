@@ -16,12 +16,15 @@ in
   withPgtk = true;
   # toolkit = "lucid";
   # withCairo = false;
+  srcRepo = true;
 }).overrideAttrs
   (old: rec {
     pname = "emacs-master-pgtk-with-igc";
     name = "${pname}-${builtins.concatStringsSep "" (lib.splitString "-" source-emacs.date)}";
     inherit (source-emacs) src;
-    buildInputs = old.buildInputs ++ [ mps ];
+    buildInputs = old.buildInputs ++ [
+      mps
+    ];
     configureFlags = old.configureFlags ++ [
       "--with-mps=yes"
     ];

@@ -14,8 +14,11 @@ in
 {
   imports = [
     ./hardware-configuration.nix
-    ../eva/preservation.nix
+    ../idols-ai/preservation.nix
   ];
+
+  # disable sunshine for securrity
+  services.sunshine.enable = lib.mkForce false;
 
   networking = {
     inherit hostName;
