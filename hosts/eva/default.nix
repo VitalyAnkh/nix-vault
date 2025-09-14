@@ -7,7 +7,7 @@
 let
   hostName = "eva"; # Define your hostname.
 
-  inherit (myvars.networking) defaultGateway defaultGateway6 nameservers;
+  inherit (myvars.networking) mainGateway mainGateway6 nameservers;
   inherit (myvars.networking.hostsAddr.${hostName}) iface ipv4 ipv6;
   ipv4WithMask = "${ipv4}/24";
   ipv6WithMask = "${ipv6}/64";
@@ -18,6 +18,8 @@ in
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
     ./nvidia.nix
+    # ./ai
+    ./gaming.nix
 
     ./preservation.nix
     #./boot.nix
@@ -25,7 +27,7 @@ in
     ./gnome.nix
   ];
 
-  boot.loader.systemd-boot.enable = true;
+  services.sunshine.enable = lib.mkForce true;
 
   networking = {
     inherit hostName;
@@ -55,11 +57,11 @@ in
     routes = [
       {
         Destination = "0.0.0.0/0";
-        Gateway = defaultGateway;
+        Gateway = mainGateway;
       }
       {
         Destination = "::/0";
-        Gateway = defaultGateway6;
+        Gateway = mainGateway6;
         GatewayOnLink = true; # it's a gateway on local link.
       }
     ];

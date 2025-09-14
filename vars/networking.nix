@@ -5,8 +5,9 @@ rec {
   # use suzi as the default gateway
   # it's a subrouter with a transparent proxy
   # VR_TODO: what the default gateway should be?
+  proxyGateway = "192.168.10.0";
+  # proxyGateway = "192.168.5.178";
   defaultGateway = "192.168.10.0";
-  # defaultGateway = "192.168.5.178";
   defaultGateway6 = "fe80::8";
   nameservers = [
     # IPv4

@@ -14,7 +14,6 @@
     # hiddify-app
     flclash
     kdiskmark
-    mihomo-party
     #daed
     warp-terminal
     zotero
