@@ -117,44 +117,88 @@ in
     map (it: it.darwinConfigurations or { }) darwinSystemValues
   );
 
+  # Home Manager configurations (standalone)
+  homeConfigurations = lib.attrsets.mergeAttrsList (
+    map (it: it.homeConfigurations or { }) allSystemValues
+  );
+
   # Packages
-  packages = forAllSystems (system: allSystems.${system}.packages or { });
+  # Collect packages from per-arch outputs and also from the repo's pkgs directory.
+  packages = forAllSystems (
+    system:
+    let
+      # Import appropriate nixpkgs for the target system
+      nixpkgsFor =
+        if (lib.strings.hasInfix "darwin" system) then inputs.nixpkgs-darwin else inputs.nixpkgs;
+      pkgs = import nixpkgsFor {
+        inherit system;
+        config.allowUnfree = true;
+      };
+
+      # Generated sources for pkgs/_sources
+      sources = pkgs.callPackage ../pkgs/_sources/generated.nix { };
+
+      # Load all packages defined under ./pkgs as a flat attrset
+      repoPkgs = mylib.callPackageFromDirectory {
+        callPackage = pkgs.lib.callPackageWith (pkgs // sources // (genSpecialArgs system));
+        directory = ../pkgs;
+      };
+
+      archPkgs = allSystems.${system}.packages or { };
+    in
+    archPkgs // repoPkgs
+  );
 
   # Eval Tests for all NixOS & darwin systems.
   evalTests = lib.lists.all (it: it.evalTests == { }) allSystemValues;
 
-  checks = forAllSystems (system: {
-    # eval-tests per system
-    eval-tests = allSystems.${system}.evalTests == { };
+  checks = forAllSystems (
+    system:
+    let
+      pkgs = nixpkgs.legacyPackages.${system};
+      evalResult = allSystems.${system}.evalTests;
+      okDrv = pkgs.runCommand "eval-tests-${system}" { } ''
+        echo ok > "$out"
+      '';
+      failDrv = pkgs.runCommand "eval-tests-${system}-failed" { } ''
+        echo "Eval tests failed for ${system}" >&2
+        echo '${builtins.toJSON evalResult}' >&2
+        exit 1
+      '';
+    in
+    {
+      # Wrap eval-tests result as a derivation for flake checks
+      eval-tests = if evalResult == { } then okDrv else failDrv;
 
-    pre-commit-check = pre-commit-hooks.lib.${system}.run {
-      src = mylib.relativeToRoot ".";
-      hooks = {
-        nixfmt-rfc-style = {
-          enable = true;
-          settings.width = 100;
-        };
-        # Source code spell checker
-        typos = {
-          enable = true;
-          settings = {
-            write = true; # Automatically fix typos
-            configPath = ".typos.toml"; # relative to the flake root
-            exclude = "rime-data/";
+      pre-commit-check = pre-commit-hooks.lib.${system}.run {
+        src = mylib.relativeToRoot ".";
+        hooks = {
+          nixfmt-rfc-style = {
+            enable = true;
+            settings.width = 100;
           };
-        };
-        prettier = {
-          enable = true;
-          settings = {
-            write = true; # Automatically format files
-            configPath = ".prettierrc.yaml"; # relative to the flake root
+          # Source code spell checker
+          typos = {
+            enable = true;
+            settings = {
+              write = true; # Automatically fix typos
+              configPath = ".typos.toml"; # relative to the flake root
+              exclude = "rime-data/";
+            };
           };
+          prettier = {
+            enable = true;
+            settings = {
+              write = true; # Automatically format files
+              configPath = ".prettierrc.yaml"; # relative to the flake root
+            };
+          };
+          # deadnix.enable = true; # detect unused variable bindings in `*.nix`
+          # statix.enable = true; # lints and suggestions for Nix code(auto suggestions)
         };
-        # deadnix.enable = true; # detect unused variable bindings in `*.nix`
-        # statix.enable = true; # lints and suggestions for Nix code(auto suggestions)
       };
-    };
-  });
+    }
+  );
 
   # Development Shells
   devShells = forAllSystems (

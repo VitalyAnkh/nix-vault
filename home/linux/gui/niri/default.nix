@@ -9,6 +9,12 @@ let
   cfg = config.modules.desktop.niri;
 in
 {
+  # Ensure the `programs.niri` option is defined by importing
+  # the upstream Home Manager module from the niri flake.
+  # Without this, even guarded references to `programs.niri.*`
+  # would fail during evaluation in tests.
+  imports = [ niri.homeModules.niri ];
+
   options.modules.desktop.niri = {
     enable = lib.mkEnableOption "niri compositor";
     settings = lib.mkOption {
