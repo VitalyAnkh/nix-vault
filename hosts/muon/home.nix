@@ -4,12 +4,10 @@ let
 in
 {
   modules.desktop = {
-    hyprland = {
-      nvidia = true;
-      settings.source = [
-        "${config.home.homeDirectory}/nix-config/hosts/${hostName}/hypr-hardware.conf"
-      ];
-    };
+    nvidia.enable = true;
+    hyprland.settings.source = [
+      "${config.home.homeDirectory}/nix-config/hosts/${hostName}/hypr-hardware.conf"
+    ];
   };
   modules.editors.emacs = {
     enable = true;

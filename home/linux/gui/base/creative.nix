@@ -27,8 +27,8 @@
 
       # this app consumes a lot of storage, so do not install it currently
       kicad # 3d printing, eletrical engineering
-      nicpkgs.packages.${pkgs.system}.nutstore-client
-      nicpkgs.packages.${pkgs.system}.nutstore-nautilus
+      #nicpkgs.packages.${pkgs.system}.nutstore-client
+      #nicpkgs.packages.${pkgs.system}.nutstore-nautilus
 
       pkgs-unstable.logisim-evolution
       pkgs-unstable.bottles

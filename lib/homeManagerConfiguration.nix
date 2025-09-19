@@ -28,20 +28,21 @@ let
     };
 
   # Nixpaks overlay for standalone home-manager (only for Linux)
-  nixpaksOverlay = 
+  nixpaksOverlay =
     if (lib.strings.hasInfix "linux" system) && (inputs ? nixpak) then
       let
-        # Import the nixpaks module to extract its overlay
+        sArgs = genSpecialArgs system;
+        # Import the nixpaks module to extract its overlay, provide required args
         nixpaksModule = import (mylib.relativeToRoot "hardening/nixpaks/default.nix") {
-          # Pass dummy pkgs just for module structure - the actual overlay uses super
+          # pkgs used only to shape the overlay; real pkgs is the 'super' in overlay
           pkgs = import nixpkgs { inherit system; };
           inherit (inputs) nixpak;
+          pkgs-patched = sArgs.pkgs-patched;
         };
       in
-        # Extract and return the overlay from the module
-        builtins.head nixpaksModule.nixpkgs.overlays
+      builtins.head nixpaksModule.nixpkgs.overlays
     else
-      (_: _: {});
+      (_: _: { });
 
   # Determine which nixpkgs to use based on system
   pkgs =
@@ -55,7 +56,10 @@ let
       import nixpkgs {
         inherit system;
         config.allowUnfree = true;
-        overlays = [ customOverlay nixpaksOverlay ];
+        overlays = [
+          customOverlay
+          nixpaksOverlay
+        ];
       };
 in
 home-manager.lib.homeManagerConfiguration {
