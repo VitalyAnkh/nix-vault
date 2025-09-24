@@ -192,6 +192,7 @@ in
         # ai agents
         ".claude"
         ".gemini"
+        ".codex"
 
         # nvim
         ".local/share/nvim"
