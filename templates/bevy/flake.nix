@@ -57,6 +57,7 @@
                 # use rust-analyzer-nightly for better type inference
                 rust-analyzer-nightly
                 cargo-watch
+                openssl
               ]
               # https://github.com/bevyengine/bevy/blob/v0.14.2/docs/linux_dependencies.md#nix
               ++ (lib.optionals pkgs.stdenv.isLinux [
