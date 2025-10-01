@@ -3,83 +3,64 @@
   anyrun,
   ...
 }:
+
+let
+  anyrunPackages = anyrun.packages.${pkgs.system};
+in
 {
+
+  imports = [
+    (
+      { modulesPath, ... }:
+      {
+        # Important! We disable home-manager's module to avoid option
+        # definition collisions
+        disabledModules = [ "${modulesPath}/programs/anyrun.nix" ];
+      }
+    )
+    anyrun.homeManagerModules.default
+  ];
+
   programs.anyrun = {
     enable = true;
+    # The package should come from the same flake as all the plugins to avoid breakage.
+    package = anyrunPackages.anyrun;
     config = {
-      plugins = with anyrun.packages.${pkgs.system}; [
-        applications
-        randr
-        rink
-        shell
-        symbols
-        translate
-      ];
+      # The horizontal position.
+      # when using `fraction`, it sets a fraction of the width or height of the screen
+      x.fraction = 0.5; # at the middle of the screen
+      # The vertical position.
+      y.fraction = 0.05; # at the top of the screen
+      # The width of the runner.
+      width.fraction = 0.3; # 30% of the screen
 
-      width.fraction = 0.3;
-      y.absolute = 15;
-      hidePluginInfo = true;
+      hideIcons = false;
+      ignoreExclusiveZones = false;
+      layer = "overlay";
+      hidePluginInfo = false;
       closeOnClick = true;
+      showResultsImmediately = true;
+      maxEntries = null;
+
+      # https://github.com/anyrun-org/anyrun/tree/master/plugins
+      plugins = with anyrunPackages; [
+        applications # Launch applications
+        dictionary # Look up word definitions using the Free Dictionary API.
+        nix-run # search & run graphical apps from nixpkgs via `nix run`, without installing it.
+        # randr         # quickly change monitor configurations on the fly
+        rink # A simple calculator plugin
+        symbols # Look up unicode symbols and custom user defined symbols.
+        translate # ":zh <text to translate>" Quickly translate text using the Google Translate API.
+        niri-focus # Search for & focus the window via title/appid on Niri
+      ];
     };
 
-    # custom css for anyrun, based on catppuccin-mocha
-    extraCss = ''
-      @define-color bg-col  rgba(30, 30, 46, 0.7);
-      @define-color bg-col-light rgba(150, 220, 235, 0.7);
-      @define-color border-col rgba(30, 30, 46, 0.7);
-      @define-color selected-col rgba(150, 205, 251, 0.7);
-      @define-color fg-col #D9E0EE;
-      @define-color fg-col2 #F28FAD;
-
-      * {
-        transition: 200ms ease;
-        font-family: "Maple Mono NF CN";
-        font-size: 1.3rem;
-      }
-
-      #window {
-        background: transparent;
-      }
-
-      #plugin,
-      #main {
-        border: 3px solid @border-col;
-        color: @fg-col;
-        background-color: @bg-col;
-      }
-      /* anyrun's input window - Text */
-      #entry {
-        color: @fg-col;
-        background-color: @bg-col;
-      }
-
-      /* anyrun's output matches entries - Base */
-      #match {
-        color: @fg-col;
-        background: @bg-col;
-      }
-
-      /* anyrun's selected entry - Red */
-      #match:selected {
-        color: @fg-col2;
-        background: @selected-col;
-      }
-
-      #match {
-        padding: 3px;
-        border-radius: 16px;
-      }
-
-      #entry, #plugin:hover {
-        border-radius: 16px;
-      }
-
-      box#main {
-        background: rgba(30, 30, 46, 0.7);
-        border: 1px solid @border-col;
-        border-radius: 15px;
-        padding: 5px;
-      }
-    '';
+    extraConfigFiles = {
+      "symbols.ron".source = ./conf/anyrun/symbols.ron;
+      "applications.ron".source = ./conf/anyrun/applications.ron;
+    };
   };
+
+  # https://github.com/anyrun-org/anyrun/discussions/179
+  xdg.configFile."anyrun/style.css".source = ./conf/anyrun/style.css;
 }

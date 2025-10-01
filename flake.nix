@@ -16,14 +16,14 @@
   nixConfig = {
     # substituers will be appended to the default substituters when fetching packages
     extra-substituters = [
-      "https://anyrun.cachix.org"
-      "https://nix-gaming.cachix.org"
-      "https://nixpkgs-wayland.cachix.org"
+      # "https://nix-gaming.cachix.org"
+      # "https://nixpkgs-wayland.cachix.org"
+      # "https://install.determinate.systems"
     ];
     extra-trusted-public-keys = [
-      "anyrun.cachix.org-1:pqBobmOjI7nKlsUMV25u9QHa9btJK65/C8vnO3p346s="
-      "nix-gaming.cachix.org-1:nbjlureqMbRAxR1gJ/f3hxemL9svXaZF/Ees8vCUUs4="
-      "nixpkgs-wayland.cachix.org-1:3lwxaILxMRkVhehr5StQprHdEo4IrE8sRho9R9HOLYA="
+      # "nix-gaming.cachix.org-1:nbjlureqMbRAxR1gJ/f3hxemL9svXaZF/Ees8vCUUs4="
+      # "nixpkgs-wayland.cachix.org-1:3lwxaILxMRkVhehr5StQprHdEo4IrE8sRho9R9HOLYA="
+      # "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM="
     ];
   };
 
@@ -68,6 +68,7 @@
       url = "github:winapps-org/winapps";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
 
     # https://github.com/catppuccin/nix
     catppuccin = {
@@ -86,9 +87,10 @@
 
     # community wayland nixpkgs
     # nixpkgs-wayland.url = "github:nix-community/nixpkgs-wayland";
+
     # anyrun - a wayland launcher
     anyrun = {
-      url = "github:Kirottu/anyrun";
+      url = "github:/anyrun-org/anyrun/v25.9.0";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -105,11 +107,6 @@
 
       # url = "github:yaxitech/ragenix";
       # url = "github:ryan4yin/ragenix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    nix-gaming = {
-      url = "github:fufexan/nix-gaming";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -167,6 +164,17 @@
     };
 
     niri.url = "github:sodiboo/niri-flake";
+
+    # -------------- Gaming ---------------------
+
+    nix-gaming = {
+      url = "github:fufexan/nix-gaming";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    aagl = {
+      url = "github:ezKEa/aagl-gtk-on-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     ########################  Some non-flake repositories  #########################################
 

@@ -288,24 +288,22 @@ in
         # Games / Media
         # ======================================
 
+        "Games"
         ".steam"
         ".config/blender"
         ".config/LDtk"
+        ".config/heroic"
+        ".config/lutris"
+        ".local/share/umu"
 
         ".local/share/Steam"
-        ".local/share/PrismLauncher"
+        ".local/state/Heroic"
 
+        ".local/share/lutris"
         ".local/share/tiled"
         ".local/share/GOG.com"
         ".local/share/StardewValley"
         ".local/share/feral-interactive"
-
-        # ======================================
-        # Instant Messaging
-        # ======================================
-        ".config/QQ"
-
-        ".local/share/TelegramDesktop"
 
         # ======================================
         # Meeting / Remote Desktop / Recording
@@ -341,7 +339,7 @@ in
         # ======================================
         ".local/share/containers"
         ".local/share/flatpak"
-        # flatpak app's data
+        # flatpak/nixpak app's data
         ".var"
 
         # ======================================

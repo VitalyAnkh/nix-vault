@@ -8,10 +8,18 @@
 
     traceroute
 
+    ninja
+    trash-cli
+
+    # use nvfetcher with nix-vault/pkgs/
+    nvfetcher
+
     # Modern cli tools, replacement of grep/sed/...
 
     # Interactively filter its input using fuzzy searching, not limit to filenames.
     fzf
+    bottom
+    uv
     # search for files by name, faster than find
     fd
     # search for files by its content, replacement of grep
