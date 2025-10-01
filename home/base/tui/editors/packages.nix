@@ -74,14 +74,14 @@
 
           deno
           #-- python
-          pipx # Install and Run Python Applications in Isolated Environments
-          uv # python project package manager
-          pyright # python language server
           (python313.withPackages (
             ps: with ps; [
+              # python language server
+              pyright
               ruff
+
+              pipx # Install and Run Python Applications in Isolated Environments
               black # python formatter
-              # debugpy
 
               # my commonly used python packages
               jupyter
@@ -92,6 +92,9 @@
               pyyaml
               boto3
 
+              # misc
+              protobuf # protocol buffer compiler
+              numpy
               ## emacs's lsp-bridge dependenciesge
               # epc
               # orjson

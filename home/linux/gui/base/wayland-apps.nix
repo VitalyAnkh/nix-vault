@@ -3,10 +3,9 @@
   ...
 }:
 {
-  home.packages = [
-    #firefox-wayland
-    #pkgs.nixpaks.firefox
-    #pkgs.nixpaks.firefox-desktop-item
+  home.packages = with pkgs; [
+    # firefox-wayland
+    # nixpaks.firefox
   ];
 
   programs = {

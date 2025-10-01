@@ -10,27 +10,21 @@
     # do not support .pdf
     foliate
 
-    # instant messaging
-    telegram-desktop
-    # discord # update too frequently, use the web version instead
-
     # remote desktop(rdp connect)
     remmina
     freerdp # required by remmina
 
+    # screenshot
     flameshot
-  ] ++ (
-    # my custom hardened packages (available in NixOS and standalone via overlay)
-    pkgs.lib.optionals (pkgs ? nixpaks) [
-      pkgs.nixpaks.qq
-      pkgs.nixpaks.qq-desktop-item
-    ]
-  ) ++ (
-    # bwraps only available in NixOS
-    pkgs.lib.optionals (pkgs ? bwraps) [
-      pkgs.bwraps.wechat
-    ]
-  );
+    satty
+
+    # my custom hardened packages
+    pkgs.nixpaks.qq
+    pkgs.nixpaks.telegram-desktop
+    # qqmusic
+    pkgs.bwraps.wechat
+    # discord # update too frequently, use the web version instead
+  ];
 
   # allow fontconfig to discover fonts and configurations installed through home.packages
   # Install fonts at system-level, not user-level

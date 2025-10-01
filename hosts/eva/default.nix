@@ -18,8 +18,7 @@ in
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
     ./nvidia.nix
-    # ./ai
-    ./gaming.nix
+    ./ai
 
     ./preservation.nix
     #./boot.nix
