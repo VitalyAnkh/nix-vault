@@ -121,7 +121,7 @@ in
         ".gemini"
 
         "Zotero"
-        # ".zotero"
+        ".zotero"
 
         # Nutstore sync folder
         "nutstore_files"
