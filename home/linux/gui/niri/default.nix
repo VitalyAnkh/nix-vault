@@ -9,6 +9,7 @@ let
   cfg = config.modules.desktop.niri;
 in
 {
+  imports = [ niri.homeModules.niri ];
   options.modules.desktop.niri = {
     enable = lib.mkEnableOption "niri compositor";
     settings = lib.mkOption {
