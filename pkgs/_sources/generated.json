@@ -22,7 +22,7 @@
   },
   "source-emacs-master-igc": {
     "cargoLocks": null,
-    "date": "2025-09-27",
+    "date": "2025-10-03",
     "extract": null,
     "name": "source-emacs-master-igc",
     "passthru": null,
@@ -34,11 +34,11 @@
       "name": null,
       "owner": "emacs-mirror",
       "repo": "emacs",
-      "rev": "a53627960e4cc45161538cb192086290272cd763",
-      "sha256": "sha256-wBom3WqnFwTw0R/vTgT1T31u1WmzMx9yG2CC6D2cnsg=",
+      "rev": "650bb5b7d185922cccf95eaf8409ebb8c80fe07f",
+      "sha256": "sha256-RCxJmJQNlv2hUrrwIxkoXYRFu5gWdDBuyp4fwHcxL4A=",
       "sparseCheckout": [],
       "type": "github"
     },
-    "version": "a53627960e4cc45161538cb192086290272cd763"
+    "version": "650bb5b7d185922cccf95eaf8409ebb8c80fe07f"
   }
 }
