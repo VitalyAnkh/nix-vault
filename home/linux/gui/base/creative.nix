@@ -29,6 +29,8 @@
       kicad # 3d printing, eletrical engineering
       #nicpkgs.packages.${pkgs.system}.nutstore-client
       #nicpkgs.packages.${pkgs.system}.nutstore-nautilus
+      pkgs.nutstore-client
+      pkgs.nutstore-nautilus
 
       pkgs-unstable.logisim-evolution
       pkgs-unstable.bottles

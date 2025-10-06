@@ -126,6 +126,7 @@ in
         # Nutstore sync folder
         "nutstore_files"
         "Nutstore Files"
+        ".nutstore"
 
         # lean prover
         ".elan"
