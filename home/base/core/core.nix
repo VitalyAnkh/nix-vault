@@ -19,6 +19,7 @@
     # Interactively filter its input using fuzzy searching, not limit to filenames.
     fzf
     bottom
+    bacon # Background rust code checker
     uv
     # search for files by name, faster than find
     fd

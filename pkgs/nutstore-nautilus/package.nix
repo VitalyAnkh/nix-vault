@@ -11,10 +11,10 @@
 }:
 stdenv.mkDerivation {
   pname = "nutstore-nautilus";
-  version = "6.3.6";
+  version = "6.4.3";
   src = fetchzip {
     url = "https://www.jianguoyun.com/static/exe/installer/nutstore_linux_src_installer.tar.gz";
-    sha256 = "sha256-G74Q51jCkZvNXX26aaSEzbQm3L0cGkiCfrb14JaMF/4=";
+    sha256 = "sha256-+xjAIATRdG3z3UZaPBn6NBuiXD074SlgSJjKyF1v7ZU=";
   };
   nativeBuildInputs = [
     autoconf

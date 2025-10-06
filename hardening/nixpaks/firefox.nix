@@ -6,6 +6,8 @@
 {
   lib,
   firefox-wayland,
+  pkgs,
+  firefox,
   mkNixPak,
   buildEnv,
   makeDesktopItem,
@@ -23,7 +25,8 @@ let
       }:
       {
         app = {
-          package = firefox-wayland;
+          # package = firefox-wayland;
+          package = firefox.packages.${pkgs.system}.firefox-nightly-bin;
           binPath = "bin/firefox";
         };
         flatpak.appId = appId;
