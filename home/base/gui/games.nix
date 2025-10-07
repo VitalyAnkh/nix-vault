@@ -10,6 +10,7 @@
 
     # some games
     beyond-all-reason
+    warzone2100
     cataclysm-dda-git
     zeroad-unwrapped
     zeroad-data

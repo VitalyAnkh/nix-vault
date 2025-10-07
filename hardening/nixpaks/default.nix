@@ -2,10 +2,12 @@
   pkgs,
   pkgs-patched,
   nixpak,
+  firefox,
   ...
 }:
 let
   callArgs = {
+    inherit pkgs firefox;
     mkNixPak = nixpak.lib.nixpak {
       inherit (pkgs) lib;
       inherit pkgs;

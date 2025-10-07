@@ -38,6 +38,7 @@ let
           pkgs = import nixpkgs { inherit system; };
           inherit (inputs) nixpak;
           pkgs-patched = sArgs.pkgs-patched;
+          firefox = sArgs.firefox;
         };
       in
       builtins.head nixpaksModule.nixpkgs.overlays
