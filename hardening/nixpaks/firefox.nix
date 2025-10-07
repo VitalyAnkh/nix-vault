@@ -5,7 +5,6 @@
 # - Firefox's flatpak manifest: https://hg.mozilla.org/mozilla-central/file/tip/taskcluster/docker/firefox-flatpak/runme.sh#l151
 {
   lib,
-  firefox-wayland,
   pkgs,
   firefox,
   mkNixPak,
@@ -16,6 +15,14 @@
 
 let
   appId = "org.mozilla.firefox";
+  system =
+    if pkgs ? stdenv && pkgs.stdenv ? hostPlatform && pkgs.stdenv.hostPlatform ? system then
+      pkgs.stdenv.hostPlatform.system
+    else if pkgs ? system then
+      pkgs.system
+    else
+      builtins.currentSystem;
+  nightly = firefox.packages.${system}.firefox-nightly-bin;
   wrapped = mkNixPak {
     config =
       {
@@ -26,8 +33,8 @@ let
       {
         app = {
           # package = firefox-wayland;
-          package = firefox.packages.${pkgs.system}.firefox-nightly-bin;
-          binPath = "bin/firefox";
+          package = nightly;
+          binPath = "bin/${nightly.meta.mainProgram or "firefox-nightly"}";
         };
         flatpak.appId = appId;
 
