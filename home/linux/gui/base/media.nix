@@ -13,6 +13,8 @@
     playerctl
     pulsemixer
     imv # simple image viewer
+    loupe
+    kdePackages.okular
 
     # video/audio tools
     libva-utils

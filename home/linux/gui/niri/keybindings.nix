@@ -25,13 +25,13 @@ niri: {
         (plain "Mod+Shift+Slash" [ (flag "show-hotkey-overlay") ])
 
         # Suggested binds for running programs: terminal, app launcher, screen locker.
-        (plain "Mod+Return" [ (leaf "spawn" [ "foot" ]) ])
-        (plain "Mod+Shift+Return" [ (leaf "spawn" [ "alacritty" ]) ])
+        (plain "Mod+Return" [ (leaf "spawn" [ "ghostty" ]) ])
+        (plain "Mod+Shift+Return" [ (leaf "spawn" [ "foot" ]) ])
         (plain "Mod+D" [ (leaf "spawn" [ "anyrun" ]) ])
         (plain "CTRL+Alt+L" [ (leaf "spawn" [ "swaylock" ]) ])
 
         # You can also use a shell:
-        # (plain "Mod+T" [(leaf "spawn" [ "bash" "-c" "notify-send hello && exec alacritty" ])])
+        # (plain "Mod+T" [(leaf "spawn" [ "bash" "-c" "notify-send hello && exec ghostty" ])])
 
         # Example volume keys mappings for PipeWire & WirePlumber.
         (plain "XF86AudioRaiseVolume" [

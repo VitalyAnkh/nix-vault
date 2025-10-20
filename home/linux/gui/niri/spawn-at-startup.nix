@@ -14,7 +14,6 @@ niri: {
       # which may be more convenient to use.
       # --------------- Terminal ---------------
       (leaf "spawn-at-startup" [ "foot" ])
-      (leaf "spawn-at-startup" [ "alacritty" ])
       (leaf "spawn-at-startup" [ "ghostty" ])
       # --------------- Networking ---------------
       (leaf "spawn-at-startup" [ "clash-verge" ])
