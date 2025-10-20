@@ -35,19 +35,37 @@
       defaultApplications =
         let
           browser = [
-            "google-chrome.desktop"
             "firefox.desktop"
+            "firefox-nightly.desktop"
+            # "google-chrome.desktop"
           ];
           editor = [
-            "nvim.desktop"
-            "Helix.desktop"
             "code.desktop"
+            "Helix.desktop"
             "code-insiders.desktop"
+            "nvim.desktop"
+          ];
+          pdfViewer = [
+            "org.kde.okular.desktop"
+            "okularApplication_pdf.desktop"
+          ];
+          videoPlayer = [
+            "vlc.desktop"
+            "mpv.desktop"
+          ];
+          imageViewer = [
+            "org.gnome.Loupe.desktop"
+            "imv-dir.desktop"
+          ];
+          directoryViewer = [
+            "org.gnome.Nautilus.desktop"
+            "yazi.desktop"
           ];
         in
         {
           "application/json" = browser;
-          "application/pdf" = browser; # TODO: pdf viewer
+          "application/pdf" = pdfViewer;
+          "application/x-pdf" = pdfViewer;
 
           "text/html" = browser;
           "text/xml" = browser;
@@ -80,14 +98,18 @@
           "x-scheme-handler/tg" = [ "org.telegram.desktop.desktop " ];
 
           "audio/*" = [ "mpv.desktop" ];
-          "video/*" = [ "mpv.desktop" ];
-          "image/*" = [ "imv-dir.desktop" ];
-          "image/gif" = [ "imv-dir.desktop" ];
-          "image/jpeg" = [ "imv-dir.desktop" ];
-          "image/png" = [ "imv-dir.desktop" ];
-          "image/webp" = [ "imv-dir.desktop" ];
+          "video/*" = videoPlayer;
+          "video/mp4" = videoPlayer;
+          "video/x-matroska" = videoPlayer;
+          "image/*" = imageViewer;
+          "image/gif" = imageViewer;
+          "image/jpeg" = imageViewer;
+          "image/png" = imageViewer;
+          "image/webp" = imageViewer;
 
-          "inode/directory" = [ "yazi.desktop" ];
+          "inode/directory" = directoryViewer;
+          "application/x-directory" = directoryViewer;
+          "x-scheme-handler/file" = directoryViewer;
         };
 
       associations.removed = {

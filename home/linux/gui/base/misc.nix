@@ -18,6 +18,9 @@
     flameshot
     satty
 
+    # file manager
+    nautilus
+
     # my custom hardened packages
     pkgs.nixpaks.qq
     pkgs.nixpaks.telegram-desktop

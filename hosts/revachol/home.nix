@@ -22,7 +22,7 @@ in
     };
   };
 
-  # Disable man for it causing infinit recursion issue
+  # Disable man for it causing infinite recursion issue
   programs.man = {
     enable = false;
     generateCaches = false;
@@ -68,6 +68,6 @@ in
     EDITOR = lib.mkDefault "hx"; # helix editor
     # BROWSER is already set in home/linux/base/shell.nix
     # Override it if needed with lib.mkForce
-    TERMINAL = lib.mkDefault "alacritty";
+    TERMINAL = lib.mkDefault "ghostty";
   };
 }

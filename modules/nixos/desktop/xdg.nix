@@ -7,10 +7,10 @@
       let
         my_terminal_desktop = [
           # NOTE: We have add these packages at user level
+          "com.mitchellh.ghostty.desktop"
           "Alacritty.desktop"
           "kitty.desktop"
           "foot.desktop"
-          "com.mitchellh.ghostty.desktop"
         ];
       in
       {
