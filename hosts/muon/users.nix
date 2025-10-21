@@ -14,8 +14,12 @@
     "xwu" = { };
     "cxu" = { };
     "zzhou" = { };
-    docker = { };  # Docker group for muon
-    podman = { };  # Keep podman group as well
+    "jwli" = { };
+    "mzhang" = { };
+    "m01005" = { };
+    "hazhang" = { };
+    docker = { }; # Docker group for muon
+    podman = { }; # Keep podman group as well
     wireshark = { };
     # for android platform tools's udev rules
     adbusers = { };
@@ -36,8 +40,8 @@
       "users"
       "networkmanager"
       "wheel"
-      "docker"  # Added docker group
-      "podman"  # Keep podman group as well
+      "docker" # Added docker group
+      "podman" # Keep podman group as well
       "wireshark"
       "adbusers"
       "libvirtd"
@@ -55,8 +59,23 @@
       "users"
       "networkmanager"
       "wheel"
-      "docker"  # Added docker group
-      "podman"  # Keep podman group as well
+      "docker" # Added docker group
+      "podman" # Keep podman group as well
+    ];
+  };
+
+  users.users.hazhang = {
+    initialHashedPassword = "$7$GU..../....qxODrBd6YQiILq340sMF40$uBnsu.QY93NZammMesaxofXLl11Hx3/KEXFbAdxiEX6";
+    home = "/home/hazhang";
+    isNormalUser = true;
+    description = "hazhang user";
+    extraGroups = [
+      "hazhang"
+      "users"
+      "networkmanager"
+      "wheel"
+      "docker" # Added docker group
+      "podman" # Keep podman group as well
     ];
   };
 
@@ -71,8 +90,8 @@
       "users"
       "networkmanager"
       "wheel"
-      "docker"  # Added docker group
-      "podman"  # Keep podman group as well
+      "docker" # Added docker group
+      "podman" # Keep podman group as well
     ];
   };
 
@@ -87,8 +106,56 @@
       "users"
       "networkmanager"
       "wheel"
-      "docker"  # Added docker group
-      "podman"  # Keep podman group as well
+      "docker" # Added docker group
+      "podman" # Keep podman group as well
+    ];
+  };
+
+  # Additional user: jwli (only on muon machine)
+  users.users.jwli = {
+    initialHashedPassword = "$6$P1KoOQSCl5amV1TR$3Bs9yJSbZ4wkfEcwVDq7IwqEBwBJk3A7gETqoMo5l1oFVQaKZM5GiaDqE2vUNrOs5qXLVNWzkzrc3lDmYWh2d0";
+    home = "/home/jwli";
+    isNormalUser = true;
+    description = "jwli User";
+    extraGroups = [
+      "jwli"
+      "users"
+      "networkmanager"
+      "wheel"
+      "docker" # Added docker group
+      "podman" # Keep podman group as well
+    ];
+  };
+
+  # Additional user: mzhang (only on muon machine)
+  users.users.mzhang = {
+    initialHashedPassword = "$6$P1KoOQSCl5amV1TR$3Bs9yJSbZ4wkfEcwVDq7IwqEBwBJk3A7gETqoMo5l1oFVQaKZM5GiaDqE2vUNrOs5qXLVNWzkzrc3lDmYWh2d0";
+    home = "/home/mzhang";
+    isNormalUser = true;
+    description = "mzhang User";
+    extraGroups = [
+      "mzhang"
+      "users"
+      "networkmanager"
+      "wheel"
+      "docker" # Added docker group
+      "podman" # Keep podman group as well
+    ];
+  };
+
+  # Additional user: m01005 (only on muon machine)
+  users.users.m01005 = {
+    initialHashedPassword = "$6$P1KoOQSCl5amV1TR$3Bs9yJSbZ4wkfEcwVDq7IwqEBwBJk3A7gETqoMo5l1oFVQaKZM5GiaDqE2vUNrOs5qXLVNWzkzrc3lDmYWh2d0";
+    home = "/home/m01005";
+    isNormalUser = true;
+    description = "m01005 User";
+    extraGroups = [
+      "m01005"
+      "users"
+      "networkmanager"
+      "wheel"
+      "docker" # Added docker group
+      "podman" # Keep podman group as well
     ];
   };
 
