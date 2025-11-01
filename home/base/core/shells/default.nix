@@ -47,7 +47,6 @@ in
   # NOTE: nushell will be launched in bash, so it can inherit all the environment variables.
   programs.nushell = {
     enable = true;
-    package = pkgs-unstable.nushell;
     configFile.source = ./config.nu;
     inherit shellAliases;
   };

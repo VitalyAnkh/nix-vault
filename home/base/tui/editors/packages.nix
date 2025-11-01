@@ -1,26 +1,20 @@
 {
   pkgs,
-  pkgs-unstable,
+  pkgs-master,
   ...
 }:
 {
   home.packages =
-    with pkgs-unstable;
+    with pkgs;
     (
       # -*- Data & Configuration Languages -*-#
       [
         #-- nix
         nil
-        # rnix-lsp
-        # nixd
+        nixd
         statix # Lints and suggestions for the nix programming language
         deadnix # Find and remove unused code in .nix source files
-        alejandra # Nix Code Formatter
-        nixfmt-tree
-        nixfmt-rfc-style # Nix Code Formatter
-
-        #android-studio-full
-        #android-studio-tools
+        nixfmt # Nix Code Formatter
 
         #-- nickel lang
         nickel
@@ -42,7 +36,7 @@
         marksman # language server for markdown
         glow # markdown previewer
         pandoc # document converter
-        pkgs-unstable.hugo # static site generator
+        pkgs-master.hugo # static site generator
 
         #-- sql
         sqlfluff
@@ -56,23 +50,18 @@
           #-- c/c++
           cmake
           cmake-language-server
-          ninja
           gnumake
           checkmake
           # c/c++ compiler, required by nvim-treesitter!
-          # gcc
+          gcc
           gdb
           # c/c++ tools with clang-tools, the unwrapped version won't
           # add alias like `cc` and `c++`, so that it won't conflict with gcc
           # llvmPackages.clang-unwrapped
-          clang
-          mold
-          sccache
           clang-tools
           lldb
           vscode-extensions.vadimcn.vscode-lldb.adapter # codelldb - debugger
 
-          deno
           #-- python
           (python313.withPackages (
             ps: with ps; [
@@ -82,6 +71,7 @@
 
               pipx # Install and Run Python Applications in Isolated Environments
               black # python formatter
+              uv # python project package manager
 
               # my commonly used python packages
               jupyter
@@ -95,29 +85,40 @@
               # misc
               protobuf # protocol buffer compiler
               numpy
-              ## emacs's lsp-bridge dependenciesge
-              # epc
-              # orjson
-              # sexpdata
-              # six
-              # setuptools
-              # paramiko
-              # rapidfuzz
             ]
           ))
 
           #-- rust
           # we'd better use the rust-overlays for rust development
-          pkgs-unstable.rustup
-          #pkgs-unstable.rustc
-          #pkgs-unstable.rust-analyzer
-          #pkgs-unstable.cargo # rust package manager
-          #pkgs-unstable.rustfmt
-          #pkgs-unstable.clippy # rust linter
+          pkgs-master.rustc
+          pkgs-master.rust-analyzer
+          pkgs-master.cargo # rust package manager
+          pkgs-master.rustfmt
+          pkgs-master.clippy # rust linter
 
-          pkgs-unstable.elan
+          #-- golang
+          go
+          gomodifytags
+          iferr # generate error handling code for go
+          impl # generate function implementation for go
+          gotools # contains tools like: godoc, goimports, etc.
+          gopls # go language server
+          delve # go debugger
 
-          pkgs-unstable.devenv
+          # -- java
+          jdk17
+          gradle
+          maven
+          spring-boot-cli
+          jdt-language-server
+
+          #-- zig
+          zls
+
+          #-- lua
+          stylua
+          lua-language-server
+
           #-- bash
           nodePackages.bash-language-server
           shellcheck
@@ -133,58 +134,17 @@
         nodePackages."@tailwindcss/language-server"
         emmet-ls
       ]
-      ++ [
-        proselint # English prose linter
-
-        pkgs-unstable.typst
-        pkgs-unstable.tinymist
-
-        #-- golang
-        go
-        gomodifytags
-        iferr # generate error handling code for go
-        impl # generate function implementation for go
-        gotools # contains tools like: godoc, goimports, etc.
-        gopls # go language server
-        delve # go debugger
-
-        # -- java
-        # jdk25
-        openjdk
-        gradle
-        maven
-        spring-boot-cli
-        jdt-language-server
-
-        #-- zig
-        zls
-
-        #-- lua
-        stylua
-        lua-language-server
-
-        #-- bash
-        nodePackages.bash-language-server
-        shellcheck
-        shfmt
-      ]
-      #-*- Web Development -*-#
-      ++ [
-        nodePackages.nodejs
-        nodePackages.typescript
-        nodePackages.typescript-language-server
-        # HTML/CSS/JSON/ESLint language servers extracted from vscode
-        nodePackages.vscode-langservers-extracted
-        nodePackages."@tailwindcss/language-server"
-        emmet-ls
-      ]
       # -*- Lisp like Languages -*-#
-      ++ [
-        # guile
-        racket-minimal
-        fnlfmt # fennel
-        (if pkgs.stdenv.isDarwin then pkgs.emptyDirectory else pkgs-unstable.akkuPackages.scheme-langserver)
-      ]
+      # ++ [
+      #   guile
+      #   racket-minimal
+      #   fnlfmt # fennel
+      #   (
+      #     if pkgs.stdenv.isLinux && pkgs.stdenv.isx86
+      #     then pkgs-master.akkuPackages.scheme-langserver
+      #     else pkgs.emptyDirectory
+      #   )
+      # ]
       ++ [
         proselint # English prose linter
 

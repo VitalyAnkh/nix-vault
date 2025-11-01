@@ -1,12 +1,13 @@
 {
-  config,
   lib,
   pkgs,
-  pkgs-unstable,
   firefox,
   winapps,
   ...
 }:
+let
+  system = pkgs.stdenv.hostPlatform.system;
+in
 {
   services.flatpak.enable = true;
   boot.loader.timeout = lib.mkForce 10; # wait for x seconds to select the boot entry
@@ -25,11 +26,11 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    firefox.packages.${pkgs.system}.firefox-nightly-bin
+    firefox.packages.${system}.firefox-nightly-bin
     gnumake
     wl-clipboard
-    winapps.packages."${system}".winapps
-    winapps.packages."${system}".winapps-launcher
+    winapps.packages.${system}.winapps
+    winapps.packages.${system}.winapps-launcher
   ];
 
   services = {
@@ -38,10 +39,6 @@
   };
 
   programs = {
-    # The OpenSSH agent remembers private keys for you
-    # so that you don’t have to type in passphrases every time you make an SSH connection.
-    # Use `ssh-add` to add a key to the agent.
-    # ssh.startAgent = true;
     # dconf is a low-level configuration system.
     dconf.enable = true;
 

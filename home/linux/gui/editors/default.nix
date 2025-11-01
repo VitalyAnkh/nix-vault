@@ -1,6 +1,13 @@
-{ mylib, pkgs-unstable, ... }:
 {
-  home.packages = with pkgs-unstable; [
+  mylib,
+  pkgs,
+  ...
+}:
+let
+  system = pkgs.stdenv.hostPlatform.system;
+in
+{
+  home.packages = with pkgs; [
     (code-cursor.overrideAttrs (_oldAttrs: rec {
       pname = "cursor";
       version = "2.0.43";
@@ -23,7 +30,7 @@
               };
             };
           in
-          sources.${pkgs-unstable.stdenv.hostPlatform.system};
+          sources.${system};
       };
       sourceRoot = "${pname}-${version}-extracted/usr/share/cursor";
     }))

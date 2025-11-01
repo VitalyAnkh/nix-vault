@@ -1,13 +1,11 @@
 {
   pkgs,
   pkgs-x64,
-  pkgs-unstable,
-  nur-ryan4yin,
   ...
 }:
 # media - control and enjoy audio/video
 {
-  home.packages = with pkgs-unstable; [
+  home.packages = with pkgs; [
     # audio control
     pavucontrol
     playerctl

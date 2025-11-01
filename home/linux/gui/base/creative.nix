@@ -1,10 +1,7 @@
 {
   lib,
   pkgs,
-  pkgs-unstable,
-  nur-ryan4yin,
   blender-bin,
-  nicpkgs,
   ...
 }:
 {
@@ -21,34 +18,23 @@
 
       # 2d game design
       aseprite # Animated sprite editor & pixel art tool
-      pkgs-unstable.godot_4
-
-      # pkgs-unstable.davinci-resolve-studio
+      godot_4
 
       # this app consumes a lot of storage, so do not install it currently
       kicad # 3d printing, electrical engineering
-      #nicpkgs.packages.${pkgs.system}.nutstore-client
-      #nicpkgs.packages.${pkgs.system}.nutstore-nautilus
-      pkgs.nutstore-client
-      pkgs.nutstore-nautilus
+      nutstore-client
+      nutstore-nautilus
 
-      pkgs-unstable.logisim-evolution
-      pkgs-unstable.bottles
-      pkgs-unstable.wineWowPackages.waylandFull
-      # pkgs-unstable.wineWowPackages.stagingFull
+      logisim-evolution
+      bottles
+      wineWowPackages.waylandFull
+      # wineWowPackages.stagingFull
     ]
     ++ (lib.optionals pkgs.stdenv.isx86_64 [
       # https://github.com/edolstra/nix-warez/blob/master/blender/flake.nix
-      blender-bin.packages.${pkgs.system}.blender_4_5 # 3d modeling
+      (blender-bin.packages.${pkgs.system}.blender_4_5 or blender-bin.packages.${pkgs.system}.blender_4_2) # 3d modeling
 
-      pkgs-unstable.ldtk # A modern, versatile 2D level editor
-
-      # fpga
-      # python313Packages.apycula # gowin fpga
-      # yosys # fpga synthesis
-      # nextpnr # fpga place and route
-      # openfpgaloader # fpga programming
-      # nur-ryan4yin.packages.${pkgs.system}.gowin-eda-edu-ide # app: `gowin-env` => `gw_ide` / `gw_pack` / ...
+      ldtk # A modern, versatile 2D level editor
     ]);
 
   programs = {
