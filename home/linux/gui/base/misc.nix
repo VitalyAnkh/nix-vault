@@ -1,6 +1,5 @@
 {
   pkgs,
-  pkgs-unstable,
   ...
 }:
 {
@@ -22,10 +21,10 @@
     nautilus
 
     # my custom hardened packages
-    pkgs.nixpaks.qq
-    pkgs.nixpaks.telegram-desktop
+    nixpaks.qq
+    nixpaks.telegram-desktop
     # qqmusic
-    pkgs.bwraps.wechat
+    bwraps.wechat
     # discord # update too frequently, use the web version instead
   ];
 
