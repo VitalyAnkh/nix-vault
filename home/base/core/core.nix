@@ -53,10 +53,15 @@
     # https://github.com/utdemir/nix-tree
     nix-tree # A TUI to visualize the dependency graph of a nix derivation
 
-    # productivity
+    # misc
+    cowsay
+    gnupg
     caddy # A webserver with automatic HTTPS via Let's Encrypt(replacement of nginx)
-    croc # File transfer between computers securely and easily
-    ncdu # analyzer your disk usage Interactively, via TUI(replacement of `du`)
+    # A fast and polyglot tool for code searching, linting, rewriting at large scale
+    # supported languages: only some mainstream languages currently(do not support nix/nginx/yaml/toml/...)
+    ast-grep
+
+    # other core cli tools are installed at system-level
   ];
 
   # A modern replacement for ‘ls’

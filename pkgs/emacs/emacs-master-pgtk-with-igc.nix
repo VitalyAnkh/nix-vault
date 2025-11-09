@@ -26,7 +26,7 @@ in
       mps
     ];
     configureFlags = old.configureFlags ++ [
-      #"--with-mps=yes"
+      "--with-mps=yes"
     ];
     patches = [ ];
     postPatch =
