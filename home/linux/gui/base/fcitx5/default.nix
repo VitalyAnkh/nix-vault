@@ -7,18 +7,6 @@
       # so we need to force replace it in every rebuild to avoid file conflict.
       force = true;
     };
-    "fcitx5/config" = {
-      source = ./config;
-      force = true;
-    };
-    "fcitx5/conf/pinyin.conf" = {
-      source = ./pinyin.conf;
-      force = true;
-    };
-    "fcitx5/conf/cloudpinyin.conf" = {
-      source = ./cloudpinyin.conf;
-      force = true;
-    };
   };
 
   i18n.inputMethod = {
@@ -30,7 +18,7 @@
       fcitx5-rime
       # needed enable rime using configtool after installed
       qt6Packages.fcitx5-configtool
-      qt6Packages.fcitx5-chinese-addons
+      # fcitx5-chinese-addons # we use rime instead
       # fcitx5-mozc    # japanese input method
       fcitx5-gtk # gtk im module
     ];
