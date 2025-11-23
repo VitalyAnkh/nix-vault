@@ -200,6 +200,15 @@ in
         ".local/share/nvim"
         ".local/state/nvim"
 
+        # helix & steel
+        ".local/share/steel"
+
+        # doom-emacs
+        # "org" # org files
+        # ".config/emacs"
+        # ".local/share/doom"
+        # ".local/share/emacs"
+
         # Joplin
         ".config/joplin" # tui client
         ".config/Joplin" # joplin-desktop
