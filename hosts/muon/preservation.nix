@@ -391,10 +391,6 @@ in
       };
     }
     // (import ./preservation-users.nix).users;
-    # CRITICAL FIX: Merge additional users WITH vitalyr's config
-    # The original bug was: users = (import ./preservation-users.nix).users;
-    # This REPLACED the entire users attribute, completely removing vitalyr's preservation!
-    # Now using // to properly merge additional users while keeping vitalyr's config
   };
 
   # Create some directories with custom permissions.

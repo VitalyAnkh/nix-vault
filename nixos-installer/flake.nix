@@ -70,7 +70,8 @@
             ../modules/nixos/base/ssh.nix
 
             ../hosts/muon/hardware-configuration.nix
-            ../hosts/muon/preservation.nix
+            ../hosts/eva/preservation.nix
+            ../hosts/muon/preservation-users.nix
           ];
         };
 
