@@ -14,8 +14,10 @@
     "xwu" = { };
     "cxu" = { };
     "zzhou" = { };
+    "sw" = { };
     "jwli" = { };
     "mzhang" = { };
+    "jcao" = { };
     "m01005" = { };
     "hazhang" = { };
     docker = { }; # Docker group for muon
@@ -111,6 +113,22 @@
     ];
   };
 
+  # Additional user: sw (only on muon machine)
+  users.users.sw = {
+    initialHashedPassword = "$6$P1KoOQSCl5amV1TR$3Bs9yJSbZ4wkfEcwVDq7IwqEBwBJk3A7gETqoMo5l1oFVQaKZM5GiaDqE2vUNrOs5qXLVNWzkzrc3lDmYWh2d0";
+    home = "/home/sw";
+    isNormalUser = true;
+    description = "sw";
+    extraGroups = [
+      "sw"
+      "users"
+      "networkmanager"
+      "wheel"
+      "docker" # Added docker group
+      "podman" # Keep podman group as well
+    ];
+  };
+
   # Additional user: jwli (only on muon machine)
   users.users.jwli = {
     initialHashedPassword = "$6$P1KoOQSCl5amV1TR$3Bs9yJSbZ4wkfEcwVDq7IwqEBwBJk3A7gETqoMo5l1oFVQaKZM5GiaDqE2vUNrOs5qXLVNWzkzrc3lDmYWh2d0";
@@ -135,6 +153,22 @@
     description = "mzhang User";
     extraGroups = [
       "mzhang"
+      "users"
+      "networkmanager"
+      "wheel"
+      "docker" # Added docker group
+      "podman" # Keep podman group as well
+    ];
+  };
+
+  # Additional user: jcao (only on muon machine)
+  users.users.jcao = {
+    initialHashedPassword = "$6$P1KoOQSCl5amV1TR$3Bs9yJSbZ4wkfEcwVDq7IwqEBwBJk3A7gETqoMo5l1oFVQaKZM5GiaDqE2vUNrOs5qXLVNWzkzrc3lDmYWh2d0";
+    home = "/home/jcao";
+    isNormalUser = true;
+    description = "jcao User";
+    extraGroups = [
+      "jcao"
       "users"
       "networkmanager"
       "wheel"

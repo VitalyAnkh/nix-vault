@@ -21,7 +21,9 @@ in
     ./users.nix # Multi-user configuration for muon machine
     ./xremap.nix # xremap configuration for vitalyr user only
 
-    ./preservation.nix
+    # Use eva's preservation configuration for muon as well
+    ../eva/preservation.nix
+    ./preservation-users.nix
     #./boot.nix
     #./secureboot.nix
     ./gnome.nix
