@@ -23,10 +23,10 @@
       aseprite # Animated sprite editor & pixel art tool
       pkgs-unstable.godot_4
 
-      pkgs-unstable.davinci-resolve-studio
+      # pkgs-unstable.davinci-resolve-studio
 
       # this app consumes a lot of storage, so do not install it currently
-      kicad # 3d printing, eletrical engineering
+      kicad # 3d printing, electrical engineering
       #nicpkgs.packages.${pkgs.system}.nutstore-client
       #nicpkgs.packages.${pkgs.system}.nutstore-nautilus
       pkgs.nutstore-client

@@ -326,6 +326,8 @@ in
         ".cache/google-chrome"
         ".config/chromium"
         ".cache/chromium"
+        ".config/microsoft-edge"
+        ".cache/microsoft-edge"
 
         # ======================================
         # CLI data

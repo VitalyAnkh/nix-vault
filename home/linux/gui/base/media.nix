@@ -20,7 +20,7 @@
     libva-utils
     vdpauinfo
     vulkan-tools
-    glxinfo
+    mesa-demos
     nvitop
     mpvc
     vlc

@@ -1,6 +1,7 @@
 {
   myvars,
   config,
+  pkgs,
   pkgs-unstable,
   ...
 }:
@@ -24,7 +25,7 @@
   # VR_TODO: move the following line to other places
   programs.fish = {
     enable = true;
-    package = pkgs-unstable.fish;
+    package = pkgs.fish;
     #configFile.source = ./config.nu;
   };
 

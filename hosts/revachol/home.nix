@@ -31,7 +31,6 @@ in
   # Host-specific packages
   home.packages = with pkgs; [
     # Development tools that work on non-NixOS
-    ripgrep
     fd
     bat
     eza

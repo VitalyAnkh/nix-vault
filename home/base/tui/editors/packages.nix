@@ -5,7 +5,7 @@
 }:
 {
   home.packages =
-    with pkgs;
+    with pkgs-unstable;
     (
       # -*- Data & Configuration Languages -*-#
       [
@@ -20,7 +20,7 @@
         nixfmt-rfc-style # Nix Code Formatter
 
         #android-studio-full
-        android-studio-tools
+        #android-studio-tools
 
         #-- nickel lang
         nickel
@@ -149,7 +149,8 @@
         delve # go debugger
 
         # -- java
-        jdk23
+        # jdk25
+        openjdk
         gradle
         maven
         spring-boot-cli

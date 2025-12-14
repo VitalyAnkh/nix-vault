@@ -37,7 +37,7 @@
     gping # ping, but with a graph(TUI)
     doggo # DNS client for humans
     duf # Disk Usage/Free Utility - a better 'df' alternative
-    du-dust # A more intuitive version of `du` in rust
+    dust # A more intuitive version of `du` in rust
     gdu # disk usage analyzer(replacement of `du`)
 
     # nix related
@@ -55,7 +55,6 @@
 
     # misc
     cowsay
-    gnupg
     caddy # A webserver with automatic HTTPS via Let's Encrypt(replacement of nginx)
     # A fast and polyglot tool for code searching, linting, rewriting at large scale
     # supported languages: only some mainstream languages currently(do not support nix/nginx/yaml/toml/...)
@@ -83,7 +82,11 @@
   };
 
   # A command-line fuzzy finder
-  programs.fzf.enable = true;
+  programs.fzf = {
+    enable = true;
+    # Use pkgs-unstable's fzf to avoid buildEnv conflicts when mixing nixpkgs revisions.
+    package = pkgs-unstable.fzf;
+  };
 
   # very fast version of tldr in Rust
   programs.tealdeer = {
