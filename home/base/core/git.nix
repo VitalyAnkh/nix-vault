@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  pkgs-unstable,
   myvars,
   ...
 }:
@@ -38,6 +39,7 @@
 
   programs.git = {
     enable = true;
+    package = pkgs-unstable.git;
     lfs.enable = true;
 
     userName = myvars.userfullname;

@@ -18,7 +18,17 @@
         }
       )
     )
+  ]
+  ++ [
+    # convenient for debugging & manual launching besides the binfmt handler below
+    pkgs.appimage-run
   ];
+
+  # allow AppImage files to be executed directly via binfmt/appimage-run
+  programs.appimage = {
+    enable = true;
+    binfmt = true;
+  };
 
   # https://github.com/Mic92/nix-ld
   #

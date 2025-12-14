@@ -1,10 +1,10 @@
-{ pkgs, ... }:
+{ pkgs-unstable, ... }:
 {
   # for security reasons, do not load neovim's user config
   # since EDITOR may be used to edit some critical files
   environment.variables.EDITOR = "nvim --clean";
 
-  environment.systemPackages = with pkgs; [
+  environment.systemPackages = with pkgs-unstable; [
     # core tools
     nushell # nushell
     fastfetch
@@ -45,8 +45,11 @@
     # search for files by its content, replacement of grep
     (ripgrep.override { withPCRE2 = true; })
 
+    # appimage tools
+    appimage-run
+
     duf # Disk Usage/Free Utility - a better 'df' alternative
-    du-dust # A more intuitive version of `du` in rust
+    dust # A more intuitive version of `du` in rust
     gdu # disk usage analyzer(replacement of `du`)
     ncdu # analyzer your disk usage Interactively, via TUI(replacement of `du`)
 

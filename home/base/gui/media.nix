@@ -1,11 +1,11 @@
 {
-  pkgs,
+  pkgs-unstable,
   config,
   ...
 }:
 # processing audio/video
 {
-  home.packages = with pkgs; [
+  home.packages = with pkgs-unstable; [
     ffmpeg-full
 
     # images

@@ -145,6 +145,6 @@
 
   services.pulseaudio.enable = false;
   # VR_TODO
-  services.nixseparatedebuginfod.enable = true;
+  services.nixseparatedebuginfod2.enable = true;
   hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.beta;
 }

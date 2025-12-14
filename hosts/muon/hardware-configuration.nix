@@ -142,6 +142,6 @@
   services.pulseaudio.enable = false;
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   # VR_TODO
-  services.nixseparatedebuginfod.enable = true;
+  services.nixseparatedebuginfod2.enable = true;
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }

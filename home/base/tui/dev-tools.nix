@@ -15,7 +15,7 @@
   #
   #############################################################
 
-  home.packages = with pkgs; [
+  home.packages = with pkgs-unstable; [
     colmena # nixos's remote deployment tool
 
     tokei # count lines of code, alternative to cloc
