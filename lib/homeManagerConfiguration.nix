@@ -45,13 +45,25 @@ let
     else
       (_: _: { });
 
+  # Bwraps overlay for standalone home-manager.
+  # The overlay itself is platform-safe and will expose an empty `pkgs.bwraps`
+  # on non-Linux systems.
+  bwrapsOverlay =
+    let
+      bwrapsModule = import (mylib.relativeToRoot "hardening/bwraps/default.nix");
+    in
+    builtins.head bwrapsModule.nixpkgs.overlays;
+
   # Determine which nixpkgs to use based on system
   pkgs =
     if (lib.strings.hasInfix "darwin" system) then
       import inputs.nixpkgs-darwin {
         inherit system;
         config.allowUnfree = true;
-        overlays = [ customOverlay ];
+        overlays = [
+          customOverlay
+          bwrapsOverlay
+        ];
       }
     else
       import nixpkgs {
@@ -60,6 +72,7 @@ let
         overlays = [
           customOverlay
           nixpaksOverlay
+          bwrapsOverlay
         ];
       };
 in
