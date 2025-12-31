@@ -41,12 +41,12 @@ both Emacs-Evil, Neovim & vim.
 I mainly use Zellij for terminal related operations, here is its terminal shortcuts I use frequently
 now:
 
-| Action                    | Zellij's Shortcut |
-| ------------------------- | ----------------- |
-| Floating Terminal         | `Ctrl + p + w`    |
-| Horizontal Split Terminal | `Ctrl + p + d`    |
-| Vertical Split Terminal   | `Ctrl + p + n`    |
-| Execute a command         | `!xxx`            |
+| Action                    | Zellij's Shortcut  |
+| ------------------------- | ------------------ |
+| Floating Terminal         | `Ctrl + z + p + w` |
+| Horizontal Split Terminal | `Ctrl + z + p + d` |
+| Vertical Split Terminal   | `Ctrl + z + p + r` |
+| Execute a command         | `!xxx`             |
 
 ### File Management
 
@@ -134,14 +134,12 @@ Misc:
 Advance Techs:
 
 - Add at the end of multiple lines: `:normal A<text>`
-
   - Execublock: `:A<text>`
   - visual block mode(ctrl + v)
   - Append text at the end of each line in the selected block
   - If position exceeds line end, neovim adds spaces automatically
 
 - Delete the last char of multivle lines: `:normal $x`
-
   - Execute `$x` on each line
   - visual mode(v)
   - `$` moves cursor to the end of line
