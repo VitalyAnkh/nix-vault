@@ -2,7 +2,6 @@
   config,
   lib,
   pkgs,
-  pkgs-unstable,
   myvars,
   ...
 }:
@@ -39,7 +38,7 @@
 
   programs.git = {
     enable = true;
-    package = pkgs-unstable.git;
+    package = pkgs.git;
     lfs.enable = true;
 
     # signing = {

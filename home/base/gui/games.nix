@@ -1,11 +1,10 @@
 {
   pkgs,
-  pkgs-unstable,
   ...
 }:
 {
   home.packages =
-    (with pkgs-unstable; [
+    (with pkgs; [
       prismlauncher # A free, open source launcher for Minecraft
       winetricks # A script to install DLLs needed to work around problems in Wine
 

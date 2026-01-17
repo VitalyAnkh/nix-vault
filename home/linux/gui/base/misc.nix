@@ -3,7 +3,7 @@
   ...
 }:
 {
-  home.packages = with pkgs-unstable; [
+  home.packages = with pkgs; [
     # GUI apps
     # e-book viewer(.epub/.mobi/...)
     # do not support .pdf

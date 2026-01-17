@@ -6,7 +6,6 @@
   config,
   lib,
   pkgs,
-  pkgs-unstable,
   modulesPath,
   ...
 }:
@@ -37,10 +36,10 @@
 
   boot.loader.systemd-boot.enable = true;
 
-  # boot.kernelPackages = pkgs-unstable.linuxPackages_latest;
-  # boot.kernelPackages = pkgs-unstable.linuxPackages_xanmod_latest;
-  boot.kernelPackages = pkgs-unstable.linuxPackages_zen;
-  # boot.kernelPackages = pkgs-unstable.linuxPackages_lqx;
+  # boot.kernelPackages = pkgs.linuxPackages_latest;
+  # boot.kernelPackages = pkgs.linuxPackages_xanmod_latest;
+  boot.kernelPackages = pkgs.linuxPackages_zen;
+  # boot.kernelPackages = pkgs.linuxPackages_lqx;
 
   # clear /tmp on boot to get a stateless /tmp directory.
 

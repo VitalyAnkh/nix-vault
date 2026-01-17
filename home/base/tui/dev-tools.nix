@@ -14,7 +14,7 @@
   #
   #############################################################
 
-  home.packages = with pkgs-unstable; [
+  home.packages = with pkgs; [
     colmena # nixos's remote deployment tool
 
     tokei # count lines of code, alternative to cloc
@@ -37,11 +37,11 @@
     k6 # load testing tool
 
     # web tools
-    pkgs-unstable.pnpm
-    pkgs-unstable.bun
+    pnpm
+    bun
 
-    pkgs-unstable.meson
-    pkgs-unstable.mesonlsp
+    meson
+    mesonlsp
 
     # solve coding extercises - learn by doing
     exercism
@@ -49,7 +49,7 @@
     wakatime-cli
 
     # openai codex
-    # pkgs-unstable.codex
+    # codex
 
     duckdb
 

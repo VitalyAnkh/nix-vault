@@ -1,6 +1,6 @@
-{ pkgs-unstable, ... }:
+{ pkgs, ... }:
 {
-  environment.systemPackages = with pkgs-unstable; [
+  environment.systemPackages = with pkgs; [
     digital
     gnomeExtensions.appindicator
     gnome-extension-manager

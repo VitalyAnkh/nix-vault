@@ -9,7 +9,6 @@
 {
   config,
   lib,
-  pkgs-unstable,
   pkgs,
   doomemacs,
   ...
@@ -42,7 +41,7 @@ in
 
   config = mkIf cfg.enable (mkMerge [
     {
-      home.packages = with pkgs-unstable; [
+      home.packages = with pkgs; [
         ## Doom dependencies
         git
         (ripgrep.override { withPCRE2 = true; })

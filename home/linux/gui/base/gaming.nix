@@ -1,7 +1,6 @@
 {
   pkgs,
   pkgs-x64,
-  pkgs-unstable,
   osConfig,
   config,
   lib,
@@ -27,7 +26,7 @@ in
     # ==========================================================================
 
     home.packages =
-      (with pkgs-unstable; [
+      (with pkgs; [
         # https://github.com/flightlessmango/MangoHud
         # a simple overlay program for monitoring FPS, temperature, CPU and GPU load, and more.
         mangohud
@@ -65,7 +64,7 @@ in
         wineWow64Packages.full
         wineWowPackages.stagingFull
       ];
-      extraPackages = with pkgs-unstable; [
+      extraPackages = with pkgs; [
         winetricks
         gamescope
         gamemode

@@ -1,7 +1,6 @@
 {
   myvars,
   config,
-  pkgs-unstable,
   lib,
   ...
 }:
