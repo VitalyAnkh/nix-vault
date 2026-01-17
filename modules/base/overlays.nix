@@ -52,5 +52,18 @@
       osu-lazer-bin = prev.osu-lazer-bin.override { osu-mime = final.osu-mime; };
       osu-lazer-tachyon-bin = prev.osu-lazer-tachyon-bin.override { osu-mime = final.osu-mime; };
     })
+
+    # nixpkgs: umu-launcher currently fails versionCheckPhase because `version` is set to a git rev
+    # while `umu-run --version` prints a semver (e.g. 1.3.0). Disable installCheck to unblock builds.
+    (final: prev: {
+      umu-launcher-unwrapped = prev.umu-launcher-unwrapped.overrideAttrs (_old: {
+        doInstallCheck = false;
+      });
+
+      # Make sure the wrapper package picks up the overridden unwrapped derivation.
+      umu-launcher = prev.umu-launcher.override {
+        umu-launcher-unwrapped = final.umu-launcher-unwrapped;
+      };
+    })
   ];
 }

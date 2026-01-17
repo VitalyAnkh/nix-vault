@@ -5,7 +5,6 @@
   config,
   lib,
   pkgs,
-  pkgs-unstable,
   modulesPath,
   ...
 }:
@@ -47,10 +46,10 @@
     "riscv64-linux"
   ];
 
-  # boot.kernelPackages = pkgs-unstable.linuxPackages_latest;
-  # boot.kernelPackages = pkgs-unstable.linuxPackages_xanmod_latest;
-  boot.kernelPackages = pkgs-unstable.linuxPackages_zen;
-  # boot.kernelPackages = pkgs-unstable.linuxPackages_lqx;
+  # boot.kernelPackages = pkgs.linuxPackages_latest;
+  # boot.kernelPackages = pkgs.linuxPackages_xanmod_latest;
+  boot.kernelPackages = pkgs.linuxPackages_zen;
+  # boot.kernelPackages = pkgs.linuxPackages_lqx;
 
   # supported file systems, so we can mount any removable disks with these filesystems
   boot.supportedFilesystems = [

@@ -1,13 +1,13 @@
 {
   config,
-  pkgs-unstable,
+  pkgs,
   mysecrets,
   ...
 }:
 {
   programs.gpg = {
     enable = true;
-    package = pkgs-unstable.gnupg;
+    package = pkgs.gnupg;
     homedir = "${config.home.homeDirectory}/.gnupg";
     #  $GNUPGHOME/trustdb.gpg stores all the trust level you specified in `programs.gpg.publicKeys` option.
     #

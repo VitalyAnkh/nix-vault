@@ -81,7 +81,6 @@
 
               pipx # Install and Run Python Applications in Isolated Environments
               black # python formatter
-              uv # python project package manager
 
               # my commonly used python packages
               jupyter
@@ -113,11 +112,11 @@
           # pkgs-master.cargo # rust package manager
           # pkgs-master.rustfmt
           # pkgs-master.clippy # rust linter
-          pkgs-unstable.rustup
+          rustup
 
-          pkgs-unstable.elan
+          elan
 
-          pkgs-unstable.devenv
+          devenv
           #-- bash
           nodePackages.bash-language-server
           shellcheck
@@ -136,8 +135,8 @@
       ++ [
         proselint # English prose linter
 
-        pkgs-unstable.typst
-        pkgs-unstable.tinymist
+        typst
+        tinymist
 
         #-- golang
         go
@@ -149,7 +148,7 @@
         delve # go debugger
 
         # -- java
-        jdk23
+        jdk21
         gradle
         maven
         spring-boot-cli
@@ -183,7 +182,7 @@
         racket-minimal
         fnlfmt # fennel
         (
-          if pkgs.stdenv.isLinux && pkgs.stdenv.isx86 then
+          if pkgs.stdenv.isLinux && (pkgs.stdenv.isx86_64 || pkgs.stdenv.isi686) then
             pkgs-master.akkuPackages.scheme-langserver
           else
             pkgs.emptyDirectory

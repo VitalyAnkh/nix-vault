@@ -2,7 +2,6 @@
   myvars,
   config,
   pkgs,
-  pkgs-unstable,
   ...
 }:
 {

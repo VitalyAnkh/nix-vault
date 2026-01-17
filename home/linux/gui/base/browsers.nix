@@ -1,6 +1,7 @@
 {
   lib,
   pkgs,
+  firefox,
   ...
 }:
 let
@@ -25,11 +26,14 @@ let
       };
 in
 {
-  home.packages = [
-    nixpaks.firefox
-    firefox.packages.${system}.firefox-nightly-bin
-  ]
-  ++ lib.optionals (microsoft-edge != null) [ microsoft-edge ];
+  home.packages =
+    (with pkgs; [
+      nixpaks.firefox
+    ])
+    ++ [
+      firefox.packages.${system}.firefox-nightly-bin
+    ]
+    ++ lib.optionals (microsoft-edge != null) [ microsoft-edge ];
 
   # source code: https://github.com/nix-community/home-manager/blob/master/modules/programs/chromium.nix
   programs.google-chrome = {

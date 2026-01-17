@@ -1,7 +1,11 @@
-{ pkgs-unstable, ... }:
+{
+  lib,
+  pkgs,
+  ...
+}:
 {
   home.packages =
-    with pkgs-unstable;
+    with pkgs;
     [
       mitmproxy # http/https proxy tool
       wireshark # network analyzer

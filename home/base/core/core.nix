@@ -1,6 +1,6 @@
-{ pkgs-unstable, ... }:
+{ pkgs, ... }:
 {
-  home.packages = with pkgs-unstable; [
+  home.packages = with pkgs; [
     # Misc
     cowsay
     gnupg
@@ -85,8 +85,7 @@
   # A command-line fuzzy finder
   programs.fzf = {
     enable = true;
-    # Use pkgs-unstable's fzf to avoid buildEnv conflicts when mixing nixpkgs revisions.
-    package = pkgs-unstable.fzf;
+    package = pkgs.fzf;
   };
 
   # very fast version of tldr in Rust

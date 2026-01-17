@@ -1,6 +1,6 @@
 {
   config,
-  pkgs-unstable,
+  pkgs,
   ...
 }:
 let
@@ -28,7 +28,7 @@ in
 
   programs.fish = {
     enable = true;
-    package = pkgs-unstable.fish;
+    package = pkgs.fish;
     #configFile.source = ./config.nu;
     inherit shellAliases;
   };
