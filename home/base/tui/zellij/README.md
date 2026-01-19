@@ -37,7 +37,10 @@ Terminal emulators should only be responsible for displaying characters.
 
 ## Passthrough mode(Lock Mode)
 
-`Ctrl + g` lock the outer zellij interface, and all keys will be sent to the focused pane.
+This config uses the **Unlock-First** keybinding style: stay in `locked` (passthrough) most of the
+time, and unlock only when you need Zellij commands.
+
+`Ctrl + z` toggles between `locked` (passthrough) and `normal` (command) mode.
 
 It's extremely useful when you want to:
 
