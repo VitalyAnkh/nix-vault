@@ -13,13 +13,6 @@
 
   zramSwap.memoryPercent = lib.mkForce 75;
 
-  # Workaround for Mesa 25.3.0 regression
-  # https://github.com/nix-community/nixos-apple-silicon/issues/380
-  # https://github.com/NixOS/nixpkgs/pull/461866
-  hardware.graphics.package =
-    assert pkgs.mesa.version == "25.3.0";
-    (import nixpkgs-mesa { localSystem = pkgs.stdenv.hostPlatform; }).mesa;
-
   nix.settings = {
     extra-substituters = [
       "https://nixos-apple-silicon.cachix.org"
@@ -36,10 +29,10 @@
     muvm # run x86_64 Apps/Games in a microVM, used as a workaround of apple silicon's 16k page size.
   ];
 
-  networking.wireless.iwd = {
-    enable = true;
-    settings.General.EnableNetworkConfiguration = true;
-  };
+  # networking.wireless.iwd = {
+  #   enable = true;
+  #   settings.DriverQuirks.DefaultInterface = true;
+  # };
   # configures the network interface(include wireless) via `nmcli` & `nmtui`
   networking.networkmanager.enable = true;
 
@@ -200,10 +193,6 @@
           Action = "MicMute";
         }
         {
-          Icon = "search";
-          Action = "Search";
-        }
-        {
           Icon = "backlight_low";
           Action = "IllumDown";
         }
@@ -249,6 +238,18 @@
         {
           Text = "Print";
           Action = "Print";
+        }
+        {
+          Text = "F1";
+          Action = "F1";
+        }
+        {
+          Text = "F2";
+          Action = "F2";
+        }
+        {
+          Text = "F12";
+          Action = "F12";
         }
       ];
     };

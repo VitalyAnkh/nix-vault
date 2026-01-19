@@ -14,7 +14,6 @@
 let
   name = "eva";
   base-modules = {
-
     nixos-modules =
       (map mylib.relativeToRoot [
         # common
@@ -50,19 +49,8 @@ let
       ];
   };
 
-  modules-hyprland = {
-    nixos-modules = [
-    ]
-    ++ base-modules.nixos-modules;
-    home-modules = [
-      { modules.desktop.hyprland.enable = true; }
-    ]
-    ++ base-modules.home-modules;
-  };
-
   modules-niri = {
     nixos-modules = [
-      inputs.niri.nixosModules.niri
       { programs.niri.enable = true; }
     ]
     ++ base-modules.nixos-modules;
@@ -74,16 +62,13 @@ let
 in
 {
   nixosConfigurations = {
-    # host with hyprland compositor
-    "${name}" = mylib.nixosSystem (modules-hyprland // args);
-    # "${name}-hyprland" = mylib.nixosSystem (modules-hyprland // args);
-    # "${name}-niri" = mylib.nixosSystem (modules-niri // args);
+    "${name}" = mylib.nixosSystem (modules-niri // args);
+    "${name}-niri" = mylib.nixosSystem (modules-niri // args);
   };
 
   # generate iso image for hosts with desktop environment
   packages = {
-    "${name}" = inputs.self.nixosConfigurations."${name}".config.formats.iso;
-    # "${name}-hyprland" = inputs.self.nixosConfigurations."${name}-hyprland".config.formats.iso;
-    # "${name}-niri" = inputs.self.nixosConfigurations."${name}-niri".config.formats.iso;
+    "${name}" = inputs.self.nixosConfigurations."${name}-niri".config.formats.iso;
+    "${name}-niri" = inputs.self.nixosConfigurations."${name}-niri".config.formats.iso;
   };
 }

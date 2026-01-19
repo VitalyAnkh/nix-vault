@@ -18,8 +18,11 @@ let
       inherit mylib myvars;
 
       # use unstable branch for some packages to get the latest updates
-      # NOTE: upstream (#232) intentionally commented out `pkgs-unstable`,
-      # since `pkgs` is already from `inputs.nixpkgs` (nixos-unstable).
+      # pkgs-unstable = import inputs.nixpkgs-unstable {
+      #   inherit system; # refer the `system` parameter form outer scope recursively
+      #   # To use chrome, we need to allow the installation of non-free software
+      #   config.allowUnfree = true;
+      # };
       pkgs-2505 = import inputs.nixpkgs-2505 {
         inherit system;
         # To use chrome, we need to allow the installation of non-free software

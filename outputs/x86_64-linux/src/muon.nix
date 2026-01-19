@@ -32,7 +32,7 @@ let
     ];
   };
 
-  modules-hyprland = {
+  modules-niri = {
     nixos-modules = [
       {
         modules.desktop.fonts.enable = true;
@@ -40,18 +40,18 @@ let
         modules.secrets.desktop.enable = true;
         modules.secrets.preservation.enable = true;
       }
+      { programs.niri.enable = true; }
     ]
     ++ base-modules.nixos-modules;
     home-modules = [
-      { modules.desktop.hyprland.enable = true; }
+      { modules.desktop.niri.enable = true; }
     ]
     ++ base-modules.home-modules;
   };
 in
 {
   nixosConfigurations = {
-    # host with hyprland compositor
-    "${name}" = mylib.nixosSystem (modules-hyprland // args);
+    "${name}" = mylib.nixosSystem (modules-niri // args);
   };
 
   # generate iso image for hosts with desktop environment

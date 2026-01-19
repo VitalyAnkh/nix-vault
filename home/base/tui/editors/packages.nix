@@ -17,7 +17,7 @@
         deadnix # Find and remove unused code in .nix source files
         alejandra # Nix Code Formatter
         nixfmt-tree
-        nixfmt-rfc-style # Nix Code Formatter
+        nixfmt # Nix Code Formatter
 
         #android-studio-full
         android-studio-tools
@@ -148,7 +148,7 @@
         delve # go debugger
 
         # -- java
-        jdk21
+        jdk25
         gradle
         maven
         spring-boot-cli
@@ -182,7 +182,7 @@
         racket-minimal
         fnlfmt # fennel
         (
-          if pkgs.stdenv.isLinux && (pkgs.stdenv.isx86_64 || pkgs.stdenv.isi686) then
+          if pkgs.stdenv.isLinux && pkgs.stdenv.hostPlatform.isx86 then
             pkgs-master.akkuPackages.scheme-langserver
           else
             pkgs.emptyDirectory

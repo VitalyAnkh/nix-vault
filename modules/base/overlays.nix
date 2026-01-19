@@ -43,7 +43,7 @@
               url = "https://raw.githubusercontent.com/ppy/osu-web/${osu-web-rev}/public/images/layout/osu-logo-white.svg";
               hash = "sha256-XvYBIGyvTTfMAozMP9gmr3uYEJaMcvMaIzwO7ZILrkY=";
             })
-            (osu-mime-spec + "/osu-file-extensions.xml")
+            osu-mime-spec
           ];
         }
       );

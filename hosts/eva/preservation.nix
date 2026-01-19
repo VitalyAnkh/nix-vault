@@ -191,6 +191,10 @@ in
         ".config/zed"
         ".local/share/zed"
 
+        # google ai editor (antigravity)
+        ".config/Antigravity"
+        ".antigravity"
+
         # ai agents
         ".claude"
         ".gemini"
@@ -378,6 +382,9 @@ in
 
         # Digital Painting
         ".local/share/krita"
+
+        # Japanese IME
+        ".config/mozc" # used by fcitx5-mozc
 
         ".config/nushell"
       ];

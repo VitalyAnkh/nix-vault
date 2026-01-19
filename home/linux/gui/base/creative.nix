@@ -32,11 +32,14 @@
     ]
     ++ (lib.optionals pkgs.stdenv.isx86_64 [
       # https://github.com/edolstra/nix-warez/blob/master/blender/flake.nix
-      (
-        blender-bin.packages.${pkgs.stdenv.hostPlatform.system}.blender_4_5
-        or blender-bin.packages.${pkgs.stdenv.hostPlatform.system}.blender_4_2
-      ) # 3d modeling
+      (blender-bin.packages.${pkgs.stdenv.hostPlatform.system}.blender_5_0) # 3d modeling
 
+      # fpga
+      # python313Packages.apycula # gowin fpga
+      # yosys # fpga synthesis
+      # nextpnr # fpga place and route
+      # openfpgaloader # fpga programming
+      # nur-ryan4yin.packages.${pkgs.stdenv.hostPlatform.system}.gowin-eda-edu-ide # app: `gowin-env` => `gw_ide` / `gw_pack` / ...
       ldtk # A modern, versatile 2D level editor
     ]);
 
@@ -44,36 +47,32 @@
     # live streaming
     obs-studio = {
       enable = pkgs.stdenv.isx86_64;
-      plugins =
-        with pkgs.obs-studio-plugins;
-        [
-          # screen capture
-          wlrobs
-          # obs-ndi
-          # obs-nvfbc
-          obs-teleport
-          # obs-hyperion
-          droidcam-obs
-          obs-vkcapture
-          obs-gstreamer
-          input-overlay
-          obs-multi-rtmp
-          obs-source-clone
-          obs-shaderfilter
-          obs-source-record
-          obs-livesplit-one
-          looking-glass-obs
-          obs-vintage-filter
-          obs-command-source
-          obs-move-transition
-          obs-backgroundremoval
-          # advanced-scene-switcher
-          obs-pipewire-audio-capture
-        ]
-        ++ (lib.optionals pkgs.stdenv.isx86_64 [
-          obs-vaapi
-          obs-3d-effect
-        ]);
+      plugins = with pkgs.obs-studio-plugins; [
+        # screen capture
+        wlrobs
+        # obs-ndi
+        # obs-nvfbc
+        obs-teleport
+        # obs-hyperion
+        droidcam-obs
+        obs-vkcapture
+        obs-gstreamer
+        input-overlay
+        obs-multi-rtmp
+        obs-source-clone
+        obs-shaderfilter
+        obs-source-record
+        obs-livesplit-one
+        looking-glass-obs
+        obs-vintage-filter
+        obs-command-source
+        obs-move-transition
+        obs-backgroundremoval
+        # advanced-scene-switcher
+        obs-pipewire-audio-capture
+        obs-vaapi
+        obs-3d-effect
+      ];
     };
   };
 }

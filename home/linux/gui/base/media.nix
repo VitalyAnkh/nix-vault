@@ -25,7 +25,7 @@
 
     qbittorrent-enhanced
 
-    (pkgs-x64.zoom-us.override { hyprlandXdgDesktopPortalSupport = true; })
+    (pkgs-x64.zoom-us)
   ];
 
   programs.mpv = {
