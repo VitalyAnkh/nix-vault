@@ -1,5 +1,7 @@
 {
+  lib,
   pkgs,
+  myvars,
   xremap-flake,
   ...
 }:
@@ -9,6 +11,11 @@
     xremap-flake.nixosModules.default
     # This is effectively an inline module
     {
+      services.xremap = {
+        enable = lib.mkDefault true;
+        userName = lib.mkDefault myvars.username;
+      };
+
       # Modmap for single key rebinds
       services.xremap.config.modmap = [
         {
