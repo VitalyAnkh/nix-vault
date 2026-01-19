@@ -1,9 +1,18 @@
 {
+  pkgs,
   ...
 }:
+let
+
+in
 {
-  # NOTE: `idols-ai` has been migrated to `eva`.
-  imports = [
-    ../../eva/ai/ollama.nix
-  ];
+  services.ollama = rec {
+    enable = true;
+    package = pkgs.ollama;
+    acceleration = "cuda";
+    host = "0.0.0.0";
+    port = 11434;
+    home = "/var/lib/ollama";
+    models = "${home}/models";
+  };
 }

@@ -34,10 +34,11 @@
     # which represents the GitHub repository URL + branch/commit-id/tag.
 
     # Official NixOS package source, using nixos's unstable branch by default
+    # Find git commit hash with build status here(3 jobs per day):
+    # https://hydra.nixos.org/jobset/nixpkgs/unstable
+    # update via nix flake update nixpkgs --override-input nixpkgs github:NixOS/nixpkgs/<commit-hash>
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-25.11";
-    # revert mesa to 25.2.6
-    nixpkgs-mesa.url = "github:nixos/nixpkgs/2b1f0ea3ee3952e68b164efa0a1c5e394ef2e781";
     nixpkgs-2505.url = "github:nixos/nixpkgs/nixos-25.05";
 
     # nixpkgs with some custom patches
@@ -76,6 +77,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    niri = {
+      url = "github:sodiboo/niri-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     lanzaboote = {
       url = "github:nix-community/lanzaboote/v0.4.3";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -83,15 +89,6 @@
 
     preservation = {
       url = "github:nix-community/preservation";
-    };
-
-    # community wayland nixpkgs
-    # nixpkgs-wayland.url = "github:nix-community/nixpkgs-wayland";
-
-    # anyrun - a wayland launcher
-    anyrun = {
-      url = "github:/anyrun-org/anyrun/v25.9.3";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # generate iso/qcow2/docker/... image from nixos configuration
@@ -159,11 +156,9 @@
 
     nixos-apple-silicon = {
       # asahi-6.17.7-2
-      url = "github:nix-community/nixos-apple-silicon/release-2025-11-18";
+      url = "github:nix-community/nixos-apple-silicon";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    niri.url = "github:sodiboo/niri-flake";
 
     helix = {
       # Helix with steel as plugin system

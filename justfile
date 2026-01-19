@@ -157,7 +157,12 @@ repair-store *paths:
 # Update all Nixpkgs inputs
 [group('nix')]
 up-nix:
-  nix flake update nixpkgs nixpkgs-stable nixpkgs-unstable nixpkgs-darwin nixpkgs-patched
+  nix flake update --commit-lock-file nixpkgs-stable nixpkgs-master nixpkgs-darwin nixpkgs-patched
+
+# override nixpkgs's commit hash
+[group('nix')]
+override-pkgs hash:
+  nix flake update --commit-lock-file nixpkgs --override-input nixpkgs github:NixOS/nixpkgs/{{hash}}
 
 ############################################################################
 #
@@ -172,14 +177,6 @@ local mode="default":
   #!/usr/bin/env nu
   use {{utils_nu}} *;
   nixos-switch (hostname) {{mode}}
-
-# Deploy the hyprland nixosConfiguration by hostname match
-[linux]
-[group('desktop')]
-hypr mode="default":
-  #!/usr/bin/env nu
-  use {{utils_nu}} *;
-  nixos-switch eva {{mode}}
 
 # Deploy the niri nixosConfiguration by hostname match
 [linux]
@@ -425,6 +422,11 @@ list-systemd:
 # https://github.com/ryan4yin/nixpkgs-review-gha
 #
 # =================================================
+
+[linux]
+[group('nixpkgs')]
+gh-login:
+  gh auth login -h github.com --skip-ssh-key --git-protocol ssh --web
 
 # Run nixpkgs-review for PR
 [linux]
