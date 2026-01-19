@@ -168,6 +168,22 @@
         "type": "github"
       }
     },
+    "doomemacs": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1765742720,
+        "narHash": "sha256-ZCOYpKs1HTzq+6cexuDHhbkhrIzN6q/aNy87I3vAodA=",
+        "owner": "doomemacs",
+        "repo": "doomemacs",
+        "rev": "59956c3aabff98459055a8784a8adc6495cebb03",
+        "type": "github"
+      },
+      "original": {
+        "owner": "doomemacs",
+        "repo": "doomemacs",
+        "type": "github"
+      }
+    },
     "flake-compat": {
       "flake": false,
       "locked": {
@@ -1050,6 +1066,22 @@
         "type": "github"
       }
     },
+    "polybar-themes": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1753542051,
+        "narHash": "sha256-f/54m7RJnqNW6eC/75IrnFxmSWTY+zd5epm6TQsYeYA=",
+        "owner": "adi1090x",
+        "repo": "polybar-themes",
+        "rev": "e6326ff356b296256b7fac9c5bcc42a1ef4a4d5b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "adi1090x",
+        "repo": "polybar-themes",
+        "type": "github"
+      }
+    },
     "pre-commit-hooks": {
       "inputs": {
         "flake-compat": "flake-compat_5",
@@ -1121,6 +1153,7 @@
         "blender-bin": "blender-bin",
         "catppuccin": "catppuccin",
         "disko": "disko",
+        "doomemacs": "doomemacs",
         "ghostty": "ghostty",
         "haumea": "haumea",
         "helix": "helix",
@@ -1144,6 +1177,7 @@
         "nu_scripts": "nu_scripts",
         "nuenv": "nuenv",
         "nur-ryan4yin": "nur-ryan4yin",
+        "polybar-themes": "polybar-themes",
         "pre-commit-hooks": "pre-commit-hooks",
         "preservation": "preservation",
         "wallpapers": "wallpapers"

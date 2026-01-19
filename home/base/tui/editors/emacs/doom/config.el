@@ -96,6 +96,7 @@
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
 
+;; use alejandra to format nix files
 (use-package! lsp-nix
   :ensure lsp-mode
   :after
@@ -103,7 +104,7 @@
   :demand t
   :custom
   (lsp-nix-nil-formatter
-   ["nixfmt"]))
+   ["alejandra"]))
 
 (use-package! nushell-mode
   :config
@@ -171,4 +172,3 @@
   (copilot-mode +1))
 
 (use-package! wakatime-mode :ensure t)
-

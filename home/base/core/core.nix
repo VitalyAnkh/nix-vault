@@ -5,6 +5,7 @@
     cowsay
     gnupg
     gnumake
+    patchelf
 
     traceroute
 

@@ -19,7 +19,7 @@ in
     ./hardware-configuration.nix
     ./nvidia.nix
     ./users.nix # Multi-user configuration for muon machine
-    ./xremap.nix # xremap configuration for vitalyr user only
+    ./xremap.nix # xremap for vitalyr only
 
     # Use eva's preservation configuration for muon as well
     ../eva/preservation.nix
