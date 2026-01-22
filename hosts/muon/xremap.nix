@@ -4,10 +4,7 @@
 {
   services.xremap = {
     enable = true;
-    serviceMode = "user";
+    serviceMode = "system";
     userName = myvars.username; # "vitalyr"
   };
-
-  # Prevent other users' `systemd --user` from starting xremap automatically.
-  systemd.user.services.xremap.unitConfig.ConditionUser = myvars.username;
 }

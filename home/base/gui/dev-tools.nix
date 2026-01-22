@@ -10,8 +10,6 @@
       mitmproxy # http/https proxy tool
       wireshark # network analyzer
 
-      xorg.xeyes
-
       # IDEs
       jetbrains-toolbox
 
@@ -19,7 +17,11 @@
       k8sgpt
       kubectl-ai # an ai helper opensourced by google
     ]
-    ++ (lib.optionals pkgs.stdenv.isx86_64 [
+    ++ (lib.optionals stdenv.isLinux [
+      xorg.xeyes
+      xvfb-run
+    ])
+    ++ (lib.optionals stdenv.isx86_64 [
       insomnia # REST client
     ]);
 }

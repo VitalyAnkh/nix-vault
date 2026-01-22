@@ -10,3 +10,8 @@ core*
 !core.nix
 .claude
 !coredns*
+
+# Local planning files (Codex / planning-with-files)
+task_plan.md
+findings.md
+progress.md

@@ -11,6 +11,7 @@
     # enabling it is required to make Wayland compositors function properly.
     # "nvidia.NVreg_PreserveVideoMemoryAllocations=1"
     "nvidia-drm.fbdev=1"
+    "NVreg_RestrictProfilingToAdminUsers=0"
   ];
   services.xserver.videoDrivers = [ "nvidia" ]; # will install nvidia-vaapi-driver by default
   hardware.nvidia = {
