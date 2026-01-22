@@ -3,6 +3,10 @@
   lib,
   ...
 }:
+let
+  hasNixAccessTokensSecret =
+    config ? age && builtins.hasAttr "nix-access-tokens" (config.age.secrets or { });
+in
 {
   # auto upgrade nix to the unstable version
   # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/tools/package-management/nix/default.nix#L284
@@ -27,7 +31,7 @@
 
   nix.channel.enable = false; # remove nix-channel related tools & configs, we use flakes instead.
 
-  nix.extraOptions = ''
-    !include ${config.age.secrets.nix-access-tokens.path}
+  nix.extraOptions = lib.optionalString hasNixAccessTokensSecret ''
+    !include ${config.age.secrets."nix-access-tokens".path}
   '';
 }

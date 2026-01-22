@@ -192,7 +192,11 @@ in
             enable = true;
             settings = {
               write = true; # Automatically fix typos
-              configPath = ".typos.toml"; # relative to the flake root
+              # NOTE: git-hooks.nix currently generates a config file in the Nix store for the `typos`
+              # hook, so `configPath` may not be used even when set. Read the repo config and pass the
+              # parsed TOML as structured config to ensure project-specific words like `osu-lazer` stay
+              # intact.
+              config = builtins.fromTOML (builtins.readFile (mylib.relativeToRoot ".typos.toml"));
               exclude = "rime-data/";
             };
           };

@@ -88,6 +88,7 @@
         cm = "commit -m"; # commit via `git cm <message>`
         ca = "commit -am"; # commit all changes via `git ca <message>`
         dc = "diff --cached";
+        wt = "worktree";
 
         amend = "commit --amend -m"; # amend commit message via `git amend <message>`
         unstage = "reset HEAD --"; # unstage file via `git unstage <file>`

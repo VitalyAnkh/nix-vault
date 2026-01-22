@@ -17,6 +17,7 @@
     # clash-party
     #daed
     warp-terminal
+    waveterm
     zotero
     kdePackages.okular
     v2raya

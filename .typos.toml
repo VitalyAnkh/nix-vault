@@ -23,7 +23,7 @@ extend-ignore-re = [
   "noice",                                                            # noice.nvim
   "crypted-nixos",
   "daed",
-  "lazer",
+  "(?i)lazer",
   '''(?m)sha256\s*=\s*"sha256-[A-Za-z0-9+/=]+"''', # sha256
 
   # catppuccin theme colors

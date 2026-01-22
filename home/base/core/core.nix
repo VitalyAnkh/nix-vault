@@ -1,68 +1,65 @@
 { pkgs, ... }:
 {
-  home.packages = with pkgs; [
-    # Misc
-    cowsay
-    gnupg
-    gnumake
-    patchelf
+  home.packages =
+    with pkgs;
+    [
+      # Misc
+      cowsay
+      gnupg
+      gnumake
+      patchelf
 
-    traceroute
+      ninja
+      trash-cli
 
-    ninja
-    trash-cli
+      # use nvfetcher with nix-vault/pkgs/
+      nvfetcher
 
-    # use nvfetcher with nix-vault/pkgs/
-    nvfetcher
+      # Modern cli tools, replacement of grep/sed/...
 
-    # Modern cli tools, replacement of grep/sed/...
+      # Interactively filter its input using fuzzy searching, not limit to filenames.
+      fzf
+      bottom
+      bacon # Background rust code checker
+      uv
+      # search for files by name, faster than find
+      fd
+      # search for files by its content, replacement of grep
+      (ripgrep.override { withPCRE2 = true; })
 
-    # Interactively filter its input using fuzzy searching, not limit to filenames.
-    fzf
-    bottom
-    bacon # Background rust code checker
-    uv
-    # search for files by name, faster than find
-    fd
-    # search for files by its content, replacement of grep
-    (ripgrep.override { withPCRE2 = true; })
+      # A fast and polyglot tool for code searching, linting, rewriting at large scale
+      # supported languages: only some mainstream languages currently(do not support nix/nginx/yaml/toml/...)
+      ast-grep
 
-    # A fast and polyglot tool for code searching, linting, rewriting at large scale
-    # supported languages: only some mainstream languages currently(do not support nix/nginx/yaml/toml/...)
-    ast-grep
+      sad # CLI search and replace, just like sed, but with diff preview.
+      yq-go # yaml processor https://github.com/mikefarah/yq
+      just # a command runner like make, but simpler
+      hyperfine # command-line benchmarking tool
+      gping # ping, but with a graph(TUI)
+      doggo # DNS client for humans
+      duf # Disk Usage/Free Utility - a better 'df' alternative
+      dust # A more intuitive version of `du` in rust
+      gdu # disk usage analyzer(replacement of `du`)
 
-    sad # CLI search and replace, just like sed, but with diff preview.
-    yq-go # yaml processor https://github.com/mikefarah/yq
-    just # a command runner like make, but simpler
-    hyperfine # command-line benchmarking tool
-    gping # ping, but with a graph(TUI)
-    doggo # DNS client for humans
-    duf # Disk Usage/Free Utility - a better 'df' alternative
-    dust # A more intuitive version of `du` in rust
-    gdu # disk usage analyzer(replacement of `du`)
+      # nix related
+      #
+      # it provides the command `nom` works just like `nix
+      # with more details log output
+      nix-output-monitor
+      hydra-check # check hydra(nix's build farm) for the build status of a package
+      nix-index # A small utility to index nix store paths
+      nix-init # generate nix derivation from url
+      # https://github.com/nix-community/nix-melt
+      nix-melt # A TUI flake.lock viewer
+      # https://github.com/utdemir/nix-tree
+      nix-tree # A TUI to visualize the dependency graph of a nix derivation
 
-    # nix related
-    #
-    # it provides the command `nom` works just like `nix
-    # with more details log output
-    nix-output-monitor
-    hydra-check # check hydra(nix's build farm) for the build status of a package
-    nix-index # A small utility to index nix store paths
-    nix-init # generate nix derivation from url
-    # https://github.com/nix-community/nix-melt
-    nix-melt # A TUI flake.lock viewer
-    # https://github.com/utdemir/nix-tree
-    nix-tree # A TUI to visualize the dependency graph of a nix derivation
+      # misc
+      caddy # A webserver with automatic HTTPS via Let's Encrypt(replacement of nginx)
 
-    # misc
-    cowsay
-    caddy # A webserver with automatic HTTPS via Let's Encrypt(replacement of nginx)
-    # A fast and polyglot tool for code searching, linting, rewriting at large scale
-    # supported languages: only some mainstream languages currently(do not support nix/nginx/yaml/toml/...)
-    ast-grep
-
-    # other core cli tools are installed at system-level
-  ];
+      # other core cli tools are installed at system-level
+    ]
+    ++ lib.optionals stdenv.isLinux [ traceroute ];
 
   # A modern replacement for ‘ls’
   # useful in bash/zsh prompt, not in nushell.
