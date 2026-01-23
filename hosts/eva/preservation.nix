@@ -198,6 +198,14 @@ in
         ".config/Antigravity"
         ".antigravity"
 
+        # ======================================
+        # Unreal Engine / Epic Games
+        # ======================================
+
+        # Unreal/Epic store user config under `~/.config` (stateless root needs these persisted)
+        ".config/Epic"
+        ".config/Unreal Engine"
+
         # ai agents
         ".claude"
         ".gemini"
