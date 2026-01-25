@@ -159,7 +159,7 @@ in
         # IDE / Editors
         # ======================================
 
-        # doom-emacs
+        # doomemacs
         ".config/emacs"
         ".local/share/doom"
         ".local/share/emacs"
@@ -199,6 +199,7 @@ in
         ".claude"
         ".gemini"
         ".codex"
+        ".clawdbot"
 
         # nvim
         ".local/share/nvim"
@@ -206,12 +207,6 @@ in
 
         # helix & steel
         ".local/share/steel"
-
-        # doom-emacs
-        # "org" # org files
-        # ".config/emacs"
-        # ".local/share/doom"
-        # ".local/share/emacs"
 
         # Joplin
         ".config/joplin" # tui client

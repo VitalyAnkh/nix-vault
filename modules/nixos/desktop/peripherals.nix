@@ -50,12 +50,24 @@
     printing.enable = true; # Enable CUPS to print documents.
     geoclue2.enable = true; # Enable geolocation services.
 
-    udev.packages = with pkgs; [
-      gnome-settings-daemon
-      # platformio # udev rules for platformio
-      # openocd # required by paltformio, see https://github.com/NixOS/nixpkgs/issues/224895
-      # openfpgaloader
-    ];
+    udev = {
+      packages = with pkgs; [
+        gnome-settings-daemon
+        # platformio # udev rules for platformio
+        # openocd # required by paltformio, see https://github.com/NixOS/nixpkgs/issues/224895
+        # openfpgaloader
+      ];
+
+      # Grant access to hidraw devices for WebHID (usevia.app / VIA).
+      #
+      # NOTE: This applies to all hidraw devices so WebHID works for multiple
+      # keyboards / similar devices without adding per-device VID/PID rules.
+      extraRules = ''
+        # Allow the active seat user to access hidraw nodes.
+        # This is required for Chrome WebHID (e.g. usevia.app / VIA).
+        KERNEL=="hidraw*", SUBSYSTEM=="hidraw", TAG+="uaccess"
+      '';
+    };
 
     # A key remapping daemon for linux.
     # https://github.com/rvaiya/keyd
