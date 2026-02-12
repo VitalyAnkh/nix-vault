@@ -111,8 +111,8 @@ in
         # ---------------------------------------------
 
         # .age means the decrypted file is still encrypted by age(via a passphrase)
-        (optionalSecret "ryan4yin-gpg-subkeys.priv.age"
-          "${mysecrets}/ryan4yin-gpg-subkeys-2024-01-27.priv.age.age"
+        (optionalSecret "vitalyr-gpg-subkeys.priv.age"
+          "${mysecrets}/vitalyr-gpg-subkeys-2024-01-27.priv.age.age"
           noaccess
         )
 
@@ -152,8 +152,8 @@ in
           user = myvars.username;
         })
 
-        (optionalEtc "agenix/ryan4yin-gpg-subkeys.priv.age" "ryan4yin-gpg-subkeys.priv.age"
-          "${mysecrets}/ryan4yin-gpg-subkeys-2024-01-27.priv.age.age"
+        (optionalEtc "agenix/vitalyr-gpg-subkeys.priv.age" "vitalyr-gpg-subkeys.priv.age"
+          "${mysecrets}/vitalyr-gpg-subkeys-2024-01-27.priv.age.age"
           { mode = "0000"; }
         )
 

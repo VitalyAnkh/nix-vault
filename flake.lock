@@ -1087,11 +1087,11 @@
     },
     "nixpkgs-master": {
       "locked": {
-        "lastModified": 1768851744,
-        "narHash": "sha256-b77OojaypryetfRCpzEdlTt6Z9GhUmqWR2bOMk8saoE=",
+        "lastModified": 1770893340,
+        "narHash": "sha256-CG/uIL6eoeqH2PEJIyGemsk+JsPi2gRL8aQi5c09Ie4=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "0d6e50cd6bc9d9c120d0b357b5634ca0c4699acb",
+        "rev": "e25ac2fcc7c636c071915347c50fe64cea6183ba",
         "type": "github"
       },
       "original": {
@@ -1261,17 +1261,17 @@
     "nu_scripts": {
       "flake": false,
       "locked": {
-        "lastModified": 1762863367,
-        "narHash": "sha256-oxnXzxQkNccCs36j+aMzg4QGHDcX7niJruqxCkeg0LM=",
-        "owner": "ryan4yin",
-        "repo": "nu_scripts",
-        "rev": "ff8092707054ad091d67bd408374a39977e33c1b",
-        "type": "github"
+        "lastModified": 1769723307,
+        "narHash": "sha256-zHLVDV7RsQMMgYP7ysWF83Q+7PoP4E+pOguzixWf9iA=",
+        "ref": "refs/heads/main",
+        "rev": "049b00e54e0dc878bc9a37ee0e05c6ba18789c2f",
+        "revCount": 1246,
+        "type": "git",
+        "url": "https://github.com/nushell/nu_scripts.git"
       },
       "original": {
-        "owner": "ryan4yin",
-        "repo": "nu_scripts",
-        "type": "github"
+        "type": "git",
+        "url": "https://github.com/nushell/nu_scripts.git"
       }
     },
     "nuenv": {

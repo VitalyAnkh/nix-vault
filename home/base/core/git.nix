@@ -26,14 +26,6 @@
         pv = "pr view";
       };
     };
-    hosts = {
-      "github.com" = {
-        "users" = {
-          "ryan4yin" = null;
-        };
-        "user" = "ryan4yin";
-      };
-    };
   };
 
   programs.git = {
@@ -52,7 +44,7 @@
         #
         # [user]
         #   email = "xxx@xxx.com"
-        #   name = "Ryan Yin"
+        #   name = "VitalyR"
         path = "~/work/.gitconfig";
         condition = "gitdir:~/work/";
       }
@@ -73,9 +65,6 @@
         "ssh://git@github.com/VitalyAnkh" = {
           insteadOf = "https://github.com/VitalyAnkh";
         };
-        # "ssh://git@bitbucket.com/ryan4yin" = {
-        #   insteadOf = "https://bitbucket.com/ryan4yin";
-        # };
       };
 
       alias = {

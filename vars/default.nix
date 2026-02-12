@@ -15,7 +15,7 @@
   #      ```bash
   #      # KDF: bcrypt with 256 rounds, takes 2s on Apple M2):
   #      # Passphrase: digits + letters + symbols, 12+ chars
-  #      ssh-keygen -t ed25519 -a 256 -C "ryan@xxx" -f ~/.ssh/xxx
+  #      ssh-keygen -t ed25519 -a 256 -C "vitalyr@xxx" -f ~/.ssh/xxx
   #      ```
   #    2. Never leave the device and never sent over the network.
   # 2. Or just use hardware security keys like Yubikey/CanoKey.
@@ -29,6 +29,6 @@
   ];
   secondaryAuthorizedKeys = [
     # the backup ssh keys for disaster recovery
-    # "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMzYT0Fpcp681eHY5FJV2G8Mve53iX3hMOLGbVvfL+TF ryan@romantic"
+    # "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMzYT0Fpcp681eHY5FJV2G8Mve53iX3hMOLGbVvfL+TF vitalyr@romantic"
   ];
 }

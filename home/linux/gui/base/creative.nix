@@ -26,20 +26,20 @@
       nutstore-nautilus
 
       logisim-evolution
-      bottles
-      wineWowPackages.waylandFull
-      # wineWowPackages.stagingFull
     ]
     ++ (lib.optionals pkgs.stdenv.isx86_64 [
       # https://github.com/edolstra/nix-warez/blob/master/blender/flake.nix
       (blender-bin.packages.${pkgs.stdenv.hostPlatform.system}.blender_5_0) # 3d modeling
+
+      bottles
+      wineWowPackages.waylandFull
+      # wineWowPackages.stagingFull
 
       # fpga
       # python313Packages.apycula # gowin fpga
       # yosys # fpga synthesis
       # nextpnr # fpga place and route
       # openfpgaloader # fpga programming
-      # nur-ryan4yin.packages.${pkgs.stdenv.hostPlatform.system}.gowin-eda-edu-ide # app: `gowin-env` => `gw_ide` / `gw_pack` / ...
       ldtk # A modern, versatile 2D level editor
     ]);
 

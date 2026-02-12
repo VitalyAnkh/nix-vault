@@ -1,4 +1,8 @@
-{ config, ... }:
+{ config, lib, ... }:
+let
+  hasGrafanaAdminPassword =
+    config ? age && config.age ? secrets && config.age.secrets ? "grafana-admin-password";
+in
 {
 
   # Declaratively provision Grafana's data sources, dashboards, and alerting rules.
@@ -88,6 +92,8 @@
         };
         editable = false;
       }
+    ]
+    ++ lib.optionals hasGrafanaAdminPassword [
       {
         # https://grafana.com/docs/grafana/latest/datasources/postgres/configure/
         name = "postgres-playground";
@@ -113,6 +119,8 @@
         };
         editable = false;
       }
+    ]
+    ++ [
       {
         name = "infinity-dataviewer";
         type = "yesoreyeram-infinity-datasource";

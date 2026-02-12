@@ -1,25 +1,19 @@
-<h2 align="center">:snowflake: Ryan4Yin's Nix Config :snowflake:</h2>
+<h2 align="center">:snowflake: vitalyr's Nix Vault :snowflake:</h2>
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/palette/macchiato.png" width="400" />
 </p>
 
 <p align="center">
-	<a href="https://github.com/ryan4yin/nix-config/stargazers">
-		<img alt="Stargazers" src="https://img.shields.io/github/stars/ryan4yin/nix-config?style=for-the-badge&logo=starship&color=C9CBFF&logoColor=D9E0EE&labelColor=302D41"></a>
     <a href="https://nixos.org/">
         <img src="https://img.shields.io/badge/NixOS-25.11-informational.svg?style=for-the-badge&logo=nixos&color=F2CDCD&logoColor=D9E0EE&labelColor=302D41"></a>
-    <a href="https://github.com/ryan4yin/nixos-and-flakes-book">
+    <a href="https://nixos-and-flakes.thiscute.world/">
         <img src="https://img.shields.io/badge/Nix%20Flakes-learning-informational.svg?style=for-the-badge&logo=nixos&color=F2CDCD&logoColor=D9E0EE&labelColor=302D41"></a>
   </a>
 </p>
 
-> My configuration is becoming more and more complex, and **it will be difficult for beginners to
-> read**. If you are new to NixOS and want to know how I use NixOS, I would recommend you to take a
-> look at the [ryan4yin/nix-config/releases](https://github.com/ryan4yin/nix-config/releases) first,
-> **check out to some simpler older versions, such as
-> [i3-kickstarter](https://github.com/ryan4yin/nix-config/tree/i3-kickstarter), which will be much
-> easier to understand**.
+> This repository is tailored to my own machines and workflows. If you are new to NixOS, treat it as
+> a reference and start from a smaller setup.
 
 This repository is home to the nix code that builds my systems:
 
@@ -46,11 +40,9 @@ As for Flakes, refer to
 
 **Want to know NixOS & Flakes in detail? Looking for a beginner-friendly tutorial or best practices?
 You don't have to go through the pain I've experienced again! Check out my
-[NixOS & Nix Flakes Book - 🛠️ ❤️ An unofficial & opinionated :book: for beginners](https://github.com/ryan4yin/nixos-and-flakes-book)!**
+[NixOS & Nix Flakes Book - 🛠️ ❤️ An unofficial & opinionated :book: for beginners](https://nixos-and-flakes.thiscute.world/)!**
 
-> If you're using macOS, check out
-> [ryan4yin/nix-darwin-kickstarter](https://github.com/ryan4yin/nix-darwin-kickstarter) for a quick
-> start.
+> If you're using macOS, see https://nixos-and-flakes.thiscute.world/ for nix-darwin notes as well.
 
 ## Components
 
@@ -77,7 +69,7 @@ You don't have to go through the pain I've experienced again! Check out my
 | **Filesystem & Encryption** | tmpfs as `/`, [Btrfs][Btrfs] subvolumes on a [LUKS][LUKS] encrypted partition for persistent, unlock via passphrase |
 | **Secure Boot**             | [lanzaboote][lanzaboote]                                                                                            |
 
-Wallpapers: https://github.com/ryan4yin/wallpapers
+Wallpapers: provided via the `wallpapers` flake input (see `flake.nix`).
 
 ## Hyprland + AstroNvim + DoomEmacs
 
@@ -105,9 +97,9 @@ See [./secrets](./secrets) for details.
 > :red_circle: **IMPORTANT**: **You should NOT deploy this flake directly on your machine :exclamation:
 > It will not succeed.** This flake contains my hardware configuration(such as
 > [hardware-configuration.nix](hosts/idols-ai/hardware-configuration.nix),
-> [Nvidia Support](https://github.com/ryan4yin/nix-config/blob/v0.1.1/hosts/idols-ai/default.nix#L77-L91),
-> etc.) which is not suitable for your hardware, and requires my private secrets repository
-> [ryan4yin/nix-secrets](https://github.com/ryan4yin/nix-config/tree/main/secrets) to deploy. You
+> [Nvidia Support](hosts/idols-ai/default.nix),
+> etc.) which is not suitable for your hardware, and requires my private secrets repository (via
+> the `mysecrets` flake input, e.g. `vr-nix-secrets`) to deploy. You
 > may use this repo as a reference to build your own configuration.
 
 For NixOS:

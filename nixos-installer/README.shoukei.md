@@ -226,7 +226,7 @@ Clone this repository:
 nix-shell -p git neovim --option substituters "https://mirrors.ustc.edu.cn/nix-channels/store"
 
 # clone this repository
-git clone https://github.com/ryan4yin/nix-config.git
+git clone https://github.com/VitalyAnkh/nix-vault.git
 ```
 
 Then, generate the NixOS configuration:
@@ -257,7 +257,7 @@ nixos-install --root /mnt --flake .#shoukei --no-root-password --show-trace --ve
 nixos-install --root /mnt --flake .#shoukei --no-root-password --show-trace --verbose --option substituters "https://mirrors.ustc.edu.cn/nix-channels/store  https://cache.nixos.org/" # install-2
 
 # enter into the installed system, check password & users
-# `su ryan` => `sudo -i` => enter ryan's password => successfully login
+# `su vitalyr` => `sudo -i` => enter vitalyr's password => successfully login
 # if login failed, check the password you set in install-1, and try again
 nixos-enter
 
@@ -277,8 +277,8 @@ rm ~/nix-config/hosts/idols_ai/hardware-configuration-new.nix
 
 # NOTE: `cat shoukei.md | grep git-1 > git-1.sh` to generate this script
 # commit the changes after installing nixos successfully
-git config --global user.email "ryan4yin@linux.com"   # git-1
-git config --global user.name "Ryan Yin"              # git-1
+git config --global user.email "vr@vitalyr.com"   # git-1
+git config --global user.name "VitalyR"            # git-1
 git commit -am "feat: update hardware-configuration"
 
 # copy our configuration to the installed file system
@@ -301,7 +301,7 @@ that the new machine can pull my private secrets repo:
 
 ```bash
 # 1. Generate a new SSH key with a strong passphrase
-ssh-keygen -t ed25519 -a 256 -C "ryan@shoukei" -f ~/.ssh/shoukei
+ssh-keygen -t ed25519 -a 256 -C "vitalyr@shoukei" -f ~/.ssh/shoukei
 # 2. Add the ssh key to the ssh-agent, so that nixos-rebuild can use it to pull my private secrets repo.
 ssh-add ~/.ssh/shoukei
 ```
@@ -314,7 +314,7 @@ After all these steps, we can finally deploy the main flake's NixOS configuratio
 
 ```bash
 sudo mv /etc/nixos ~/nix-config
-sudo chown -R ryan:ryan ~/nix-config
+sudo chown -R vitalyr:vitalyr ~/nix-vault
 
 cd ~/nix-config
 
@@ -324,5 +324,4 @@ just s-hypr
 
 Finally, to enable secure boot, follow the instructions in
 [lanzaboote - Quick Start](https://github.com/nix-community/lanzaboote/blob/master/docs/QUICK_START.md)
-and
-[nix-config/ai/secure-boot.nix](https://github.com/ryan4yin/nix-config/blob/main/hosts/idols_ai/secureboot.nix)
+and [../hosts/idols-ai/secureboot.nix](../hosts/idols-ai/secureboot.nix)

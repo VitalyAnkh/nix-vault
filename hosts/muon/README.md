@@ -28,7 +28,7 @@ efivarfs                  efivarfs  256K  108K  144K  43% /sys/firmware/efi/efiv
 /dev/mapper/crypted-nixos btrfs     1.9T  630G  1.3T  34% /swap
 /dev/nvme0n1p1            vfat      597M  108M  490M  19% /boot
 tmpfs                     tmpfs     3.2G   48K  3.2G   1% /run/user/1000
-//192.168.5.194/Downloads cifs      3.7T  3.0T  699G  82% /home/ryan/SMB-Downloads
+//192.168.5.194/Downloads cifs      3.7T  3.0T  699G  82% /home/vitalyr/SMB-Downloads
 tmpfs                     tmpfs     100K     0  100K   0% /var/lib/lxd/shmounts
 tmpfs                     tmpfs     100K     0  100K   0% /var/lib/lxd/devlxd
 /dev/mapper/crypted-nixos btrfs     1.9T  630G  1.3T  34% /tmp
@@ -44,39 +44,39 @@ nvme0n1           259:0    0  1.8T  0 disk
                                             /swap/swapfile
                                             /swap
                                             /snapshots
-                                            /home/ryan/tmp
-                                            /home/ryan/nix-config
-                                            /home/ryan/go
-                                            /home/ryan/codes
-                                            /home/ryan/Videos
-                                            /home/ryan/Pictures
-                                            /home/ryan/Music
-                                            /home/ryan/Downloads
-                                            /home/ryan/Documents
-                                            /home/ryan/.wakatime
-                                            /home/ryan/.ssh
-                                            /home/ryan/.pki
-                                            /home/ryan/.npm
-                                            /home/ryan/.mozilla
-                                            /home/ryan/.local/state
-                                            /home/ryan/.local/share
-                                            /home/ryan/.kube
-                                            /home/ryan/.gnupg
-                                            /home/ryan/.docker
-                                            /home/ryan/.config/remmina
-                                            /home/ryan/.config/pulse
-                                            /home/ryan/.config/google-chrome
-                                            /home/ryan/.config/github-copilot
-                                            /home/ryan/.config/freerdp
-                                            /home/ryan/.aws
+                                            /home/vitalyr/tmp
+                                            /home/vitalyr/nix-vault
+                                            /home/vitalyr/go
+                                            /home/vitalyr/codes
+                                            /home/vitalyr/Videos
+                                            /home/vitalyr/Pictures
+                                            /home/vitalyr/Music
+                                            /home/vitalyr/Downloads
+                                            /home/vitalyr/Documents
+                                            /home/vitalyr/.wakatime
+                                            /home/vitalyr/.ssh
+                                            /home/vitalyr/.pki
+                                            /home/vitalyr/.npm
+                                            /home/vitalyr/.mozilla
+                                            /home/vitalyr/.local/state
+                                            /home/vitalyr/.local/share
+                                            /home/vitalyr/.kube
+                                            /home/vitalyr/.gnupg
+                                            /home/vitalyr/.docker
+                                            /home/vitalyr/.config/remmina
+                                            /home/vitalyr/.config/pulse
+                                            /home/vitalyr/.config/google-chrome
+                                            /home/vitalyr/.config/github-copilot
+                                            /home/vitalyr/.config/freerdp
+                                            /home/vitalyr/.aws
                                             /etc/ssh
                                             /etc/secureboot
                                             /etc/nix/inputs
                                             /etc/agenix
                                             /etc/NetworkManager/system-connections
                                             /etc/machine-id
-                                            /home/ryan/.config/nushell/history.txt
-                                            /home/ryan/.wakatime.cfg
+                                            /home/vitalyr/.config/nushell/history.txt
+                                            /home/vitalyr/.wakatime.cfg
                                             /nix/store
                                             /var/log
                                             /var/lib
