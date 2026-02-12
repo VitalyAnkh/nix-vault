@@ -28,9 +28,9 @@ And `Zellij` for a smooth and stable terminal experience.
 
 Type `:tutor`(`:Tutor` in Neovim) to learn the basics usage of vim/neovim.
 
-## VIM's Cheetsheet
+## VIM's Cheatsheet
 
-> Here only record my commonly used keys, to see **a more comprehensive cheetsheet**:
+> Here only record my commonly used keys, to see **a more comprehensive cheatsheet**:
 > <https://vimhelp.org/quickref.txt.html>
 
 Both Emacs-Evil & Neovim are compatible with vim, sothe key-bindings described here are common in

@@ -419,7 +419,7 @@ list-systemd:
 # =================================================
 #
 # Nixpkgs Review via Github Action
-# https://github.com/ryan4yin/nixpkgs-review-gha
+# (pass the repo explicitly, e.g. `OWNER/nixpkgs-review-gha`)
 #
 # =================================================
 
@@ -431,17 +431,17 @@ gh-login:
 # Run nixpkgs-review for PR
 [linux]
 [group('nixpkgs')]
-pkg-review pr:
-  gh workflow run review.yml --repo ryan4yin/nixpkgs-review-gha -f x86_64-darwin=no -f post-result=true -f pr={{pr}}
+pkg-review pr repo:
+  gh workflow run review.yml --repo {{repo}} -f x86_64-darwin=no -f post-result=true -f pr={{pr}}
 
 # Run package tests for PR
 [linux]
 [group('nixpkgs')]
-pkg-test pr pname:
-  gh workflow run review.yml --repo ryan4yin/nixpkgs-review-gha -f x86_64-darwin=no -f post-result=true -f pr={{pr}} -f extra-args="-p {{pname}}.passthru.tests"
+pkg-test pr pname repo:
+  gh workflow run review.yml --repo {{repo}} -f x86_64-darwin=no -f post-result=true -f pr={{pr}} -f extra-args="-p {{pname}}.passthru.tests"
 
 # View the summary of a workflow
 [linux]
 [group('nixpkgs')]
-pkg-summary:
-  gh workflow view review.yml --repo ryan4yin/nixpkgs-review-gha
+pkg-summary repo:
+  gh workflow view review.yml --repo {{repo}}

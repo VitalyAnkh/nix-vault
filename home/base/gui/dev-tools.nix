@@ -7,9 +7,6 @@
   home.packages =
     with pkgs;
     [
-      mitmproxy # http/https proxy tool
-      wireshark # network analyzer
-
       # IDEs
       jetbrains-toolbox
 
@@ -18,6 +15,9 @@
       kubectl-ai # an ai helper opensourced by google
     ]
     ++ (lib.optionals stdenv.isLinux [
+      mitmproxy # http/https proxy tool
+      wireshark # network analyzer
+
       xorg.xeyes
       xvfb-run
     ])

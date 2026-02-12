@@ -10,7 +10,7 @@ terraform {
 # https://registry.terraform.io/providers/aminueza/minio/latest/docs
 provider "minio" {
   minio_server = "minio.writefor.fun"
-  minio_user   = "ryan"
+  minio_user   = "vitalyr"
 
   minio_api_version = "v4"
   minio_region      = "us-east-1"

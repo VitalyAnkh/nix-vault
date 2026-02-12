@@ -1,4 +1,4 @@
-## How to create & managage KubeVirt's Virtual Machine from this flake?
+## How to create & manage KubeVirt's Virtual Machine from this flake?
 
 Use `aquamarine` as an example, first build and upload the virtual machine's qcow2 image to the file
 server:
@@ -7,11 +7,10 @@ server:
 just upload-vm aquamarine
 ```
 
-Then create the virtual machine by creating a yaml file at
-[ryan4yin/k8s-gitops](https://github.com/ryan4yin/k8s-gitops/tree/main/vms), set the
-`spec.dataVolumeTemplates[0].source.http.url` to the uploaded file's URL, and fluxcd will
-automatically apply the changes, then a virtual machine named `aquamarine` will be created in the
-KubeVirt cluster.
+Then create the virtual machine by creating a yaml file at your GitOps repository (the one that
+applies Kubernetes manifests via FluxCD), set `spec.dataVolumeTemplates[0].source.http.url` to the
+uploaded file's URL, and FluxCD will automatically apply the changes. Then a virtual machine named
+`aquamarine` will be created in the KubeVirt cluster.
 
 Once the virtual machine `aquamarine` is created, we can deploy updates to it with the following
 commands:

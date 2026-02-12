@@ -35,8 +35,8 @@ Clusters running as virtual machines on the KubeVirt cluster, for testing and pr
 
 ## Kubernetes Resources
 
-Kubernetes resources are deployed and managed separately through
-[ryan4yin/k8s-gitops](https://github.com/ryan4yin/k8s-gitops).
+Kubernetes resources are deployed and managed separately through your GitOps repository (e.g. a
+`k8s-gitops` repo).
 
 [k3s]: https://github.com/k3s-io/k3s/
 [what-have-k3s-removed-from-upstream-kubernetes]:

@@ -9,6 +9,8 @@ ignore-files = true
 extend-exclude = [
   "data/",
   "rime-data/",
+  "home/base/tui/editors/emacs/doom/init.el",
+  "home/linux/gui/base/fcitx5/pinyin.conf",
 ]
 
 [default]

@@ -28,7 +28,7 @@
         #-- json like
         # terraform  # install via brew on macOS
         terraform-ls
-        jsonnet
+        (if stdenv.isLinux then jsonnet else emptyDirectory)
         jsonnet-language-server
         taplo # TOML language server / formatter / validator
         nodePackages.yaml-language-server
@@ -60,7 +60,7 @@
           checkmake
           # c/c++ compiler, required by nvim-treesitter!
           # gcc
-          gdb
+          (if stdenv.isLinux then gdb else emptyDirectory)
           # c/c++ tools with clang-tools, the unwrapped version won't
           # add alias like `cc` and `c++`, so that it won't conflict with gcc
           # llvmPackages.clang-unwrapped
@@ -155,7 +155,7 @@
         jdt-language-server
 
         #-- zig
-        zls
+        (if stdenv.isLinux then zls else emptyDirectory)
 
         #-- lua
         stylua
@@ -179,7 +179,7 @@
       # -*- Lisp like Languages -*-#
       ++ [
         guile
-        racket-minimal
+        (if stdenv.isLinux then racket-minimal else emptyDirectory)
         fnlfmt # fennel
         (
           if pkgs.stdenv.isLinux && pkgs.stdenv.hostPlatform.isx86 then
@@ -192,7 +192,7 @@
         proselint # English prose linter
 
         #-- verilog / systemverilog
-        verible
+        (if stdenv.isLinux then verible else emptyDirectory)
 
         #-- Optional Requirements:
         nodePackages.prettier # common code formatter

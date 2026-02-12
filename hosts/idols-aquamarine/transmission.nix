@@ -1,18 +1,27 @@
 {
   config,
+  lib,
+  pkgs,
   myvars,
   ...
 }:
 let
   dataDir = "/data/fileshare/public/transmission";
   name = "transmission";
+  hasTransmissionCreds =
+    config ? age && config.age ? secrets && config.age.secrets ? "transmission-credentials.json";
 in
 {
   # the headless Transmission BitTorrent daemon
   # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/services/torrent/transmission.nix
   # https://wiki.archlinux.org/title/transmission
+  warnings =
+    lib.optional (!hasTransmissionCreds)
+      "aquamarine: age secret \"transmission-credentials.json\" missing; disabling services.transmission.";
+
   services.transmission = {
-    enable = true;
+    enable = hasTransmissionCreds;
+    package = pkgs.transmission_4;
     user = name;
     group = name;
     home = dataDir;
@@ -23,10 +32,6 @@ in
     # And be aware that these settings are quite aggressive and might not suite your regular desktop use.
     # For instance, SSH sessions may time out more easily.
     performanceNetParameters = true;
-
-    # Path to a JSON file to be merged with the settings.
-    # Useful to merge a file which is better kept out of the Nix store to set secret config parameters like `rpc-password`.
-    credentialsFile = config.age.secrets."transmission-credentials.json".path;
 
     # Whether to open the RPC port in the firewall.
     openRPCPort = false;
@@ -115,5 +120,10 @@ in
       seed-queue-enabled = true;
       seed-queue-size = 10;
     };
+  }
+  // lib.optionalAttrs hasTransmissionCreds {
+    # Path to a JSON file to be merged with the settings.
+    # Useful to merge a file which is better kept out of the Nix store to set secret config parameters like `rpc-password`.
+    credentialsFile = config.age.secrets."transmission-credentials.json".path;
   };
 }

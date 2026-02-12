@@ -1,11 +1,18 @@
-{ config, ... }:
+{ config, lib, ... }:
 let
   user = "sftpgo";
   dataDir = "/data/apps/sftpgo";
+  hasSftpgoSecret = config ? age && config.age ? secrets && config.age.secrets ? "sftpgo.env";
 in
 {
   # Read SFTPGO_DEFAULT_ADMIN_USERNAME and SFTPGO_DEFAULT_ADMIN_PASSWORD from a file
-  systemd.services.sftpgo.serviceConfig.EnvironmentFile = config.age.secrets."sftpgo.env".path;
+  warnings = lib.optional (
+    !hasSftpgoSecret
+  ) "aquamarine: age secret \"sftpgo.env\" missing; disabling services.sftpgo.";
+
+  systemd.services.sftpgo.serviceConfig = lib.mkIf hasSftpgoSecret {
+    EnvironmentFile = config.age.secrets."sftpgo.env".path;
+  };
 
   # Create Directories
   # https://www.freedesktop.org/software/systemd/man/latest/tmpfiles.d.html#Type
@@ -14,7 +21,7 @@ in
   ];
 
   services.sftpgo = {
-    enable = true;
+    enable = hasSftpgoSecret;
     inherit user dataDir;
     extraArgs = [
       "--log-level"

@@ -6,6 +6,7 @@ rec {
   # it's a subrouter with a transparent proxy
   # VR_TODO: what the default gateway should be?
   proxyGateway = "192.168.10.0";
+  proxyGateway6 = defaultGateway6;
   # proxyGateway = "192.168.5.178";
   defaultGateway = "192.168.10.0";
   defaultGateway6 = "fe80::8";

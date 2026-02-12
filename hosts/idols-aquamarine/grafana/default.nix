@@ -1,10 +1,18 @@
 {
   pkgs,
   config,
+  lib,
   myvars,
   ...
 }:
+let
+  hasGrafanaAdminPassword =
+    config ? age && config.age ? secrets && config.age.secrets ? "grafana-admin-password";
+in
 {
+  warnings = lib.optional (
+    !hasGrafanaAdminPassword
+  ) "aquamarine: age secret \"grafana-admin-password\" missing; disabling services.grafana.";
 
   imports = [
     ./dashboards.nix
@@ -12,7 +20,7 @@
   ];
 
   services.grafana = {
-    enable = true;
+    enable = hasGrafanaAdminPassword;
     dataDir = "/data/apps/grafana";
     provision.enable = true;
     settings = {
@@ -36,6 +44,8 @@
       security = {
         admin_user = myvars.username;
         admin_email = myvars.useremail;
+      }
+      // lib.optionalAttrs hasGrafanaAdminPassword {
         # Use file provider to read the admin password from a file.
         # https://grafana.com/docs/grafana/latest/setup-grafana/configure-grafana/#file-provider
         admin_password = "$__file{${config.age.secrets."grafana-admin-password".path}}";

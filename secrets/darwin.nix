@@ -48,8 +48,8 @@
       # ---------------------------------------------
 
       # .age means the decrypted file is still encrypted by age(via a passphrase)
-      "ryan4yin-gpg-subkeys.priv.age" = {
-        file = "${mysecrets}/ryan4yin-gpg-subkeys-2024-01-27.priv.age.age";
+      "vitalyr-gpg-subkeys.priv.age" = {
+        file = "${mysecrets}/vitalyr-gpg-subkeys-2024-01-27.priv.age.age";
       }
       // noaccess;
 
@@ -93,7 +93,6 @@
   # NOTE: this will fail for the first time. cause it's running before "activate-agenix"
   environment.etc = {
     # wireguard config used with `wg-quick up wg-business`
-    # Fix DNS for WireGuard on macOS: https://github.com/ryan4yin/nix-config/issues/5
     "wireguard/wg-business.conf" = {
       source = config.age.secrets."wg-business.conf".path;
     };
@@ -106,8 +105,8 @@
       source = config.age.secrets."ssh-key-romantic".path;
     };
 
-    "agenix/ryan4yin-gpg-subkeys.priv.age" = {
-      source = config.age.secrets."ryan4yin-gpg-subkeys.priv.age".path;
+    "agenix/vitalyr-gpg-subkeys.priv.age" = {
+      source = config.age.secrets."vitalyr-gpg-subkeys.priv.age".path;
     };
 
     # The following secrets are used by home-manager modules

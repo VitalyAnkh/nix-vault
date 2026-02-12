@@ -1,12 +1,18 @@
 {
   pkgs,
   config,
+  lib,
   wallpapers,
   ...
 }:
 let
+  hasCaddyTlsKey =
+    config ? age && config.age ? secrets && config.age.secrets ? "caddy-ecc-server.key";
+
   hostCommonConfig = ''
     encode zstd gzip
+  ''
+  + lib.optionalString hasCaddyTlsKey ''
     tls ${../../certs/ecc-server.crt} ${config.age.secrets."caddy-ecc-server.key".path} {
       protocols tls1.3 tls1.3
       curves x25519 secp384r1 secp521r1
@@ -14,8 +20,12 @@ let
   '';
 in
 {
+  warnings = lib.optional (
+    !hasCaddyTlsKey
+  ) "aquamarine: age secret \"caddy-ecc-server.key\" missing; disabling services.caddy.";
+
   services.caddy = {
-    enable = true;
+    enable = hasCaddyTlsKey;
     # Reload Caddy instead of restarting it when configuration file changes.
     enableReload = true;
     user = "caddy"; # User account under which caddy runs.
@@ -131,14 +141,14 @@ in
     #   reverse_proxy http://localhost:9090
     # '';
   };
-  networking.firewall.allowedTCPPorts = [
+  networking.firewall.allowedTCPPorts = lib.optionals hasCaddyTlsKey [
     80
     443
   ];
 
   # Create Directories
   # https://www.freedesktop.org/software/systemd/man/latest/tmpfiles.d.html#Type
-  systemd.tmpfiles.rules = [
+  systemd.tmpfiles.rules = lib.optionals hasCaddyTlsKey [
     "d /data/apps/caddy/fileserver/ 0755 caddy caddy"
     # directory for virtual machine's images
     "d /data/apps/caddy/fileserver/vms 0755 caddy caddy"
@@ -146,8 +156,10 @@ in
 
   # Add all my wallpapers into /data/apps/caddy/fileserver/wallpapers
   # Install the homepage-dashboard configuration files
-  system.activationScripts.installCaddyWallpapers = ''
-    mkdir -p /data/apps/caddy/fileserver/wallpapers
-    ${pkgs.rsync}/bin/rsync -avz --chmod=D2755,F644 ${wallpapers}/ /data/apps/caddy/fileserver/wallpapers/
-  '';
+  system.activationScripts = lib.optionalAttrs hasCaddyTlsKey {
+    installCaddyWallpapers = ''
+      mkdir -p /data/apps/caddy/fileserver/wallpapers
+      ${pkgs.rsync}/bin/rsync -avz --chmod=D2755,F644 ${wallpapers}/ /data/apps/caddy/fileserver/wallpapers/
+    '';
+  };
 }

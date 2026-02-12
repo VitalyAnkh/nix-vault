@@ -8,7 +8,7 @@ features a versatile key management system as well as access modules for all kin
 directories.
 
 > In the following content, we will use GPG to refer to GnuPG tool, and PGP to refer to various
-> concepts defined in the OepnPGP standard(e.g. PGP key, PGP key server).
+> concepts defined in the OpenPGP standard(e.g. PGP key, PGP key server).
 
 Key functions of GnuPG:
 
@@ -120,7 +120,7 @@ gpg (GnuPG) 2.4.1; Copyright (C) 2023 g10 Code GmbH
 This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.
 
-gpg: directory '/Users/ryan/.gnupg' created
+gpg: directory '/Users/vitalyr/.gnupg' created
 Please select what kind of key you want:
    (1) RSA and RSA
    (2) DSA and Elgamal
@@ -151,7 +151,7 @@ Real name:
 Email address:
 Comment:
 You selected this USER-ID:
-    "Ryan Yin (For pass For Work ssh only) <ryan4yin@linux.com>"
+    "VitalyR (For pass & ssh only) <vr@vitalyr.com>"
 
 Change (N)ame, (C)omment, (E)mail or (O)kay/(Q)uit? O
 We need to generate a lot of random bytes. It is a good idea to perform
@@ -162,14 +162,14 @@ We need to generate a lot of random bytes. It is a good idea to perform
 some other action (type on the keyboard, move the mouse, utilize the
 disks) during the prime generation; this gives the random number
 generator a better chance to gain enough entropy.
-gpg: /Users/ryan/.gnupg/trustdb.gpg: trustdb created
-gpg: directory '/Users/ryan/.gnupg/openpgp-revocs.d' created
-gpg: revocation certificate stored as '/Users/ryan/.gnupg/openpgp-revocs.d/C8D84EBC5F82494F432ACEF042E49B284C30A0DA.rev'
+gpg: /Users/vitalyr/.gnupg/trustdb.gpg: trustdb created
+gpg: directory '/Users/vitalyr/.gnupg/openpgp-revocs.d' created
+gpg: revocation certificate stored as '/Users/vitalyr/.gnupg/openpgp-revocs.d/C8D84EBC5F82494F432ACEF042E49B284C30A0DA.rev'
 public and secret key created and signed.
 
 pub   ed25519 2024-01-09 [SC] [expires: 2034-01-04]
       C8D84EBC5F82494F432ACEF042E49B284C30A0DA
-uid                      Ryan Yin (For pass For Work ssh only) <ryan4yin@linux.com>
+uid                      VitalyR (For pass & ssh only) <vr@vitalyr.com>
 sub   cv25519 2024-01-09 [E] [expires: 2034-01-04]
 ```
 
@@ -181,7 +181,7 @@ The generated keys are stored in `~/.gnupg` by default, the functions of each fi
 
 ```bash
 › tree ~/.gnupg/
-/Users/ryan/.gnupg/
+/Users/vitalyr/.gnupg/
 |-- S.gpg-agent           # socket file
 |-- S.gpg-agent.browser   # socket file
 |-- S.gpg-agent.extra     # socket file
@@ -246,7 +246,7 @@ Now let's add the sub keys to the keypair we generated above:
 > GnuPG will ask you to input your passphrase to unlock your primary key.
 
 ```bash
-› gpg --expert --edit-key ryan4yin@linux.com
+› gpg --expert --edit-key vr@vitalyr.com
 gpg (GnuPG) 2.4.1; Copyright (C) 2023 g10 Code GmbH
 This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.
@@ -258,7 +258,7 @@ sec  ed25519/42E49B284C30A0DA
      trust: ultimate      validity: ultimate
 ssb  cv25519/6CB4A81FFB3C99B6
      created: 2024-01-09  expires: 2034-01-04  usage: E
-[ultimate] (1). Ryan Yin (For pass For Work ssh only) <ryan4yin@linux.com>
+[ultimate] (1). VitalyR (For pass & ssh only) <vr@vitalyr.com>
 
 gpg> addkey
 Please select what kind of key you want:
@@ -307,7 +307,7 @@ ssb  cv25519/6CB4A81FFB3C99B6
      created: 2024-01-09  expires: 2034-01-04  usage: E
 ssb  ed25519/A42813E03A10F504
      created: 2024-01-09  expires: 2034-01-04  usage: S
-[ultimate] (1). Ryan Yin (For pass For Work ssh only) <ryan4yin@linux.com>
+[ultimate] (1). VitalyR (For pass & ssh only) <vr@vitalyr.com>
 
 gpg> addkey
 Please select what kind of key you want:
@@ -385,7 +385,7 @@ ssb  ed25519/A42813E03A10F504
      created: 2024-01-09  expires: 2034-01-04  usage: S
 ssb  ed25519/5469C4FACC81B60F
      created: 2024-01-09  expires: 2034-01-04  usage: A
-[ultimate] (1). Ryan Yin (For pass For Work ssh only) <ryan4yin@linux.com>
+[ultimate] (1). VitalyR (For pass & ssh only) <vr@vitalyr.com>
 
 gpg> save
 ```
@@ -398,7 +398,7 @@ Check the secret keys and public keys we generated:
 ---------
 sec   ed25519 2024-01-09 [SC] [expires: 2034-01-04]
       C8D84EBC5F82494F432ACEF042E49B284C30A0DA
-uid           [ultimate] Ryan Yin (For pass For Work ssh only) <ryan4yin@linux.com>
+uid           [ultimate] VitalyR (For pass & ssh only) <vr@vitalyr.com>
 ssb   cv25519 2024-01-09 [E] [expires: 2034-01-04]
       1146D48B93C2177C92D186026CB4A81FFB3C99B6
 ssb   ed25519 2024-01-09 [S] [expires: 2034-01-04]
@@ -415,9 +415,9 @@ ssb   ed25519 2024-01-09 [A] [expires: 2034-01-04]
 Export Public Keys(Both Primary Key & Sub Keys):
 
 ```bash
-gpg --armor --export ryan4yin@linux.com > ryan4yin-gpg-keys.pub
+gpg --armor --export vr@vitalyr.com > vitalyr-gpg-keys.pub
 # check what we have exported, we should see 4 public keys
-nix run nixpkgs#pgpdump ryan4yin-gpg-keys.pub
+nix run nixpkgs#pgpdump vitalyr-gpg-keys.pub
 ```
 
 Export Primary Key(The exported key is still encrypted by your passphrase):
@@ -431,10 +431,10 @@ Export Primary Key(The exported key is still encrypted by your passphrase):
 
 ```bash
 # replace the key ID with your own sec key's ID
-gpg --armor --export-secret-keys C8D84EBC5F82494F432ACEF042E49B284C30A0DA! > ryan4yin-primary-key.priv
+gpg --armor --export-secret-keys C8D84EBC5F82494F432ACEF042E49B284C30A0DA! > vitalyr-primary-key.priv
 
 # Check the exported primary key's detail info,
-nix run nixpkgs#pgpdump ryan4yin-primary-key.priv
+nix run nixpkgs#pgpdump vitalyr-primary-key.priv
 ...
 Old: Secret Key Packet(tag 5)(134 bytes)
         Ver 4 - new
@@ -464,21 +464,21 @@ passphrase):
 
 ```bash
 # for simplicity, use the same passphrase as your gpg keypair here
-age --passphrase -o ryan4yin-primary-key.priv.age ryan4yin-primary-key.priv
-rm ryan4yin-primary-key.priv
+age --passphrase -o vitalyr-primary-key.priv.age vitalyr-primary-key.priv
+rm vitalyr-primary-key.priv
 ```
 
 Export Sub Keys one by one(The exported keys is still encrypted by your passphrase):
 
 ```bash
-gpg --armor --export-secret-subkeys > ryan4yin-gpg-subkeys.priv
+gpg --armor --export-secret-subkeys > vitalyr-gpg-subkeys.priv
 
 # Check the exported primary key's detail info,
-nix run nixpkgs#pgpdump ryan4yin-gpg-subkeys.priv
+nix run nixpkgs#pgpdump vitalyr-gpg-subkeys.priv
 
 # encrypt it again with age(scrypt)
-age --passphrase  -o ryan4yin-gpg-subkeys.priv.age ryan4yin-gpg-subkeys.priv
-rm ryan4yin-gpg-subkeys.priv
+age --passphrase  -o vitalyr-gpg-subkeys.priv.age vitalyr-gpg-subkeys.priv
+rm vitalyr-gpg-subkeys.priv
 ```
 
 Your can import the exported Private Key via `gpg --import <keyfile>` to restore it, but you need to
@@ -492,14 +492,14 @@ completed:
 
 ```bash
 # delete the primary key and all its sub keys
-gpg --delete-secret-keys ryan4yin@linux.com
+gpg --delete-secret-keys vr@vitalyr.com
 
 # delete the revocation certificate
 rm ~/.gnupg/openpgp-revocs.d/C8D84EBC5F82494F432ACEF042E49B284C30A0DA.rev
 
 # import our subkeys back
-age --decrypt -o ryan4yin-primary-key.priv ryan4yin-primary-key.priv.age
-gpg --import ryan4yin-gpg-subkeys.priv
+age --decrypt -o vitalyr-primary-key.priv vitalyr-primary-key.priv.age
+gpg --import vitalyr-gpg-subkeys.priv
 ```
 
 Now check the secret keys and public keys again:
@@ -508,22 +508,22 @@ Now check the secret keys and public keys again:
 
 ```bash
 › gpg --list-secret-keys --keyid-format=long
-/home/ryan/.gnupg/pubring.kbx
+/home/vitalyr/.gnupg/pubring.kbx
 -----------------------------
 sec#  ed25519/D1C5FFA3118A41FC 2024-01-09 [SC] [expires: 2034-01-04]
       Key fingerprint = E267 943C 33AD C5AF 3D76  4D96 D1C5 FFA3 118A 41FC
-uid                 [ unknown] Ryan Yin (Personal) <ryan4yin@linux.com>
+uid                 [ unknown] VitalyR (Personal) <vr@vitalyr.com>
 ssb   cv25519/62526A4A0CF43E33 2024-01-09 [E] [expires: 2034-01-04]
 ssb   ed25519/433A66D63805BD1A 2024-01-09 [S] [expires: 2034-01-04]
 ssb   ed25519/441E3D8FBD313BF2 2024-01-09 [A] [expires: 2034-01-04]
 
 
 › gpg --list-public-keys --keyid-format=long
-/home/ryan/.gnupg/pubring.kbx
+/home/vitalyr/.gnupg/pubring.kbx
 -----------------------------
 pub   ed25519/D1C5FFA3118A41FC 2024-01-09 [SC] [expires: 2034-01-04]
       Key fingerprint = E267 943C 33AD C5AF 3D76  4D96 D1C5 FFA3 118A 41FC
-uid                 [ unknown] Ryan Yin (Personal) <ryan4yin@linux.com>
+uid                 [ unknown] VitalyR (Personal) <vr@vitalyr.com>
 sub   cv25519/62526A4A0CF43E33 2024-01-09 [E] [expires: 2034-01-04]
 sub   ed25519/433A66D63805BD1A 2024-01-09 [S] [expires: 2034-01-04]
 sub   ed25519/441E3D8FBD313BF2 2024-01-09 [A] [expires: 2034-01-04]
@@ -550,9 +550,9 @@ gpg --verify <file> <signature-file>
 ```bash
 # Encrypt a file via recipient's public key, sign it via your private key for signing, and output cleartext.
 # so that the reciiptent can decrypt it via his/her private key.
-gpg --armor --sign --encrypt --recipient ryan4yin@linux.com <file>
+gpg --armor --sign --encrypt --recipient vr@vitalyr.com <file>
 # or use this short version
-gpg -aser ryan4yin@linux.com <file>
+gpg -aser vr@vitalyr.com <file>
 
 # Descrypt a file via your private key, and verify the signature via the sender's public key.
 gpg --decrypt <file>
@@ -602,7 +602,7 @@ But in OpenPGP:
   the keypair. But OpenPGP standard **DO NOT provide a way to distribute this certificate to
   others**.
   - Not to mention some key status query protocol like OCSP in Web PKI.
-  - Users has to pulish their revocation certificate to their blog, github profile or somewhere
+  - Users has to publish their revocation certificate to their blog, github profile or somewhere
     else, and others has to check it and run `gpg --import <revocation-certificate>` to revoke the
     keypair manually.
 
@@ -620,7 +620,7 @@ Anyway, let's try to revoke a keypair:
 gpg: checking the trustdb
 gpg: marginals needed: 3  completes needed: 1  trust model: pgp
 gpg: depth: 0  valid:   1  signed:   0  trust: 0-, 0q, 0n, 0m, 0f, 1u
-/home/ryan/.gnupg/pubring.kbx
+/home/vitalyr/.gnupg/pubring.kbx
 -----------------------------
 pub   ed25519/0x55859965C2742B4B 2024-01-09 [SC]
       Key fingerprint = A2CD 07BD 9631 44CB 2725  5A6B 5585 9965 C274 2B4B
@@ -679,7 +679,7 @@ gpg:    new key revocations: 1
 gpg: no ultimately trusted keys found
 
 › gpg --list-secret-keys --keyid-format=long
-/home/ryan/.gnupg/pubring.kbx
+/home/vitalyr/.gnupg/pubring.kbx
 -----------------------------
 sec   ed25519/55859965C2742B4B 2024-01-09 [SC] [revoked: 2024-01-09]
       Key fingerprint = A2CD 07BD 9631 44CB 2725  5A6B 5585 9965 C274 2B4B

@@ -1,5 +1,4 @@
 {
-  config,
   pkgs,
   myvars,
   mylib,
@@ -15,7 +14,7 @@ let
   k3sModule = mylib.genK3sServerModule {
     inherit pkgs;
     kubeconfigFile = "/home/${myvars.username}/.kube/config";
-    tokenFile = config.age.secrets."k3s-prod-1-token".path;
+    tokenSecretName = "k3s-prod-1-token";
     # use my own domain & kube-vip's virtual IP for the API server
     # so that the API server can always be accessed even if some nodes are down
     masterHost = "prod-cluster-1.writefor.fun";

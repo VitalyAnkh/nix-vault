@@ -47,8 +47,7 @@ Named after "Twelve Kingdoms":
 
 ### External Systems
 
-- **SBCs**: aarch64/riscv64 single-board computers managed in
-  [ryan4yin/nixos-config-sbc](https://github.com/ryan4yin/nixos-config-sbc)
+- **SBCs**: aarch64/riscv64 single-board computers managed in a separate repo
 
 All my riscv64 hosts:
 

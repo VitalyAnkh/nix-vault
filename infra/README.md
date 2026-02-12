@@ -30,8 +30,7 @@ infra/
 
 ### External Resources
 
-- **Kubernetes YAML**: Managed in separate repository
-  [ryan4yin/k8s-gitops](https://github.com/ryan4yin/k8s-gitops)
+- **Kubernetes YAML**: Managed in separate repository (e.g. a `k8s-gitops` repo)
 - **Secrets Management**: Handled via agenix in [../secrets](../secrets/)
 
 ## Usage

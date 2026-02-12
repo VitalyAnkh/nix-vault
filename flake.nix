@@ -1,10 +1,10 @@
 {
-  description = "Ryan Yin's nix configuration for both NixOS & macOS";
+  description = "vitalyr's nix configuration for both NixOS & macOS";
 
   ##################################################################################################################
   #
   # Want to know Nix in details? Looking for a beginner-friendly tutorial?
-  # Check out https://github.com/ryan4yin/nixos-and-flakes-book !
+  # Check out https://nixos-and-flakes.thiscute.world/ !
   #
   ##################################################################################################################
 
@@ -103,7 +103,6 @@
       # replaced with a type-safe reimplementation to get a better error message and less bugs.
 
       # url = "github:yaxitech/ragenix";
-      # url = "github:ryan4yin/ragenix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -187,7 +186,7 @@
     };
 
     nu_scripts = {
-      url = "github:ryan4yin/nu_scripts";
+      url = "git+https://github.com/nushell/nu_scripts.git";
       flake = false;
     };
 
@@ -204,11 +203,6 @@
       url = "github:VitalyAnkh/vr-nix-secrets";
       flake = false;
     };
-
-    # my-asahi-firmware = {
-    #   url = "git+ssh://git@github.com/ryan4yin/asahi-firmware.git?shallow=1";
-    #   flake = false;
-    # };
 
     # my wallpapers
     wallpapers = {
