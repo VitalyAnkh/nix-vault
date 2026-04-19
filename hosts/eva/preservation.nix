@@ -132,7 +132,8 @@ in
         # lean prover
         ".elan"
 
-        # some cache, like clipboard history, sccache
+        # some cache, like clipboard history, sccache, and Dolphin Anty's
+        # runtime caches under `.cache/dolphin_anty` / `.cache/appimage-run`
         ".cache"
 
         # warp-terminal config
@@ -211,6 +212,13 @@ in
         # Joplin
         ".config/joplin" # tui client
         ".config/Joplin" # joplin-desktop
+
+        # Dolphin Anty
+        ".config/dolphin_anty"
+
+        # Obsidian app-level system folder on Linux.
+        # Vault-local `.obsidian` stays with the preserved vault directory itself.
+        ".config/obsidian"
 
         ".local/share/jupyter"
 

@@ -29,6 +29,21 @@ in
   services.sunshine.enable = lib.mkForce true;
   services.tuned.ppdSettings.main.default = lib.mkForce "performance";
 
+  # This host repeatedly hit swap/reclaim storms before hard resets.
+  # Keep zram, but make it much less aggressive on the desktop.
+  zramSwap = {
+    algorithm = lib.mkForce "zstd";
+    memoryPercent = lib.mkForce 50;
+  };
+  boot.kernel.sysctl = {
+    "vm.swappiness" = lib.mkForce 100;
+    "vm.watermark_scale_factor" = lib.mkForce 50;
+  };
+
+  # Let oomd watch the whole user slice, so a runaway browser session gets cut
+  # before the desktop hard-stalls under RAM+zram pressure.
+  systemd.oomd.enableUserSlices = lib.mkForce true;
+
   networking = {
     inherit hostName;
 

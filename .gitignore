@@ -9,4 +9,5 @@ core*
 !core/
 !core.nix
 .claude
+.omx/
 !coredns*

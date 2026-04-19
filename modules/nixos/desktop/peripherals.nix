@@ -1,4 +1,14 @@
 { pkgs, ... }:
+let
+  webhidHidrawUaccessRules = pkgs.writeTextFile {
+    name = "webhid-hidraw-uaccess-rules";
+    destination = "/lib/udev/rules.d/70-webhid-hidraw-uaccess.rules";
+    text = ''
+      # Allow the active seat user to access hidraw nodes (WebHID: usevia.app / VIA).
+      KERNEL=="hidraw*", SUBSYSTEM=="hidraw", TAG+="uaccess"
+    '';
+  };
+in
 {
   #============================= Audio(PipeWire) =======================
 
@@ -53,20 +63,11 @@
     udev = {
       packages = with pkgs; [
         gnome-settings-daemon
+        webhidHidrawUaccessRules
         # platformio # udev rules for platformio
         # openocd # required by paltformio, see https://github.com/NixOS/nixpkgs/issues/224895
         # openfpgaloader
       ];
-
-      # Grant access to hidraw devices for WebHID (usevia.app / VIA).
-      #
-      # NOTE: This applies to all hidraw devices so WebHID works for multiple
-      # keyboards / similar devices without adding per-device VID/PID rules.
-      extraRules = ''
-        # Allow the active seat user to access hidraw nodes.
-        # This is required for Chrome WebHID (e.g. usevia.app / VIA).
-        KERNEL=="hidraw*", SUBSYSTEM=="hidraw", TAG+="uaccess"
-      '';
     };
 
     # A key remapping daemon for linux.

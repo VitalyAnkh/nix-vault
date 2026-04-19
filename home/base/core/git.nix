@@ -29,9 +29,9 @@
     hosts = {
       "github.com" = {
         "users" = {
-          "ryan4yin" = null;
+          "VitalyAnkh" = null;
         };
-        "user" = "ryan4yin";
+        "user" = "VitalyAnkh";
       };
     };
   };

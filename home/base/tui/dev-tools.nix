@@ -31,6 +31,9 @@
     # ai related
     python313Packages.huggingface-hub # huggingface-cli
 
+    # terminal
+    tmux
+
     # misc
     devbox
     bfg-repo-cleaner # remove large files from git history
@@ -52,6 +55,9 @@
     # codex
 
     duckdb
+
+    # cloudflare
+    (pkgs.lib.lowPrio wrangler)
 
     # Automatically trims your branches whose tracking remote refs are merged or gone
     # It's really useful when you work on a project for a long time.
