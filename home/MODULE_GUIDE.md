@@ -205,13 +205,12 @@ home/
   - gtk.nix: GTK 主题配置
   - media.nix: 媒体工具
   - note-taking.nix: 笔记工具
-  - wallpaper/: 壁纸管理
   - xdg.nix: XDG 配置
 
-#### home/linux/gui/hyprland/
+#### home/linux/gui/niri/
 
-- **作用**: Hyprland 窗口管理器
-- **包含**: 完整的 hyprland 配置、waybar、mako 等
+- **作用**: Niri Wayland compositor 配置
+- **包含**: Niri 的配置、快捷键、窗口规则等
 
 ### 5. 基础配置 (home/base/home.nix)
 
@@ -298,7 +297,7 @@ home-modules = [
 **桌面环境**:
 
 - `home/base/gui` - GUI 应用
-- `home/linux/gui/hyprland/` - Hyprland WM
+- `home/linux/gui/niri/` - Niri (Wayland compositor)
 
 **多媒体创作**:
 

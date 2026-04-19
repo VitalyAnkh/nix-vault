@@ -17,15 +17,19 @@
     #    2. command line args `--options substituers http://xxx`
     trusted-users = [ myvars.username ];
 
-    # substituers that will be considered before the official ones(https://cache.nixos.org)
+    # Substituters in priority order (most reliable first). Putting mirrors first can lead to noisy
+    # `error: file 'nar/…' does not exist in binary cache ...` messages when a mirror lags behind.
     substituters = [
-      # cache mirrors located in China
+      # official cache
+      "https://cache.nixos.org"
+
+      # community cache
+      "https://nix-community.cachix.org"
+
+      # cache mirrors located in China (fallback)
       "https://mirrors.sustech.edu.cn/nix-channels/store"
       "https://mirrors.tuna.tsinghua.edu.cn/nix-channels/store"
       "https://mirrors.ustc.edu.cn/nix-channels/store"
-
-      # my own cache server, currently not used.
-      "https://nix-community.cachix.org"
     ];
 
     trusted-public-keys = [
