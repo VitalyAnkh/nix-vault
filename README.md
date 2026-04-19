@@ -17,7 +17,7 @@
 
 This repository is home to the nix code that builds my systems:
 
-1. NixOS Desktops: NixOS with home-manager, hyprland, agenix, etc.
+1. NixOS Desktops: NixOS with home-manager, niri, agenix, etc.
 2. macOS Desktops: nix-darwin with home-manager, share the same home-manager configuration with
    NixOS Desktops.
 3. NixOS Servers: virtual machines running on Proxmox/KubeVirt, with various services, such as
@@ -48,7 +48,7 @@ You don't have to go through the pain I've experienced again! Check out my
 
 |                             | NixOS(Wayland)                                                                                                      |
 | --------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| **Window Manager**          | [Hyprland][Hyprland] / [Niri][Niri]                                                                                 |
+| **Window Manager**          | [Niri][Niri]                                                                                                        |
 | **Terminal Emulator**       | [Zellij][Zellij] + [foot][foot]/[Kitty][Kitty]/[Alacritty][Alacritty]/[Ghostty][Ghostty]                            |
 | **Bar**                     | [Waybar][Waybar]                                                                                                    |
 | **Application Launcher**    | [anyrun][anyrun]                                                                                                    |
@@ -64,18 +64,14 @@ You don't have to go through the pain I've experienced again! Check out my
 | **Text Editor**             | [Neovim][Neovim] + [DoomEmacs][DoomEmacs]                                                                           |
 | **Fonts**                   | [Nerd fonts][Nerd fonts]                                                                                            |
 | **Image Viewer**            | [imv][imv]                                                                                                          |
-| **Screenshot Software**     | [hyprshot][hyprshot]                                                                                                |
+| **Screenshot Software**     | [flameshot][flameshot]                                                                                              |
 | **Screen Recording**        | [OBS][OBS]                                                                                                          |
 | **Filesystem & Encryption** | tmpfs as `/`, [Btrfs][Btrfs] subvolumes on a [LUKS][LUKS] encrypted partition for persistent, unlock via passphrase |
 | **Secure Boot**             | [lanzaboote][lanzaboote]                                                                                            |
 
 Wallpapers: provided via the `wallpapers` flake input (see `flake.nix`).
 
-## Hyprland + AstroNvim + DoomEmacs
-
-![](./_img/hyprland_2023-07-29_1.webp)
-
-![](./_img/hyprland_2023-07-29_2.webp)
+## Wayland + AstroNvim + DoomEmacs
 
 ![](./_img/emacs-2024-01-07.webp)
 
@@ -86,6 +82,17 @@ See [./home/base/tui/editors/neovim/](./home/base/tui/editors/neovim/) for detai
 ## Emacs
 
 See [./home/base/tui/editors/emacs/](./home/base/tui/editors/emacs/) for details.
+
+## Development Templates
+
+This repository also includes standalone development templates that can be entered directly with
+`nix develop`, for example:
+
+```bash
+nix develop ./templates/cpp
+nix develop ./templates/bevy
+nix develop ./templates/web
+```
 
 ## Secrets Management
 
@@ -112,14 +119,11 @@ For NixOS:
 sudo nixos-rebuild switch --flake .#eva
 
 # deploy via `just`(a command runner with similar syntax to make) & Justfile
-# Deploy the hyprland nixosConfiguration by hostname match
-just hypr
-
 # Deploy the niri nixosConfiguration by hostname match
 just niri
 
 # or we can deploy with details
-just hypr debug
+just niri debug
 ```
 
 For macOS:
@@ -277,19 +281,11 @@ Other dotfiles that inspired me:
 - Modularized NixOS Configuration
   - [hlissner/dotfiles](https://github.com/hlissner/dotfiles)
   - [viperML/dotfiles](https://github.com/viperML/dotfiles)
-- Hyprland(wayland)
-  - [notwidow/hyprland](https://github.com/notwidow/hyprland): This is where I start my hyprland
-    journey.
-  - [HeinzDev/Hyprland-dotfiles](https://github.com/HeinzDev/Hyprland-dotfiles): Refer to the waybar
-    configuration here.
-  - [Zeioth/zeioth-hyprland-config](https://github.com/Zeioth/zeioth-hyprland-config)
-  - [linuxmobile/kaku](https://github.com/linuxmobile/kaku)
 - Neovim/AstroNvim
   - [maxbrunet/dotfiles](https://github.com/maxbrunet/dotfiles): astronvim with nix flakes.
 - Misc
   - [1amSimp1e/dots](https://github.com/1amSimp1e/dots)
 
-[Hyprland]: https://github.com/hyprwm/Hyprland
 [Niri]: https://github.com/YaLTeR/niri
 [Kitty]: https://github.com/kovidgoyal/kitty
 [foot]: https://codeberg.org/dnkl/foot
@@ -310,7 +306,6 @@ Other dotfiles that inspired me:
 [Zellij]: https://github.com/zellij-org/zellij
 [Neovim]: https://github.com/neovim/neovim
 [AstroNvim]: https://github.com/AstroNvim/AstroNvim
-[Hyprshot]: https://github.com/Gustash/Hyprshot
 [DoomEmacs]: https://github.com/doomemacs/doomemacs
 [flameshot]: https://github.com/flameshot-org/flameshot
 [grim]: https://github.com/emersion/grim

@@ -10,22 +10,26 @@
 
   outputs = inputs: import ./outputs inputs;
 
-  # the nixConfig here only affects the flake itself, not the system configuration!
-  # for more information, see:
-  #     https://nixos-and-flakes.thiscute.world/nix-store/add-binary-cache-servers
-  nixConfig = {
-    # substituers will be appended to the default substituters when fetching packages
-    extra-substituters = [
-      # "https://nix-gaming.cachix.org"
-      # "https://nixpkgs-wayland.cachix.org"
-      # "https://install.determinate.systems"
-    ];
-    extra-trusted-public-keys = [
-      # "nix-gaming.cachix.org-1:nbjlureqMbRAxR1gJ/f3hxemL9svXaZF/Ees8vCUUs4="
-      # "nixpkgs-wayland.cachix.org-1:3lwxaILxMRkVhehr5StQprHdEo4IrE8sRho9R9HOLYA="
-      # "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM="
-    ];
-  };
+  # Optional: flake-level `nixConfig` (ignored unless trusted via `--accept-flake-config`).
+  #
+  # Keep this commented out by default to avoid noisy warnings like:
+  # `warning: ignoring untrusted flake configuration setting ...`
+  #
+  # For more information, see:
+  #   https://nixos-and-flakes.thiscute.world/nix-store/add-binary-cache-servers
+  #
+  # nixConfig = {
+  #   extra-substituters = [
+  #     "https://nix-gaming.cachix.org"
+  #     "https://nixpkgs-wayland.cachix.org"
+  #     "https://install.determinate.systems"
+  #   ];
+  #   extra-trusted-public-keys = [
+  #     "nix-gaming.cachix.org-1:nbjlureqMbRAxR1gJ/f3hxemL9svXaZF/Ees8vCUUs4="
+  #     "nixpkgs-wayland.cachix.org-1:3lwxaILxMRkVhehr5StQprHdEo4IrE8sRho9R9HOLYA="
+  #     "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM="
+  #   ];
+  # };
 
   # This is the standard format for flake.nix. `inputs` are the dependencies of the flake,
   # Each item in `inputs` will be passed as a parameter to the `outputs` function after being pulled and built.

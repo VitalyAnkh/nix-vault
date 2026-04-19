@@ -37,7 +37,7 @@ let
           # pkgs used only to shape the overlay; real pkgs is the 'super' in overlay
           pkgs = import nixpkgs { inherit system; };
           inherit (inputs) nixpak;
-          pkgs-patched = sArgs.pkgs-patched;
+          pkgs-master = sArgs.pkgs-master;
           firefox = sArgs.firefox;
         };
       in

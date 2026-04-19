@@ -1,7 +1,7 @@
 [source-emacs-master-igc]
 src.git = "https://github.com/emacs-mirror/emacs.git"
 src.branch = "feature/igc"
-fetch.github = "emacs-mirror/emacs"
+fetch.git = "https://github.com/emacs-mirror/emacs.git"
 
 [source-emacs-lsp-booster]
 src.git = "https://github.com/blahgeek/emacs-lsp-booster.git"

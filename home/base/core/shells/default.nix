@@ -10,6 +10,7 @@ let
     j = "just -f ~/nix-vault/justfile";
     ncpp = "nix develop ~/nix-vault/templates/cpp";
     nrust = "nix develop ~/nix-vault/templates/bevy";
+    nweb = "nix develop ~/nix-vault/templates/web";
 
     urldecode = "python3 -c 'import sys, urllib.parse as ul; print(ul.unquote_plus(sys.stdin.read()))'";
     urlencode = "python3 -c 'import sys, urllib.parse as ul; print(ul.quote_plus(sys.stdin.read()))'";

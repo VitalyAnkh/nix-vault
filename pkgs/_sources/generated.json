@@ -22,7 +22,7 @@
   },
   "source-emacs-master-igc": {
     "cargoLocks": null,
-    "date": "2026-01-23",
+    "date": "2026-02-12",
     "extract": null,
     "name": "source-emacs-master-igc",
     "passthru": null,
@@ -32,13 +32,12 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "owner": "emacs-mirror",
-      "repo": "emacs",
-      "rev": "07c893264b8520030c78e10e0e5dbe55b6a8bf50",
-      "sha256": "sha256-V5wyYTa3AfTPvX03F9rQdr5q7OTKpEe/cQlJf9gETAc=",
+      "rev": "9a4a54af9192a6653164364c75721ee814ffb1e8",
+      "sha256": "sha256-3PRoNDO1B/ZFdgj5LBtIs2UYI0PFcu0U8znq0Ud442k=",
       "sparseCheckout": [],
-      "type": "github"
+      "type": "git",
+      "url": "https://github.com/emacs-mirror/emacs.git"
     },
-    "version": "07c893264b8520030c78e10e0e5dbe55b6a8bf50"
+    "version": "9a4a54af9192a6653164364c75721ee814ffb1e8"
   }
 }

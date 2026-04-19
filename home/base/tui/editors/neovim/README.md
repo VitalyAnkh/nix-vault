@@ -8,7 +8,7 @@ usage.
 
 ## Screenshots
 
-![](/_img/astronvim_2023-07-13_00-39.webp) ![](/_img/hyprland_2023-07-29_2.webp)
+![](/_img/astronvim_2023-07-13_00-39.webp)
 
 ## Configuration Structure
 
