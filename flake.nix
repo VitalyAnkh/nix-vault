@@ -87,7 +87,7 @@
     };
 
     lanzaboote = {
-      url = "github:nix-community/lanzaboote/v0.4.3";
+      url = "github:nix-community/lanzaboote/v1.0.0";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -116,7 +116,7 @@
     daeuniverse.url = "github:daeuniverse/flake.nix";
 
     disko = {
-      url = "github:nix-community/disko/v1.11.0";
+      url = "github:nix-community/disko/v1.13.0";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -169,6 +169,9 @@
       url = "github:mattwparas/helix/steel-event-system";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # AI coding agents
+    llm-agents.url = "github:numtide/llm-agents.nix";
 
     # -------------- Gaming ---------------------
 

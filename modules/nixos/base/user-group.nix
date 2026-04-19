@@ -11,6 +11,7 @@
   users.groups = {
     "${myvars.username}" = { };
     podman = { };
+    docker = { };
     wireshark = { };
     # for android platform tools's udev rules
     adbusers = { };
@@ -19,6 +20,8 @@
     plugdev = { };
     # misc
     uinput = { };
+    # shared group for services that read/write the same data directory
+    fileshare = { };
   };
 
   # VR_TODO: move the following line to other places
@@ -40,9 +43,11 @@
       "wheel"
       "networkmanager" # for nmtui / nm-connection-editor
       "podman"
+      "docker"
       "wireshark"
       "adbusers" # android debugging
       "libvirtd" # virt-viewer / qemu
+      "fileshare"
     ];
   };
 

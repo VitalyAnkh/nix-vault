@@ -93,5 +93,9 @@
 
       # ncdu is removed on darwin
       pkgs.ncdu
+
+      # storage diagnostics
+      pkgs.smartmontools
+      pkgs.nvme-cli
     ];
 }

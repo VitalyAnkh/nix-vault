@@ -1,4 +1,9 @@
-{ lib, pkgs, ... }:
+{
+  lib,
+  pkgs,
+  pkgs-patched,
+  ...
+}:
 {
   #############################################################
   #
@@ -29,6 +34,8 @@
 
       # ai related
       python313Packages.huggingface-hub # huggingface-cli
+      pkgs-patched.python313Packages.modelscope
+      yt-dlp
 
       # terminal
       tmux

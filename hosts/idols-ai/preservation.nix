@@ -1,5 +1,6 @@
 {
   preservation,
+  lib,
   pkgs,
   myvars,
   ...
@@ -13,7 +14,7 @@ in
   ];
 
   preservation.enable = true;
-  # preservation requires initrd using systemd.
+  # pverservation required initrd using systemd.
   boot.initrd.systemd.enable = true;
 
   environment.systemPackages = [
@@ -46,18 +47,12 @@ in
       "/etc/agenix/"
 
       "/var/log"
-      # preserve davfs2 cache to keep WebDAV mounts from shifting load into RAM
+
+      # preserve davfs2 driver's cache to avoid large memory usage
       "/var/cache/davfs2"
 
-      # VR_TODO: for proxy apps run with sudo
-      "/root/.local"
-      "/root/.config"
-
       # system-core
-      {
-        directory = "/var/lib/nixos";
-        inInitrd = true;
-      }
+      "/var/lib/nixos"
       "/var/lib/systemd"
       {
         directory = "/var/lib/private";
@@ -65,7 +60,7 @@ in
       }
 
       # containers
-      "/var/lib/docker"
+      # "/var/lib/docker"
       "/var/lib/cni"
       "/var/lib/containers"
 
@@ -80,12 +75,12 @@ in
       # "/var/lib/waydroid"
 
       # network
-      "/var/lib/tailscale"
-      "/var/lib/netbird-homelab" # netbird's homelab client
-      "/etc/netbird-homelab"
       "/var/lib/bluetooth"
       "/var/lib/NetworkManager"
       "/var/lib/iwd"
+      "/var/lib/tailscale"
+      "/var/lib/netbird-homelab" # netbird's homelab client
+      "/etc/netbird-homelab"
     ];
     files = [
       # auto-generated machine ID
@@ -112,46 +107,16 @@ in
         "Documents"
         "Videos"
 
+        # Keep .cache off tmpfs to avoid high RAM usage; many apps use it and it is storage-heavy.
+        ".cache"
+
         # ======================================
         # Codes / Work / Playground
         # ======================================
-        "projects"
-        "nix-vault"
+        "codes" # for personal code
+        "work" # for work contains a .gitconfig with my work email.
+        "nix-config"
         "tmp"
-
-        # android tools
-        "Android"
-        # Android Studio
-        ".config/Google"
-        ".android"
-
-        # google gemini
-        ".gemini"
-
-        "Zotero"
-        ".zotero"
-
-        # Nutstore sync folder
-        "nutstore_files"
-        "Nutstore Files"
-        ".nutstore"
-
-        # lean prover
-        ".elan"
-
-        # some cache, like clipboard history, sccache, and Dolphin Anty's
-        # runtime caches under `.cache/dolphin_anty` / `.cache/appimage-run`
-        ".cache"
-
-        # warp-terminal config
-        ".config/warp-terminal"
-
-        # gnome configurations
-        ".config/dconf"
-
-        ".config/clash-nyanpasu"
-        ".config/hiddify"
-        ".config/flclash"
 
         # ======================================
         # Nix / Home Manager Profiles
@@ -160,67 +125,34 @@ in
         ".local/state/home-manager"
         ".local/state/nix/profiles"
         ".local/share/nix"
-        ".cache/nix"
-        ".cache/nixpkgs-review"
 
         # ======================================
         # IDE / Editors
         # ======================================
 
-        # doomemacs
-        ".config/emacs"
-        ".local/share/doom"
-        ".local/share/emacs"
-        "org" # org files
-
-        # neovim plugins(wakatime & copilot)
+        # neovim plugins
         ".wakatime"
-        ".config/github-copilot"
 
         # vscode
         ".vscode"
         ".config/Code"
-        ".vscode-insiders"
-        ".config/Code - Insiders"
 
-        # godot
-        ".config/godot"
-
-        # nvidia profiling tools: nsight-system and nsight-compute
-        ".config/NVIDIA Corporation/"
-        ".nsightsystems"
-        ".nsightcompute"
-
-        # cursor ai editor
+        # cursor ai editor / cli
         ".cursor"
         ".config/cursor"
         ".config/Cursor"
 
-        # zed editor
-        ".config/zed"
-        ".local/share/zed"
-
-        # google ai editor (antigravity)
-        ".config/Antigravity"
-        ".antigravity"
-
-        # ======================================
-        # Unreal Engine / Epic Games
-        # ======================================
-
-        # Unreal/Epic store user config under `~/.config` (stateless root needs these persisted)
-        ".config/Epic"
-        ".config/Unreal Engine"
-
         # ai agents
-        ".agents"
+        ".agents" # skills for all agents
         ".config/agents"
         ".claude"
+        ".gemini"
         ".codex"
-        ".clawdbot"
         ".config/opencode"
-        ".context7"
-        ".kimi"
+        ".local/share/opencode"
+        ".local/state/opencode"
+        ".kimi" # kimi-cli
+        ".context7" # up-to-date docs and code examples for for LLMs & agents
 
         # nvim
         ".local/share/nvim"
@@ -233,27 +165,8 @@ in
         ".config/joplin" # tui client
         ".config/Joplin" # joplin-desktop
 
-        # Dolphin Anty
-        ".config/dolphin_anty"
-
-        # Obsidian app-level system folder on Linux.
-        # Vault-local `.obsidian` stays with the preserved vault directory itself.
-        ".config/obsidian"
-
         ".local/share/jupyter"
         ".ipython"
-
-        # qbittorrent
-        ".config/qBittorrent"
-        ".local/share/qBittorrent"
-
-        # vlc
-        ".config/vlc/"
-        # mpv
-        ".config/mpv/"
-
-        # wine
-        ".wine"
 
         # ======================================
         # Cloud Native
@@ -291,7 +204,6 @@ in
         ".npm" # typsescript/javascript
         "go"
         ".cargo" # rust
-        ".rustup"
         ".m2" # java maven
         ".gradle" # java gradle
         ".conda" # python generated by `conda-shell`
@@ -300,7 +212,6 @@ in
         ".local/bin"
         # python uv
         ".local/share/uv"
-        ".cache/uv"
 
         # ======================================
         # Security
@@ -318,10 +229,15 @@ in
           directory = ".pki";
           mode = "0700";
         }
-
-        ".local/share/password-store"
-        # gnmome keyrings
-        ".local/share/keyrings"
+        {
+          directory = ".local/share/password-store";
+          mode = "0700";
+        }
+        {
+          # gnmome keyrings
+          directory = ".local/share/keyrings";
+          mode = "0700";
+        }
 
         # ======================================
         # Games / Media
@@ -360,11 +276,7 @@ in
         # ======================================
         ".mozilla"
         ".config/google-chrome"
-        ".cache/google-chrome"
         ".config/chromium"
-        ".cache/chromium"
-        ".config/microsoft-edge"
-        ".cache/microsoft-edge"
 
         # ======================================
         # CLI data
@@ -373,7 +285,6 @@ in
         ".local/share/zoxide"
         ".local/share/direnv"
         ".local/share/k9s"
-        ".cache/tealdeer" # tldr
 
         # ======================================
         # Containers
@@ -381,28 +292,22 @@ in
         ".local/share/containers"
         ".local/share/flatpak"
         # flatpak/nixpak app's data
-        ".var"
-
-        # ======================================
-        # xdg data home & state home
-        # Used by:
-        #  neovim, flatpak, autin, fcitx5, etc...
-        # ======================================
-        # XDG_DATA_HOME
-        ".local/share"
-        # XDG_STATE_HOME
-        ".local/state"
+        {
+          directory = ".var";
+          mode = "0700";
+        }
 
         # ======================================
         # Misc
         # ======================================
 
+        # Clash Verge Rev
+        ".local/share/io.github.clash-verge-rev.clash-verge-rev"
+        ".local/share/clash-verge"
+
         # Audio
         ".config/pulse"
         ".local/state/wireplumber"
-
-        # flatpak app's data
-        ".var"
 
         # Digital Painting
         ".local/share/krita"
@@ -435,10 +340,10 @@ in
 
   # Create some directories with custom permissions.
   #
-  # In this configuration the path `/home/<user>/.local` is not an immediate parent
+  # In this configuration the path `/home/butz/.local` is not an immediate parent
   # of any persisted file so it would be created with the systemd-tmpfiles default
-  # ownership `root:root` and mode `0755`. This would mean that the user
-  # could not create other files or directories inside `/home/<user>/.local`.
+  # ownership `root:root` and mode `0755`. This would mean that the user `butz`
+  # could not create other files or directories inside `/home/butz/.local`.
   #
   # Therefore systemd-tmpfiles is used to prepare such directories with
   # appropriate permissions.
@@ -450,17 +355,12 @@ in
     let
       permission = {
         user = username;
-        group = "users";
-        mode = "0755";
-      };
-      homePermission = permission // {
-        mode = "0700";
+        group = lib.mkForce username;
+        mode = lib.mkForce "0750";
       };
     in
     {
-      "/home/${username}".d = homePermission;
       "/home/${username}/.config".d = permission;
-      "/home/${username}/.cache".d = permission;
       "/home/${username}/.local".d = permission;
       "/home/${username}/.local/share".d = permission;
       "/home/${username}/.local/state".d = permission;

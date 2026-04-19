@@ -12,7 +12,8 @@
   ...
 }@args:
 let
-  name = "eva";
+  # 星野 アイ, Hoshino Ai
+  name = "ai";
   base-modules = {
     nixos-modules =
       (map mylib.relativeToRoot [
@@ -20,7 +21,7 @@ let
         "secrets/nixos.nix"
         "modules/nixos/desktop.nix"
         # host specific
-        "hosts/${name}"
+        "hosts/idols-${name}"
         # nixos hardening
         # "hardening/profiles/default.nix"
         "hardening/nixpaks"
@@ -36,7 +37,7 @@ let
         }
       ];
     home-modules = map mylib.relativeToRoot [
-      "home/hosts/linux/${name}.nix"
+      "home/hosts/linux/idols-${name}.nix"
     ];
   };
 
@@ -50,13 +51,11 @@ let
 in
 {
   nixosConfigurations = {
-    "${name}" = mylib.nixosSystem (modules-niri // args);
     "${name}-niri" = mylib.nixosSystem (modules-niri // args);
   };
 
   # generate iso image for hosts with desktop environment
   packages = {
-    "${name}" = inputs.self.nixosConfigurations."${name}-niri".config.formats.iso;
     "${name}-niri" = inputs.self.nixosConfigurations."${name}-niri".config.formats.iso;
   };
 }

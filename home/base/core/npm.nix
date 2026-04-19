@@ -1,10 +1,9 @@
 { config, ... }:
 {
-  # make `npm install -g <pkg>` happey
-  #
-  # mainly used to install npm packages that updates frequently
-  # such as gemini-cli, claude-code, etc.
+  # 1. make `npm install -g <pkg>` happey
+  # 2. require a short release-age delay for registry packages
   home.file.".npmrc".text = ''
     prefix=${config.home.homeDirectory}/.npm
+    min-release-age=7
   '';
 }
