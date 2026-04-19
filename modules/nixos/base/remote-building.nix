@@ -51,7 +51,6 @@
       #   # remote builder's max-job
       #   maxJobs = 3;
       #   # speedFactor's a signed integer
-      #   # https://github.com/ryan4yin/nix-config/issues/70
       #   speedFactor = 1;
       # }
       # {

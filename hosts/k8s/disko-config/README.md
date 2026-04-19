@@ -27,7 +27,7 @@ DEVICE=/dev/disk/by-label/NIXOS_DSC
 dd bs=512 count=64 iflag=fullblock seek=128 if=$KEYFILE of=$DEVICE
 
 K3S_TOKEN_FILE=./kubevirt-k3s-token
-USB_PATH=/run/media/ryan/NIXOS_K3S
+USB_PATH=/run/media/vitalyr/NIXOS_K3S
 cp $K3S_TOKEN_FILE $USB_PATH
 ```
 
@@ -37,9 +37,9 @@ cp $K3S_TOKEN_FILE $USB_PATH
 # enter an shell with git/vim/ssh-agent/gnumake available
 nix-shell -p git vim gnumake
 # clone this repository
-git clone https://github.com/ryan4yin/nix-config.git
+git clone https://github.com/VitalyAnkh/nix-vault.git
 
-cd nix-config
+cd nix-vault
 
 # one line
 sudo nix run --experimental-features "nix-command flakes" 'github:nix-community/disko#disko-install' -- \
@@ -53,7 +53,7 @@ sudo nix --experimental-features "nix-command flakes" run github:nix-community/d
 sudo nixos-install --root /mnt --no-root-password --show-trace --verbose --flake .#kubevirt-shoryu
 
 # enter into the installed system, check password & users
-# `su ryan` => `sudo -i` => enter ryan's password => successfully login
+# `su vitalyr` => `sudo -i` => enter vitalyr's password => successfully login
 # if login failed, check the password you set in install-1, and try again
 nixos-enter
 
@@ -64,6 +64,6 @@ nixos-enter
 ##       We need to copy files into /persistent manually!!!
 mv /etc/machine-id /persistent/etc/
 mv /etc/ssh /persistent/etc/
-mkdir -p /persistent/home/ryan
-chown -R ryan:ryan /persistent/home/ryan
+mkdir -p /persistent/home/vitalyr
+chown -R vitalyr:vitalyr /persistent/home/vitalyr
 ```

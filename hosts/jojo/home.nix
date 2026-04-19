@@ -21,7 +21,7 @@ in
   home.packages = with pkgs; [
     # Emacs with pgtk support (as requested)
     emacs-master-pgtk-with-igc
-    
+
     # Add any other host-specific packages here if needed
   ];
 
@@ -29,13 +29,13 @@ in
   home.sessionVariables = {
     # Reduce Nix memory usage
     NIX_BUILD_CORES = "1"; # Single core optimization
-    
+
     # Git performance for low-spec
     GIT_PAGER = "less -FRX";
   };
 
   # Git performance optimizations for low-spec systems
-  programs.git.extraConfig = {
+  programs.git.settings = {
     core = {
       # Reduce memory usage
       packedGitLimit = "128m";
@@ -44,7 +44,7 @@ in
       packSizeLimit = "128m";
       threads = "1"; # Single core optimization
     };
-    
+
     # Reduce network operations
     gc.auto = 0; # Disable automatic garbage collection
     fetch.prune = false;
@@ -67,17 +67,17 @@ in
     # Minimal tmux configuration for low-spec systems
     set -g history-limit 1000  # Reduce history size
     set -g default-terminal "screen-256color"
-    
+
     # Simple status bar
     set -g status-interval 60  # Update less frequently
     set -g status-left-length 20
     set -g status-right-length 20
     set -g status-left "[#S] "
     set -g status-right "%H:%M"
-    
+
     # Disable mouse to save resources
     set -g mouse off
-    
+
     # Simple key bindings
     bind r source-file ~/.tmux.conf
     bind | split-window -h

@@ -18,8 +18,8 @@ src.branch = "feature/igc"
 fetch.github = "emacs-mirror/emacs"
 ```
 
-然后在 `emacs/emacs-master-igc-pgtk.nix` 中，传入的函数加上 `source-emacs-master-igc` 参数，并替换掉
-原有的src
+然后在 `emacs/emacs-master-igc-pgtk.nix` 中，传入的函数加上 `source-emacs-master-igc`
+参数，并替换掉原有的src
 
 ```nix
 { source-emacs-master-igc, emacs, ... }:

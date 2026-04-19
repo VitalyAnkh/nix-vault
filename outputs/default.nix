@@ -50,6 +50,11 @@ let
         # To use chrome, we need to allow the installation of non-free software
         config.allowUnfree = true;
       };
+
+      # Some modules expect this input to exist in specialArgs even when the flake input
+      # is not configured in `flake.nix` (e.g. on machines that don't need Asahi firmware).
+      my-asahi-firmware =
+        if builtins.hasAttr "my-asahi-firmware" inputs then inputs."my-asahi-firmware" else null;
     };
 
   # This is the args for all the haumea modules in this folder.
@@ -192,8 +197,12 @@ in
             enable = true;
             settings = {
               write = true; # Automatically fix typos
-              configPath = ".typos.toml"; # relative to the flake root
-              exclude = "rime-data/";
+              # NOTE: git-hooks.nix currently generates a config file in the Nix store for the `typos`
+              # hook, so `configPath` may not be used even when set. Read the repo config and pass the
+              # parsed TOML as structured config to ensure project-specific words like `osu-lazer` stay
+              # intact.
+              config = builtins.fromTOML (builtins.readFile (mylib.relativeToRoot ".typos.toml"));
+              exclude = "(^rime-data/|^home/base/tui/editors/emacs/doom/init\\.el$|^home/linux/gui/base/fcitx5/pinyin\\.conf$)";
             };
           };
           prettier = {

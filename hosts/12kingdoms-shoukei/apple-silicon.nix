@@ -2,7 +2,7 @@
   lib,
   pkgs,
   nixos-apple-silicon,
-  my-asahi-firmware,
+  my-asahi-firmware ? null,
   nixpkgs-mesa,
   ...
 }:
@@ -37,11 +37,17 @@
   networking.networkmanager.enable = true;
 
   # Specify path to peripheral firmware files.
+  warnings =
+    lib.optional (my-asahi-firmware == null)
+      "shoukei: flake input \"my-asahi-firmware\" missing; not setting hardware.asahi.peripheralFirmwareDirectory";
+
   hardware.asahi = {
-    enable = true;
-    peripheralFirmwareDirectory = "${my-asahi-firmware}/macbook-pro-m2-a2338";
+    enable = my-asahi-firmware != null;
 
     # since mesa 25.1(already in nixpkgs), support for asahi is enabled by default.
+  }
+  // lib.optionalAttrs (my-asahi-firmware != null) {
+    peripheralFirmwareDirectory = "${my-asahi-firmware}/macbook-pro-m2-a2338";
   };
 
   # Lid & PowerKey settings

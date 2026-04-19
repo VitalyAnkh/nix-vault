@@ -13,7 +13,7 @@ in
   ];
 
   preservation.enable = true;
-  # pverservation required initrd using systemd.
+  # preservation requires initrd using systemd.
   boot.initrd.systemd.enable = true;
 
   environment.systemPackages = [
@@ -52,7 +52,10 @@ in
       "/root/.config"
 
       # system-core
-      "/var/lib/nixos"
+      {
+        directory = "/var/lib/nixos";
+        inInitrd = true;
+      }
       "/var/lib/systemd"
       {
         directory = "/var/lib/private";
@@ -195,6 +198,14 @@ in
         # google ai editor (antigravity)
         ".config/Antigravity"
         ".antigravity"
+
+        # ======================================
+        # Unreal Engine / Epic Games
+        # ======================================
+
+        # Unreal/Epic store user config under `~/.config` (stateless root needs these persisted)
+        ".config/Epic"
+        ".config/Unreal Engine"
 
         # ai agents
         ".claude"
@@ -414,10 +425,10 @@ in
 
   # Create some directories with custom permissions.
   #
-  # In this configuration the path `/home/butz/.local` is not an immediate parent
+  # In this configuration the path `/home/<user>/.local` is not an immediate parent
   # of any persisted file so it would be created with the systemd-tmpfiles default
-  # ownership `root:root` and mode `0755`. This would mean that the user `butz`
-  # could not create other files or directories inside `/home/butz/.local`.
+  # ownership `root:root` and mode `0755`. This would mean that the user
+  # could not create other files or directories inside `/home/<user>/.local`.
   #
   # Therefore systemd-tmpfiles is used to prepare such directories with
   # appropriate permissions.
@@ -432,8 +443,12 @@ in
         group = "users";
         mode = "0755";
       };
+      homePermission = permission // {
+        mode = "0700";
+      };
     in
     {
+      "/home/${username}".d = homePermission;
       "/home/${username}/.config".d = permission;
       "/home/${username}/.cache".d = permission;
       "/home/${username}/.local".d = permission;

@@ -9,6 +9,8 @@ ignore-files = true
 extend-exclude = [
   "data/",
   "rime-data/",
+  "home/base/tui/editors/emacs/doom/init.el",
+  "home/linux/gui/base/fcitx5/pinyin.conf",
 ]
 
 [default]
@@ -23,7 +25,7 @@ extend-ignore-re = [
   "noice",                                                            # noice.nvim
   "crypted-nixos",
   "daed",
-  "lazer",
+  "(?i)lazer",
   '''(?m)sha256\s*=\s*"sha256-[A-Za-z0-9+/=]+"''', # sha256
 
   # catppuccin theme colors

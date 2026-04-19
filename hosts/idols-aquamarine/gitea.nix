@@ -6,7 +6,7 @@
     user = "gitea";
     group = "gitea";
     stateDir = "/data/apps/gitea";
-    appName = "Ryan Yin's Gitea Service";
+    appName = "VitalyR's Gitea Service";
     lfs.enable = true;
     # Enable a timer that runs gitea dump to generate backup-files of the current gitea database and repositories.
     dump = {
@@ -49,7 +49,8 @@
         ENABLED = true;
         MAILER_TYPE = "sendmail";
         FROM = "do-not-reply@writefor.fun";
-        SENDMAIL_PATH = "${pkgs.stdenv.hostPlatform.system-sendmail}/bin/sendmail";
+        # Use msmtp's sendmail-compatible interface.
+        SENDMAIL_PATH = "${pkgs.msmtp}/bin/msmtp";
       };
       other = {
         SHOW_FOOTER_VERSION = false;

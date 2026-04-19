@@ -37,10 +37,7 @@
       macos_option_as_alt = true; # Option key acts as Alt on macOS
       enable_audio_bell = false;
       tab_bar_edge = "top"; # tab bar on top
-      #  To resolve issues:
-      #    1. https://github.com/ryan4yin/nix-config/issues/26
-      #    2. https://github.com/ryan4yin/nix-config/issues/8
-      #  Spawn a nushell in login mode via `bash`
+      # Spawn a nushell in login mode via `bash`
       shell = "${pkgs.bash}/bin/bash --login -c 'nu --login --interactive'";
     };
 

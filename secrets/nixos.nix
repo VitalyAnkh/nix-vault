@@ -11,13 +11,34 @@ with lib;
 let
   cfg = config.modules.secrets;
 
-  enabledServerSecrets =
+  enabledServerSecrets = any (v: v) [
     cfg.server.application.enable
-    || cfg.server.network.enable
-    || cfg.server.operation.enable
-    || cfg.server.kubernetes.enable
-    || cfg.server.webserver.enable
-    || cfg.server.storage.enable;
+    cfg.server.network.enable
+    cfg.server.operation.enable
+    cfg.server.kubernetes.enable
+    cfg.server.webserver.enable
+    cfg.server.storage.enable
+  ];
+
+  hasSecretFile = path: builtins.pathExists path;
+
+  optionalSecret =
+    name: file: extra:
+    optionalAttrs (hasSecretFile file) {
+      "${name}" = {
+        inherit file;
+      }
+      // extra;
+    };
+
+  optionalEtc =
+    target: secretName: file: extra:
+    optionalAttrs (hasSecretFile file) {
+      "${target}" = {
+        source = config.age.secrets.${secretName}.path;
+      }
+      // extra;
+    };
 
   noaccess = {
     mode = "0000";
@@ -70,13 +91,9 @@ in
           ];
 
       # secrets that are used by all nixos hosts
-      age.secrets = {
-        "nix-access-tokens" = {
-          file = "${mysecrets}/nix-access-tokens.age";
-        }
-        # access-token needs to be readable by the user running the `nix` command
-        // user_readable;
-      };
+      age.secrets = mkMerge [
+        (optionalSecret "nix-access-tokens" "${mysecrets}/nix-access-tokens.age" user_readable)
+      ];
 
       assertions = [
         {
@@ -88,175 +105,142 @@ in
     }
 
     (mkIf cfg.desktop.enable {
-      age.secrets = {
+      age.secrets = mkMerge [
         # ---------------------------------------------
         # no one can read/write this file, even root.
         # ---------------------------------------------
 
         # .age means the decrypted file is still encrypted by age(via a passphrase)
-        "ryan4yin-gpg-subkeys.priv.age" = {
-          file = "${mysecrets}/ryan4yin-gpg-subkeys-2024-01-27.priv.age.age";
-        }
-        // noaccess;
+        (optionalSecret "vitalyr-gpg-subkeys.priv.age"
+          "${mysecrets}/vitalyr-gpg-subkeys-2024-01-27.priv.age.age"
+          noaccess
+        )
 
         # ---------------------------------------------
         # only root can read this file.
         # ---------------------------------------------
 
-        "wg-business.conf" = {
-          file = "${mysecrets}/wg-business.conf.age";
-        }
-        // high_security;
+        (optionalSecret "wg-business.conf" "${mysecrets}/wg-business.conf.age" high_security)
 
         # Used only by NixOS Modules
         # smb-credentials is referenced in /etc/fstab, by ../hosts/ai/cifs-mount.nix
-        "smb-credentials" = {
-          file = "${mysecrets}/smb-credentials.age";
-        }
-        // high_security;
+        (optionalSecret "smb-credentials" "${mysecrets}/smb-credentials.age" high_security)
 
-        "rclone.conf" = {
-          file = "${mysecrets}/rclone.conf.age";
-        }
-        // high_security;
+        (optionalSecret "rclone.conf" "${mysecrets}/rclone.conf.age" high_security)
 
         # ---------------------------------------------
         # user can read this file.
         # ---------------------------------------------
 
-        "ssh-key-romantic" = {
-          file = "${mysecrets}/ssh-key-romantic.age";
-        }
-        // user_readable;
+        (optionalSecret "ssh-key-romantic" "${mysecrets}/ssh-key-romantic.age" user_readable)
 
         # alias-for-work
-        "alias-for-work.nushell" = {
-          file = "${mysecrets}/alias-for-work.nushell.age";
-        }
-        // user_readable;
-      };
+        (optionalSecret "alias-for-work.nushell" "${mysecrets}/alias-for-work.nushell.age" user_readable)
+      ];
 
       # place secrets in /etc/
-      environment.etc = {
+      environment.etc = mkMerge [
         # wireguard config used with `wg-quick up wg-business`
-        "wireguard/wg-business.conf" = {
-          source = config.age.secrets."wg-business.conf".path;
-        };
+        (optionalEtc "wireguard/wg-business.conf" "wg-business.conf" "${mysecrets}/wg-business.conf.age"
+          { }
+        )
 
-        "agenix/rclone.conf" = {
-          source = config.age.secrets."rclone.conf".path;
-        };
+        (optionalEtc "agenix/rclone.conf" "rclone.conf" "${mysecrets}/rclone.conf.age" { })
 
-        "agenix/ssh-key-romantic" = {
-          source = config.age.secrets."ssh-key-romantic".path;
+        (optionalEtc "agenix/ssh-key-romantic" "ssh-key-romantic" "${mysecrets}/ssh-key-romantic.age" {
           mode = "0600";
           user = myvars.username;
-        };
+        })
 
-        "agenix/ryan4yin-gpg-subkeys.priv.age" = {
-          source = config.age.secrets."ryan4yin-gpg-subkeys.priv.age".path;
-          mode = "0000";
-        };
+        (optionalEtc "agenix/vitalyr-gpg-subkeys.priv.age" "vitalyr-gpg-subkeys.priv.age"
+          "${mysecrets}/vitalyr-gpg-subkeys-2024-01-27.priv.age.age"
+          { mode = "0000"; }
+        )
 
         # The following secrets are used by home-manager modules
         # So we need to make then readable by the user
-        "agenix/alias-for-work.nushell" = {
-          source = config.age.secrets."alias-for-work.nushell".path;
-          mode = "0644"; # both the original file and the symlink should be readable and executable by the user
-        };
-      };
+        (optionalEtc "agenix/alias-for-work.nushell" "alias-for-work.nushell"
+          "${mysecrets}/alias-for-work.nushell.age"
+          { mode = "0644"; }
+        )
+      ];
     })
 
     (mkIf cfg.server.network.enable {
-      age.secrets = {
-        "dae-subscription.dae" = {
-          file = "${mysecrets}/server/dae-subscription.dae.age";
-        }
-        // high_security;
-      };
+      age.secrets = mkMerge [
+        (optionalSecret "dae-subscription.dae" "${mysecrets}/server/dae-subscription.dae.age" high_security)
+      ];
     })
 
     (mkIf cfg.server.application.enable {
-      age.secrets = {
-        "transmission-credentials.json" = {
-          file = "${mysecrets}/server/transmission-credentials.json.age";
-        }
-        // high_security;
+      age.secrets = mkMerge [
+        (optionalSecret "transmission-credentials.json"
+          "${mysecrets}/server/transmission-credentials.json.age"
+          high_security
+        )
 
-        "sftpgo.env" = {
-          file = "${mysecrets}/server/sftpgo.env.age";
+        (optionalSecret "sftpgo.env" "${mysecrets}/server/sftpgo.env.age" {
           mode = "0400";
           owner = "sftpgo";
-        };
-        "minio.env" = {
-          file = "${mysecrets}/server/minio.env.age";
+        })
+
+        (optionalSecret "minio.env" "${mysecrets}/server/minio.env.age" {
           mode = "0400";
           owner = "minio";
-        };
-      };
+        })
+      ];
     })
 
     (mkIf cfg.server.operation.enable {
-      age.secrets = {
-        "grafana-admin-password" = {
-          file = "${mysecrets}/server/grafana-admin-password.age";
+      age.secrets = mkMerge [
+        (optionalSecret "grafana-admin-password" "${mysecrets}/server/grafana-admin-password.age" {
           mode = "0400";
           owner = "grafana";
-        };
+        })
 
-        "alertmanager.env" = {
-          file = "${mysecrets}/server/alertmanager.env.age";
-        }
-        // high_security;
-      };
+        (optionalSecret "alertmanager.env" "${mysecrets}/server/alertmanager.env.age" high_security)
+      ];
     })
 
     (mkIf cfg.server.kubernetes.enable {
-      age.secrets = {
-        "k3s-prod-1-token" = {
-          file = "${mysecrets}/server/k3s-prod-1-token.age";
-        }
-        // high_security;
+      age.secrets = mkMerge [
+        (optionalSecret "k3s-prod-1-token" "${mysecrets}/server/k3s-prod-1-token.age" high_security)
 
-        "k3s-test-1-token" = {
-          file = "${mysecrets}/server/k3s-test-1-token.age";
-        }
-        // high_security;
-      };
+        (optionalSecret "k3s-test-1-token" "${mysecrets}/server/k3s-test-1-token.age" high_security)
+      ];
     })
 
     (mkIf cfg.server.webserver.enable {
-      age.secrets = {
-        "caddy-ecc-server.key" = {
-          file = "${mysecrets}/certs/ecc-server.key.age";
+      age.secrets = mkMerge [
+        (optionalSecret "caddy-ecc-server.key" "${mysecrets}/certs/ecc-server.key.age" {
           mode = "0400";
           owner = "caddy";
-        };
-        "postgres-ecc-server.key" = {
-          file = "${mysecrets}/certs/ecc-server.key.age";
+        })
+
+        (optionalSecret "postgres-ecc-server.key" "${mysecrets}/certs/ecc-server.key.age" {
           mode = "0400";
           owner = "postgres";
-        };
-      };
+        })
+      ];
     })
 
     (mkIf cfg.server.storage.enable {
-      age.secrets = {
-        "hdd-luks-crypt-key" = {
-          file = "${mysecrets}/hdd-luks-crypt-key.age";
+      age.secrets = mkMerge [
+        (optionalSecret "hdd-luks-crypt-key" "${mysecrets}/hdd-luks-crypt-key.age" {
           mode = "0400";
           owner = "root";
-        };
-      };
+        })
+      ];
 
       # place secrets in /etc/
-      environment.etc = {
-        "agenix/hdd-luks-crypt-key" = {
-          source = config.age.secrets."hdd-luks-crypt-key".path;
-          mode = "0400";
-          user = "root";
-        };
-      };
+      environment.etc = mkMerge [
+        (optionalEtc "agenix/hdd-luks-crypt-key" "hdd-luks-crypt-key" "${mysecrets}/hdd-luks-crypt-key.age"
+          {
+            mode = "0400";
+            user = "root";
+          }
+        )
+      ];
     })
   ]);
 }

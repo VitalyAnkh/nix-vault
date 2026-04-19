@@ -1,29 +1,23 @@
-<h2 align="center">:snowflake: Ryan4Yin's Nix Config :snowflake:</h2>
+<h2 align="center">:snowflake: vitalyr's Nix Vault :snowflake:</h2>
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/palette/macchiato.png" width="400" />
 </p>
 
 <p align="center">
-	<a href="https://github.com/ryan4yin/nix-config/stargazers">
-		<img alt="Stargazers" src="https://img.shields.io/github/stars/ryan4yin/nix-config?style=for-the-badge&logo=starship&color=C9CBFF&logoColor=D9E0EE&labelColor=302D41"></a>
     <a href="https://nixos.org/">
         <img src="https://img.shields.io/badge/NixOS-25.11-informational.svg?style=for-the-badge&logo=nixos&color=F2CDCD&logoColor=D9E0EE&labelColor=302D41"></a>
-    <a href="https://github.com/ryan4yin/nixos-and-flakes-book">
+    <a href="https://nixos-and-flakes.thiscute.world/">
         <img src="https://img.shields.io/badge/Nix%20Flakes-learning-informational.svg?style=for-the-badge&logo=nixos&color=F2CDCD&logoColor=D9E0EE&labelColor=302D41"></a>
   </a>
 </p>
 
-> My configuration is becoming more and more complex, and **it will be difficult for beginners to
-> read**. If you are new to NixOS and want to know how I use NixOS, I would recommend you to take a
-> look at the [ryan4yin/nix-config/releases](https://github.com/ryan4yin/nix-config/releases) first,
-> **check out to some simpler older versions, such as
-> [i3-kickstarter](https://github.com/ryan4yin/nix-config/tree/i3-kickstarter), which will be much
-> easier to understand**.
+> This repository is tailored to my own machines and workflows. If you are new to NixOS, treat it as
+> a reference and start from a smaller setup.
 
 This repository is home to the nix code that builds my systems:
 
-1. NixOS Desktops: NixOS with home-manager, hyprland, agenix, etc.
+1. NixOS Desktops: NixOS with home-manager, niri, agenix, etc.
 2. macOS Desktops: nix-darwin with home-manager, share the same home-manager configuration with
    NixOS Desktops.
 3. NixOS Servers: virtual machines running on Proxmox/KubeVirt, with various services, such as
@@ -46,17 +40,15 @@ As for Flakes, refer to
 
 **Want to know NixOS & Flakes in detail? Looking for a beginner-friendly tutorial or best practices?
 You don't have to go through the pain I've experienced again! Check out my
-[NixOS & Nix Flakes Book - 🛠️ ❤️ An unofficial & opinionated :book: for beginners](https://github.com/ryan4yin/nixos-and-flakes-book)!**
+[NixOS & Nix Flakes Book - 🛠️ ❤️ An unofficial & opinionated :book: for beginners](https://nixos-and-flakes.thiscute.world/)!**
 
-> If you're using macOS, check out
-> [ryan4yin/nix-darwin-kickstarter](https://github.com/ryan4yin/nix-darwin-kickstarter) for a quick
-> start.
+> If you're using macOS, see https://nixos-and-flakes.thiscute.world/ for nix-darwin notes as well.
 
 ## Components
 
 |                             | NixOS(Wayland)                                                                                                      |
 | --------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| **Window Manager**          | [Hyprland][Hyprland] / [Niri][Niri]                                                                                 |
+| **Window Manager**          | [Niri][Niri]                                                                                                        |
 | **Terminal Emulator**       | [Zellij][Zellij] + [foot][foot]/[Kitty][Kitty]/[Alacritty][Alacritty]/[Ghostty][Ghostty]                            |
 | **Bar**                     | [Waybar][Waybar]                                                                                                    |
 | **Application Launcher**    | [anyrun][anyrun]                                                                                                    |
@@ -72,18 +64,14 @@ You don't have to go through the pain I've experienced again! Check out my
 | **Text Editor**             | [Neovim][Neovim] + [DoomEmacs][DoomEmacs]                                                                           |
 | **Fonts**                   | [Nerd fonts][Nerd fonts]                                                                                            |
 | **Image Viewer**            | [imv][imv]                                                                                                          |
-| **Screenshot Software**     | [hyprshot][hyprshot]                                                                                                |
+| **Screenshot Software**     | [flameshot][flameshot]                                                                                              |
 | **Screen Recording**        | [OBS][OBS]                                                                                                          |
 | **Filesystem & Encryption** | tmpfs as `/`, [Btrfs][Btrfs] subvolumes on a [LUKS][LUKS] encrypted partition for persistent, unlock via passphrase |
 | **Secure Boot**             | [lanzaboote][lanzaboote]                                                                                            |
 
-Wallpapers: https://github.com/ryan4yin/wallpapers
+Wallpapers: provided via the `wallpapers` flake input (see `flake.nix`).
 
-## Hyprland + AstroNvim + DoomEmacs
-
-![](./_img/hyprland_2023-07-29_1.webp)
-
-![](./_img/hyprland_2023-07-29_2.webp)
+## Wayland + AstroNvim + DoomEmacs
 
 ![](./_img/emacs-2024-01-07.webp)
 
@@ -95,6 +83,17 @@ See [./home/base/tui/editors/neovim/](./home/base/tui/editors/neovim/) for detai
 
 See [./home/base/tui/editors/emacs/](./home/base/tui/editors/emacs/) for details.
 
+## Development Templates
+
+This repository also includes standalone development templates that can be entered directly with
+`nix develop`, for example:
+
+```bash
+nix develop ./templates/cpp
+nix develop ./templates/bevy
+nix develop ./templates/web
+```
+
 ## Secrets Management
 
 See [./secrets](./secrets) for details.
@@ -105,9 +104,9 @@ See [./secrets](./secrets) for details.
 > :red_circle: **IMPORTANT**: **You should NOT deploy this flake directly on your machine :exclamation:
 > It will not succeed.** This flake contains my hardware configuration(such as
 > [hardware-configuration.nix](hosts/idols-ai/hardware-configuration.nix),
-> [Nvidia Support](https://github.com/ryan4yin/nix-config/blob/v0.1.1/hosts/idols-ai/default.nix#L77-L91),
-> etc.) which is not suitable for your hardware, and requires my private secrets repository
-> [ryan4yin/nix-secrets](https://github.com/ryan4yin/nix-config/tree/main/secrets) to deploy. You
+> [Nvidia Support](hosts/idols-ai/default.nix),
+> etc.) which is not suitable for your hardware, and requires my private secrets repository (via
+> the `mysecrets` flake input, e.g. `vr-nix-secrets`) to deploy. You
 > may use this repo as a reference to build your own configuration.
 
 For NixOS:
@@ -120,14 +119,11 @@ For NixOS:
 sudo nixos-rebuild switch --flake .#eva
 
 # deploy via `just`(a command runner with similar syntax to make) & Justfile
-# Deploy the hyprland nixosConfiguration by hostname match
-just hypr
-
 # Deploy the niri nixosConfiguration by hostname match
 just niri
 
 # or we can deploy with details
-just hypr debug
+just niri debug
 ```
 
 For macOS:
@@ -285,19 +281,11 @@ Other dotfiles that inspired me:
 - Modularized NixOS Configuration
   - [hlissner/dotfiles](https://github.com/hlissner/dotfiles)
   - [viperML/dotfiles](https://github.com/viperML/dotfiles)
-- Hyprland(wayland)
-  - [notwidow/hyprland](https://github.com/notwidow/hyprland): This is where I start my hyprland
-    journey.
-  - [HeinzDev/Hyprland-dotfiles](https://github.com/HeinzDev/Hyprland-dotfiles): Refer to the waybar
-    configuration here.
-  - [Zeioth/zeioth-hyprland-config](https://github.com/Zeioth/zeioth-hyprland-config)
-  - [linuxmobile/kaku](https://github.com/linuxmobile/kaku)
 - Neovim/AstroNvim
   - [maxbrunet/dotfiles](https://github.com/maxbrunet/dotfiles): astronvim with nix flakes.
 - Misc
   - [1amSimp1e/dots](https://github.com/1amSimp1e/dots)
 
-[Hyprland]: https://github.com/hyprwm/Hyprland
 [Niri]: https://github.com/YaLTeR/niri
 [Kitty]: https://github.com/kovidgoyal/kitty
 [foot]: https://codeberg.org/dnkl/foot
@@ -318,7 +306,6 @@ Other dotfiles that inspired me:
 [Zellij]: https://github.com/zellij-org/zellij
 [Neovim]: https://github.com/neovim/neovim
 [AstroNvim]: https://github.com/AstroNvim/AstroNvim
-[Hyprshot]: https://github.com/Gustash/Hyprshot
 [DoomEmacs]: https://github.com/doomemacs/doomemacs
 [flameshot]: https://github.com/flameshot-org/flameshot
 [grim]: https://github.com/emersion/grim

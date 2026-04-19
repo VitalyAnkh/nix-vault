@@ -1,7 +1,11 @@
-{ config, ... }:
+{ config, lib, ... }:
+let
+  hasAlertmanagerSecret =
+    config ? age && config.age ? secrets && config.age.secrets ? "alertmanager.env";
+in
 {
   # https://docs.victoriametrics.com/victoriametrics/vmalert/
-  services.vmalert.instances."homelab" = {
+  services.vmalert.instances."homelab" = lib.mkIf hasAlertmanagerSecret {
     enable = true;
     settings = {
       "httpListenAddr" = "127.0.0.1:8880";
@@ -30,7 +34,11 @@
     };
   };
 
-  services.prometheus.alertmanager = {
+  warnings =
+    lib.optional (!hasAlertmanagerSecret)
+      "aquamarine: age secret \"alertmanager.env\" missing; disabling vmalert + prometheus alertmanager.";
+
+  services.prometheus.alertmanager = lib.mkIf hasAlertmanagerSecret {
     enable = true;
     listenAddress = "127.0.0.1";
     port = 9093;
@@ -94,7 +102,7 @@
         #   name = "email";
         #   email_configs = [
         #     {
-        #       to = "ryan4yin@linux.com";
+        #       to = "vr@vitalyr.com";
         #       # Whether to notify about resolved alerts.
         #       send_resolved = true;
         #     }

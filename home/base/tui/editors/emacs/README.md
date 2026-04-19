@@ -67,9 +67,9 @@ just emacs-clean
 - GitHub's orgmode support is not well, Markdown is better for GitHub.
   - Use markdown for repo's README.md, and use orgmode for my personal notes and docs only.
 
-## Cheetsheet
+## Cheatsheet
 
-Here is the cheetsheet related to my DoomEmacs configs. Please read vim's common cheetsheet at
+Here is the cheatsheet related to my DoomEmacs configs. Please read vim's common cheatsheet at
 [../README.md](../README.md) before reading the following.
 
 ### Basics

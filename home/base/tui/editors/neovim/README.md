@@ -8,7 +8,7 @@ usage.
 
 ## Screenshots
 
-![](/_img/astronvim_2023-07-13_00-39.webp) ![](/_img/hyprland_2023-07-29_2.webp)
+![](/_img/astronvim_2023-07-13_00-39.webp)
 
 ## Configuration Structure
 
@@ -45,9 +45,9 @@ just nvim-test
 just nvim-clear
 ```
 
-## Cheetsheet
+## Cheatsheet
 
-Here is the cheetsheet related to my Neovim configs. Please read vim's common cheetsheet at
+Here is the cheatsheet related to my Neovim configs. Please read vim's common cheatsheet at
 [../README.md](../README.md) before reading the following.
 
 ### Incremental Selection

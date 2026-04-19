@@ -9,5 +9,12 @@ core*
 !core/
 !core.nix
 .claude
-.omx/
 !coredns*
+
+# Local planning files (Codex / planning-with-files)
+task_plan.md
+findings.md
+progress.md
+
+# oh-my-codex local state
+.omx/

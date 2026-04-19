@@ -11,6 +11,8 @@ let
   user = "postgres"; # postgresql's default system user
   package = pkgs.postgresql_16;
   dataDir = "/data/apps/postgresql/${package.psqlSchema}";
+  hasPostgresTlsKey =
+    config ? age && config.age ? secrets && config.age.secrets ? "postgres-ecc-server.key";
 in
 {
   # Create Directories
@@ -68,11 +70,7 @@ in
       log_destination = lib.mkForce "syslog";
 
       # ssl
-      ssl = true;
-      ssl_cert_file = "${../../certs/ecc-server.crt}";
-      ssl_key_file = config.age.secrets."postgres-ecc-server.key".path;
-      ssl_min_protocol_version = "TLSv1.3";
-      ssl_ecdh_curve = "secp384r1";
+      ssl = hasPostgresTlsKey;
       # Using custom DH parameters reduces the exposure
       # dhparam -out dhparams.pem 2048
       # ssl_dh_params_file = "";
@@ -80,6 +78,12 @@ in
       # memory
       shared_buffers = "128MB";
       huge_pages = "try";
+    }
+    // lib.optionalAttrs hasPostgresTlsKey {
+      ssl_cert_file = "${../../certs/ecc-server.crt}";
+      ssl_key_file = config.age.secrets."postgres-ecc-server.key".path;
+      ssl_min_protocol_version = "TLSv1.3";
+      ssl_ecdh_curve = "secp384r1";
     };
 
     # Map the systemUser to the DBUser
@@ -118,6 +122,10 @@ in
     #   pkgs.writeText "backend-initScript" ''
     #   '';
   };
+
+  warnings = lib.optional (
+    !hasPostgresTlsKey
+  ) "aquamarine: age secret \"postgres-ecc-server.key\" missing; disabling PostgreSQL TLS.";
 
   services.prometheus.exporters.postgres = {
     enable = true;

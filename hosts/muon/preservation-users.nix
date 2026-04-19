@@ -1,6 +1,4 @@
 {
-  config,
-  lib,
   myvars,
   preservation,
   pkgs,
@@ -20,6 +18,7 @@ let
     "jcao"
     "m01005"
     "hazhang"
+    "hwtest"
   ];
 
   # Shared preservation profile for ${username}, as defined by the host's
@@ -37,6 +36,13 @@ let
     group = "users";
     mode = "0755";
   };
+
+  userHomePermission =
+    user:
+    userPermission user
+    // {
+      mode = "0700";
+    };
 
   tmpfilePaths = [
     ".config"
@@ -60,9 +66,17 @@ let
     };
   };
 
-  allTmpfiles = builtins.concatMap (
-    user: builtins.map (path: mkTmpfileAttr user path) tmpfilePaths
-  ) additionalUsers;
+  mkHomeTmpfileAttr = user: {
+    name = "/home/${user}";
+    value = {
+      d = userHomePermission user;
+    };
+  };
+
+  perUserTmpfiles =
+    user: [ (mkHomeTmpfileAttr user) ] ++ (builtins.map (path: mkTmpfileAttr user path) tmpfilePaths);
+
+  allTmpfiles = builtins.concatMap perUserTmpfiles additionalUsers;
 in
 {
   config = {
