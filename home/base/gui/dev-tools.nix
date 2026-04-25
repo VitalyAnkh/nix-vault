@@ -4,6 +4,9 @@
   pkgs,
   ...
 }:
+let
+  llmAgentPackages = llm-agents.packages.${pkgs.stdenv.hostPlatform.system};
+in
 {
   home.packages =
     with pkgs;
@@ -14,10 +17,10 @@
       # AI cli tools
       k8sgpt
       kubectl-ai # an ai helper opensourced by google
+      cursor-cli # packaged in nixpkgs, not llm-agents
     ]
-    ++ (with llm-agents.packages.${pkgs.stdenv.hostPlatform.system}; [
+    ++ (with llmAgentPackages; [
       codex
-      cursor-cli
       claude-code
       gemini-cli
       opencode

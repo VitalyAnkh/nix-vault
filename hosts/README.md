@@ -78,7 +78,10 @@ configurations follow similar patterns but are customized for specific hardware 
    1. Create a new folder under `hosts/` with the name of the new host.
    2. Create & add the new host's `hardware-configuration.nix` to the new folder, and add the new
       host's `configuration.nix` to `hosts/<name>/default.nix`.
-   3. If the new host need to use home-manager, add its custom config into `hosts/<name>/home.nix`.
+   3. If the new host needs Home Manager, add a single host-home entry module under `home/hosts/...`
+      and make the corresponding output point at it.
+      - Linux hosts usually use `home/hosts/linux/<name>.nix`.
+      - Darwin hosts usually use `home/hosts/darwin/darwin-<name>.nix`.
 1. Under `outputs/`
    1. Add a new nix file named `outputs/<system-architecture>/src/<name>.nix`.
    2. Copy the content from one of the existing similar host, and modify it to fit the new host.

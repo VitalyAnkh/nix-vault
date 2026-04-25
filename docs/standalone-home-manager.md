@@ -7,15 +7,18 @@ This NixOS configuration now supports standalone home-manager usage on non-NixOS
 ### Generic Configurations
 
 - `vitalyr@x86_64-linux` - Basic TUI configuration for x86_64 Linux
-- `vitalyr-gui@x86_64-linux` - Full GUI configuration for x86_64 Linux
+- `vitalyr-desktop@x86_64-linux` - Full GUI configuration for x86_64 Linux
 - `vitalyr@aarch64-linux` - Basic TUI configuration for ARM64 Linux
-- `vitalyr-gui@aarch64-linux` - Full GUI configuration for ARM64 Linux
+- `vitalyr-desktop@aarch64-linux` - Full GUI configuration for ARM64 Linux
 - `vitalyr@aarch64-darwin` - Configuration for macOS (ARM64)
+
+When a configuration name contains `@`, quote that attr name in flake commands, for example:
+`.#homeConfigurations."vitalyr@x86_64-linux".activationPackage`.
 
 ### Host-Specific Configurations
 
-- `revachol` - Example non-NixOS host with basic TUI setup
-- `revachol-gui` - Example non-NixOS host with full desktop environment
+- `jojo` - Example low-spec standalone Linux host with a minimal TUI-only setup
+- `revachol` - Example non-NixOS Linux host with host-specific GUI setup
 
 ## Usage on Non-NixOS Systems
 
@@ -37,11 +40,11 @@ cd nix-vault
 
 ```bash
 # For basic TUI setup
-nix build .#homeConfigurations.revachol.activationPackage
+nix build '.#homeConfigurations."vitalyr@x86_64-linux".activationPackage'
 ./result/activate
 
-# Or for GUI desktop setup
-nix build .#homeConfigurations.revachol-gui.activationPackage
+# Or for a host-specific GUI setup
+nix build .#homeConfigurations.revachol.activationPackage
 ./result/activate
 ```
 
@@ -53,24 +56,60 @@ home-manager switch --flake .#revachol
 
 ## Creating a New Host Configuration
 
-1. Create a new host directory:
+1. Choose the host-home entry location for your platform:
 
 ```bash
-mkdir -p hosts/YOUR_HOST_NAME
+mkdir -p home/hosts/linux
+$EDITOR home/hosts/linux/YOUR_HOST_NAME.nix
+
+# Or on Darwin
+mkdir -p home/hosts/darwin
+$EDITOR home/hosts/darwin/darwin-YOUR_HOST_NAME.nix
 ```
 
-2. Create `hosts/YOUR_HOST_NAME/home.nix` with host-specific settings:
+2. Put the host-specific Home Manager settings in that file. Shared imports belong in the host-home
+   entry file itself:
 
 ```nix
-{ config, pkgs, lib, ... }:
+# Full Linux desktop host
+{ config, ... }:
 {
-  # Your host-specific configuration
-  programs.git.enable = true;
-  # ...
+  imports = [ ../../linux/gui.nix ];
+
+  programs.ssh.matchBlocks."github.com".identityFile =
+    "${config.home.homeDirectory}/.ssh/YOUR_HOST_NAME";
 }
 ```
 
-3. Create a new configuration file in `outputs/x86_64-linux/src/YOUR_HOST_NAME.nix`:
+For minimal standalone TUI-only Linux hosts, import only the base layers instead:
+
+```nix
+{ config, ... }:
+{
+  imports = [
+    ../../base/core
+    ../../base/tui
+  ];
+
+  programs.ssh.matchBlocks."github.com".identityFile =
+    "${config.home.homeDirectory}/.ssh/YOUR_HOST_NAME";
+}
+```
+
+For Darwin host-home files, import `../../darwin` instead:
+
+```nix
+{ config, ... }:
+{
+  imports = [ ../../darwin ];
+
+  programs.ssh.matchBlocks."github.com".identityFile =
+    "${config.home.homeDirectory}/.ssh/YOUR_HOST_NAME";
+}
+```
+
+3. Create a new configuration file under the matching outputs tree, for example
+   `outputs/x86_64-linux/src/YOUR_HOST_NAME.nix`:
 
 ```nix
 {
@@ -85,21 +124,13 @@ mkdir -p hosts/YOUR_HOST_NAME
 let
   name = "YOUR_HOST_NAME";
 
-  # Import common configurations
   home-manager-config = import ./home-manager.nix args;
-  inherit (home-manager-config) base-home-modules gui-home-modules mkHomeConfig;
-
-  # Define your modules
-  base-modules = {
-    home-modules = base-home-modules ++ [
-      (mylib.relativeToRoot "hosts/${name}/home.nix")
-    ];
-  };
+  inherit (home-manager-config) mkHomeConfig;
 in
 {
   homeConfigurations = {
     "${name}" = mkHomeConfig {
-      modules = base-modules.home-modules;
+      modules = [ (mylib.relativeToRoot "home/hosts/linux/${name}.nix") ];
     };
   };
 }
@@ -108,7 +139,12 @@ in
 4. Add files to git and build:
 
 ```bash
-git add hosts/YOUR_HOST_NAME outputs/x86_64-linux/src/YOUR_HOST_NAME.nix
+# Linux example
+git add home/hosts/linux/YOUR_HOST_NAME.nix outputs/x86_64-linux/src/YOUR_HOST_NAME.nix
+nix build .#homeConfigurations.YOUR_HOST_NAME.activationPackage
+
+# Darwin example
+git add home/hosts/darwin/darwin-YOUR_HOST_NAME.nix outputs/aarch64-darwin/src/YOUR_HOST_NAME.nix
 nix build .#homeConfigurations.YOUR_HOST_NAME.activationPackage
 ```
 
@@ -119,7 +155,8 @@ The standalone home-manager support is implemented through:
 1. **lib/homeManagerConfiguration.nix** - Core function for building home-manager configurations
 2. **outputs/\*/src/home-manager.nix** - Common module definitions per architecture
 3. **outputs/\*/src/<hostname>.nix** - Host-specific configurations
-4. **hosts/<hostname>/home.nix** - Host-specific home-manager settings
+4. **home/hosts/linux/<hostname>.nix** / **home/hosts/darwin/darwin-<hostname>.nix** - Host-specific
+   home-manager entry modules
 
 This architecture allows:
 
@@ -127,3 +164,6 @@ This architecture allows:
 - Host-specific customization
 - Support for multiple architectures
 - Coexistence with NixOS configurations
+
+For the current host-home layout and conventions, also see
+[`home/hosts/README.md`](../home/hosts/README.md).
