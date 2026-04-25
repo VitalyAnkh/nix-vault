@@ -8,28 +8,28 @@
 {
   source-emacs-lsp-booster = {
     pname = "source-emacs-lsp-booster";
-    version = "8059c7dce8f9abe26099f6e30e7824c63c5ebd79";
+    version = "004bb508c9a2d2877b9145fcccd5437f23a0b669";
     src = fetchFromGitHub {
       owner = "blahgeek";
       repo = "emacs-lsp-booster";
-      rev = "8059c7dce8f9abe26099f6e30e7824c63c5ebd79";
+      rev = "004bb508c9a2d2877b9145fcccd5437f23a0b669";
       fetchSubmodules = false;
-      sha256 = "sha256-++YkiKyJhjynPTntHcF/PLsnQj2/enZwXe/F0mQ73vg=";
+      sha256 = "sha256-aOkvOyRlkG7gzMy5/x15CMm/voOFOX98QcWVbvfuVLM=";
     };
-    date = "2025-11-29";
+    date = "2026-04-12";
   };
   source-emacs-master-igc = {
     pname = "source-emacs-master-igc";
-    version = "9a4a54af9192a6653164364c75721ee814ffb1e8";
+    version = "9f434852fccfff27bca2e09cdfdc023c8017aca5";
     src = fetchgit {
       url = "https://github.com/emacs-mirror/emacs.git";
-      rev = "9a4a54af9192a6653164364c75721ee814ffb1e8";
+      rev = "9f434852fccfff27bca2e09cdfdc023c8017aca5";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-3PRoNDO1B/ZFdgj5LBtIs2UYI0PFcu0U8znq0Ud442k=";
+      sha256 = "sha256-2+bJKuewtQwTh54dgFypvadrSZTmB/7p6r5CiNkYC6I=";
     };
-    date = "2026-02-12";
+    date = "2026-04-22";
   };
 }

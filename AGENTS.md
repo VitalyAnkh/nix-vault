@@ -285,6 +285,10 @@ Model flag normalization contract:
 - Preserve `eva` boot, disk, filesystem, and activation semantics unless the user explicitly asks
   for those to change. For potentially disruptive upstream host changes, keep them disabled behind
   local options or record why they were not migrated.
+- Treat `eva` preservation as part of the boot/storage contract. When merging host or common NixOS
+  changes, compare preservation configuration before and after the merge, including
+  `preservation.preserveAt`, system directories/files, user directories/files, `systemd.tmpfiles`
+  preservation entries, and the `/persistent` filesystem definition.
 - Treat `muon` as a light customization of `eva`. Propagate reusable `eva` improvements to `muon`
   when they apply, and prefer importing shared `eva` modules such as preservation where that keeps
   the configuration simpler. Preserve `muon`'s multi-user configuration and host-local overrides.
@@ -308,6 +312,11 @@ Minimum acceptance checks for upstream `ryan/main` merges:
   an upstream lock update if it makes required local builds unverifiable or broken.
 - Verify `eva` boot/storage invariants before and after the merge when host or common NixOS files
   changed.
+- Verify `eva` preservation invariants before and after the merge when `hosts/eva`,
+  `hosts/idols-ai`, Home Manager state paths, or shared persistence-related modules changed.
+  Specifically check whether newly preserved paths already contain non-persistent live data that
+  must be moved to `/persistent` before `switch`, and whether removed/renamed preserved paths could
+  hide existing data after activation.
 - Verify `eva` and `muon` keep their intended host roles: `eva` remains boot-safe with local
   filesystems unchanged, while `muon` keeps its multi-user additions and imports only safe shared
   `eva` behavior.

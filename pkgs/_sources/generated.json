@@ -1,7 +1,7 @@
 {
   "source-emacs-lsp-booster": {
     "cargoLocks": null,
-    "date": "2025-11-29",
+    "date": "2026-04-12",
     "extract": null,
     "name": "source-emacs-lsp-booster",
     "passthru": null,
@@ -13,16 +13,16 @@
       "name": null,
       "owner": "blahgeek",
       "repo": "emacs-lsp-booster",
-      "rev": "8059c7dce8f9abe26099f6e30e7824c63c5ebd79",
-      "sha256": "sha256-++YkiKyJhjynPTntHcF/PLsnQj2/enZwXe/F0mQ73vg=",
+      "rev": "004bb508c9a2d2877b9145fcccd5437f23a0b669",
+      "sha256": "sha256-aOkvOyRlkG7gzMy5/x15CMm/voOFOX98QcWVbvfuVLM=",
       "sparseCheckout": [],
       "type": "github"
     },
-    "version": "8059c7dce8f9abe26099f6e30e7824c63c5ebd79"
+    "version": "004bb508c9a2d2877b9145fcccd5437f23a0b669"
   },
   "source-emacs-master-igc": {
     "cargoLocks": null,
-    "date": "2026-02-12",
+    "date": "2026-04-22",
     "extract": null,
     "name": "source-emacs-master-igc",
     "passthru": null,
@@ -32,12 +32,12 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "9a4a54af9192a6653164364c75721ee814ffb1e8",
-      "sha256": "sha256-3PRoNDO1B/ZFdgj5LBtIs2UYI0PFcu0U8znq0Ud442k=",
+      "rev": "9f434852fccfff27bca2e09cdfdc023c8017aca5",
+      "sha256": "sha256-2+bJKuewtQwTh54dgFypvadrSZTmB/7p6r5CiNkYC6I=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://github.com/emacs-mirror/emacs.git"
     },
-    "version": "9a4a54af9192a6653164364c75721ee814ffb1e8"
+    "version": "9f434852fccfff27bca2e09cdfdc023c8017aca5"
   }
 }
