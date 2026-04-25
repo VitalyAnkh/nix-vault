@@ -276,6 +276,51 @@ Model flag normalization contract:
 
 ---
 
+<project_merge_protocol> Project-specific merge rules for this repository:
+
+- When merging from upstream `ryan/main`, treat upstream `idols-ai` / `ai` host changes as the
+  source lineage for local `eva`. The local `eva` host is the adapted successor of upstream's AI
+  host, so safe capability improvements from upstream `idols-ai` should be migrated into `eva`
+  rather than ignored.
+- Preserve `eva` boot, disk, filesystem, and activation semantics unless the user explicitly asks
+  for those to change. For potentially disruptive upstream host changes, keep them disabled behind
+  local options or record why they were not migrated.
+- Treat `muon` as a light customization of `eva`. Propagate reusable `eva` improvements to `muon`
+  when they apply, and prefer importing shared `eva` modules such as preservation where that keeps
+  the configuration simpler. Preserve `muon`'s multi-user configuration and host-local overrides.
+- The local `vr` branch intentionally uses packages defined under `pkgs/` instead of Ryan's overlay
+  layer. During merges, preserve that package pipeline and make sure important local packages such
+  as `emacs-master-pgtk-with-igc`, `nutstore-client`, `nutstore-nautilus`, and local fcitx5/Rime
+  data packages still evaluate and remain usable.
+- The local fcitx5 setup is custom and should not be replaced by upstream Rime-oriented defaults
+  unless the user explicitly requests it.
+- The local Emacs setup depends on the `pkgs/` Emacs PGTK build and Doom Emacs configuration
+  framework. Preserve `pkgs.emacs-master-pgtk-with-igc`, Doom Emacs activation/config wiring, and
+  any Home Manager package references to that Emacs build.
+- For flake-based validation, add new files to the git index before running `nix eval` or
+  `nixos-rebuild`, because flakes do not see untracked files.
+
+Minimum acceptance checks for upstream `ryan/main` merges:
+
+- Read upstream and local commit messages before resolving conflicts, especially for `flake.lock`,
+  host modules, Home Manager modules, and package plumbing.
+- Prefer newer flake lock hashes when they are compatible with local customizations, but do not keep
+  an upstream lock update if it makes required local builds unverifiable or broken.
+- Verify `eva` boot/storage invariants before and after the merge when host or common NixOS files
+  changed.
+- Verify `eva` and `muon` keep their intended host roles: `eva` remains boot-safe with local
+  filesystems unchanged, while `muon` keeps its multi-user additions and imports only safe shared
+  `eva` behavior.
+- Verify local package mechanisms with targeted `nix eval`, including `pkgs` packages, fcitx5
+  package/data wiring, `emacs-master-pgtk-with-igc`, Nutstore packages, and Doom Emacs Home Manager
+  wiring.
+- Run the strongest feasible build check, normally `nixos-rebuild build --impure --flake .#eva`. If
+  a build cannot complete due to network-only substitute or source-fetch failures, capture the exact
+  failing derivation and error and do not misreport it as a configuration success.
+  </project_merge_protocol>
+
+---
+
 <verification>
 Verify before claiming completion. The goal is evidence-backed confidence, not ceremony.
 
