@@ -41,7 +41,7 @@
   boot.loader.systemd-boot.enable = true;
 
   # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/top-level/linux-kernels.nix
-  boot.kernelPackages = pkgs.linuxPackages_6_18; # 6.19 works not well with nvidia driver
+  boot.kernelPackages = pkgs.linuxPackages_latest;
 
   boot.initrd.availableKernelModules = [
     "xhci_pci"
@@ -51,10 +51,6 @@
     "usb_storage"
     "sd_mod"
   ];
-  boot.initrd.kernelModules = [ ];
-  boot.kernelModules = [ "kvm-intel" ]; # kvm virtualization support
-  boot.extraModprobeConfig = "options kvm_intel nested=1"; # for intel cpu
-  boot.extraModulePackages = [ ];
   # clear /tmp on boot to get a stateless /tmp directory.
   boot.tmp.cleanOnBoot = true;
 

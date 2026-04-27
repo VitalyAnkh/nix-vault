@@ -146,10 +146,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    ghostty = {
-      url = "github:ghostty-org/ghostty/tip"; # Latest Continuous Release
-    };
-
     nicpkgs.url = "github:nicball/nicpkgs";
 
     blender-bin = {
@@ -163,13 +159,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    helix = {
-      # Helix with steel as plugin system
-      # https://github.com/helix-editor/helix/pull/8675
-      url = "github:mattwparas/helix/steel-event-system";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     # AI coding agents
     llm-agents.url = "github:numtide/llm-agents.nix";
 
@@ -180,7 +169,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     aagl = {
-      url = "github:ezKEa/aagl-gtk-on-nix/release-25.11";
+      url = "github:ezKEa/aagl-gtk-on-nix/main";
       # inputs.nixpkgs.follows = "nixpkgs";
     };
 

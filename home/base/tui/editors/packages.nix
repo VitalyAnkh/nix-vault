@@ -69,7 +69,6 @@
           sccache
           clang-tools
           lldb
-          vscode-extensions.vadimcn.vscode-lldb.adapter # codelldb - debugger
 
           deno
           #-- python

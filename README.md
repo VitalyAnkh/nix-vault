@@ -46,28 +46,26 @@ You don't have to go through the pain I've experienced again! Check out my
 
 ## Components
 
-|                             | NixOS(Wayland)                                                                                                      |
-| --------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| **Window Manager**          | [Niri][Niri]                                                                                                        |
-| **Terminal Emulator**       | [Zellij][Zellij] + [foot][foot]/[Kitty][Kitty]/[Alacritty][Alacritty]/[Ghostty][Ghostty]                            |
-| **Bar**                     | [Waybar][Waybar]                                                                                                    |
-| **Application Launcher**    | [anyrun][anyrun]                                                                                                    |
-| **Notification Daemon**     | [Mako][Mako]                                                                                                        |
-| **Display Manager**         | [tuigreet][tuigreet]                                                                                                |
-| **Color Scheme**            | [catppuccin-nix][catppuccin-nix]                                                                                    |
-| **network management tool** | [NetworkManager][NetworkManager]                                                                                    |
-| **Input method framework**  | [Fcitx5][Fcitx5] + [rime][rime] + [小鹤音形 flypy][flypy]                                                           |
-| **System resource monitor** | [Btop][Btop]                                                                                                        |
-| **File Manager**            | [Yazi][Yazi] + [thunar][thunar]                                                                                     |
-| **Shell**                   | [Nushell][Nushell] + [Starship][Starship]                                                                           |
-| **Media Player**            | [mpv][mpv]                                                                                                          |
-| **Text Editor**             | [Neovim][Neovim] + [DoomEmacs][DoomEmacs]                                                                           |
-| **Fonts**                   | [Nerd fonts][Nerd fonts]                                                                                            |
-| **Image Viewer**            | [imv][imv]                                                                                                          |
-| **Screenshot Software**     | [flameshot][flameshot]                                                                                              |
-| **Screen Recording**        | [OBS][OBS]                                                                                                          |
-| **Filesystem & Encryption** | tmpfs as `/`, [Btrfs][Btrfs] subvolumes on a [LUKS][LUKS] encrypted partition for persistent, unlock via passphrase |
-| **Secure Boot**             | [lanzaboote][lanzaboote]                                                                                            |
+|                                                                | NixOS(Wayland)                                                                                                      |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| **Window Manager**                                             | [Niri][Niri]                                                                                                        |
+| **Terminal Emulator**                                          | [Zellij][Zellij] + [foot][foot]/[Kitty][Kitty]/[Alacritty][Alacritty]/[Ghostty][Ghostty]                            |
+| **Status Bar** / **Notifier** / **Launcher** / **lockscreens** | [noctalia-shell][noctalia-shell]                                                                                    |
+| **Display Manager**                                            | [tuigreet][tuigreet]                                                                                                |
+| **Color Scheme**                                               | [catppuccin-nix][catppuccin-nix]                                                                                    |
+| **network management tool**                                    | [NetworkManager][NetworkManager]                                                                                    |
+| **Input method framework**                                     | [Fcitx5][Fcitx5] + [rime][rime] + [小鹤音形 flypy][flypy]                                                           |
+| **System resource monitor**                                    | [Btop][Btop]                                                                                                        |
+| **File Manager**                                               | [Yazi][Yazi] + [thunar][thunar]                                                                                     |
+| **Shell**                                                      | [Nushell][Nushell] + [Starship][Starship]                                                                           |
+| **Media Player**                                               | [mpv][mpv]                                                                                                          |
+| **Editors / IDE**                                              | [Helix][Helix] (primary), [Neovim][Neovim] (backup), [DoomEmacs][DoomEmacs]                                         |
+| **Fonts**                                                      | [Nerd fonts][Nerd fonts]                                                                                            |
+| **Image Viewer**                                               | [imv][imv]                                                                                                          |
+| **Screenshot Software**                                        | Niri's builtin function                                                                                             |
+| **Screen Recording**                                           | [OBS][OBS]                                                                                                          |
+| **Filesystem & Encryption**                                    | tmpfs as `/`, [Btrfs][Btrfs] subvolumes on a [LUKS][LUKS] encrypted partition for persistent, unlock via passphrase |
+| **Secure Boot**                                                | [lanzaboote][lanzaboote]                                                                                            |
 
 Wallpapers: provided via the `wallpapers` flake input (see `flake.nix`).
 
@@ -75,9 +73,14 @@ Wallpapers: provided via the `wallpapers` flake input (see `flake.nix`).
 
 ![](./_img/emacs-2024-01-07.webp)
 
-## Neovim
+## Editors / IDE
 
-See [./home/base/tui/editors/neovim/](./home/base/tui/editors/neovim/) for details.
+- **Terminal editors:** [./home/base/core/editors/](./home/base/core/editors/) — Helix / Neovim,
+  `$EDITOR`, docs.
+- **VS Code (GUI, Home Manager on NixOS):**
+  [./home/linux/gui/base/editors.nix](./home/linux/gui/base/editors.nix).
+- **LLM coding agents:** [./agents](./agents/) — rules, installers, CLI snippets; see
+  [./agents/README.md](./agents/README.md).
 
 ## Emacs
 
@@ -304,6 +307,7 @@ Other dotfiles that inspired me:
 [Btop]: https://github.com/aristocratos/btop
 [mpv]: https://github.com/mpv-player/mpv
 [Zellij]: https://github.com/zellij-org/zellij
+[Helix]: https://github.com/helix-editor/helix
 [Neovim]: https://github.com/neovim/neovim
 [AstroNvim]: https://github.com/AstroNvim/AstroNvim
 [DoomEmacs]: https://github.com/doomemacs/doomemacs
