@@ -15,7 +15,9 @@
     enable = true;
     viAlias = true;
     vimAlias = true;
+    withPython3 = false;
+    withRuby = false;
   };
 
-  home.stateVersion = "25.11";
+  home.stateVersion = "26.05";
 }

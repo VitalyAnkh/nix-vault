@@ -33,6 +33,9 @@ in
     # defaultEditor = true; # set EDITOR at system-wide level
     viAlias = true;
     vimAlias = true;
+    withPython3 = false;
+    withRuby = false;
+    sideloadInitLua = true;
 
     # These environment variables are needed to build and run binaries
     # with external package managers like mason.nvim.

@@ -20,17 +20,17 @@ in
       cursor-cli # packaged in nixpkgs, not llm-agents
     ]
     ++ (with llmAgentPackages; [
-      codex
-      claude-code
-      gemini-cli
-      opencode
-      rtk
+      #codex
+      #claude-code
+      #gemini-cli
+      #opencode
+      #rtk
     ])
     ++ (lib.optionals stdenv.isLinux [
       mitmproxy # http/https proxy tool
       wireshark # network analyzer
 
-      xorg.xeyes
+      xeyes
       xvfb-run
     ])
     ++ (lib.optionals stdenv.isx86_64 [

@@ -239,7 +239,7 @@ in
           # spell checker
           typos
           # code formatter
-          nodePackages.prettier
+          prettier
         ];
         name = "dots";
         inherit (self.checks.${system}.pre-commit-check) shellHook;

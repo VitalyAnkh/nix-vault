@@ -86,7 +86,7 @@ home-manager.lib.homeManagerConfiguration {
       # Basic home-manager settings
       home = {
         inherit username homeDirectory;
-        stateVersion = lib.mkDefault "25.11";
+        stateVersion = lib.mkDefault "26.05";
       };
 
       # Let home-manager manage itself

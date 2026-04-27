@@ -40,6 +40,7 @@
     enable = true;
     package = pkgs.git;
     lfs.enable = true;
+    signing.format = null;
 
     # signing = {
     #   key = "xxx";

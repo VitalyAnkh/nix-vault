@@ -12,7 +12,7 @@
   libnotify,
   libappindicator-gtk3,
   pkgs,
-  xorg,
+  libxtst,
   alsa-lib,
   autoPatchelfHook,
   lib,
@@ -132,7 +132,7 @@ stdenv.mkDerivation rec {
     (python3.withPackages (p: with p; [ pygobject3 ]))
 
     autoPatchelfHook
-    xorg.libXtst
+    libxtst
     alsa-lib
   ];
   buildPhase = ''

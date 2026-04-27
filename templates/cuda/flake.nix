@@ -112,19 +112,19 @@
 
               sccache
 
-              xorg.libXi
+              libxi
 
-              xorg.libXmu
+              libxmu
 
               freeglut
 
-              xorg.libXext
+              libxext
 
-              xorg.libX11
+              libx11
 
-              xorg.libXv
+              libxv
 
-              xorg.libXrandr
+              libxrandr
 
               zlib
 

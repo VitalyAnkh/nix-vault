@@ -42,8 +42,8 @@
       (blender-bin.packages.${pkgs.stdenv.hostPlatform.system}.blender_5_0) # 3d modeling
 
       bottles
-      wineWowPackages.waylandFull
-      # wineWowPackages.stagingFull
+      wineWow64Packages.waylandFull
+      # wineWow64Packages.stagingFull
 
       # fpga
       # python313Packages.apycula # gowin fpga

@@ -77,13 +77,13 @@
               libGL
               glfw
               sccache
-              xorg.libXi
-              xorg.libXmu
+              libxi
+              libxmu
               freeglut
-              xorg.libXext
-              xorg.libX11
-              xorg.libXv
-              xorg.libXrandr
+              libxext
+              libx11
+              libxv
+              libxrandr
               zlib
               ncurses5
               binutils

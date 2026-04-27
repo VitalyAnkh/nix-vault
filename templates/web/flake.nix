@@ -85,12 +85,12 @@
               tailwindcss
               tailwindcss-language-server
               self.packages.${system}.webTooling
-              nodePackages_latest.eslint
-              nodePackages_latest.prettier
-              nodePackages_latest.typescript
-              nodePackages_latest.typescript-language-server
-              nodePackages_latest.vscode-langservers-extracted
-              nodePackages_latest.npm-check-updates
+              eslint
+              prettier
+              typescript
+              typescript-language-server
+              vscode-langservers-extracted
+              npm-check-updates
             ];
 
             shellHook = ''

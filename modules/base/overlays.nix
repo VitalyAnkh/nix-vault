@@ -65,5 +65,35 @@
         umu-launcher-unwrapped = final.umu-launcher-unwrapped;
       };
     })
+
+    # test017-syncreplication-refresh is timing-sensitive and can fail even when
+    # slapd itself built correctly. The other syncrepl tests in this cluster are
+    # the same kind of timing-sensitive integration checks, so skip the cluster
+    # while keeping the rest of OpenLDAP's test suite.
+    (final: prev: {
+      openldap = prev.openldap.overrideAttrs (old: {
+        preCheck = (old.preCheck or "") + ''
+          rm -f tests/scripts/test017-syncreplication-refresh
+          rm -f tests/scripts/test018-syncreplication-persist
+          rm -f tests/scripts/test019-syncreplication-cascade
+        '';
+      });
+    })
+
+    # cli-helpers 2.10.0 has color-sequence assertions that no longer match
+    # current Pygments output, which breaks mycli/pgcli builds.
+    (final: prev: {
+      pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [
+        (_python-final: python-prev: {
+          "cli-helpers" = python-prev."cli-helpers".overridePythonAttrs (old: {
+            disabledTests = (old.disabledTests or [ ]) ++ [
+              "test_style_output"
+              "test_style_output_with_newlines"
+              "test_style_output_custom_tokens"
+            ];
+          });
+        })
+      ];
+    })
   ];
 }

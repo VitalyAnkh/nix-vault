@@ -64,10 +64,10 @@
                 udev
                 alsa-lib
                 vulkan-loader
-                xorg.libX11
-                xorg.libXcursor
-                xorg.libXi
-                xorg.libXrandr # To use the x11 feature
+                libx11
+                libxcursor
+                libxi
+                libxrandr # To use the x11 feature
                 libxkbcommon
                 fontconfig
                 wayland # To use the wayland feature

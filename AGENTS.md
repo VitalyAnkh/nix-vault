@@ -328,6 +328,42 @@ Minimum acceptance checks for upstream `ryan/main` merges:
   failing derivation and error and do not misreport it as a configuration success.
   </project_merge_protocol>
 
+<project_desktop_font_protocol> Project-specific desktop font and GTK troubleshooting rules:
+
+- If GNOME/GTK applications show square tofu boxes after a NixOS switch, do not assume CJK fonts are
+  missing. First inspect the live runtime state:
+  `gsettings get org.gnome.desktop.interface font-name`, `fc-match -v 'Noto Sans'`,
+  `fc-match -s 'Noto Sans:charset=4E2D'`, and user journal lines matching
+  `failed to create cairo scaled font`, `font_face status`, `fontconfig`, `pango`, `gtk`, or
+  `nautilus`.
+- On NixOS, stale user fontconfig caches can reference removed `/nix/store` font paths after flake
+  updates or profile switches. Check with `fc-cat ~/.cache/fontconfig/*.cache-*` for old store paths
+  such as prior `noto-fonts-*` generations. A plain `fc-cache -r` may not fix running GNOME/GTK
+  processes that already hold stale Cairo/Pango font faces; clear `~/.cache/fontconfig/*.cache-*`,
+  rebuild caches, and restart affected applications.
+- Keep CJK diagnosis character-based. `fc-match -s 'sans:lang=zh-cn'` can list Latin UI fonts before
+  CJK fonts, but the decisive check is a real Chinese codepoint, for example
+  `fc-match -s 'Noto Sans:charset=4E2D'`. For this repo, the expected CJK fallback includes
+  `LXGW WenKai Screen` and `Source Han Sans SC`.
+- Do not change the configured UI font from `Noto Sans` to another Latin font merely to work around
+  stale cache errors. `Noto Sans` itself is acceptable as the Latin GNOME/GTK UI font as long as
+  fontconfig fallback reaches the configured CJK fonts.
+- Persist font-cache repairs in Home Manager activation when stale per-user caches are the root
+  cause. The activation should run after `writeBoundary`, remove user fontconfig cache files, and
+  run `${pkgs.fontconfig}/bin/fc-cache -r`.
+- Keep GNOME dconf interface settings aligned with Home Manager GTK settings. If GTK settings are
+  generated but GNOME Shell still uses stale values, set
+  `dconf.settings."org/gnome/desktop/interface"` from the same `config.gtk.*` and cursor values.
+- For GTK4 themes, verify that `gtk.theme.name` exactly matches a real directory under
+  `${config.gtk.theme.package}/share/themes`. Home Manager's generated `gtk-4.0/gtk.css` imports
+  that exact name; a mismatch creates GTK theme parser errors even when the package exists.
+- Runtime verification after a font/GTK fix should include applying or building the relevant Home
+  Manager generation, checking the generated `~/.config/gtk-4.0/gtk.css` and `settings.ini`,
+  restarting Nautilus or the affected GTK app, and confirming the user journal has no new font/Cairo
+  or GTK theme parser warnings. On Wayland, GNOME Shell itself may retain stale font faces until
+  logout or shell restart; report that separately from application-level success.
+  </project_desktop_font_protocol>
+
 ---
 
 <verification>

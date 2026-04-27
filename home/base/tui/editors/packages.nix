@@ -31,7 +31,7 @@
         (if stdenv.isLinux then jsonnet else emptyDirectory)
         jsonnet-language-server
         taplo # TOML language server / formatter / validator
-        nodePackages.yaml-language-server
+        yaml-language-server
         actionlint # GitHub Actions linter
 
         #-- dockerfile
@@ -118,18 +118,18 @@
 
           devenv
           #-- bash
-          nodePackages.bash-language-server
+          bash-language-server
           shellcheck
           shfmt
         ]
       #-*- Web Development -*-#
       ++ [
-        nodePackages.nodejs
-        nodePackages.typescript
-        nodePackages.typescript-language-server
+        nodejs
+        typescript
+        typescript-language-server
         # HTML/CSS/JSON/ESLint language servers extracted from vscode
-        nodePackages.vscode-langservers-extracted
-        nodePackages."@tailwindcss/language-server"
+        vscode-langservers-extracted
+        tailwindcss-language-server
         emmet-ls
       ]
       ++ [
@@ -143,7 +143,7 @@
         gomodifytags
         iferr # generate error handling code for go
         impl # generate function implementation for go
-        gotools # contains tools like: godoc, goimports, etc.
+        (lib.lowPrio gotools) # also ships modernize; let gopls provide that binary.
         gopls # go language server
         delve # go debugger
 
@@ -162,18 +162,18 @@
         lua-language-server
 
         #-- bash
-        nodePackages.bash-language-server
+        bash-language-server
         shellcheck
         shfmt
       ]
       #-*- Web Development -*-#
       ++ [
-        nodePackages.nodejs
-        nodePackages.typescript
-        nodePackages.typescript-language-server
+        nodejs
+        typescript
+        typescript-language-server
         # HTML/CSS/JSON/ESLint language servers extracted from vscode
-        nodePackages.vscode-langservers-extracted
-        nodePackages."@tailwindcss/language-server"
+        vscode-langservers-extracted
+        tailwindcss-language-server
         emmet-ls
       ]
       # -*- Lisp like Languages -*-#
@@ -195,7 +195,7 @@
         (if stdenv.isLinux then verible else emptyDirectory)
 
         #-- Optional Requirements:
-        nodePackages.prettier # common code formatter
+        prettier # common code formatter
         fzf
         gdu # disk usage analyzer, required by AstroNvim
         (ripgrep.override { withPCRE2 = true; }) # recursively searches directories for a regex pattern
