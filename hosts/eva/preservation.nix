@@ -365,6 +365,9 @@ in
         ".cache/chromium"
         ".config/microsoft-edge"
         ".cache/microsoft-edge"
+        ".config/RoxyBrowser"
+        ".cache/RoxyBrowser"
+        ".roxybrowser"
 
         # ======================================
         # CLI data

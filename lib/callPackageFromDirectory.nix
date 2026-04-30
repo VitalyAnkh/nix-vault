@@ -31,7 +31,12 @@ let
   directoryEntryPred =
     basename: type:
     type == "directory" && basename != "_sources"
-    || (hasSuffix ".nix" basename && basename != "lib.nix" && basename != "package.nix");
+    || (
+      hasSuffix ".nix" basename
+      && basename != "lib.nix"
+      && basename != "package.nix"
+      && basename != "flake.nix"
+    );
 
   filterDirectoryEntry =
     path:

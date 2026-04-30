@@ -10,6 +10,7 @@ let
     ;
 
   cfg = config.vr.hosts.eva.nvidia.primeOffload;
+  dynamicBoostCfg = config.vr.hosts.eva.nvidia.dynamicBoost;
 in
 {
   options.vr.hosts.eva.nvidia.primeOffload = {
@@ -42,6 +43,13 @@ in
     };
   };
 
+  options.vr.hosts.eva.nvidia.dynamicBoost.enable = mkEnableOption ''
+    NVIDIA Dynamic Boost on eva.
+
+    Keep this disabled by default on the current desktop GPU path because it
+    starts nvidia-powerd, which is intended for supported laptops.
+  '';
+
   config = {
     # ===============================================================================================
     # for Nvidia GPU
@@ -60,6 +68,7 @@ in
     hardware.nvidia = {
       # Open-source kernel modules are preferred over and planned to steadily replace proprietary modules
       open = true;
+      nvidiaSettings = true;
       # Optionally, you may need to select the appropriate driver version for your specific GPU.
       # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/os-specific/linux/nvidia-x11/default.nix
       package = config.boot.kernelPackages.nvidiaPackages.beta;
@@ -70,6 +79,7 @@ in
         enable = true;
         # finegrained = true;
       };
+      dynamicBoost.enable = dynamicBoostCfg.enable;
       prime = mkIf cfg.enable (
         {
           # Keep PRIME offload opt-in on eva; the default path uses the NVIDIA dGPU directly.
@@ -120,5 +130,12 @@ in
         };
       })
     ];
+
+    services.sunshine.settings = {
+      max_bitrate = 20000; # in Kbps
+      # NVIDIA NVENC Encoder
+      nvenc_preset = 3; # 1(fastest + worst quality) - 7(slowest + best quality)
+      nvenc_twopass = "full_res"; # quarter_res / full_res.
+    };
   };
 }

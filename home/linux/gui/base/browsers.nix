@@ -33,6 +33,9 @@ in
     ++ [
       firefox.packages.${system}.firefox-nightly-bin
     ]
+    ++ lib.optionals pkgs.stdenv.isx86_64 [
+      pkgs.roxy-browser
+    ]
     ++ lib.optionals (microsoft-edge != null) [ microsoft-edge ];
 
   # source code: https://github.com/nix-community/home-manager/blob/master/modules/programs/chromium.nix
