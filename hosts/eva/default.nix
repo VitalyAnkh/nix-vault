@@ -26,6 +26,9 @@ in
     ./gnome.nix
   ];
 
+  # GDM owns eva's graphical seat. kmscon can grab KMS/DRM on tty1 during boot
+  # and make GNOME Shell's greeter fail to register with GDM.
+  services.kmscon.enable = lib.mkForce false;
   services.sunshine.enable = lib.mkForce true;
   services.tuned.ppdSettings.main.default = lib.mkForce "performance";
 
