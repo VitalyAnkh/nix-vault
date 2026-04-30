@@ -45,6 +45,10 @@ in
     "../../modules/nixos/base/user-group.nix"
   ];
 
+  # GDM owns muon's graphical seat. kmscon can grab KMS/DRM on tty1 during boot
+  # and make GNOME Shell's greeter fail to register with GDM.
+  services.kmscon.enable = lib.mkForce false;
+
   boot.loader.systemd-boot.enable = true;
 
   zramSwap.memoryPercent = lib.mkForce 10;
