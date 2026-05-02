@@ -47,3 +47,8 @@ extend-ignore-re = [
   "f9e2af",
   "fab387",
 ]
+
+[default.extend-words]
+# PCIe Advanced Error Reporting and status field abbreviations.
+AER = "AER"
+UE = "UE"

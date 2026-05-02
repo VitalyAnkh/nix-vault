@@ -71,7 +71,13 @@ in
       nvidiaSettings = true;
       # Optionally, you may need to select the appropriate driver version for your specific GPU.
       # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/os-specific/linux/nvidia-x11/default.nix
-      package = config.boot.kernelPackages.nvidiaPackages.beta;
+      # Use the newest packaged general NVIDIA driver for eva. Current nixpkgs
+      # exposes that as `latest`; newer nixpkgs also has `bleeding_edge` to
+      # include beta when it is numerically newer.
+      package = lib.mkForce (
+        config.boot.kernelPackages.nvidiaPackages.bleeding_edge
+          or config.boot.kernelPackages.nvidiaPackages.latest
+      );
 
       # required by most wayland compositors!
       modesetting.enable = true;

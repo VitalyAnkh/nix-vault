@@ -26,6 +26,10 @@ in
     ./gnome.nix
   ];
 
+  # Temporary: disable the btrbk timer on eva until we wire up a full-disk
+  # backup setup that matches this host's storage layout.
+  services.btrbk.instances = lib.mkForce { };
+
   # GDM owns eva's graphical seat. kmscon can grab KMS/DRM on tty1 during boot
   # and make GNOME Shell's greeter fail to register with GDM.
   services.kmscon.enable = lib.mkForce false;
