@@ -216,11 +216,14 @@ in
         ".agents"
         ".config/agents"
         ".claude"
+        ".config/codex-desktop"
+        ".config/Codex"
         ".codex"
         ".clawdbot"
         ".config/opencode"
         ".context7"
         ".kimi"
+        ".local/state/codex-desktop"
 
         # nvim
         ".local/share/nvim"
