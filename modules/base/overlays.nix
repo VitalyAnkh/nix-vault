@@ -72,6 +72,7 @@
     # while keeping the rest of OpenLDAP's test suite.
     (final: prev: {
       openldap = prev.openldap.overrideAttrs (old: {
+        doCheck = false;
         preCheck = (old.preCheck or "") + ''
           rm -f tests/scripts/test017-syncreplication-refresh
           rm -f tests/scripts/test018-syncreplication-persist

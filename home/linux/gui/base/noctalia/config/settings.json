@@ -99,6 +99,7 @@
       "left": [
         {
           "colorizeSystemIcon": "none",
+          "colorizeSystemText": "none",
           "customIconPath": "",
           "enableColorization": false,
           "icon": "rocket",
@@ -209,6 +210,7 @@
         {
           "colorizeDistroLogo": false,
           "colorizeSystemIcon": "none",
+          "colorizeSystemText": "none",
           "customIconPath": "",
           "enableColorization": false,
           "icon": "noctalia",
@@ -649,7 +651,7 @@
     "automationEnabled": true,
     "directory": "/home/ryan/Pictures/Wallpapers",
     "enableMultiMonitorDirectories": false,
-    "enabled": false,
+    "enabled": true,
     "favorites": [],
     "fillColor": "#000000",
     "fillMode": "crop",

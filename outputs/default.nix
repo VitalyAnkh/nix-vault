@@ -49,6 +49,7 @@ let
 
         # To use chrome, we need to allow the installation of non-free software
         config.allowUnfree = true;
+
       };
 
       # Some modules expect this input to exist in specialArgs even when the flake input
