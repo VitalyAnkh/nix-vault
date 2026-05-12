@@ -52,3 +52,4 @@ extend-ignore-re = [
 # PCIe Advanced Error Reporting and status field abbreviations.
 AER = "AER"
 UE = "UE"
+ue = "ue"

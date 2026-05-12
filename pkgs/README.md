@@ -7,6 +7,15 @@ b.nix} 最终会得到 pkgs.a pkgs.b
 
 定义完后，git add file 即可。
 
+## Unreal 说明
+
+`pkgs/unreal` 是一个本地 Unreal Engine 5 wrapper：
+
+- 必须通过 `UE_SRC` 环境变量指定你的 Unreal 源码仓库
+- 如果没设置 `UE_SRC`，wrapper 会直接报错退出，不会启动 Unreal
+- 只包装你本地的源码树，不会把整个 Unreal 仓库复制进 `/nix/store`
+- 可直接用 `nix build .#unreal` 或 `nix run .#unreal`
+
 ## 如何通过 nvfetcher 修改软件
 
 例如，emacs，在 `nvfetcher.toml` 中定义
