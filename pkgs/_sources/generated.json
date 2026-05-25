@@ -1,6 +1,29 @@
 {
-  "source-emacs-lsp-booster": {
+  "source-codex-desktop-linux": {
     "cargoLock": null,
+    "date": "2026-05-24",
+    "extract": null,
+    "name": "source-codex-desktop-linux",
+    "passthru": null,
+    "pinned": false,
+    "src": {
+      "deepClone": false,
+      "fetchSubmodules": false,
+      "leaveDotGit": false,
+      "name": null,
+      "owner": "ilysenko",
+      "repo": "codex-desktop-linux",
+      "rev": "0850ed9f8efd2dbac58a82b597c7e6506487f0f9",
+      "sha256": "sha256-MfKVDR44CuFfPp5MZWaMOrmi2+k6PCfVok1amGk15yM=",
+      "sparseCheckout": [],
+      "type": "github"
+    },
+    "version": "0850ed9f8efd2dbac58a82b597c7e6506487f0f9"
+  },
+  "source-emacs-lsp-booster": {
+    "cargoLock": {
+      "Cargo.lock": ["sha256-aOkvOyRlkG7gzMy5_x15CMm_voOFOX98QcWVbvfuVLM=/Cargo.lock", {}]
+    },
     "date": "2026-04-12",
     "extract": null,
     "name": "source-emacs-lsp-booster",
@@ -22,7 +45,7 @@
   },
   "source-emacs-master-igc": {
     "cargoLock": null,
-    "date": "2026-05-06",
+    "date": "2026-05-24",
     "extract": null,
     "name": "source-emacs-master-igc",
     "passthru": null,
@@ -32,12 +55,57 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "abe63cecccd6e9b67eb567a64b2a157bb460640f",
-      "sha256": "sha256-Kasm3KYRe2Uncy0fZIAQLQ+wQbV9gEEP6pZdHOUBhvs=",
+      "rev": "04bbfbe56f3cc508ae54ffbb76d29affa70e4b09",
+      "sha256": "sha256-cNP1y6yRod3nbU5cabZKdzDw6xxt3+yq6JQPxHaidUI=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://github.com/emacs-mirror/emacs.git"
     },
-    "version": "abe63cecccd6e9b67eb567a64b2a157bb460640f"
+    "version": "04bbfbe56f3cc508ae54ffbb76d29affa70e4b09"
+  },
+  "source-nutstore-client": {
+    "cargoLock": null,
+    "date": null,
+    "extract": null,
+    "name": "source-nutstore-client",
+    "passthru": null,
+    "pinned": false,
+    "src": {
+      "name": null,
+      "sha256": "sha256-sG3NrWTP1joKztkNddzz8x1xPVg9qZIKlKI7tIw/2xI=",
+      "type": "url",
+      "url": "https://pkg-cdn.jianguoyun.com/static/exe/ex/6.4.3/nutstore_client-6.4.3-linux-x86_64-public.tar.gz"
+    },
+    "version": "6.4.3"
+  },
+  "source-nutstore-nautilus": {
+    "cargoLock": null,
+    "date": null,
+    "extract": null,
+    "name": "source-nutstore-nautilus",
+    "passthru": null,
+    "pinned": false,
+    "src": {
+      "name": null,
+      "sha256": "sha256-iBbZEyTSNGlm4AGZgapuXflLsaAWrFFGNm3qN9L0s84=",
+      "type": "url",
+      "url": "https://www.jianguoyun.com/static/exe/installer/nutstore_linux_src_installer.tar.gz"
+    },
+    "version": "6.4.3"
+  },
+  "source-roxy-browser": {
+    "cargoLock": null,
+    "date": null,
+    "extract": null,
+    "name": "source-roxy-browser",
+    "passthru": null,
+    "pinned": false,
+    "src": {
+      "name": null,
+      "sha256": "sha256-94mYBrHWeU/I/6q1Y3EUFPtoWSD5tAkMxBO624wGaSc=",
+      "type": "url",
+      "url": "https://lumibrowser.oss-cn-shenzhen.aliyuncs.com/public/package/app/Linux/x64/3.8.7/RoxyBrowser_x64_3.8.7.deb"
+    },
+    "version": "3.8.7"
   }
 }

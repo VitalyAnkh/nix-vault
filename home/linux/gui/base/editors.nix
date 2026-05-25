@@ -1,6 +1,5 @@
 {
   lib,
-  codex-desktop-linux,
   pkgs,
   pkgs-master,
   ...
@@ -15,7 +14,6 @@ let
   ];
 
   code-cursor = pkgs-master.code-cursor;
-  codex-desktop = codex-desktop-linux.packages.${pkgs.stdenv.hostPlatform.system}.codex-desktop;
   # (pkgs-master.code-cursor.override {
   #   commandLineArgs = lib.concatStringsSep " " vscodeCliArgs;
   # }).overrideAttrs
@@ -51,9 +49,6 @@ in
     pkgs.zed-editor
     pkgs-master.code-cursor
     pkgs-master.antigravity-fhs
-  ]
-  ++ lib.optionals pkgs.stdenv.isx86_64 [
-    codex-desktop
   ];
 
   programs.vscode = {

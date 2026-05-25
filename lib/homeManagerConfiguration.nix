@@ -23,7 +23,7 @@ let
       sources = prev.callPackage ../pkgs/_sources/generated.nix { };
     in
     mylib.callPackageFromDirectory {
-      callPackage = prev.lib.callPackageWith (prev // sources // (genSpecialArgs system));
+      callPackage = final.lib.callPackageWith (final // prev // sources // (genSpecialArgs system));
       directory = ../pkgs;
     };
 

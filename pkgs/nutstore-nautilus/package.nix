@@ -1,6 +1,6 @@
 {
   stdenv,
-  fetchzip,
+  source-nutstore-nautilus,
   autoconf,
   automake,
   libtool,
@@ -11,11 +11,7 @@
 }:
 stdenv.mkDerivation {
   pname = "nutstore-nautilus";
-  version = "6.4.3";
-  src = fetchzip {
-    url = "https://www.jianguoyun.com/static/exe/installer/nutstore_linux_src_installer.tar.gz";
-    sha256 = "sha256-+xjAIATRdG3z3UZaPBn6NBuiXD074SlgSJjKyF1v7ZU=";
-  };
+  inherit (source-nutstore-nautilus) src version;
   nativeBuildInputs = [
     autoconf
     automake

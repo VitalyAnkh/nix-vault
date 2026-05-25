@@ -155,10 +155,13 @@ in
       sources = pkgs.callPackage ../pkgs/_sources/generated.nix { };
 
       # Load all packages defined under ./pkgs as a flat attrset
-      repoPkgs = mylib.callPackageFromDirectory {
-        callPackage = pkgs.lib.callPackageWith (pkgs // sources // (genSpecialArgs system));
-        directory = ../pkgs;
-      };
+      repoPkgs = lib.fix (
+        selfPkgs:
+        mylib.callPackageFromDirectory {
+          callPackage = pkgs.lib.callPackageWith (selfPkgs // pkgs // sources // (genSpecialArgs system));
+          directory = ../pkgs;
+        }
+      );
 
       archPkgs = allSystems.${system}.packages or { };
     in

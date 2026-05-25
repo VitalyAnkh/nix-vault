@@ -1,4 +1,5 @@
 {
+  nixpkgs,
   nuenv,
   mylib,
   nix-gaming,
@@ -16,7 +17,7 @@
         sources = prev.callPackage ../../pkgs/_sources/generated.nix { };
       in
       mylib.callPackageFromDirectory {
-        callPackage = prev.lib.callPackageWith (prev // sources);
+        callPackage = final.lib.callPackageWith (final // prev // sources // { inherit nixpkgs; });
         directory = ../../pkgs;
       }
     )

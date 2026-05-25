@@ -1,7 +1,7 @@
 {
   lib,
   stdenv,
-  fetchurl,
+  source-roxy-browser,
   autoPatchelfHook,
   dpkg,
   makeWrapper,
@@ -78,12 +78,7 @@ let
 in
 stdenv.mkDerivation rec {
   pname = "roxy-browser";
-  version = "3.8.2";
-
-  src = fetchurl {
-    url = "https://lumibrowser.oss-cn-shenzhen.aliyuncs.com/public/package/app/Linux/x64/${version}/RoxyBrowser_x64_${version}.deb";
-    hash = "sha256-og1XBz9D4liuvmONR8NNLSG/mrN5NB58yEeebsmTWLg=";
-  };
+  inherit (source-roxy-browser) src version;
 
   nativeBuildInputs = [
     autoPatchelfHook

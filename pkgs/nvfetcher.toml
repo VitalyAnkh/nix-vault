@@ -7,3 +7,22 @@ fetch.git = "https://github.com/emacs-mirror/emacs.git"
 src.git = "https://github.com/blahgeek/emacs-lsp-booster.git"
 src.branch = "master"
 fetch.github = "blahgeek/emacs-lsp-booster"
+cargo_lock = ["Cargo.lock"]
+
+[source-codex-desktop-linux]
+src.git = "https://github.com/ilysenko/codex-desktop-linux.git"
+src.branch = "main"
+fetch.github = "ilysenko/codex-desktop-linux"
+
+[source-roxy-browser]
+src.httpheader = "https://dl.roxybrowser.com/app-download/Linux-64-latest"
+src.regex = "RoxyBrowser_x64_([0-9]+\\.[0-9]+\\.[0-9]+)\\.deb"
+fetch.url = "https://lumibrowser.oss-cn-shenzhen.aliyuncs.com/public/package/app/Linux/x64/$ver/RoxyBrowser_x64_$ver.deb"
+
+[source-nutstore-client]
+src.manual = "6.4.3"
+fetch.url = "https://pkg-cdn.jianguoyun.com/static/exe/ex/$ver/nutstore_client-$ver-linux-x86_64-public.tar.gz"
+
+[source-nutstore-nautilus]
+src.manual = "6.4.3"
+fetch.url = "https://www.jianguoyun.com/static/exe/installer/nutstore_linux_src_installer.tar.gz"

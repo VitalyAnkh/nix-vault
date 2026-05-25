@@ -1,6 +1,6 @@
 {
   stdenv,
-  fetchzip,
+  source-nutstore-client,
   jdk,
   gtk3,
   cairo,
@@ -19,12 +19,7 @@
 }:
 
 let
-  version = "6.4.3";
-  src = fetchzip {
-    url = "https://pkg-cdn.jianguoyun.com/static/exe/ex/${version}/nutstore_client-${version}-linux-x86_64-public.tar.gz";
-    sha256 = "sha256-jDKzEEoY3nJ0oPybdx8HO1Z7x/eh60KjwlljO2pOYIs=";
-    stripRoot = false;
-  };
+  inherit (source-nutstore-client) src version;
   runtimeLibs = with pkgs; [
     gtk3
     webkitgtk_4_1
@@ -95,6 +90,8 @@ let
   '';
   native-libs = stdenv.mkDerivation {
     name = "nutstore-native-libs";
+    inherit src;
+    sourceRoot = ".";
     buildInputs = [
       autoPatchelfHook
       pkgs.webkitgtk_4_1
@@ -103,16 +100,15 @@ let
       libGLU
     ];
     autoPatchelfIgnoreMissingDeps = [ "libjawt.so" ];
-    dontUnpack = true;
     installPhase = ''
-      mkdir $out
-      cd $out
-      jar_file=$(find ${src}/lib -maxdepth 1 -name 'nutstore_client-*.jar' -print -quit)
+      jar_file=$(find "$sourceRoot/lib" -maxdepth 1 -name 'nutstore_client-*.jar' -print -quit)
       if [ -z "$jar_file" ]; then
-        echo "nutstore-client: jar file not found under ${src}/lib" >&2
+        echo "nutstore-client: jar file not found under $sourceRoot/lib" >&2
         exit 1
       fi
-      cp "$jar_file" .
+      mkdir $out
+      cp "$jar_file" "$out/"
+      cd $out
       ${jdk}/bin/jar xf "$(basename "$jar_file")"
     '';
   };
@@ -121,6 +117,7 @@ in
 stdenv.mkDerivation rec {
   pname = "nutstore-client";
   inherit version src;
+  sourceRoot = ".";
   nativeBuildInputs = [ makeWrapper ];
   buildInputs = [
     wrapGAppsHook3

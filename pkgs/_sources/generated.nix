@@ -6,6 +6,18 @@
   dockerTools,
 }:
 {
+  source-codex-desktop-linux = {
+    pname = "source-codex-desktop-linux";
+    version = "0850ed9f8efd2dbac58a82b597c7e6506487f0f9";
+    src = fetchFromGitHub {
+      owner = "ilysenko";
+      repo = "codex-desktop-linux";
+      rev = "0850ed9f8efd2dbac58a82b597c7e6506487f0f9";
+      fetchSubmodules = false;
+      sha256 = "sha256-MfKVDR44CuFfPp5MZWaMOrmi2+k6PCfVok1amGk15yM=";
+    };
+    date = "2026-05-24";
+  };
   source-emacs-lsp-booster = {
     pname = "source-emacs-lsp-booster";
     version = "004bb508c9a2d2877b9145fcccd5437f23a0b669";
@@ -16,20 +28,50 @@
       fetchSubmodules = false;
       sha256 = "sha256-aOkvOyRlkG7gzMy5/x15CMm/voOFOX98QcWVbvfuVLM=";
     };
+    cargoLock."Cargo.lock" = {
+      lockFile = ./. + "/sha256-aOkvOyRlkG7gzMy5_x15CMm_voOFOX98QcWVbvfuVLM=/Cargo.lock";
+      outputHashes = {
+
+      };
+    };
     date = "2026-04-12";
   };
   source-emacs-master-igc = {
     pname = "source-emacs-master-igc";
-    version = "abe63cecccd6e9b67eb567a64b2a157bb460640f";
+    version = "04bbfbe56f3cc508ae54ffbb76d29affa70e4b09";
     src = fetchgit {
       url = "https://github.com/emacs-mirror/emacs.git";
-      rev = "abe63cecccd6e9b67eb567a64b2a157bb460640f";
+      rev = "04bbfbe56f3cc508ae54ffbb76d29affa70e4b09";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-Kasm3KYRe2Uncy0fZIAQLQ+wQbV9gEEP6pZdHOUBhvs=";
+      sha256 = "sha256-cNP1y6yRod3nbU5cabZKdzDw6xxt3+yq6JQPxHaidUI=";
     };
-    date = "2026-05-06";
+    date = "2026-05-24";
+  };
+  source-nutstore-client = {
+    pname = "source-nutstore-client";
+    version = "6.4.3";
+    src = fetchurl {
+      url = "https://pkg-cdn.jianguoyun.com/static/exe/ex/6.4.3/nutstore_client-6.4.3-linux-x86_64-public.tar.gz";
+      sha256 = "sha256-sG3NrWTP1joKztkNddzz8x1xPVg9qZIKlKI7tIw/2xI=";
+    };
+  };
+  source-nutstore-nautilus = {
+    pname = "source-nutstore-nautilus";
+    version = "6.4.3";
+    src = fetchurl {
+      url = "https://www.jianguoyun.com/static/exe/installer/nutstore_linux_src_installer.tar.gz";
+      sha256 = "sha256-iBbZEyTSNGlm4AGZgapuXflLsaAWrFFGNm3qN9L0s84=";
+    };
+  };
+  source-roxy-browser = {
+    pname = "source-roxy-browser";
+    version = "3.8.7";
+    src = fetchurl {
+      url = "https://lumibrowser.oss-cn-shenzhen.aliyuncs.com/public/package/app/Linux/x64/3.8.7/RoxyBrowser_x64_3.8.7.deb";
+      sha256 = "sha256-94mYBrHWeU/I/6q1Y3EUFPtoWSD5tAkMxBO624wGaSc=";
+    };
   };
 }

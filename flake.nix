@@ -165,7 +165,6 @@
     };
 
     # AI coding agents
-    codex-desktop-linux.url = "github:ilysenko/codex-desktop-linux";
     llm-agents.url = "github:numtide/llm-agents.nix";
 
     # -------------- Gaming ---------------------

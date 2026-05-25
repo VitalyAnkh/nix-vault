@@ -2,7 +2,7 @@
   lib,
   rustPlatform,
   source-emacs-lsp-booster,
-  pkgs,
+  emacs-master-pgtk-with-igc,
   ...
 }:
 rustPlatform.buildRustPackage {
@@ -11,9 +11,9 @@ rustPlatform.buildRustPackage {
 
   inherit (source-emacs-lsp-booster) src;
 
-  cargoHash = "sha256-7lIceMT2hJplHU2VIN1O8IiGE6+DxO4/uM8pYS/qvlE=";
+  cargoLock = source-emacs-lsp-booster.cargoLock."Cargo.lock";
 
-  nativeCheckInputs = [ pkgs.emacs-master-pgtk-with-igc ]; # tests/bytecode_test
+  nativeCheckInputs = [ emacs-master-pgtk-with-igc ]; # tests/bytecode_test
 
   meta = with lib; {
     description = "Emacs LSP performance booster";
