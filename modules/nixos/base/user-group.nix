@@ -18,8 +18,6 @@
     dialout = { };
     # for openocd (embedded system development)
     plugdev = { };
-    # misc
-    uinput = { };
     # shared group for services that read/write the same data directory
     fileshare = { };
   };
@@ -41,6 +39,7 @@
       myvars.username
       "users"
       "wheel"
+      "uinput"
       "networkmanager" # for nmtui / nm-connection-editor
       "podman"
       "docker"

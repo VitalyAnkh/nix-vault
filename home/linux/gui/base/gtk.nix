@@ -39,6 +39,7 @@
     font-name = "${config.gtk.font.name} ${toString config.gtk.font.size}";
     gtk-theme = config.gtk.theme.name;
     icon-theme = config.gtk.iconTheme.name;
+    toolkit-accessibility = true;
   };
 
   # gtk's theme settings, generate files:

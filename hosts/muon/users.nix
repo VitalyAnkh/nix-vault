@@ -111,6 +111,7 @@ in
       ]
       ++ commonExtraGroups
       ++ [
+        "uinput"
         "wireshark"
         "adbusers"
         "libvirtd"
@@ -131,6 +132,5 @@ in
     adbusers = { }; # android platform-tools udev rules
     dialout = { };
     plugdev = { }; # openocd (embedded development)
-    uinput = { };
   };
 }
