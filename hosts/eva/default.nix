@@ -36,6 +36,11 @@ in
   services.sunshine.enable = lib.mkForce true;
   services.tuned.ppdSettings.main.default = lib.mkForce "performance";
 
+  # Match the upstream ai host's PCIe stability setting from boot. Runtime ASPM
+  # policy changes did not reveal the Wi-Fi endpoint, but boot-time link setup
+  # can differ and this remains a low-risk, reversible local candidate.
+  boot.kernelParams = [ "pcie_aspm=off" ];
+
   # This host repeatedly hit swap/reclaim storms before hard resets.
   # Keep zram, but make it much less aggressive on the desktop.
   zramSwap = {
