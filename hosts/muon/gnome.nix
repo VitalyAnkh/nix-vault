@@ -47,7 +47,7 @@ in
     gnomeExtensions.clipboard-history
     gnomeExtensions.kimpanel
     gnomeExtensions.user-themes
-    gnome-screenshot
+    gnome-screenshot-portal
     clash-verge-rev
     clash-nyanpasu
     # hiddify-app
