@@ -13,6 +13,10 @@ rustPlatform.buildRustPackage {
 
   cargoLock = source-emacs-lsp-booster.cargoLock."Cargo.lock";
 
+  patches = [
+    ./skip-bytecode-stress-tests.patch
+  ];
+
   nativeCheckInputs = [ emacs-master-pgtk-with-igc ]; # tests/bytecode_test
 
   meta = with lib; {

@@ -1,7 +1,7 @@
 {
   "source-codex-desktop-linux": {
     "cargoLock": null,
-    "date": "2026-05-24",
+    "date": "2026-05-30",
     "extract": null,
     "name": "source-codex-desktop-linux",
     "passthru": null,
@@ -13,12 +13,12 @@
       "name": null,
       "owner": "ilysenko",
       "repo": "codex-desktop-linux",
-      "rev": "0850ed9f8efd2dbac58a82b597c7e6506487f0f9",
-      "sha256": "sha256-MfKVDR44CuFfPp5MZWaMOrmi2+k6PCfVok1amGk15yM=",
+      "rev": "fb2008ec0917631c07c4f0c065b316d7620180e4",
+      "sha256": "sha256-pgae65LzF0XXpGoQQqZb4iULJejdiwR2+ycxqt+ojGc=",
       "sparseCheckout": [],
       "type": "github"
     },
-    "version": "0850ed9f8efd2dbac58a82b597c7e6506487f0f9"
+    "version": "fb2008ec0917631c07c4f0c065b316d7620180e4"
   },
   "source-emacs-lsp-booster": {
     "cargoLock": {
@@ -45,7 +45,7 @@
   },
   "source-emacs-master-igc": {
     "cargoLock": null,
-    "date": "2026-05-24",
+    "date": "2026-05-28",
     "extract": null,
     "name": "source-emacs-master-igc",
     "passthru": null,
@@ -55,13 +55,13 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "04bbfbe56f3cc508ae54ffbb76d29affa70e4b09",
-      "sha256": "sha256-cNP1y6yRod3nbU5cabZKdzDw6xxt3+yq6JQPxHaidUI=",
+      "rev": "69ca5bc8f4e39951961cf408ccf5763f2000b04e",
+      "sha256": "sha256-foH8Ijtq24s/dQhrmX/n9tkQs3uo52PvjG7fCoUg2VE=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://github.com/emacs-mirror/emacs.git"
     },
-    "version": "04bbfbe56f3cc508ae54ffbb76d29affa70e4b09"
+    "version": "69ca5bc8f4e39951961cf408ccf5763f2000b04e"
   },
   "source-nutstore-client": {
     "cargoLock": null,

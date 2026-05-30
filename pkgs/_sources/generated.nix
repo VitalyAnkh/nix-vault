@@ -8,15 +8,15 @@
 {
   source-codex-desktop-linux = {
     pname = "source-codex-desktop-linux";
-    version = "0850ed9f8efd2dbac58a82b597c7e6506487f0f9";
+    version = "fb2008ec0917631c07c4f0c065b316d7620180e4";
     src = fetchFromGitHub {
       owner = "ilysenko";
       repo = "codex-desktop-linux";
-      rev = "0850ed9f8efd2dbac58a82b597c7e6506487f0f9";
+      rev = "fb2008ec0917631c07c4f0c065b316d7620180e4";
       fetchSubmodules = false;
-      sha256 = "sha256-MfKVDR44CuFfPp5MZWaMOrmi2+k6PCfVok1amGk15yM=";
+      sha256 = "sha256-pgae65LzF0XXpGoQQqZb4iULJejdiwR2+ycxqt+ojGc=";
     };
-    date = "2026-05-24";
+    date = "2026-05-30";
   };
   source-emacs-lsp-booster = {
     pname = "source-emacs-lsp-booster";
@@ -38,17 +38,17 @@
   };
   source-emacs-master-igc = {
     pname = "source-emacs-master-igc";
-    version = "04bbfbe56f3cc508ae54ffbb76d29affa70e4b09";
+    version = "69ca5bc8f4e39951961cf408ccf5763f2000b04e";
     src = fetchgit {
       url = "https://github.com/emacs-mirror/emacs.git";
-      rev = "04bbfbe56f3cc508ae54ffbb76d29affa70e4b09";
+      rev = "69ca5bc8f4e39951961cf408ccf5763f2000b04e";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-cNP1y6yRod3nbU5cabZKdzDw6xxt3+yq6JQPxHaidUI=";
+      sha256 = "sha256-foH8Ijtq24s/dQhrmX/n9tkQs3uo52PvjG7fCoUg2VE=";
     };
-    date = "2026-05-24";
+    date = "2026-05-28";
   };
   source-nutstore-client = {
     pname = "source-nutstore-client";

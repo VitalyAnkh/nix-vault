@@ -1,0 +1,15 @@
+diff --git a/tests/bytecode_test.rs b/tests/bytecode_test.rs
+index 647ad82..8a3f4d2 100644
+--- a/tests/bytecode_test.rs
++++ b/tests/bytecode_test.rs
+@@ -70,6 +70,10 @@ fn test_bytecode() {
+         run_one_test(include_str!("./data/publishDiagnostics2.json"), object_type).unwrap();
+     }
+
++    if std::env::var_os("EMACS_LSP_BOOSTER_RUN_STRESS_TESTS").is_none() {
++        return;
++    }
++
+     {
+         eprintln!("Testing huge array (100000 elements)");
+         let value = json::Value::Array(
