@@ -146,12 +146,11 @@ in
         ".agents" # skills for all agents
         ".config/agents"
         ".claude"
-        ".gemini"
         ".codex"
         ".config/opencode"
         ".local/share/opencode"
         ".local/state/opencode"
-        ".kimi" # kimi-cli
+
         ".context7" # up-to-date docs and code examples for for LLMs & agents
 
         # nvim
@@ -244,14 +243,15 @@ in
         ".steam"
         ".config/blender"
         ".config/LDtk"
-        ".config/heroic"
-        ".config/lutris"
+
         ".local/share/umu"
 
         ".local/share/Steam"
         ".local/state/Heroic"
-
+        ".config/heroic"
+        ".config/lutris"
         ".local/share/lutris"
+
         ".local/share/tiled"
         ".local/share/GOG.com"
         ".local/share/StardewValley"

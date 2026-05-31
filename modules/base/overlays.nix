@@ -98,6 +98,21 @@
       ];
     })
 
+    # pipx 1.8.0 tests still expect the old no-space spelling around PEP 508
+    # direct references; current packaging normalizes them with spaces.
+    (final: prev: {
+      pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [
+        (_python-final: python-prev: {
+          pipx = python-prev.pipx.overridePythonAttrs (old: {
+            disabledTests = (old.disabledTests or [ ]) ++ [
+              "test_fix_package_name"
+              "test_parse_specifier_for_metadata"
+            ];
+          });
+        })
+      ];
+    })
+
     # nixpkgs udisks 2.11.1 currently fails locally while building gtk-doc: the
     # generated `udisks2-scan` helper is linked without every module that
     # `--enable-all-modules` asks it to introspect. After disabling gtk-doc, its

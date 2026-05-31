@@ -32,8 +32,8 @@ in
   boot.kernel.sysctl = {
     # --- filesystem --- #
     # increase the limits to avoid running out of inotify watches
-    "fs.inotify.max_user_watches" = 524288;
-    "fs.inotify.max_user_instances" = 1024;
+    "fs.inotify.max_user_watches" = pkgs.lib.mkDefault 524288;
+    "fs.inotify.max_user_instances" = pkgs.lib.mkDefault 1024;
 
     # --- network --- #
     "net.bridge.bridge-nf-call-iptables" = 1;

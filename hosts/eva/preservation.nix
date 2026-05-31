@@ -221,6 +221,8 @@ in
         ".codex"
         ".clawdbot"
         ".config/opencode"
+        ".local/share/opencode"
+        ".local/state/opencode"
         ".context7"
         ".kimi"
         ".local/state/codex-desktop"

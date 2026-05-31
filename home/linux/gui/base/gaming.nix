@@ -45,7 +45,8 @@ in
         bbe
       ])
       ++ (with pkgs-x64; [
-        # a game launcher - great for epic games and gog games
+        # Heroic Games Launcher - primarily for Epic Games & GOG
+        # https://heroicgameslauncher.com/
         (heroic.override {
           extraPkgs = _pkgs: [
             pkgs.gamescope # aarch64
@@ -53,7 +54,9 @@ in
         })
       ]);
 
-    # a GUI game launcher for Steam/GoG/Epic
+    # Game launchers for Epic/GOG/Ubisoft/etc. (use Steam + DWProton for common games)
+
+    # a GUI game launcher for Steam/GoG/Epic/Ubisoft
     # https://lutris.net/games?ordering=-popularity
     programs.lutris = {
       enable = true;

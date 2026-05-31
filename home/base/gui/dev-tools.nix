@@ -22,7 +22,6 @@ in
     ++ (with llmAgentPackages; [
       #codex
       #claude-code
-      #gemini-cli
       #opencode
       #rtk
     ])

@@ -36,6 +36,6 @@
     services.openssh.enable = true;
     # we configure the host via nixos itself, so we don't need the cloud-init
     services.cloud-init.enable = lib.mkForce false;
-    systemd.services."serial-getty@ttyS0".enable = true;
+    systemd.services."serial-getty@ttyS0".enable = lib.mkDefault true;
   };
 }
