@@ -1,0 +1,6 @@
+interface:
+  display_name: "Merge Ryan Nix Config"
+  short_description: "Merge ryan/main into the current Nix config safely"
+  default_prompt:
+    "Use $merge-upstream-ryan-nix-config to merge upstream ryan/main into this checkout while
+    preserving local vr customizations."
