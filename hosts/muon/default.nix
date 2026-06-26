@@ -75,6 +75,29 @@ in
     systemd-logind.serviceConfig = serviceConfigNoMountNamespace;
     systemd-hostnamed.serviceConfig = serviceConfigNoMountNamespace;
 
+    # GNOME/GDM activates these over D-Bus during greeter/session startup. On
+    # muon, their default mount-namespace hardening can burn the full 90s start
+    # timeout while cloning thousands of preservation bind mounts, leaving the
+    # greeter black/empty or very delayed after `nixos-rebuild switch`.
+    accounts-daemon.serviceConfig = serviceConfigNoMountNamespaceWithDevices // {
+      # The package unit's ReadOnlyPaths/ReadWritePaths still force mount
+      # namespace setup; one accountsservice ReadOnlyPaths entry also points to
+      # a directory that is absent in the package output, making GDM fail before
+      # it can list cached users.
+      ReadOnlyPaths = lib.mkForce "";
+      ReadWritePaths = lib.mkForce "";
+    };
+    colord.serviceConfig = serviceConfigNoMountNamespace;
+    geoclue.serviceConfig = serviceConfigNoMountNamespace;
+    rtkit-daemon.serviceConfig = serviceConfigNoMountNamespaceWithDevices;
+    upower.serviceConfig = serviceConfigNoMountNamespaceWithDevices;
+    systemd-localed.serviceConfig = serviceConfigNoMountNamespaceWithDevices;
+
+    # These are not directly graphical, but they hit the same mount namespace
+    # timeout pattern on muon and can keep the system degraded after a switch.
+    systemd-oomd.serviceConfig = serviceConfigNoMountNamespaceWithDevices;
+    systemd-timesyncd.serviceConfig = serviceConfigNoMountNamespaceWithDevices;
+
     netbird-homelab = {
       serviceConfig = serviceConfigNoMountNamespaceWithDevices;
       wantedBy = lib.mkForce [ ];

@@ -8,15 +8,15 @@
 {
   source-codex-desktop-linux = {
     pname = "source-codex-desktop-linux";
-    version = "fb2008ec0917631c07c4f0c065b316d7620180e4";
+    version = "407ff0e31cddd64a8c671d1351e962a07e6cb6c9";
     src = fetchFromGitHub {
       owner = "ilysenko";
       repo = "codex-desktop-linux";
-      rev = "fb2008ec0917631c07c4f0c065b316d7620180e4";
+      rev = "407ff0e31cddd64a8c671d1351e962a07e6cb6c9";
       fetchSubmodules = false;
-      sha256 = "sha256-pgae65LzF0XXpGoQQqZb4iULJejdiwR2+ycxqt+ojGc=";
+      sha256 = "sha256-GfPnTppYPXRAo+X2hj5OZQg1dc72QTwJ5ZdEjBeObuo=";
     };
-    date = "2026-05-30";
+    date = "2026-06-25";
   };
   source-emacs-lsp-booster = {
     pname = "source-emacs-lsp-booster";
@@ -38,17 +38,17 @@
   };
   source-emacs-master-igc = {
     pname = "source-emacs-master-igc";
-    version = "69ca5bc8f4e39951961cf408ccf5763f2000b04e";
+    version = "184f85aef7fd9dc778bc953a483623f91df3fae7";
     src = fetchgit {
       url = "https://github.com/emacs-mirror/emacs.git";
-      rev = "69ca5bc8f4e39951961cf408ccf5763f2000b04e";
+      rev = "184f85aef7fd9dc778bc953a483623f91df3fae7";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-foH8Ijtq24s/dQhrmX/n9tkQs3uo52PvjG7fCoUg2VE=";
+      sha256 = "sha256-aGL4gosXnVtsM0w+X4+eA0Ea0nJmFyLP/GJgaXBISe4=";
     };
-    date = "2026-05-28";
+    date = "2026-06-24";
   };
   source-nutstore-client = {
     pname = "source-nutstore-client";
@@ -68,10 +68,22 @@
   };
   source-roxy-browser = {
     pname = "source-roxy-browser";
-    version = "3.8.7";
+    version = "3.9.0";
     src = fetchurl {
-      url = "https://lumibrowser.oss-cn-shenzhen.aliyuncs.com/public/package/app/Linux/x64/3.8.7/RoxyBrowser_x64_3.8.7.deb";
-      sha256 = "sha256-94mYBrHWeU/I/6q1Y3EUFPtoWSD5tAkMxBO624wGaSc=";
+      url = "https://lumibrowser.oss-cn-shenzhen.aliyuncs.com/public/package/app/Linux/x64/3.9.0/RoxyBrowser_x64_3.9.0.deb";
+      sha256 = "sha256-OwVXqoQl9MwuldA5VxBzEjNDPbSRt9txCql7qNUj9DM=";
     };
+  };
+  source-warp-terminal = {
+    pname = "source-warp-terminal";
+    version = "abf98bffd143846e3afc7e76de77de0f0ea1d445";
+    src = fetchFromGitHub {
+      owner = "warpdotdev";
+      repo = "Warp";
+      rev = "abf98bffd143846e3afc7e76de77de0f0ea1d445";
+      fetchSubmodules = false;
+      sha256 = "sha256-HvP06NqPA1G+0b9HV0N/rDlceC1JHaoVtZaRVEoNbDk=";
+    };
+    date = "2026-06-25";
   };
 }

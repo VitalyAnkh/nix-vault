@@ -26,3 +26,7 @@ fetch.url = "https://pkg-cdn.jianguoyun.com/static/exe/ex/$ver/nutstore_client-$
 [source-nutstore-nautilus]
 src.manual = "6.4.3"
 fetch.url = "https://www.jianguoyun.com/static/exe/installer/nutstore_linux_src_installer.tar.gz"
+[source-warp-terminal]
+src.git = "https://github.com/warpdotdev/Warp.git"
+src.branch = "master"
+fetch.github = "warpdotdev/Warp"

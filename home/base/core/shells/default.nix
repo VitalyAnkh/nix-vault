@@ -20,12 +20,17 @@ let
   goBin = "${config.home.homeDirectory}/go/bin";
   rustBin = "${config.home.homeDirectory}/.cargo/bin";
   npmBin = "${config.home.homeDirectory}/.npm/bin";
-  pnpmBin = "${config.home.homeDirectory}/.local/share/pnpm";
+  pnpmHome = "${config.home.homeDirectory}/.local/share/pnpm";
+  pnpmBin = "${pnpmHome}/bin";
   miniforgeBin = "${config.home.homeDirectory}/miniforge3/bin";
 in
 {
   # only works in bash/zsh, not nushell
   home.shellAliases = shellAliases;
+  home.sessionPath = [
+    pnpmBin
+    pnpmHome
+  ];
 
   programs.fish = {
     enable = true;
@@ -38,7 +43,7 @@ in
     enable = true;
     enableCompletion = true;
     bashrcExtra = ''
-      export PATH="$PATH:${localBin}:${pnpmBin}:${goBin}:${rustBin}:${npmBin}"
+      export PATH="$PATH:${localBin}:${pnpmBin}:${pnpmHome}:${goBin}:${rustBin}:${npmBin}"
     '';
   };
 

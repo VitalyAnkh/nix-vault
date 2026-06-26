@@ -1,7 +1,7 @@
 {
   "source-codex-desktop-linux": {
     "cargoLock": null,
-    "date": "2026-05-30",
+    "date": "2026-06-25",
     "extract": null,
     "name": "source-codex-desktop-linux",
     "passthru": null,
@@ -13,12 +13,12 @@
       "name": null,
       "owner": "ilysenko",
       "repo": "codex-desktop-linux",
-      "rev": "fb2008ec0917631c07c4f0c065b316d7620180e4",
-      "sha256": "sha256-pgae65LzF0XXpGoQQqZb4iULJejdiwR2+ycxqt+ojGc=",
+      "rev": "407ff0e31cddd64a8c671d1351e962a07e6cb6c9",
+      "sha256": "sha256-GfPnTppYPXRAo+X2hj5OZQg1dc72QTwJ5ZdEjBeObuo=",
       "sparseCheckout": [],
       "type": "github"
     },
-    "version": "fb2008ec0917631c07c4f0c065b316d7620180e4"
+    "version": "407ff0e31cddd64a8c671d1351e962a07e6cb6c9"
   },
   "source-emacs-lsp-booster": {
     "cargoLock": {
@@ -45,7 +45,7 @@
   },
   "source-emacs-master-igc": {
     "cargoLock": null,
-    "date": "2026-05-28",
+    "date": "2026-06-24",
     "extract": null,
     "name": "source-emacs-master-igc",
     "passthru": null,
@@ -55,13 +55,13 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "69ca5bc8f4e39951961cf408ccf5763f2000b04e",
-      "sha256": "sha256-foH8Ijtq24s/dQhrmX/n9tkQs3uo52PvjG7fCoUg2VE=",
+      "rev": "184f85aef7fd9dc778bc953a483623f91df3fae7",
+      "sha256": "sha256-aGL4gosXnVtsM0w+X4+eA0Ea0nJmFyLP/GJgaXBISe4=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://github.com/emacs-mirror/emacs.git"
     },
-    "version": "69ca5bc8f4e39951961cf408ccf5763f2000b04e"
+    "version": "184f85aef7fd9dc778bc953a483623f91df3fae7"
   },
   "source-nutstore-client": {
     "cargoLock": null,
@@ -102,10 +102,31 @@
     "pinned": false,
     "src": {
       "name": null,
-      "sha256": "sha256-94mYBrHWeU/I/6q1Y3EUFPtoWSD5tAkMxBO624wGaSc=",
+      "sha256": "sha256-OwVXqoQl9MwuldA5VxBzEjNDPbSRt9txCql7qNUj9DM=",
       "type": "url",
-      "url": "https://lumibrowser.oss-cn-shenzhen.aliyuncs.com/public/package/app/Linux/x64/3.8.7/RoxyBrowser_x64_3.8.7.deb"
+      "url": "https://lumibrowser.oss-cn-shenzhen.aliyuncs.com/public/package/app/Linux/x64/3.9.0/RoxyBrowser_x64_3.9.0.deb"
     },
-    "version": "3.8.7"
+    "version": "3.9.0"
+  },
+  "source-warp-terminal": {
+    "cargoLock": null,
+    "date": "2026-06-25",
+    "extract": null,
+    "name": "source-warp-terminal",
+    "passthru": null,
+    "pinned": false,
+    "src": {
+      "deepClone": false,
+      "fetchSubmodules": false,
+      "leaveDotGit": false,
+      "name": null,
+      "owner": "warpdotdev",
+      "repo": "Warp",
+      "rev": "abf98bffd143846e3afc7e76de77de0f0ea1d445",
+      "sha256": "sha256-HvP06NqPA1G+0b9HV0N/rDlceC1JHaoVtZaRVEoNbDk=",
+      "sparseCheckout": [],
+      "type": "github"
+    },
+    "version": "abf98bffd143846e3afc7e76de77de0f0ea1d445"
   }
 }

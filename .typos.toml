@@ -53,3 +53,4 @@ extend-ignore-re = [
 AER = "AER"
 UE = "UE"
 ue = "ue"
+localed = "localed"

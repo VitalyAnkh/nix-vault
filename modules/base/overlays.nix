@@ -3,6 +3,8 @@
   nuenv,
   mylib,
   nix-gaming,
+  crane,
+  rust-overlay,
   ...
 }@args:
 {
@@ -17,7 +19,18 @@
         sources = prev.callPackage ../../pkgs/_sources/generated.nix { };
       in
       mylib.callPackageFromDirectory {
-        callPackage = final.lib.callPackageWith (final // prev // sources // { inherit nixpkgs; });
+        callPackage = final.lib.callPackageWith (
+          final
+          // prev
+          // sources
+          // {
+            inherit
+              nixpkgs
+              crane
+              rust-overlay
+              ;
+          }
+        );
         directory = ../../pkgs;
       }
     )

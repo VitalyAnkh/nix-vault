@@ -55,7 +55,9 @@ in
                 if [ -n "''${DBUS_SESSION_BUS_ADDRESS-}" ]; then
                   "$@" && return 0
                 fi
-                ${pkgs.dbus}/bin/dbus-run-session -- "$@"
+                ${pkgs.dbus}/bin/dbus-run-session \
+                  --dbus-daemon=${pkgs.dbus}/bin/dbus-daemon \
+                  -- "$@"
               }
 
               next=""

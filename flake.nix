@@ -135,6 +135,12 @@
       url = "github:cachix/git-hooks.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # Build Rust workspaces that use upstream Rust toolchain files.
+    crane.url = "github:ipetkov/crane";
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     nuenv = {
       url = "github:DeterminateSystems/nuenv";

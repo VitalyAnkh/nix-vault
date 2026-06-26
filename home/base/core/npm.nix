@@ -1,9 +1,13 @@
 { config, ... }:
 {
-  # 1. make `npm install -g <pkg>` happey
-  # 2. require a short release-age delay for registry packages
+  # make `npm install -g <pkg>` happy without blocking fresh registry releases
   home.file.".npmrc".text = ''
     prefix=${config.home.homeDirectory}/.npm
-    min-release-age=7
+    min-release-age=0
+  '';
+
+  # pnpm v11 reads non-auth settings from its YAML config, not from .npmrc.
+  home.file.".config/pnpm/config.yaml".text = ''
+    minimumReleaseAge: 0
   '';
 }

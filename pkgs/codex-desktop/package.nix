@@ -35,9 +35,6 @@ let
 
     cargoLock = {
       lockFile = "${upstreamSource}/Cargo.lock";
-      outputHashes = {
-        "cosmic-protocols-0.2.0" = "sha256-ymn+BUTTzyHquPn4hvuoA3y1owFj8LVrmsPu2cdkFQ8=";
-      };
     };
     buildAndTestSubdir = "computer-use-linux";
     cargoBuildFlags = [
