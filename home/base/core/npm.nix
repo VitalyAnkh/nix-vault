@@ -9,5 +9,8 @@
   # pnpm v11 reads non-auth settings from its YAML config, not from .npmrc.
   home.file.".config/pnpm/config.yaml".text = ''
     minimumReleaseAge: 0
+    fetchTimeout: 300000
+    fetchRetries: 5
+    networkConcurrency: 2
   '';
 }
