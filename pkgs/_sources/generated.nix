@@ -8,15 +8,15 @@
 {
   source-codex-desktop-linux = {
     pname = "source-codex-desktop-linux";
-    version = "407ff0e31cddd64a8c671d1351e962a07e6cb6c9";
+    version = "e75743bfba7628f82ebdc2e60a91c8faf5333f54";
     src = fetchFromGitHub {
       owner = "ilysenko";
       repo = "codex-desktop-linux";
-      rev = "407ff0e31cddd64a8c671d1351e962a07e6cb6c9";
+      rev = "e75743bfba7628f82ebdc2e60a91c8faf5333f54";
       fetchSubmodules = false;
-      sha256 = "sha256-GfPnTppYPXRAo+X2hj5OZQg1dc72QTwJ5ZdEjBeObuo=";
+      sha256 = "sha256-l+/VtXxgpNBo13l1KAtRhNf6UDzVrDprCDZpht6/MTU=";
     };
-    date = "2026-06-25";
+    date = "2026-06-29";
   };
   source-emacs-lsp-booster = {
     pname = "source-emacs-lsp-booster";
@@ -38,17 +38,17 @@
   };
   source-emacs-master-igc = {
     pname = "source-emacs-master-igc";
-    version = "184f85aef7fd9dc778bc953a483623f91df3fae7";
+    version = "abd0574762fe680a068974374e639ee6eb9840b5";
     src = fetchgit {
       url = "https://github.com/emacs-mirror/emacs.git";
-      rev = "184f85aef7fd9dc778bc953a483623f91df3fae7";
+      rev = "abd0574762fe680a068974374e639ee6eb9840b5";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-aGL4gosXnVtsM0w+X4+eA0Ea0nJmFyLP/GJgaXBISe4=";
+      sha256 = "sha256-B1ygD96Z4T7BVzLVrtr0ThRbYS4ClDXWZ+Riv/vBNXY=";
     };
-    date = "2026-06-24";
+    date = "2026-06-26";
   };
   source-nutstore-client = {
     pname = "source-nutstore-client";
@@ -76,14 +76,14 @@
   };
   source-warp-terminal = {
     pname = "source-warp-terminal";
-    version = "abf98bffd143846e3afc7e76de77de0f0ea1d445";
+    version = "160b6c50346f3f0abcfe018c643efcc8eb1370e6";
     src = fetchFromGitHub {
       owner = "warpdotdev";
       repo = "Warp";
-      rev = "abf98bffd143846e3afc7e76de77de0f0ea1d445";
+      rev = "160b6c50346f3f0abcfe018c643efcc8eb1370e6";
       fetchSubmodules = false;
-      sha256 = "sha256-HvP06NqPA1G+0b9HV0N/rDlceC1JHaoVtZaRVEoNbDk=";
+      sha256 = "sha256-8oLwiDNnJ0FMWzrh7vqSn+TD8vROVwB4ifhfR6Oohns=";
     };
-    date = "2026-06-25";
+    date = "2026-06-28";
   };
 }

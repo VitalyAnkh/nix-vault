@@ -253,6 +253,7 @@ in
         # qbittorrent
         ".config/qBittorrent"
         ".local/share/qBittorrent"
+        ".yema"
 
         # vlc
         ".config/vlc/"

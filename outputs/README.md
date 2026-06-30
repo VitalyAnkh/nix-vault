@@ -87,19 +87,27 @@ All the outputs of this flake are defined here.
     ├── default.nix
     ├── nixos-tests
     ├── src           # every host has its own file in this directory
-    │   ├── idols-ai.nix
+    │   ├── eva.nix
+    │   ├── home-manager.nix
+    │   ├── home-test.nix
     │   ├── idols-aquamarine.nix
     │   ├── idols-kana.nix
     │   ├── idols-ruby.nix
+    │   ├── jojo.nix
     │   ├── k3s-prod-1-master-1.nix
     │   ├── k3s-prod-1-master-2.nix
     │   ├── k3s-prod-1-master-3.nix
     │   ├── k3s-prod-1-worker-1.nix
     │   ├── k3s-prod-1-worker-2.nix
     │   ├── k3s-prod-1-worker-3.nix
+    │   ├── k3s-test-1-master-1.nix
+    │   ├── k3s-test-1-master-2.nix
+    │   ├── k3s-test-1-master-3.nix
     │   ├── kubevirt-shoryu.nix
     │   ├── kubevirt-shushou.nix
-    │   └── kubevirt-youko.nix
+    │   ├── kubevirt-youko.nix
+    │   ├── muon.nix
+    │   └── revachol.nix
     └── tests         # eval tests
         ├── home-manager
         │   ├── expected.nix

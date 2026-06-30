@@ -36,10 +36,13 @@ in
   services.sunshine.enable = lib.mkForce true;
   services.tuned.ppdSettings.main.default = lib.mkForce "performance";
 
-  # Match the upstream ai host's PCIe stability setting from boot. Runtime ASPM
-  # policy changes did not reveal the Wi-Fi endpoint, but boot-time link setup
-  # can differ and this remains a low-risk, reversible local candidate.
-  boot.kernelParams = [ "pcie_aspm=off" ];
+  # Keep the NVIDIA root port out of PCIe power-saving paths. Repeated Xid 79
+  # freezes showed the GPU disappearing from the PCIe bus, and live sampling
+  # previously showed corrected TLP errors before failure.
+  boot.kernelParams = [
+    "pcie_aspm=off"
+    "pcie_port_pm=off"
+  ];
 
   # This host repeatedly hit swap/reclaim storms before hard resets.
   # Keep zram, but make it much less aggressive on the desktop.
@@ -63,7 +66,9 @@ in
     # we use NetworkManager
     # how to use networkd?
     networkmanager.enable = true; # provides nmcli/nmtui for wifi adjustment
-    useDHCP = lib.mkForce true;
+    # Let NetworkManager own DHCP; dhcpcd races with it and can leave DNS stale.
+    useDHCP = lib.mkForce false;
+    dhcpcd.enable = false;
   };
 
   # networking.useNetworkd = true;
