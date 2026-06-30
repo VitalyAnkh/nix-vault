@@ -63,10 +63,24 @@ else
     meta = (old.meta or { }) // {
       description = "Warp is an agentic development environment, born out of the terminal";
       homepage = "https://github.com/warpdotdev/Warp";
-      mainProgram = "warp-terminal";
+      # Upstream's Linux flake currently builds the OSS channel binary. Keep
+      # the historical package name/aliases, but expose the real desktop app
+      # entrypoint so launchers and `lib.getExe` do not route through the
+      # experimental alias.
+      mainProgram = "warp-oss";
     };
 
     postInstall = (old.postInstall or "") + ''
+      desktop_entry="$out/share/applications/dev.warp.WarpOss.desktop"
+      if [ ! -f "$desktop_entry" ]; then
+        echo "expected Warp OSS desktop entry is missing: $desktop_entry" >&2
+        exit 1
+      fi
+
+      substituteInPlace "$desktop_entry" \
+        --replace-fail "Name=WarpOss" "Name=Warp (OSS)" \
+        --replace-fail "Exec=warp-terminal-experimental %U" "Exec=warp-oss %U"
+
       ln -sfn "$out/bin/warp-terminal-experimental" "$out/bin/warp-terminal"
     '';
   })

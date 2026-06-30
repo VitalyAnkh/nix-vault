@@ -143,8 +143,10 @@ in
         # runtime caches under `.cache/dolphin_anty` / `.cache/appimage-run`
         ".cache"
 
-        # warp-terminal config
+        # Warp config. The packaged Linux build is the OSS channel, whose
+        # runtime app id uses the `warp-oss` XDG namespace.
         ".config/warp-terminal"
+        ".config/warp-oss"
 
         # gnome configurations
         ".config/dconf"
