@@ -15,8 +15,7 @@ in
     ../../base/tui
   ];
 
-  programs.ssh.matchBlocks."github.com".identityFile =
-    "${config.home.homeDirectory}/.ssh/${hostName}";
+  programs.ssh.settings."github.com".IdentityFile = "${config.home.homeDirectory}/.ssh/${hostName}";
 
   home.packages = with pkgs; [
     emacs-master-pgtk-with-igc

@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, llm-agents, ... }:
 {
   # https://github.com/Mic92/nix-ld
   #
@@ -15,7 +15,7 @@
   # nix-ld's nixos module will set default values for `NIX_LD` and `NIX_LD_LIBRARY_PATH` environment variables, so
   # it can work out of the box:
   #
-  #  - https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/programs/nix-ld.nix#L37-L40
+  #  - https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/modules/programs/nix-ld.nix#L42-L45
   #
   # You can overwrite `NIX_LD_LIBRARY_PATH` in the environment where you run the non-NixOS binaries to customize the
   # search path for shared libraries.
@@ -26,56 +26,68 @@
     ];
   };
 
-  environment.systemPackages = with pkgs; [
-    nodejs_24
-    pnpm
+  environment.systemPackages =
+    with pkgs;
+    [
+      nodejs_24
+      pnpm
 
-    #-- python
-    conda
-    uv # python project package manager
-    pipx # Install and Run Python Applications in Isolated Environments
-    (python313.withPackages (
-      ps: with ps; [
-        pandas
-        requests
-        pyquery
-        pyyaml
-        numpy
+      #-- python
+      conda
+      uv # python project package manager
+      (python313.withPackages (
+        ps: with ps; [
+          pandas
+          requests
+          pyquery
+          pyyaml
+          numpy
 
-        # model downloaders
-        huggingface-hub
-        modelscope
-      ]
-    ))
+          # model downloaders
+          huggingface-hub
+          modelscope
+        ]
+      ))
 
-    rustc
-    cargo # rust package manager
-    go
+      rustc
+      cargo # rust package manager
+      go
 
-    # cryptography
-    age
-    sops
-    rclone
-    gnupg
+      # cryptography
+      age
+      sops
+      rclone
+      gnupg
 
-    # cloud-native
-    kubectl
-    istioctl
-    kubevirt # virtctl
-    kubernetes-helm
-    fluxcd
-    terraform
+      # cloud-native
+      kubectl
+      istioctl
+      kubevirt # virtctl
+      kubernetes-helm
+      fluxcd
+      terraform
 
-    # db related
-    pgcli
-    mongosh
-    sqlite
+      # db related
+      pgcli
+      mongosh
+      sqlite
 
-    yt-dlp # youtube/bilibili/soundcloud/... video/music downloader
+      yt-dlp # youtube/bilibili/soundcloud/... video/music downloader
 
-    # need to run `conda-install` before using it
-    # need to run `conda-shell` before using command `conda`
-    # conda is not available for MacOS
-    conda
-  ];
+      # need to run `conda-install` before using it
+      # need to run `conda-shell` before using command `conda`
+      # conda is not available for MacOS
+      conda
+    ]
+    # AI Agent Tools
+    ++ (with llm-agents.packages.${pkgs.stdenv.hostPlatform.system}; [
+      # Agents
+      codex
+      cursor-cli
+      claude-code
+      opencode
+
+      # Utilities
+      rtk # CLI proxy that reduces LLM token consumption
+    ]);
 }

@@ -5,7 +5,7 @@ let
   hasMinioSecret = config ? age && config.age ? secrets && config.age.secrets ? "minio.env";
 in
 {
-  # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/services/web-servers/minio.nix
+  # https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/modules/services/web-servers/minio.nix
   warnings = lib.optional (
     !hasMinioSecret
   ) "aquamarine: age secret \"minio.env\" missing; disabling services.minio";

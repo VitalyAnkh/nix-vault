@@ -21,6 +21,5 @@
     zotero
     kdePackages.okular
     v2raya
-    zulip
   ];
 }

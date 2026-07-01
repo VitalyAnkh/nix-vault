@@ -13,7 +13,7 @@ in
   programs = {
     fish.enable = true;
     git.enable = true;
-    ssh.matchBlocks."github.com".identityFile = "${config.home.homeDirectory}/.ssh/${hostName}";
+    ssh.settings."github.com".IdentityFile = "${config.home.homeDirectory}/.ssh/${hostName}";
   };
 
   programs.man = {

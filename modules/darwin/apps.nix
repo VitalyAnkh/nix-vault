@@ -104,7 +104,7 @@ in
 
     onActivation = {
       autoUpdate = true; # Fetch the newest stable branch of Homebrew's git repo
-      upgrade = true; # Upgrade outdated casks, formulae, and App Store apps
+      upgrade = false; # Upgrade outdated casks, formulae, and App Store apps
       # 'zap': uninstalls all formulae(and related files) not listed in the generated Brewfile
       cleanup = "zap";
     };
@@ -114,6 +114,9 @@ in
     # otherwise Apple Store will refuse to install them.
     # For details, see https://github.com/mas-cli/mas
     masApps = {
+      Keynote = 409183694;
+      Slack = 803453959;
+      WireGuard = 1451685025;
       # Xcode = 497799835;
       Wechat = 836500024;
     };
@@ -171,9 +174,6 @@ in
       "tailscale-app" # tailscale macos app (with gui)
       "netbirdio/tap/netbird-ui" # netbird gui app
 
-      # AI
-      "lm-studio"
-
       # IM & audio & remote desktop & meeting
       "telegram"
       "qq"
@@ -191,6 +191,7 @@ in
       # "raycast" # (HotKey: alt/option + space)search, calculate and run scripts(with many plugins)
       "stats" # beautiful system status monitor in menu bar
       "jordanbaird-ice" # Powerful menu bar manager for macOS
+      "orcaslicer" # 3d printer slicer app
 
       # "reaper"  # audio editor
       # "sonic-pi" # music programming
@@ -201,7 +202,6 @@ in
 
       # Development
       "mitmproxy" # HTTP/HTTPS traffic inspector
-      "insomnia" # REST client
       "wireshark-app" # network analyzer
       # "jdk-mission-control" # Java Mission Control
       # "google-cloud-sdk" # Google Cloud SDK

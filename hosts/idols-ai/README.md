@@ -82,7 +82,6 @@ nvme0n1           259:0    0  1.8T  0 disk
                                             /home/ryan/.zoom
                                             /home/ryan/Documents
                                             /home/ryan/.wakatime
-                                            /home/ryan/.vscode
                                             /home/ryan/.var
                                             /home/ryan/.terraform.d/plugin-cache
                                             /home/ryan/.steam
@@ -106,6 +105,7 @@ nvme0n1           259:0    0  1.8T  0 disk
                                             /home/ryan/.local/share/password-store
                                             /home/ryan/.local/share/opencode
                                             /home/ryan/.local/share/nvim
+                                            /home/ryan/.local/share/zed
                                             /home/ryan/.local/share/nix
                                             /home/ryan/.local/share/krita
                                             /home/ryan/.local/share/lutris
@@ -123,7 +123,6 @@ nvme0n1           259:0    0  1.8T  0 disk
                                             /home/ryan/.local/share/StardewValley
                                             /home/ryan/.local/share/GOG.com
                                             /home/ryan/.local/bin
-                                            /home/ryan/.local/pipx
                                             /home/ryan/.kube
                                             /home/ryan/.gradle
                                             /home/ryan/.gnupg
@@ -141,6 +140,7 @@ nvme0n1           259:0    0  1.8T  0 disk
                                             /home/ryan/.config/obs-studio
                                             /home/ryan/.config/mozc
                                             /home/ryan/.config/nushell
+                                            /home/ryan/.config/zed
                                             /home/ryan/.config/lutris
                                             /home/ryan/.config/joplin
                                             /home/ryan/.config/heroic
@@ -152,7 +152,6 @@ nvme0n1           259:0    0  1.8T  0 disk
                                             /home/ryan/.config/LDtk
                                             /home/ryan/.config/Joplin
                                             /home/ryan/.config/Cursor
-                                            /home/ryan/.config/Code
                                             /home/ryan/.conda
                                             /home/ryan/.cargo
                                             /home/ryan/.codex

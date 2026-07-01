@@ -351,6 +351,8 @@ in
         ".local/share/GOG.com"
         ".local/share/StardewValley"
         ".local/share/feral-interactive"
+        ".local/share/orca-slicer"
+        ".config/OrcaSlicer"
 
         # ======================================
         # Meeting / Remote Desktop / Recording

@@ -58,7 +58,6 @@ in
     zotero
     kdePackages.okular
     v2raya
-    zulip
   ];
 
   # Persist GNOME monitor layout/scaling (monitors.xml) on a stateless root.

@@ -1,7 +1,15 @@
-{ config, nixvim, ... }:
+{
+  config,
+  nixpkgs,
+  nixvim,
+  pkgs,
+  ...
+}:
 {
 
   imports = [ nixvim.homeModules.nixvim ];
+
+  programs.nixvim.nixpkgs.source = nixpkgs;
   home.shellAliases = {
 
     vi = "nvim";
@@ -11,7 +19,7 @@
   programs.nixvim = {
     enable = true;
 
-    clipboard.providers.wl-copy.enable = true;
+    clipboard.providers.wl-copy.enable = pkgs.stdenv.isLinux;
 
     opts = {
       number = true;

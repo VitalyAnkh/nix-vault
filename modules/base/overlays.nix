@@ -1,6 +1,5 @@
 {
   nixpkgs,
-  nuenv,
   mylib,
   nix-gaming,
   crane,
@@ -9,7 +8,6 @@
 }@args:
 {
   nixpkgs.overlays = [
-    nuenv.overlays.default
     nix-gaming.overlays.default
     # nix-vault/modules/overlays has been deleted
     # use nix-vault/modules/pkgs

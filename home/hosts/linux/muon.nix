@@ -11,6 +11,5 @@ in
 
   programs.fish.enable = true;
 
-  programs.ssh.matchBlocks."github.com".identityFile =
-    "${config.home.homeDirectory}/.ssh/${hostName}";
+  programs.ssh.settings."github.com".IdentityFile = "${config.home.homeDirectory}/.ssh/${hostName}";
 }

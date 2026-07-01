@@ -1,18 +1,20 @@
 {
   lib,
   pkgs,
+  pkgs-stable,
   blender-bin,
   ...
 }:
 {
   home.packages =
-    with pkgs;
+    with pkgs-stable;
     [
       # creative
       # gimp      # image editing, I prefer using figma in browser instead of this one
       inkscape # vector graphics
       krita # digital painting
       musescore # music notation
+      orca-slicer # 3d printer slicer app
       # reaper # audio production
       # sonic-pi # music programming
 
@@ -22,8 +24,8 @@
 
       # this app consumes a lot of storage, so do not install it currently
       kicad # 3d printing, electrical engineering
-      nutstore-client
-      nutstore-nautilus
+      pkgs.nutstore-client
+      pkgs.nutstore-nautilus
 
       logisim-evolution
 
