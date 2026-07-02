@@ -12,4 +12,11 @@ in
   programs.fish.enable = true;
 
   programs.ssh.settings."github.com".IdentityFile = "${config.home.homeDirectory}/.ssh/${hostName}";
+
+  programs.zed-editor.userSettings = {
+    ui_font_size = 18.0;
+    buffer_font_size = 17.0;
+    agent_ui_font_size = 18.0;
+    agent_buffer_font_size = 17.0;
+  };
 }
