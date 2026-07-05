@@ -63,6 +63,26 @@
     },
     "version": "abd0574762fe680a068974374e639ee6eb9840b5"
   },
+  "source-godot-master": {
+    "cargoLock": null,
+    "date": "2026-07-05",
+    "extract": null,
+    "name": "source-godot-master",
+    "passthru": null,
+    "pinned": false,
+    "src": {
+      "deepClone": false,
+      "fetchSubmodules": false,
+      "leaveDotGit": false,
+      "name": null,
+      "rev": "ebbf577a041d1ab8d7824b6f90e7d0575461ca45",
+      "sha256": "sha256-0yS6cy4MblrdZApB4Tu9dwtH8rILNOB7+QnZV5qNNEw=",
+      "sparseCheckout": [],
+      "type": "git",
+      "url": "https://github.com/godotengine/godot.git"
+    },
+    "version": "ebbf577a041d1ab8d7824b6f90e7d0575461ca45"
+  },
   "source-nutstore-client": {
     "cargoLock": null,
     "date": null,

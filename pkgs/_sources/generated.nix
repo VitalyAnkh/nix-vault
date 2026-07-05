@@ -50,6 +50,20 @@
     };
     date = "2026-06-26";
   };
+  source-godot-master = {
+    pname = "source-godot-master";
+    version = "ebbf577a041d1ab8d7824b6f90e7d0575461ca45";
+    src = fetchgit {
+      url = "https://github.com/godotengine/godot.git";
+      rev = "ebbf577a041d1ab8d7824b6f90e7d0575461ca45";
+      fetchSubmodules = false;
+      deepClone = false;
+      leaveDotGit = false;
+      sparseCheckout = [ ];
+      sha256 = "sha256-0yS6cy4MblrdZApB4Tu9dwtH8rILNOB7+QnZV5qNNEw=";
+    };
+    date = "2026-07-05";
+  };
   source-nutstore-client = {
     pname = "source-nutstore-client";
     version = "6.4.3";
