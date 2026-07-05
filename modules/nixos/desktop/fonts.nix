@@ -1,4 +1,22 @@
-{ ... }:
+{
+  lib,
+  options,
+  pkgs,
+  ...
+}:
+let
+  hasKmsconConfig = options.services.kmscon ? config;
+  kmsconFonts = with pkgs; [
+    {
+      name = "Maple Mono NF CN";
+      package = maple-mono.NF-CN-unhinted;
+    }
+    {
+      name = "JetBrainsMono Nerd Font";
+      package = nerd-fonts.jetbrains-mono;
+    }
+  ];
+in
 {
   # all fonts are linked to /nix/var/nix/profiles/system/sw/share/X11/fonts
   fonts = {
@@ -55,6 +73,8 @@
     # It supports a richer feature set than the standard linux console VT,
     # including full unicode support, and when the video card supports drm should be much faster.
     enable = true;
+  }
+  // lib.optionalAttrs hasKmsconConfig {
     config = {
       "font-name" = "Maple Mono NF CN";
       "font-size" = 14;
@@ -62,5 +82,12 @@
       # Whether to use 3D hardware acceleration to render the console.
       hwaccel = true;
     };
+  }
+  // lib.optionalAttrs (!hasKmsconConfig) {
+    fonts = kmsconFonts;
+    extraOptions = "--term xterm-256color";
+    extraConfig = "font-size=14";
+    # Whether to use 3D hardware acceleration to render the console.
+    hwRender = true;
   };
 }
