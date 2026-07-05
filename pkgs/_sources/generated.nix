@@ -8,15 +8,15 @@
 {
   source-codex-desktop-linux = {
     pname = "source-codex-desktop-linux";
-    version = "e75743bfba7628f82ebdc2e60a91c8faf5333f54";
+    version = "177ce2d64b6426d7dc1b2dd42226528523454f6e";
     src = fetchFromGitHub {
       owner = "ilysenko";
       repo = "codex-desktop-linux";
-      rev = "e75743bfba7628f82ebdc2e60a91c8faf5333f54";
+      rev = "177ce2d64b6426d7dc1b2dd42226528523454f6e";
       fetchSubmodules = false;
-      sha256 = "sha256-l+/VtXxgpNBo13l1KAtRhNf6UDzVrDprCDZpht6/MTU=";
+      sha256 = "sha256-KMa1I47xLI805zgiVHAOgtqZvHb9BATAbBf8pN1dovg=";
     };
-    date = "2026-06-29";
+    date = "2026-07-05";
   };
   source-emacs-lsp-booster = {
     pname = "source-emacs-lsp-booster";
@@ -68,22 +68,22 @@
   };
   source-roxy-browser = {
     pname = "source-roxy-browser";
-    version = "3.9.0";
+    version = "3.9.1";
     src = fetchurl {
-      url = "https://lumibrowser.oss-cn-shenzhen.aliyuncs.com/public/package/app/Linux/x64/3.9.0/RoxyBrowser_x64_3.9.0.deb";
-      sha256 = "sha256-OwVXqoQl9MwuldA5VxBzEjNDPbSRt9txCql7qNUj9DM=";
+      url = "https://lumibrowser.oss-cn-shenzhen.aliyuncs.com/public/package/app/Linux/x64/3.9.1/RoxyBrowser_x64_3.9.1.deb";
+      sha256 = "sha256-gV8yCBhZmQY3AJ7Jhwe4aq+ia4IvUJas645M2GwyraA=";
     };
   };
   source-warp-terminal = {
     pname = "source-warp-terminal";
-    version = "160b6c50346f3f0abcfe018c643efcc8eb1370e6";
+    version = "b7430f40a9ef73a534f97bbc815944ebf17eedf8";
     src = fetchFromGitHub {
       owner = "warpdotdev";
       repo = "Warp";
-      rev = "160b6c50346f3f0abcfe018c643efcc8eb1370e6";
+      rev = "b7430f40a9ef73a534f97bbc815944ebf17eedf8";
       fetchSubmodules = false;
-      sha256 = "sha256-8oLwiDNnJ0FMWzrh7vqSn+TD8vROVwB4ifhfR6Oohns=";
+      sha256 = "sha256-2AqaKh9UaYExq9gCzhlAsdmfvkiPa6F0S73TShdtO10=";
     };
-    date = "2026-06-28";
+    date = "2026-07-05";
   };
 }
