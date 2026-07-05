@@ -7,7 +7,7 @@
       cowsay
       gnupg
       gnumake
-      patchelf
+      patchelfUnstable
 
       ninja
       trash-cli

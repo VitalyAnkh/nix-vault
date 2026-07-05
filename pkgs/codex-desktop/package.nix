@@ -2,7 +2,7 @@
   jq,
   lib,
   nixpkgs,
-  patchelf,
+  patchelfUnstable,
   rustPlatform,
   source-codex-desktop-linux,
   stdenv,
@@ -85,7 +85,7 @@ else
 
     nativeBuildInputs = [
       jq
-      patchelf
+      patchelfUnstable
     ];
 
     dontUnpack = true;
