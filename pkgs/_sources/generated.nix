@@ -8,15 +8,15 @@
 {
   source-codex-desktop-linux = {
     pname = "source-codex-desktop-linux";
-    version = "177ce2d64b6426d7dc1b2dd42226528523454f6e";
+    version = "98e05d0dbc38634557e5da3d5bd771356073029e";
     src = fetchFromGitHub {
       owner = "ilysenko";
       repo = "codex-desktop-linux";
-      rev = "177ce2d64b6426d7dc1b2dd42226528523454f6e";
+      rev = "98e05d0dbc38634557e5da3d5bd771356073029e";
       fetchSubmodules = false;
-      sha256 = "sha256-KMa1I47xLI805zgiVHAOgtqZvHb9BATAbBf8pN1dovg=";
+      sha256 = "sha256-eGcIhJLLI1zUVzdmmEfrnj//umH1dI5hpGCnjLKBYkk=";
     };
-    date = "2026-07-05";
+    date = "2026-07-11";
   };
   source-emacs-lsp-booster = {
     pname = "source-emacs-lsp-booster";
@@ -52,17 +52,17 @@
   };
   source-godot-master = {
     pname = "source-godot-master";
-    version = "ebbf577a041d1ab8d7824b6f90e7d0575461ca45";
+    version = "2c089e9bf0b8712d0bc444c2ceaf9c543ed9c777";
     src = fetchgit {
       url = "https://github.com/godotengine/godot.git";
-      rev = "ebbf577a041d1ab8d7824b6f90e7d0575461ca45";
+      rev = "2c089e9bf0b8712d0bc444c2ceaf9c543ed9c777";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-0yS6cy4MblrdZApB4Tu9dwtH8rILNOB7+QnZV5qNNEw=";
+      sha256 = "sha256-liWZ+1CBk1a4/ANPw/C8fCUsZ5qAcFmBebEuSMpTfhw=";
     };
-    date = "2026-07-05";
+    date = "2026-07-10";
   };
   source-nutstore-client = {
     pname = "source-nutstore-client";
@@ -82,22 +82,22 @@
   };
   source-roxy-browser = {
     pname = "source-roxy-browser";
-    version = "3.9.1";
+    version = "3.9.2";
     src = fetchurl {
-      url = "https://lumibrowser.oss-cn-shenzhen.aliyuncs.com/public/package/app/Linux/x64/3.9.1/RoxyBrowser_x64_3.9.1.deb";
-      sha256 = "sha256-gV8yCBhZmQY3AJ7Jhwe4aq+ia4IvUJas645M2GwyraA=";
+      url = "https://lumibrowser.oss-cn-shenzhen.aliyuncs.com/public/package/app/Linux/x64/3.9.2/RoxyBrowser_x64_3.9.2.deb";
+      sha256 = "sha256-2MT9j3rWceSqhK6D7xSOz1yI2o9a9eeOjmzfneLzHKY=";
     };
   };
   source-warp-terminal = {
     pname = "source-warp-terminal";
-    version = "b7430f40a9ef73a534f97bbc815944ebf17eedf8";
+    version = "a01df387ae5697f05d08ac180a081e9e60b7200c";
     src = fetchFromGitHub {
       owner = "warpdotdev";
       repo = "Warp";
-      rev = "b7430f40a9ef73a534f97bbc815944ebf17eedf8";
+      rev = "a01df387ae5697f05d08ac180a081e9e60b7200c";
       fetchSubmodules = false;
-      sha256 = "sha256-2AqaKh9UaYExq9gCzhlAsdmfvkiPa6F0S73TShdtO10=";
+      sha256 = "sha256-HZCq+tMgXZFyRjiw8NmX0YUB0nEOBq4IKIkcvuxcJEs=";
     };
-    date = "2026-07-05";
+    date = "2026-07-11";
   };
 }
