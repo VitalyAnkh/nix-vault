@@ -78,6 +78,19 @@
       };
     })
 
+    # Warzone 2100 4.7.0 uses a Vulkan-Hpp enum alias removed in Vulkan 1.4.350.
+    # Backport the upstream compatibility fix until nixpkgs includes it.
+    (_final: prev: {
+      warzone2100 = prev.warzone2100.overrideAttrs (old: {
+        patches = (old.patches or [ ]) ++ [
+          (prev.fetchurl {
+            url = "https://github.com/Warzone2100/warzone2100/commit/8701c62ae68ca70da43ec915cbf6776c492e6656.patch";
+            hash = "sha256-LIPoGQ8ZloqD20JkptsHK0mhnfjcJCCLMeshhzsmqjY=";
+          })
+        ];
+      });
+    })
+
     # test017-syncreplication-refresh is timing-sensitive and can fail even when
     # slapd itself built correctly. The other syncrepl tests in this cluster are
     # the same kind of timing-sensitive integration checks, so skip the cluster

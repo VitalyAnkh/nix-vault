@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }:
 let
@@ -39,7 +40,10 @@ in
       "auto-allocate-uids"
       "cgroups"
     ];
-    sandbox-paths = [ "/dev/net" ];
+    sandbox-paths = [
+      "/bin/sh=${pkgs.busybox-sandbox-shell.out}/bin/busybox"
+      "/dev/net"
+    ];
   };
 
   nix.channel.enable = false; # remove nix-channel related tools & configs, we use flakes instead.

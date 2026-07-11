@@ -22,8 +22,9 @@
     (lib.setPrio 10 cudaPackages.cudatoolkit)
     # nsight_compute has medium priority
     (lib.setPrio 20 cudaPackages.nsight_compute)
-    # nsight_systems has lowest priority (highest number)
-    (lib.setPrio 30 cudaPackages.nsight_systems)
+    (lib.setPrio 30 (
+      cudaPackages.nsight_systems.override { ucx = ucx.override { enableCuda = false; }; }
+    ))
 
     # cross compiling rust
     # cargo-xwin

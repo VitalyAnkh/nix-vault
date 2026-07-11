@@ -12,6 +12,6 @@ in
     host = "0.0.0.0";
     port = 11434;
     home = ollamaHome;
-    models = "${home}/models";
+    modelsDir = "${home}/models";
   };
 }
