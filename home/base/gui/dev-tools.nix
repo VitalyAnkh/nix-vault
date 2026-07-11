@@ -20,6 +20,7 @@ in
       cursor-cli # packaged in nixpkgs, not llm-agents
     ]
     ++ (with llmAgentPackages; [
+      grok
       #codex
       #claude-code
       #opencode

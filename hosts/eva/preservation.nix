@@ -218,6 +218,7 @@ in
         ".agents"
         ".config/agents"
         ".claude"
+        ".grok"
         ".config/codex-desktop"
         ".config/Codex"
         ".codex"
