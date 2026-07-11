@@ -1,5 +1,5 @@
 {
-  emacs30,
+  emacs31-pgtk,
   lib,
   stdenv,
   ccacheStdenv,
@@ -11,7 +11,7 @@
 let
   source-emacs = source-emacs-master-igc;
 in
-(emacs30.override {
+(emacs31-pgtk.override {
   #stdenv = ccacheStdenv;
   withPgtk = true;
   # toolkit = "lucid";
