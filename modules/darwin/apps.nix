@@ -192,6 +192,7 @@ in
       "stats" # beautiful system status monitor in menu bar
       "jordanbaird-ice" # Powerful menu bar manager for macOS
       "orcaslicer" # 3d printer slicer app
+      "bambu-studio" # bambu 3d printer slicer app
 
       # "reaper"  # audio editor
       # "sonic-pi" # music programming

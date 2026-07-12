@@ -355,6 +355,10 @@ in
         ".local/share/orca-slicer"
         ".config/OrcaSlicer"
 
+        # Bambu Studio - 3D Printer Slicer
+        ".local/share/bambu-studio"
+        ".config/BambuStudio"
+
         # ======================================
         # Meeting / Remote Desktop / Recording
         # ======================================
