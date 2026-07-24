@@ -42,6 +42,18 @@ let
       description = "zzhou User";
     }
     {
+      name = "m01537";
+      uid = 1011;
+      initialHashedPassword = "$6$t9D22ZE.YxkWh3.4$v6V7MuBMbOdhQYKZMzPm8gVlixCdrGZCSsC9REvReF5EYuO1PUzUOHgLRsSCaKjITxcPP5GemXrZ.72PSLib9.";
+      description = "m01537 User";
+    }
+    {
+      name = "george";
+      uid = 1012;
+      initialHashedPassword = "$6$hMtgcYVw.aszyff0$0No32EeRKGAMPgYTBrUBNbPQ3.kREBe5E/ZOf9JTtmf.0nPGgW3zH7Y7pjQcgLGXfLouamoTXVa9D.UPvKX/M.";
+      description = "George User";
+    }
+    {
       name = "hwtest";
       uid = 1010;
       initialHashedPassword = sharedHashedPassword;

@@ -12,6 +12,8 @@ let
     "xwu"
     "cxu"
     "zzhou"
+    "m01537"
+    "george"
     "sw"
     "jwli"
     "mzhang"
