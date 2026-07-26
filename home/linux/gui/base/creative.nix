@@ -22,7 +22,8 @@
 
       # 2d game design
       aseprite # Animated sprite editor & pixel art tool
-      godot_4
+      # godot_4
+      pkgs.godot # use godot built from godot repository master
 
       # this app consumes a lot of storage, so do not install it currently
       kicad # 3d printing, electrical engineering
