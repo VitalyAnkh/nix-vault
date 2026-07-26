@@ -1,7 +1,7 @@
 {
   "source-codex-desktop-linux": {
     "cargoLock": null,
-    "date": "2026-07-11",
+    "date": "2026-07-12",
     "extract": null,
     "name": "source-codex-desktop-linux",
     "passthru": null,
@@ -13,12 +13,12 @@
       "name": null,
       "owner": "ilysenko",
       "repo": "codex-desktop-linux",
-      "rev": "98e05d0dbc38634557e5da3d5bd771356073029e",
-      "sha256": "sha256-eGcIhJLLI1zUVzdmmEfrnj//umH1dI5hpGCnjLKBYkk=",
+      "rev": "c7a36b2d3df57a5d710d52a5bee62fac200ec4de",
+      "sha256": "sha256-/5B1nwjbftMi/Ok7WauvOdkSD/AftVJCmTAjGUckhQQ=",
       "sparseCheckout": [],
       "type": "github"
     },
-    "version": "98e05d0dbc38634557e5da3d5bd771356073029e"
+    "version": "c7a36b2d3df57a5d710d52a5bee62fac200ec4de"
   },
   "source-emacs-lsp-booster": {
     "cargoLock": {
@@ -142,11 +142,11 @@
       "name": null,
       "owner": "warpdotdev",
       "repo": "Warp",
-      "rev": "a01df387ae5697f05d08ac180a081e9e60b7200c",
-      "sha256": "sha256-HZCq+tMgXZFyRjiw8NmX0YUB0nEOBq4IKIkcvuxcJEs=",
+      "rev": "f9a0bf80e3e767f148c01339f5828a2ca7a513c5",
+      "sha256": "sha256-xHrUVFWraK0SgBYmCzsvVbvysgkbKxSvoR+Dms19y9g=",
       "sparseCheckout": [],
       "type": "github"
     },
-    "version": "a01df387ae5697f05d08ac180a081e9e60b7200c"
+    "version": "f9a0bf80e3e767f148c01339f5828a2ca7a513c5"
   }
 }

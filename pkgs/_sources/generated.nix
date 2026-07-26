@@ -8,15 +8,15 @@
 {
   source-codex-desktop-linux = {
     pname = "source-codex-desktop-linux";
-    version = "98e05d0dbc38634557e5da3d5bd771356073029e";
+    version = "c7a36b2d3df57a5d710d52a5bee62fac200ec4de";
     src = fetchFromGitHub {
       owner = "ilysenko";
       repo = "codex-desktop-linux";
-      rev = "98e05d0dbc38634557e5da3d5bd771356073029e";
+      rev = "c7a36b2d3df57a5d710d52a5bee62fac200ec4de";
       fetchSubmodules = false;
-      sha256 = "sha256-eGcIhJLLI1zUVzdmmEfrnj//umH1dI5hpGCnjLKBYkk=";
+      sha256 = "sha256-/5B1nwjbftMi/Ok7WauvOdkSD/AftVJCmTAjGUckhQQ=";
     };
-    date = "2026-07-11";
+    date = "2026-07-12";
   };
   source-emacs-lsp-booster = {
     pname = "source-emacs-lsp-booster";
@@ -90,13 +90,13 @@
   };
   source-warp-terminal = {
     pname = "source-warp-terminal";
-    version = "a01df387ae5697f05d08ac180a081e9e60b7200c";
+    version = "f9a0bf80e3e767f148c01339f5828a2ca7a513c5";
     src = fetchFromGitHub {
       owner = "warpdotdev";
       repo = "Warp";
-      rev = "a01df387ae5697f05d08ac180a081e9e60b7200c";
+      rev = "f9a0bf80e3e767f148c01339f5828a2ca7a513c5";
       fetchSubmodules = false;
-      sha256 = "sha256-HZCq+tMgXZFyRjiw8NmX0YUB0nEOBq4IKIkcvuxcJEs=";
+      sha256 = "sha256-xHrUVFWraK0SgBYmCzsvVbvysgkbKxSvoR+Dms19y9g=";
     };
     date = "2026-07-11";
   };
