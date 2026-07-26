@@ -168,6 +168,13 @@ in
       "aerospace" # an i3-like tiling window manager for macOS
       "ghostty" # terminal emulator
 
+      # AI agents
+      "codex-app" # codex desktop app
+      "claude" # claude desktop app
+
+      # container & vm
+      "utm" # vm
+
       # https://joplinapp.org/help/
       "joplin" # note taking app
 

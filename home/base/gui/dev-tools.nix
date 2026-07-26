@@ -21,6 +21,7 @@ in
     ]
     ++ (with llmAgentPackages; [
       grok
+      kimi-code
       #codex
       #claude-code
       #opencode

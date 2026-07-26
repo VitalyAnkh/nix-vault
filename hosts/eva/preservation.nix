@@ -228,6 +228,7 @@ in
         ".local/state/opencode"
         ".context7"
         ".kimi"
+        ".kimi-code"
         ".local/state/codex-desktop"
 
         # nvim
