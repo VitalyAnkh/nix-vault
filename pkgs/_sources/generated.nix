@@ -8,15 +8,15 @@
 {
   source-codex-desktop-linux = {
     pname = "source-codex-desktop-linux";
-    version = "c7a36b2d3df57a5d710d52a5bee62fac200ec4de";
+    version = "b48075d553475ba7674ea609fea806dc66913638";
     src = fetchFromGitHub {
       owner = "ilysenko";
       repo = "codex-desktop-linux";
-      rev = "c7a36b2d3df57a5d710d52a5bee62fac200ec4de";
+      rev = "b48075d553475ba7674ea609fea806dc66913638";
       fetchSubmodules = false;
-      sha256 = "sha256-/5B1nwjbftMi/Ok7WauvOdkSD/AftVJCmTAjGUckhQQ=";
+      sha256 = "sha256-tYCWA6CsnYWiGgyfZTvYjWvn7eNrSfTxOb3cNEHA3JA=";
     };
-    date = "2026-07-12";
+    date = "2026-07-30";
   };
   source-emacs-lsp-booster = {
     pname = "source-emacs-lsp-booster";
@@ -38,31 +38,31 @@
   };
   source-emacs-master-igc = {
     pname = "source-emacs-master-igc";
-    version = "abd0574762fe680a068974374e639ee6eb9840b5";
+    version = "64f598cbc6e6ba187d537b24adf377c2d033cc5a";
     src = fetchgit {
       url = "https://github.com/emacs-mirror/emacs.git";
-      rev = "abd0574762fe680a068974374e639ee6eb9840b5";
+      rev = "64f598cbc6e6ba187d537b24adf377c2d033cc5a";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-B1ygD96Z4T7BVzLVrtr0ThRbYS4ClDXWZ+Riv/vBNXY=";
+      sha256 = "sha256-Dw0cMFL0V1rd0S7BeEQHhK6ma4lkOvJuQnJZsTTINzE=";
     };
-    date = "2026-06-26";
+    date = "2026-07-30";
   };
   source-godot-master = {
     pname = "source-godot-master";
-    version = "2c089e9bf0b8712d0bc444c2ceaf9c543ed9c777";
+    version = "4e8c061c9b4a778102a085d9d10f64b3c6be0f87";
     src = fetchgit {
       url = "https://github.com/godotengine/godot.git";
-      rev = "2c089e9bf0b8712d0bc444c2ceaf9c543ed9c777";
+      rev = "4e8c061c9b4a778102a085d9d10f64b3c6be0f87";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
       sparseCheckout = [ ];
-      sha256 = "sha256-liWZ+1CBk1a4/ANPw/C8fCUsZ5qAcFmBebEuSMpTfhw=";
+      sha256 = "sha256-h1U5nZCd0eHDfYFXvGgix/pdY99IXfkHzFRXa5xpgkI=";
     };
-    date = "2026-07-10";
+    date = "2026-07-30";
   };
   source-nutstore-client = {
     pname = "source-nutstore-client";
@@ -82,22 +82,22 @@
   };
   source-roxy-browser = {
     pname = "source-roxy-browser";
-    version = "3.9.2";
+    version = "4.0.0";
     src = fetchurl {
-      url = "https://lumibrowser.oss-cn-shenzhen.aliyuncs.com/public/package/app/Linux/x64/3.9.2/RoxyBrowser_x64_3.9.2.deb";
-      sha256 = "sha256-2MT9j3rWceSqhK6D7xSOz1yI2o9a9eeOjmzfneLzHKY=";
+      url = "https://lumibrowser.oss-cn-shenzhen.aliyuncs.com/public/package/app/Linux/x64/4.0.0/RoxyBrowser_x64_4.0.0.deb";
+      sha256 = "sha256-wzlMmudZ1MRbsVFGDcxZrbPKJdDtGt01/S0dqEpZp7k=";
     };
   };
   source-warp-terminal = {
     pname = "source-warp-terminal";
-    version = "f9a0bf80e3e767f148c01339f5828a2ca7a513c5";
+    version = "f79df8d9d440265e348cc266a4ba816a3e916be1";
     src = fetchFromGitHub {
       owner = "warpdotdev";
       repo = "Warp";
-      rev = "f9a0bf80e3e767f148c01339f5828a2ca7a513c5";
+      rev = "f79df8d9d440265e348cc266a4ba816a3e916be1";
       fetchSubmodules = false;
-      sha256 = "sha256-xHrUVFWraK0SgBYmCzsvVbvysgkbKxSvoR+Dms19y9g=";
+      sha256 = "sha256-Fq+NSPrhOjC2g1kMnn3KjM9H/P3dk2lDgdYcCw6XOAk=";
     };
-    date = "2026-07-11";
+    date = "2026-07-30";
   };
 }
