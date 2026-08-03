@@ -60,6 +60,11 @@ in
         receiver = "telegram";
         routes = [
           {
+            # Meta alerts (Watchdog, InfoInhibitor) and info-level noise never notify.
+            receiver = "null";
+            matchers = [ ''severity =~ "none|info"'' ];
+          }
+          {
             receiver = "telegram";
             # group alerts by labels
             group_by = [
@@ -98,6 +103,10 @@ in
         ];
       };
       receivers = [
+        {
+          # Discards all notifications (for meta alerts that should never notify).
+          name = "null";
+        }
         # {
         #   name = "email";
         #   email_configs = [
@@ -122,25 +131,43 @@ in
               # https://core.telegram.org/bots/api#formatting-options
               parse_mode = "HTML";
               # Message template
+              # Telegram limits a message to 4096 chars, so only render the first 5 alerts
+              # in a group and keep the fields minimal (no full label dump).
+              #
+              # WARNING: never use template variables ($i, $a, ...) here. The NixOS
+              # alertmanager module pipes the generated config through `envsubst`
+              # (to inject $TELEGRAM_BOT_TOKEN etc.), which silently replaces any
+              # $var in this template with an empty string and breaks rendering at
+              # notify time. Use `{{ range .Alerts }}` + dot, and `define`/`template`
+              # for reuse instead.
               message = ''
                 {{- if eq .Status "firing" }}
-                🟡 <b>告警触发</b>  {{ .CommonLabels.alertname }} [{{ index .CommonLabels "severity" | title }}]
+                🟡 <b>告警触发</b> [{{ .CommonLabels.severity | title }}] <b>{{ .CommonLabels.alertname }}</b> (共 {{ len .Alerts }} 条)
                 {{- else }}
-                🟢 <b>告警恢复</b>  {{ .CommonLabels.alertname }} [{{ index .CommonLabels "severity" | title }}]
+                🟢 <b>告警恢复</b> [{{ .CommonLabels.severity | title }}] <b>{{ .CommonLabels.alertname }}</b>
                 {{- end }}
 
-                {{- range .Alerts }}
+                • <b>告警组</b>: {{ .CommonLabels.alertgroup }}
+                • <b>Cluster</b>: {{ with .CommonLabels.cluster }}{{ . }}{{ else }}N/A{{ end }}
+                • <b>Env</b>: {{ with .CommonLabels.env }}{{ . }}{{ else }}N/A{{ end }}
+                • <b>Namespace</b>: {{ with .CommonLabels.namespace }}{{ . }}{{ else }}N/A{{ end }}
+                {{- define "alert" }}
 
-                📊 <b>详情:</b>
-                • <b>告警组</b>: {{ .Labels.alertgroup }}
-                • <b>等级</b>: {{ if eq .Labels.severity "critical" }}🔴{{ else }}🟡 {{ end }} {{ .Labels.severity | title }}
-                • <b>查询</b>: <a href="{{ .GeneratorURL }}">Grafana Explore</a>
-                • <b>触发值</b>: {{ with .Annotations.value }}{{ . }}{{ else }}N/A{{ end }}
-                • <b>Env</b>: {{ with .Labels.env }}{{ . }}{{ else }}N/A{{ end }}
-                • <b>Cluster</b>: {{ with .Labels.cluster }}{{ . }}{{ else }}N/A{{ end }}
-                • <b>Namespace</b>: {{ with .Labels.namespace }}{{ . }}{{ else }}N/A{{ end }}
-                • <b>标签</b>: {{ range .Labels.SortedPairs }}{{ .Name }}={{ .Value }},{{ end }}
-                • <b>触发时间</b>: {{ .StartsAt.Format "2006-01-02 15:04:05" }}
+                ━━━━━━━━
+                📌 {{ with .Annotations.summary }}<b>{{ . }}</b>{{ else }}<b>{{ .Labels.instance }}</b>{{ end }}
+                {{- with .Labels.nodename }}
+                🏠 {{ . }}
+                {{- end }}
+                🔗 <a href="{{ .GeneratorURL }}">Grafana Explore</a> · ⏱ {{ .StartsAt.Format "2006-01-02 15:04:05" }}
+                {{- end }}
+                {{- if le (len .Alerts) 5 }}
+                {{- range .Alerts }}{{ template "alert" . }}
+                {{- end }}
+                {{- else }}
+                {{- range slice .Alerts 0 5 }}{{ template "alert" . }}
+                {{- end }}
+
+                ⚠️ 另有 {{ len (slice .Alerts 5) }} 条同组告警未列出，请查看 Alertmanager。
                 {{- end }}
               '';
             }
