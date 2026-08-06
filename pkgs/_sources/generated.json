@@ -1,7 +1,7 @@
 {
   "source-codex-desktop-linux": {
     "cargoLock": null,
-    "date": "2026-07-30",
+    "date": "2026-08-06",
     "extract": null,
     "name": "source-codex-desktop-linux",
     "passthru": null,
@@ -13,12 +13,12 @@
       "name": null,
       "owner": "ilysenko",
       "repo": "codex-desktop-linux",
-      "rev": "b48075d553475ba7674ea609fea806dc66913638",
-      "sha256": "sha256-tYCWA6CsnYWiGgyfZTvYjWvn7eNrSfTxOb3cNEHA3JA=",
+      "rev": "f20d8252240f0ee9189faf118b0886c0a3d788a4",
+      "sha256": "sha256-5TfmIK18fXUdD1GWz4wecNSR7j7B6TC22wuqcaWdt/0=",
       "sparseCheckout": [],
       "type": "github"
     },
-    "version": "b48075d553475ba7674ea609fea806dc66913638"
+    "version": "f20d8252240f0ee9189faf118b0886c0a3d788a4"
   },
   "source-emacs-lsp-booster": {
     "cargoLock": {
@@ -45,7 +45,7 @@
   },
   "source-emacs-master-igc": {
     "cargoLock": null,
-    "date": "2026-07-30",
+    "date": "2026-08-05",
     "extract": null,
     "name": "source-emacs-master-igc",
     "passthru": null,
@@ -55,17 +55,17 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "64f598cbc6e6ba187d537b24adf377c2d033cc5a",
-      "sha256": "sha256-Dw0cMFL0V1rd0S7BeEQHhK6ma4lkOvJuQnJZsTTINzE=",
+      "rev": "5f4458c796c095d00d5828fd4461508c1836881e",
+      "sha256": "sha256-w2TrbiggRiIimgHkzDNrT1xOJcodJmK/goAflASJDMc=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://github.com/emacs-mirror/emacs.git"
     },
-    "version": "64f598cbc6e6ba187d537b24adf377c2d033cc5a"
+    "version": "5f4458c796c095d00d5828fd4461508c1836881e"
   },
   "source-godot-master": {
     "cargoLock": null,
-    "date": "2026-07-30",
+    "date": "2026-08-05",
     "extract": null,
     "name": "source-godot-master",
     "passthru": null,
@@ -75,13 +75,13 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "4e8c061c9b4a778102a085d9d10f64b3c6be0f87",
-      "sha256": "sha256-h1U5nZCd0eHDfYFXvGgix/pdY99IXfkHzFRXa5xpgkI=",
+      "rev": "51105ccbe58381774ecd7a7486d564b202a5192e",
+      "sha256": "sha256-tKNnuEJo25mnhUZwxCZXo7mbRIUdqg3vm+QoAdcwozQ=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://github.com/godotengine/godot.git"
     },
-    "version": "4e8c061c9b4a778102a085d9d10f64b3c6be0f87"
+    "version": "51105ccbe58381774ecd7a7486d564b202a5192e"
   },
   "source-nutstore-client": {
     "cargoLock": null,
@@ -130,7 +130,7 @@
   },
   "source-warp-terminal": {
     "cargoLock": null,
-    "date": "2026-07-30",
+    "date": "2026-08-05",
     "extract": null,
     "name": "source-warp-terminal",
     "passthru": null,
@@ -142,11 +142,11 @@
       "name": null,
       "owner": "warpdotdev",
       "repo": "Warp",
-      "rev": "f79df8d9d440265e348cc266a4ba816a3e916be1",
-      "sha256": "sha256-Fq+NSPrhOjC2g1kMnn3KjM9H/P3dk2lDgdYcCw6XOAk=",
+      "rev": "733546102ea4367acc733f21b53b6e70c83b682e",
+      "sha256": "sha256-Qy18wxWKkhnsImjrz169P3ZxfAo5mKWIeyA1ZysWyYY=",
       "sparseCheckout": [],
       "type": "github"
     },
-    "version": "f79df8d9d440265e348cc266a4ba816a3e916be1"
+    "version": "733546102ea4367acc733f21b53b6e70c83b682e"
   }
 }
