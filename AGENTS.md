@@ -383,6 +383,19 @@ work. </verification>
 targets, names no specific file or function, touches 3+ areas, or is a single sentence without a
 clear deliverable. When detected: explore first, optionally consult architect, then plan.
 
+NixOS Build Resource Limits:
+
+- Every `nixos-rebuild` or `nix build` that evaluates or builds a NixOS configuration must pass
+  explicit `--max-jobs` and `--cores` values no greater than `16`.
+- Default to `--max-jobs 1 --cores 1` for EVA, MUON, or any large configuration. Increase
+  concurrency only when current resource headroom has been checked and it remains within the
+  16-job/16-core ceiling.
+- Cap aggregate builder memory at `16 GiB` with a cgroup that covers the Nix daemon and its builder
+  processes. Do not treat a scope that contains only the `nixos-rebuild` client as proof of this
+  limit when a system Nix daemon owns the actual builders.
+- Do not start another Nix evaluation or build while a constrained configuration build is active,
+  unless it is demonstrably isolated within the same resource limits.
+
 Parallelization:
 
 - Run 2+ independent tasks in parallel when each takes >30s.
