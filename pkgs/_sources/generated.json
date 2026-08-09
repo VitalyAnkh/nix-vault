@@ -1,7 +1,7 @@
 {
   "source-codex-desktop-linux": {
     "cargoLock": null,
-    "date": "2026-08-06",
+    "date": "2026-08-09",
     "extract": null,
     "name": "source-codex-desktop-linux",
     "passthru": null,
@@ -13,12 +13,12 @@
       "name": null,
       "owner": "ilysenko",
       "repo": "codex-desktop-linux",
-      "rev": "f20d8252240f0ee9189faf118b0886c0a3d788a4",
-      "sha256": "sha256-5TfmIK18fXUdD1GWz4wecNSR7j7B6TC22wuqcaWdt/0=",
+      "rev": "6192a9c554d2166b94e7aba4dcfacad52199670e",
+      "sha256": "sha256-wIrmGqRsnmo31qD2Edex/vK2qKUEVXYyKfhNpXCGVpk=",
       "sparseCheckout": [],
       "type": "github"
     },
-    "version": "f20d8252240f0ee9189faf118b0886c0a3d788a4"
+    "version": "6192a9c554d2166b94e7aba4dcfacad52199670e"
   },
   "source-emacs-lsp-booster": {
     "cargoLock": {
@@ -45,7 +45,7 @@
   },
   "source-emacs-master-igc": {
     "cargoLock": null,
-    "date": "2026-08-05",
+    "date": "2026-08-06",
     "extract": null,
     "name": "source-emacs-master-igc",
     "passthru": null,
@@ -55,17 +55,17 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "5f4458c796c095d00d5828fd4461508c1836881e",
-      "sha256": "sha256-w2TrbiggRiIimgHkzDNrT1xOJcodJmK/goAflASJDMc=",
+      "rev": "07b35c82b7dfc9d0c044dc54dcc65675f49de87e",
+      "sha256": "sha256-/KKDhIXhmHVIl7vz/cz9gnba36NPWC5ZyQpcmmY2yl8=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://github.com/emacs-mirror/emacs.git"
     },
-    "version": "5f4458c796c095d00d5828fd4461508c1836881e"
+    "version": "07b35c82b7dfc9d0c044dc54dcc65675f49de87e"
   },
   "source-godot-master": {
     "cargoLock": null,
-    "date": "2026-08-05",
+    "date": "2026-08-07",
     "extract": null,
     "name": "source-godot-master",
     "passthru": null,
@@ -75,13 +75,13 @@
       "fetchSubmodules": false,
       "leaveDotGit": false,
       "name": null,
-      "rev": "51105ccbe58381774ecd7a7486d564b202a5192e",
-      "sha256": "sha256-tKNnuEJo25mnhUZwxCZXo7mbRIUdqg3vm+QoAdcwozQ=",
+      "rev": "4173760fdf6c2c722e82e08cb58e55f34c9efd80",
+      "sha256": "sha256-fawtxbgqXwmrUQqobC9RCnRHoguhIOwjVctEjmJ0SpQ=",
       "sparseCheckout": [],
       "type": "git",
       "url": "https://github.com/godotengine/godot.git"
     },
-    "version": "51105ccbe58381774ecd7a7486d564b202a5192e"
+    "version": "4173760fdf6c2c722e82e08cb58e55f34c9efd80"
   },
   "source-nutstore-client": {
     "cargoLock": null,
@@ -122,15 +122,15 @@
     "pinned": false,
     "src": {
       "name": null,
-      "sha256": "sha256-wzlMmudZ1MRbsVFGDcxZrbPKJdDtGt01/S0dqEpZp7k=",
+      "sha256": "sha256-93Du8l6pZJ13V9f+6Oxzjq07kSuLr7PMcTWko/GJas0=",
       "type": "url",
-      "url": "https://lumibrowser.oss-cn-shenzhen.aliyuncs.com/public/package/app/Linux/x64/4.0.0/RoxyBrowser_x64_4.0.0.deb"
+      "url": "https://lumibrowser.oss-cn-shenzhen.aliyuncs.com/public/package/app/Linux/x64/4.0.2/RoxyBrowser_x64_4.0.2.deb"
     },
-    "version": "4.0.0"
+    "version": "4.0.2"
   },
   "source-warp-terminal": {
     "cargoLock": null,
-    "date": "2026-08-05",
+    "date": "2026-08-08",
     "extract": null,
     "name": "source-warp-terminal",
     "passthru": null,
@@ -142,11 +142,11 @@
       "name": null,
       "owner": "warpdotdev",
       "repo": "Warp",
-      "rev": "733546102ea4367acc733f21b53b6e70c83b682e",
-      "sha256": "sha256-Qy18wxWKkhnsImjrz169P3ZxfAo5mKWIeyA1ZysWyYY=",
+      "rev": "7d93fa46886b97a69ef23efa7c76c9d32a023054",
+      "sha256": "sha256-6ePW8rELSuGQvB74wUAGe6vJRiRH93WWvJHvWrVenPw=",
       "sparseCheckout": [],
       "type": "github"
     },
-    "version": "733546102ea4367acc733f21b53b6e70c83b682e"
+    "version": "7d93fa46886b97a69ef23efa7c76c9d32a023054"
   }
 }
