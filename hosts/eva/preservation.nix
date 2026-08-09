@@ -286,6 +286,10 @@ in
           mode = "0700";
         }
         {
+          directory = ".config/gh";
+          mode = "0700";
+        }
+        {
           directory = ".docker";
           mode = "0700";
         }

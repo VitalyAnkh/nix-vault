@@ -22,8 +22,10 @@ If rules conflict, follow the higher-priority source and state the conflict brie
   - Examples: `git push`, creating/updating remote PRs/Issues via `gh`.
 - MUST NOT auto-run remote-mutating commands unless explicitly requested.
   - Examples: `kubectl apply/delete`, `helm upgrade`, `terraform apply`, remote `ssh` mutation.
-- MUST NOT use destructive/force/delete options EVEN if explicitly requested.
-  - Examples: `--force`, `rm -rf`, `git reset --hard`, `gh repo delete`, `terraform destroy`
+- MUST NOT perform destructive/irreversible operations or use force options, even if explicitly
+  requested (e.g. `rm -rf`, `terraform destroy`).
+  - MAY perform verified, recoverable cleanup when explicitly requested (e.g. `git branch -d` for a
+    fully merged branch).
 - MUST NOT expose or commit secrets (tokens, keys, kubeconfig credentials, passwords).
 
 ## 3) Security and Secrets Handling
@@ -35,10 +37,13 @@ If rules conflict, follow the higher-priority source and state the conflict brie
 
 ### Secret Access
 
-- Commands or API calls that retrieve secret values or payloads are forbidden, even with explicit
-  user authorization and regardless of how their output is processed.
-- Metadata and key names are allowed only through commands verified not to return values, such as
-  `kubectl describe secret`.
+- When explicitly requested, an authentication client or command MAY consume a user-designated
+  secret source solely to authenticate to the specified service (e.g. an API, `redis-cli`, `psql`,
+  or `pgcli`).
+- Secrets MUST remain opaque to the agent and must not be exposed in arguments, output, or logs;
+  copied, cached, or persisted; or sent anywhere except the intended authentication target.
+- All other secret-value access is forbidden. Metadata and identifiers MAY be queried only with
+  operations verified not to reveal secret values, such as `kubectl describe secret`.
 
 ## 4) Scope Discipline
 

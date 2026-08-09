@@ -16,25 +16,9 @@
 
   # GitHub CLI tool
   # https://cli.github.com/manual/
-  programs.gh = {
-    enable = true;
-    settings = {
-      git_protocol = "ssh";
-      prompt = "enabled";
-      aliases = {
-        co = "pr checkout";
-        pv = "pr view";
-      };
-    };
-    hosts = {
-      "github.com" = {
-        "users" = {
-          "VitalyAnkh" = null;
-        };
-        "user" = "VitalyAnkh";
-      };
-    };
-  };
+  # Keep its configuration user-managed and persisted rather than replacing it
+  # with a Home Manager-generated file on every activation.
+  home.packages = [ pkgs.gh ];
 
   programs.git = {
     enable = true;

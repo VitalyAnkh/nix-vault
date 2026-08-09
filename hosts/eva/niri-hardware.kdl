@@ -14,6 +14,5 @@ workspace "1terminal" { open-on-output "DP-3"; }
 workspace "2browser" { open-on-output "DP-3"; }
 workspace "3chat" { open-on-output "DP-3"; }
 workspace "4entertainment" { open-on-output "DP-3"; }
-workspace "5mail" { open-on-output "DP-3"; }
-workspace "6utility" { open-on-output "DP-3"; }
+workspace "5utility" { open-on-output "DP-3"; }
 workspace "0other" { open-on-output "DP-3"; }
