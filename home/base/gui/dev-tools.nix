@@ -22,6 +22,7 @@ in
     ++ (with llmAgentPackages; [
       grok
       kimi-code
+      herdr # Terminal workspace manager for AI coding agents
       #codex
       #claude-code
       #opencode
@@ -30,6 +31,7 @@ in
     ++ (lib.optionals stdenv.isLinux [
       mitmproxy # http/https proxy tool
       wireshark # network analyzer
+      qrtool # decode/encode qr code
 
       xeyes
       xvfb-run
