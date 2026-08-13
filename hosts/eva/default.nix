@@ -33,6 +33,10 @@ in
   # GDM owns eva's graphical seat. kmscon can grab KMS/DRM on tty1 during boot
   # and make GNOME Shell's greeter fail to register with GDM.
   services.kmscon.enable = lib.mkForce false;
+
+  # Allow SSH password authentication on eva.
+  services.openssh.settings.PasswordAuthentication = lib.mkForce true;
+
   services.sunshine.enable = lib.mkForce true;
   services.tuned.ppdSettings.main.default = lib.mkForce "performance";
 
