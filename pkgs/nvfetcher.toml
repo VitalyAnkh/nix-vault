@@ -1,22 +1,27 @@
+# Version checks use GitHub Commits API over HTTP.
+# Avoid src.git: git ls-remote often times out on large repos / weak proxy networks.
+# Regex must match ONLY the top-level commit "sha" — nvchecker takes the max of all
+# matches, and GitHub JSON also contains tree/parent shas.
+
 [source-emacs-master-igc]
-src.git = "https://github.com/emacs-mirror/emacs.git"
-src.branch = "feature/igc3"
-fetch.git = "https://github.com/emacs-mirror/emacs.git"
+src.webpage = "https://api.github.com/repos/emacs-mirror/emacs/commits/feature/igc3"
+src.regex = "\\A\\s*\\{\\s*\"sha\"\\s*:\\s*\"([0-9a-f]{40})\""
+fetch.github = "emacs-mirror/emacs"
 
 [source-godot-master]
-src.git = "https://github.com/godotengine/godot.git"
-src.branch = "master"
-fetch.git = "https://github.com/godotengine/godot.git"
+src.webpage = "https://api.github.com/repos/godotengine/godot/commits/master"
+src.regex = "\\A\\s*\\{\\s*\"sha\"\\s*:\\s*\"([0-9a-f]{40})\""
+fetch.github = "godotengine/godot"
 
 [source-emacs-lsp-booster]
-src.git = "https://github.com/blahgeek/emacs-lsp-booster.git"
-src.branch = "master"
+src.webpage = "https://api.github.com/repos/blahgeek/emacs-lsp-booster/commits/master"
+src.regex = "\\A\\s*\\{\\s*\"sha\"\\s*:\\s*\"([0-9a-f]{40})\""
 fetch.github = "blahgeek/emacs-lsp-booster"
 cargo_lock = ["Cargo.lock"]
 
 [source-codex-desktop-linux]
-src.git = "https://github.com/ilysenko/codex-desktop-linux.git"
-src.branch = "main"
+src.webpage = "https://api.github.com/repos/ilysenko/codex-desktop-linux/commits/main"
+src.regex = "\\A\\s*\\{\\s*\"sha\"\\s*:\\s*\"([0-9a-f]{40})\""
 fetch.github = "ilysenko/codex-desktop-linux"
 
 [source-roxy-browser]
@@ -31,7 +36,8 @@ fetch.url = "https://pkg-cdn.jianguoyun.com/static/exe/ex/$ver/nutstore_client-$
 [source-nutstore-nautilus]
 src.manual = "6.4.3"
 fetch.url = "https://www.jianguoyun.com/static/exe/installer/nutstore_linux_src_installer.tar.gz"
+
 [source-warp-terminal]
-src.git = "https://github.com/warpdotdev/Warp.git"
-src.branch = "master"
+src.webpage = "https://api.github.com/repos/warpdotdev/Warp/commits/master"
+src.regex = "\\A\\s*\\{\\s*\"sha\"\\s*:\\s*\"([0-9a-f]{40})\""
 fetch.github = "warpdotdev/Warp"

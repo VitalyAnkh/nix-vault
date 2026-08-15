@@ -20,7 +20,13 @@ in
 }).overrideAttrs
   (old: rec {
     pname = "emacs-master-pgtk-with-igc";
-    name = "${pname}-${builtins.concatStringsSep "" (lib.splitString "-" source-emacs.date)}";
+    # Prefer nvfetcher git `date` when present; webpage-based pins only have `version` (commit).
+    name = "${pname}-${
+      if source-emacs ? date then
+        builtins.concatStringsSep "" (lib.splitString "-" source-emacs.date)
+      else
+        builtins.substring 0 8 source-emacs.version
+    }";
     inherit (source-emacs) src;
     buildInputs = old.buildInputs ++ [
       mps
