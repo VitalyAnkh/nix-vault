@@ -18,6 +18,11 @@
   programs.nixvim = {
     enable = true;
 
+    # Skip the options manpage: nixvim's nixos-26.05 branch patches
+    # nixos-render-docs, but that patch no longer applies on nixos-unstable
+    # (GFM admonitions are now supported natively upstream).
+    enableMan = false;
+
     clipboard.providers.wl-copy.enable = pkgs.stdenv.isLinux;
 
     opts = {
