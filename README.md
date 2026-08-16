@@ -97,6 +97,11 @@ nix develop ./templates/bevy
 nix develop ./templates/web
 ```
 
+`templates/sglang` is different: it is a drop-in flake to copy into a local
+[sglang](https://github.com/sgl-project/sglang) checkout, where it builds sglang from source and
+serves models with CUDA (`nix run .#install` / `nix run .#serve`). See
+[./templates/sglang/README.md](./templates/sglang/README.md).
+
 ## Secrets Management
 
 See [./secrets](./secrets) for details.
