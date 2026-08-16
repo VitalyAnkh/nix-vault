@@ -102,6 +102,11 @@ nix develop ./templates/web
 serves models with CUDA (`nix run .#install` / `nix run .#serve`). See
 [./templates/sglang/README.md](./templates/sglang/README.md).
 
+`templates/pytorch` is the same kind of drop-in flake for a local
+[pytorch](https://github.com/pytorch/pytorch) checkout: it builds PyTorch from source with CUDA
+(`nix run .#build-torch`) and runs it from a uv-managed venv (`nix run .#venv` / `nix run .#smoke`).
+See [./templates/pytorch/README.md](./templates/pytorch/README.md).
+
 ## Secrets Management
 
 See [./secrets](./secrets) for details.
