@@ -66,7 +66,7 @@ let
     '';
 
     meta = with lib; {
-      description = "Codex Desktop with Linux Computer Use bundled resources restored";
+      description = "ChatGPT Desktop (formerly Codex Desktop) with Linux Computer Use bundled resources restored";
       homepage = "https://github.com/ilysenko/codex-desktop-linux";
       license = licenses.mit;
       mainProgram = "codex-desktop";
@@ -105,7 +105,9 @@ else
       substituteInPlace "$out/share/applications/codex-desktop.desktop" \
         --replace-fail "$src" "$out"
 
-      electron="$out/opt/codex-desktop/electron"
+      # The main ELF was renamed from `electron` to `ChatGPT` upstream
+      # (OpenAI rebranded the Codex desktop app to ChatGPT).
+      electron="$out/opt/codex-desktop/ChatGPT"
       electronRpath="$(patchelf --print-rpath "$electron")"
       patchelf --set-rpath "''${electronRpath//$src/$out}" "$electron"
 
@@ -153,7 +155,7 @@ else
     '';
 
     meta = with lib; {
-      description = "Codex Desktop with Linux Computer Use bundled resources restored";
+      description = "ChatGPT Desktop (formerly Codex Desktop) with Linux Computer Use bundled resources restored";
       homepage = "https://github.com/ilysenko/codex-desktop-linux";
       license = licenses.mit;
       mainProgram = "codex-desktop";
