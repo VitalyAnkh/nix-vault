@@ -230,6 +230,14 @@ in
         ".kimi"
         ".kimi-code"
         ".local/state/codex-desktop"
+        # Orca ADE (llm-agents), distinct from OrcaSlicer
+        ".orca"
+        ".config/Orca"
+        ".config/orca"
+        # ZCode ADE (llm-agents)
+        ".zcode"
+        ".config/ZCode"
+        ".config/zcode"
 
         # nvim
         ".local/share/nvim"

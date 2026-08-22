@@ -8,13 +8,13 @@
 {
   source-codex-desktop-linux = {
     pname = "source-codex-desktop-linux";
-    version = "e6b51d96ac2b9b5d9adafa852241bd0982972557";
+    version = "13895a608077151d314e5f2b6e442b92cd9f2f3b";
     src = fetchFromGitHub {
       owner = "ilysenko";
       repo = "codex-desktop-linux";
-      rev = "e6b51d96ac2b9b5d9adafa852241bd0982972557";
+      rev = "13895a608077151d314e5f2b6e442b92cd9f2f3b";
       fetchSubmodules = false;
-      sha256 = "sha256-RdoFKwNQ2m2zbHnq/QbgLf2lUI9cohsnlMwLfJuaTh0=";
+      sha256 = "sha256-OrqBaIHflpZIcn2OjiMKCXyZNeK/zDbBWyy0lVOarr8=";
     };
   };
   source-emacs-lsp-booster = {
@@ -30,7 +30,6 @@
     cargoLock."Cargo.lock" = {
       lockFile = ./. + "/sha256-aOkvOyRlkG7gzMy5_x15CMm_voOFOX98QcWVbvfuVLM=/Cargo.lock";
       outputHashes = {
-
       };
     };
   };
@@ -47,13 +46,13 @@
   };
   source-godot-master = {
     pname = "source-godot-master";
-    version = "00932449c9f372b30301d8b5fdc1be70ec12b5c0";
+    version = "893cf5cbfe789ae67c9389708e1428141bb39b18";
     src = fetchFromGitHub {
       owner = "godotengine";
       repo = "godot";
-      rev = "00932449c9f372b30301d8b5fdc1be70ec12b5c0";
+      rev = "893cf5cbfe789ae67c9389708e1428141bb39b18";
       fetchSubmodules = false;
-      sha256 = "sha256-3hBH8cqTgKmy19O5aJKbGHjaor1JMjyUfmld+3jPZzE=";
+      sha256 = "sha256-kEqkeIt74S1YxyXjG3exK1LPUBbTvLcLfDyaYX+dlG4=";
     };
   };
   source-nutstore-client = {
@@ -82,13 +81,13 @@
   };
   source-warp-terminal = {
     pname = "source-warp-terminal";
-    version = "e72fd7aacbbb2236d9b3be2aad7e7178fe94b4bc";
+    version = "19548aec6285e82b1a4cde526e7ec7e04513c248";
     src = fetchFromGitHub {
       owner = "warpdotdev";
       repo = "Warp";
-      rev = "e72fd7aacbbb2236d9b3be2aad7e7178fe94b4bc";
+      rev = "19548aec6285e82b1a4cde526e7ec7e04513c248";
       fetchSubmodules = false;
-      sha256 = "sha256-su5aEqBmcE3ch8c/JXoQCY/rdUwrMhAuA64yaYz7agk=";
+      sha256 = "sha256-iPm/LxGDlJ6JLPIbNEp5tu6P7DqXByrw81RKDkSAgW0=";
     };
   };
 }

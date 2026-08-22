@@ -13,12 +13,12 @@
       "name": null,
       "owner": "ilysenko",
       "repo": "codex-desktop-linux",
-      "rev": "e6b51d96ac2b9b5d9adafa852241bd0982972557",
-      "sha256": "sha256-RdoFKwNQ2m2zbHnq/QbgLf2lUI9cohsnlMwLfJuaTh0=",
+      "rev": "13895a608077151d314e5f2b6e442b92cd9f2f3b",
+      "sha256": "sha256-OrqBaIHflpZIcn2OjiMKCXyZNeK/zDbBWyy0lVOarr8=",
       "sparseCheckout": [],
       "type": "github"
     },
-    "version": "e6b51d96ac2b9b5d9adafa852241bd0982972557"
+    "version": "13895a608077151d314e5f2b6e442b92cd9f2f3b"
   },
   "source-emacs-lsp-booster": {
     "cargoLock": {
@@ -78,12 +78,12 @@
       "name": null,
       "owner": "godotengine",
       "repo": "godot",
-      "rev": "00932449c9f372b30301d8b5fdc1be70ec12b5c0",
-      "sha256": "sha256-3hBH8cqTgKmy19O5aJKbGHjaor1JMjyUfmld+3jPZzE=",
+      "rev": "893cf5cbfe789ae67c9389708e1428141bb39b18",
+      "sha256": "sha256-kEqkeIt74S1YxyXjG3exK1LPUBbTvLcLfDyaYX+dlG4=",
       "sparseCheckout": [],
       "type": "github"
     },
-    "version": "00932449c9f372b30301d8b5fdc1be70ec12b5c0"
+    "version": "893cf5cbfe789ae67c9389708e1428141bb39b18"
   },
   "source-nutstore-client": {
     "cargoLock": null,
@@ -144,11 +144,11 @@
       "name": null,
       "owner": "warpdotdev",
       "repo": "Warp",
-      "rev": "e72fd7aacbbb2236d9b3be2aad7e7178fe94b4bc",
-      "sha256": "sha256-su5aEqBmcE3ch8c/JXoQCY/rdUwrMhAuA64yaYz7agk=",
+      "rev": "19548aec6285e82b1a4cde526e7ec7e04513c248",
+      "sha256": "sha256-iPm/LxGDlJ6JLPIbNEp5tu6P7DqXByrw81RKDkSAgW0=",
       "sparseCheckout": [],
       "type": "github"
     },
-    "version": "e72fd7aacbbb2236d9b3be2aad7e7178fe94b4bc"
+    "version": "19548aec6285e82b1a4cde526e7ec7e04513c248"
   }
 }

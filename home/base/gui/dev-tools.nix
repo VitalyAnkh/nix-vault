@@ -23,6 +23,8 @@ in
       grok
       kimi-code
       herdr # Terminal workspace manager for AI coding agents
+      orca
+      zcode
       #codex
       #claude-code
       #opencode

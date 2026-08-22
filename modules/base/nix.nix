@@ -26,6 +26,8 @@
       # community cache
       "https://nix-community.cachix.org"
       "https://catppuccin.cachix.org"
+      # llm-agents.nix (grok, wrap-buddy, and other agent CLIs)
+      "https://cache.numtide.com"
 
       # cache mirrors located in China (fallback)
       "https://mirrors.sustech.edu.cn/nix-channels/store"
@@ -37,6 +39,7 @@
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
       "catppuccin.cachix.org-1:noG/4HkbhJb+lUAdKrph6LaozJvAeEEZj4N732IysmU="
+      "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
     ];
     builders-use-substitutes = true;
   };
