@@ -11,7 +11,7 @@
   programs.ghostty = {
     enable = true;
     package =
-      if pkgs.stdenv.isDarwin then
+      if pkgs.stdenv.hostPlatform.isDarwin then
         null # installed via Homebrew cask on darwin
       else
         pkgs.ghostty;
@@ -21,6 +21,9 @@
     settings = {
       font-family = "Maple Mono NF CN";
       font-size = 13;
+
+      # hide title bar/header bar (Linux only; on macOS it would remove the traffic lights too)
+      window-decoration = pkgs.stdenv.hostPlatform.isDarwin;
 
       background-opacity = 0.93;
       # only supported on macOS;

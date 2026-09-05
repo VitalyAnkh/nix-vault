@@ -41,8 +41,6 @@
       "wheel"
       "uinput"
       "networkmanager" # for nmtui / nm-connection-editor
-      "podman"
-      "docker"
       "wireshark"
       "adbusers" # android debugging
       "libvirtd" # virt-viewer / qemu

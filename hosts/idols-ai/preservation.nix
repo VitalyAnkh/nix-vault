@@ -110,6 +110,14 @@ in
         # Keep .cache off tmpfs to avoid high RAM usage; many apps use it and it is storage-heavy.
         ".cache"
 
+        # NOTE: do NOT persist ~/.local/share/Trash here. The trash crate (nushell
+        # `rm --trash`) picks the home trash only when the file's mount topdir equals
+        # the trash dir's topdir; a bind-mounted Trash dir would make files straight
+        # under $HOME fail with EACCES (it would try /.Trash-$uid). The home trash on
+        # tmpfs is lost on reboot, which is acceptable: scattered per-mount
+        # .Trash-$uid dirs on persistent volumes are covered by the trash-empty
+        # retention timer (modules/nixos/base/trash.nix).
+
         # ======================================
         # Codes / Work / Playground
         # ======================================
@@ -132,6 +140,10 @@ in
 
         # neovim plugins
         ".wakatime"
+
+        # vscode
+        ".vscode"
+        ".config/Code"
 
         # zed
         ".config/zed"
@@ -265,6 +277,7 @@ in
         # ======================================
         ".zoom"
         ".config/obs-studio"
+        ".config/Moonlight Game Streaming Project"
         ".config/sunshine"
         ".config/freerdp"
 

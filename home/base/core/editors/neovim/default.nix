@@ -23,7 +23,7 @@
     # (GFM admonitions are now supported natively upstream).
     enableMan = false;
 
-    clipboard.providers.wl-copy.enable = pkgs.stdenv.isLinux;
+    clipboard.providers.wl-copy.enable = pkgs.stdenv.hostPlatform.isLinux;
 
     opts = {
       number = true;

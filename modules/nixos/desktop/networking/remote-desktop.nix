@@ -1,4 +1,8 @@
-{ lib, pkgs, ... }:
+{
+  lib,
+  pkgs,
+  ...
+}:
 {
   environment.systemPackages = with pkgs; [
     moonlight-qt # moonlight client, for streaming games/desktop from a PC
@@ -28,9 +32,10 @@
   services.sunshine = {
     enable = lib.mkDefault false; # default to false, for security reasons.
     autoStart = true;
-    capSysAdmin = true; # only needed for Wayland -- omit this when using with Xorg
+    capSysAdmin = false;
     openFirewall = true;
     settings = {
+      capture = "wlr";
       # pc  - Only localhost may access the web ui
       # lan - Only LAN devices may access the web ui
       origin_web_ui_allowed = "pc";

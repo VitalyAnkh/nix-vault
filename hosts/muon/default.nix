@@ -53,8 +53,12 @@ in
 
   zramSwap.memoryPercent = lib.mkForce 10;
 
-  # Enable SSH password authentication for this host
-  services.openssh.settings.PasswordAuthentication = lib.mkForce true;
+  # Enable SSH password authentication for this host.
+  # Keep root usable for remote deployment; do not inherit desktop PermitRootLogin = no.
+  services.openssh.settings = {
+    PasswordAuthentication = lib.mkForce true;
+    PermitRootLogin = lib.mkForce "prohibit-password";
+  };
   # ModemManager times out on this host and makes `nixos-rebuild switch` fail.
   # Disable it unless cellular modem support is needed.
   networking.modemmanager.enable = false;

@@ -39,9 +39,24 @@ in
   ];
 
   # Zram consumes physical memory for compression, which can cause a deadlock and system hang if the model size approaches the physical memory limit.
-  zramSwap.enable = lib.mkForce false;
+  # Disable the whole module (zram device + its swappiness=180 sysctl tunings); this host uses a disk swapfile instead.
+  modules.zram.enable = false;
 
-  services.sunshine.enable = false;
+  # zswap: compressed writeback cache in front of the disk swapfile.
+  # Keeps swapped cold anon pages compressed in RAM instead of the SSD, which frees more
+  # page cache for the ~78GB mmap'd LLM weights (mmap file pages never go through zswap).
+  # Safe here: disk swapfile remains the real backing store, no zram deadlock structure.
+  # - zstd: CPU is not the bottleneck here (llama.cpp peaks ~30% util); its ~2.5x ratio
+  #   keeps ~5G more anon bytes in the capped pool than lz4, and ~5us decompress is noise
+  #   vs the ~100us SSD fault it avoids.
+  # - 10% pool (~9G): the module default 25% (~23G) would compete with the weight cache.
+  boot.zswap = {
+    enable = true;
+    compressor = "zstd";
+    maxPoolPercent = 10;
+  };
+
+  services.sunshine.enable = true;
   services.tuned.ppdSettings.main.default = lib.mkForce "performance";
 
   powerManagement.resumeCommands = ''

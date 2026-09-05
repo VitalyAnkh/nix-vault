@@ -2,6 +2,7 @@
 
 import os
 import sys
+import tempfile
 from pathlib import Path
 
 
@@ -12,10 +13,24 @@ def install_one(target_dir: Path, source_file: Path, target_name: str) -> None:
 
     target_file = target_dir / target_name
 
-    if target_file.exists() or target_file.is_symlink():
-        target_file.unlink()
+    if target_file.is_file() and not target_file.is_symlink():
+        # Preserve the old inode without reading its contents or replacing an earlier backup.
+        index = 0
+        while True:
+            suffix = ".bak" if index == 0 else f".bak.{index}"
+            backup = target_file.with_name(target_file.name + suffix)
+            try:
+                os.link(target_file, backup)
+                break
+            except FileExistsError:
+                index += 1
+        print(f"backed up  {target_file} -> {backup}")
 
-    target_file.symlink_to(source_file)
+    # Create the link on the same filesystem before atomically replacing the destination.
+    with tempfile.TemporaryDirectory(prefix=".install-rules-", dir=target_dir) as staging:
+        link = Path(staging) / target_name
+        link.symlink_to(source_file)
+        link.replace(target_file)
     print(f"linked  {target_file} -> {source_file}")
 
 
@@ -32,12 +47,21 @@ def main() -> int:
     opencode_dir = xdg_config_home / "opencode"
     claude_dir = Path("~/.claude").expanduser()
     agents_dir = Path("~/.agents").expanduser()
-    install_one(codex_dir, agents_file, "AGENTS.md")
-    install_one(opencode_dir, agents_file, "AGENTS.md")
-    install_one(claude_dir, agents_file, "CLAUDE.md")
-    install_one(agents_dir, agents_file, "AGENTS.md")
+    targets = (
+        (codex_dir, "AGENTS.md"),
+        (opencode_dir, "AGENTS.md"),
+        (claude_dir, "CLAUDE.md"),
+        (agents_dir, "AGENTS.md"),
+    )
+    failed = False
+    for target_dir, target_name in targets:
+        try:
+            install_one(target_dir, agents_file, target_name)
+        except OSError as error:
+            print(f"failed  {target_dir / target_name}: {error}", file=sys.stderr)
+            failed = True
 
-    return 0
+    return 1 if failed else 0
 
 
 if __name__ == "__main__":

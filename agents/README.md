@@ -8,15 +8,16 @@ The primary workflow is to symlink files from here into each agent runtime/confi
 ## What this directory contains
 
 - `AGENTS.md`: global baseline rules for coding agents.
-- `permissions.md`: permission policies for agent tool access.
+- `evals/global-rules.md`: behavioral scenarios for validating changes to the global rules.
 - `install-rules.py`: installs the baseline by creating symlinks in supported agent config dirs.
+- `test_install_rules.py`: regression tests for file preservation and independent target handling.
 - `install-cli.md`: curated CLI install/update command snippets.
 - `install-skills.md`: curated `npx skills` command snippets.
 
 ## Core workflow
 
 1. Maintain shared rules in `agents/AGENTS.md`.
-2. Define permission policies in `agents/permissions.md`.
+2. Configure permissions directly in the agent runtime; auto-approval is generally used.
 3. Run `install-rules.py` to refresh symlinks in local agent homes.
 4. Use `install-cli.md` and `install-skills.md` as reference snippets when needed.
 
@@ -38,8 +39,23 @@ Current targets:
 Behavior:
 
 - Each target is handled independently.
+- Target errors are reported while remaining targets are attempted; any error yields a nonzero exit.
 - Missing destination directories are skipped.
-- Existing destination file/symlink is replaced with a symlink to this repo source file.
+- Existing regular files are preserved as `.bak` backups (numbered when a backup already exists).
+- Destination links are replaced atomically; a failed link creation leaves the destination intact.
+
+The installer links only `AGENTS.md`; it does not install permission configuration, skills, or CLIs.
+The repository-root `AGENTS.md` contains guidance for this Nix configuration repository. It is not
+the global rules source and is not installed by this script.
+
+Auto-approval controls tool prompting. The global rules still define task authorization, safety, and
+secret handling.
+
+Run installer regression tests without changing installed rules:
+
+```bash
+python3 -B -m unittest discover -s agents -p test_install_rules.py
+```
 
 ## About `install-cli.md` and `install-skills.md`
 

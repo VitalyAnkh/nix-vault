@@ -129,7 +129,8 @@ in
 
   services.prometheus.exporters.postgres = {
     enable = true;
-    listenAddress = "0.0.0.0";
+    # loopback only: scraped by VictoriaMetrics on the same host
+    listenAddress = "127.0.0.1";
     port = 9187;
     user = "postgres-exporter";
     group = "postgres-exporter";

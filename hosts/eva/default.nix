@@ -35,7 +35,11 @@ in
   services.kmscon.enable = lib.mkForce false;
 
   # Allow SSH password authentication on eva.
-  services.openssh.settings.PasswordAuthentication = lib.mkForce true;
+  # Keep root usable for remote deployment; do not inherit desktop PermitRootLogin = no.
+  services.openssh.settings = {
+    PasswordAuthentication = lib.mkForce true;
+    PermitRootLogin = lib.mkForce "prohibit-password";
+  };
 
   services.sunshine.enable = lib.mkForce true;
   services.tuned.ppdSettings.main.default = lib.mkForce "performance";

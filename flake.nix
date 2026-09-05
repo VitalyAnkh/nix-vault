@@ -206,6 +206,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Wayland <-> X11 clipboard sync daemon for xwayland-satellite (niri)
+    pyclipsync = {
+      url = "github:ryan4yin/pyclipsync";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # for waydroid
     # nur-ataraxiasjel.url = "github:AtaraxiaSjel/nur";
   };

@@ -1,5 +1,5 @@
-# Desktops hold personal data and laptops join untrusted networks, so enable the
-# firewall here (repo-wide default is off, see modules/nixos/base/ssh.nix).
+# Desktops hold personal data and laptops join untrusted networks, so keep the
+# firewall enabled here (repo-wide default is on, see modules/nixos/base/ssh.nix).
 # SSH/Tailscale/LocalSend/Sunshine keep working via their own `openFirewall` options.
 {
   networking.firewall = {

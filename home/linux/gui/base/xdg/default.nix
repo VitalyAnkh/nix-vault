@@ -16,21 +16,14 @@
     xdg-user-dirs
   ];
 
-  xdg = {
+  xdg.userDirs = {
     enable = true;
-
-    cacheHome = "${config.home.homeDirectory}/.cache";
-    configHome = "${config.home.homeDirectory}/.config";
-    dataHome = "${config.home.homeDirectory}/.local/share";
-    stateHome = "${config.home.homeDirectory}/.local/state";
-
-    userDirs = {
-      enable = true;
-      createDirectories = true;
-      setSessionVariables = false;
-      extraConfig = {
-        SCREENSHOTS = "${config.xdg.userDirs.pictures}/Screenshots";
-      };
+    # Keep session XDG_* vars unset here; overlapping GUI/session writers have
+    # previously clobbered font and portal settings when these were exported.
+    setSessionVariables = false;
+    createDirectories = true;
+    extraConfig = {
+      SCREENSHOTS = "${config.xdg.userDirs.pictures}/Screenshots";
     };
   };
 }

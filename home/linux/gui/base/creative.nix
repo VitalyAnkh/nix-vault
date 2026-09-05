@@ -55,7 +55,7 @@ in
       hunspellDicts.en_US # USA English
       hyphenDicts.en_GB # British English
     ]
-    ++ (lib.optionals pkgs.stdenv.isx86_64 [
+    ++ (lib.optionals pkgs.stdenv.hostPlatform.isx86_64 [
       bottles
       wineWow64Packages.waylandFull
       # wineWow64Packages.stagingFull
@@ -71,32 +71,32 @@ in
   programs = {
     # live streaming
     obs-studio = {
-      enable = pkgs.stdenv.isx86_64;
+      enable = pkgs.stdenv.hostPlatform.isx86_64;
       plugins = with pkgs.obs-studio-plugins; [
         # screen capture
         wlrobs
         # obs-ndi
         # obs-nvfbc
-        obs-teleport
+        # obs-teleport
         # obs-hyperion
-        droidcam-obs
-        obs-vkcapture
+        # droidcam-obs
+        # obs-vkcapture
         obs-gstreamer
         input-overlay
         obs-multi-rtmp
         obs-source-clone
-        obs-shaderfilter
-        obs-source-record
-        obs-livesplit-one
-        looking-glass-obs
-        obs-vintage-filter
-        obs-command-source
-        obs-move-transition
-        obs-backgroundremoval
+        # obs-shaderfilter
+        # obs-source-record
+        # obs-livesplit-one
+        # looking-glass-obs
+        # obs-vintage-filter
+        # obs-command-source
+        # obs-move-transition
+        # obs-backgroundremoval
         # advanced-scene-switcher
         obs-pipewire-audio-capture
         obs-vaapi
-        obs-3d-effect
+        # obs-3d-effect
       ];
     };
   };

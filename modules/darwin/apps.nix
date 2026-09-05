@@ -160,13 +160,13 @@ in
       "firefox"
       "google-chrome"
 
+      "ghostty" # terminal emulator
+
       # code editor
       "visual-studio-code"
-      # "zed"
       "cursor" # cursor ai editor
 
       "aerospace" # an i3-like tiling window manager for macOS
-      "ghostty" # terminal emulator
 
       # AI agents
       "codex-app" # codex desktop app
@@ -187,7 +187,8 @@ in
       "qqmusic"
       # "discord" # update too frequently, use the web version instead
       "microsoft-remote-desktop"
-      # "moonlight" # remote desktop client
+      # "windows-app"
+      "moonlight" # remote desktop client (Sunshine/Moonlight game-stream based)
       # "rustdesk" # meeting
       # "tencent-meeting"
       "zoom" # meeting

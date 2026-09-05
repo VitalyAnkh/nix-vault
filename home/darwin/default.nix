@@ -18,9 +18,6 @@
     ../base/home.nix
   ];
 
-  # enable management of XDG base directories on macOS.
-  xdg.enable = true;
-
   # Home Manager 26.05 defaults programs.man.package to null on Darwin.
   programs.man.generateCaches = false;
 }

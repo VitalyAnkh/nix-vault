@@ -92,6 +92,7 @@
       which
       tree
       tealdeer # a very fast version of tldr
+      trash-cli # freedesktop trash can CLI: trash-list / trash-restore / trash-put / trash-empty
     ])
     ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
       # appimage tools (Linux-only; `buildFHSEnv` is not supported on Darwin)

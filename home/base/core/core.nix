@@ -83,6 +83,8 @@
   programs.fzf = {
     enable = true;
     package = pkgs.fzf;
+    # atuin (sourced after fzf) owns Ctrl-R; keep fzf from binding it too
+    historyWidget.command = "";
   };
 
   # very fast version of tldr in Rust

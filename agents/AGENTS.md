@@ -1,97 +1,133 @@
-# RULES - Global Agent Baseline
+# Personal global agent rules
 
-This file defines the cross-project baseline for AI coding agents. It focuses on safety, boundaries,
-and portable behavior.
+These rules define my default safety boundaries and working preferences for coding agents.
 
-## 1) Instruction Priority
+The uppercase terms `MUST`, `MUST NOT`, `SHOULD`, `SHOULD NOT`, and `MAY` are normative and carry
+the meanings defined in RFC 2119 and RFC 8174.
 
-Apply instructions in this order:
+## Scope and precedence
 
-1. Runtime system/developer instructions
-2. User task request
-3. Project-local policy (`AGENTS.md`, `CLAUDE.md`, repo docs)
-4. This global RULES
+Agents MUST apply instructions in this order:
 
-If rules conflict, follow the higher-priority source and state the conflict briefly.
+1. Runtime system and developer instructions
+2. Safety and secret-handling rules in this file
+3. The current user request
+4. Project-local policy (`AGENTS.md`, `CLAUDE.md`, and repository documentation)
+5. Other defaults in this file
 
-## 2) Hard Safety Boundaries (MUST NOT)
+Project-local policy MAY override defaults but MUST NOT weaken safety or secret handling. On
+conflict, agents MUST follow the higher-priority source and state the conflict briefly.
 
-- MUST NOT read/write outside the approved workspace.
-- MUST NOT perform broad operations on the entire home directory.
-- MUST NOT mutate remote Git state unless explicitly requested.
-  - Examples: `git push`, creating/updating remote PRs/Issues via `gh`.
-- MUST NOT auto-run remote-mutating commands unless explicitly requested.
-  - Examples: `kubectl apply/delete`, `helm upgrade`, `terraform apply`, remote `ssh` mutation.
-- MUST NOT perform destructive/irreversible operations or use force options, even if explicitly
-  requested (e.g. `rm -rf`, `terraform destroy`).
-  - MAY perform verified, recoverable cleanup when explicitly requested (e.g. `git branch -d` for a
-    fully merged branch).
-- MUST NOT expose or commit secrets (tokens, keys, kubeconfig credentials, passwords).
+## Request handling
 
-## 3) Security and Secrets Handling
+- For requests to answer, explain, review, diagnose, or plan, agents MUST inspect and report without
+  modifying files or external state unless changes are also requested.
+- For change, build, or fix requests, agents MUST make the in-scope local edits and run relevant
+  non-destructive validation without additional confirmation.
+- Agents MUST NOT ask again for actions already authorized within the current task and scope.
+- If required work needs new authority or materially expands the requested scope, agents MUST stop
+  and request direction.
 
-- Never write secret literals into tracked files.
-- Use environment variables, secret managers, or placeholders.
-- Redact sensitive output in logs and summaries.
-- For infra/IaC changes, prefer plan/eval/check before apply/deploy.
+## Safety and authorization
 
-### Secret Access
+### Workspace access
 
-- When explicitly requested, an authentication client or command MAY consume a user-designated
-  secret source solely to authenticate to the specified service (e.g. an API, `redis-cli`, `psql`,
-  or `pgcli`).
-- Secrets MUST remain opaque to the agent and must not be exposed in arguments, output, or logs;
-  copied, cached, or persisted; or sent anywhere except the intended authentication target.
-- All other secret-value access is forbidden. Metadata and identifiers MAY be queried only with
-  operations verified not to reveal secret values, such as `kubectl describe secret`.
+- Agents MUST access only runtime-approved roots and explicitly scoped paths, and MUST NOT perform
+  broad operations on the entire home directory.
 
-## 4) Scope Discipline
+### Remote changes
 
-- Keep changes strictly within requested scope.
-- Do not refactor unrelated areas unless user asks.
-- Preserve backward compatibility unless a breaking change is explicitly requested.
+- Agents MUST NOT mutate remote state unless the user explicitly requests it. This includes
+  `git push`, remote PR or Issue changes, deployments, applies, upgrades, and remote `ssh` changes.
+- Infrastructure and IaC changes SHOULD be checked with plan, eval, or equivalent commands before
+  any authorized apply or deployment.
 
-## 5) Change Hygiene
+### Destructive and force operations
 
-- Keep diffs minimal and reviewable.
-- Group logically related edits together.
-- Do not revert user/unrelated changes unless explicitly asked.
-- Do not claim verification you did not run.
+- Agents SHOULD avoid irreversible operations and prefer recoverable alternatives. They MUST NOT use
+  destructive or force operations unless the user explicitly requests or approves them, the exact
+  target and scope are verified, and a recovery path or safety guard exists.
 
-## 6) Tooling Defaults
+### Secrets and authentication
 
-- Use Bash only for quick one-offs, Nushell for personal tooling, Python for everything else.
-- Prefer structural search tools first for code find/replace (`ast-grep`/`jq`/`yq`), then text tools
-  (`rg`, `fd`).
-- Prefer project task runners (`just`, `make`, `npm scripts`, etc.) over ad-hoc commands when
-  equivalent.
-- Only use `nix run`, `flake.nix`/`shell.nix`, or `uv`/`pnpm` for missing commands & packages.
-  Otherwise, ask the user—never use another installer.
-- Use `gh` CLI for GitHub operations, especially code/PR/issue search and inspection.
+- Agents MUST NOT expose, commit, or write secret literals. They MUST use environment variables,
+  secret managers, or placeholders and MUST redact sensitive command output, logs, and summaries.
+- When explicitly requested, an authentication client MAY consume a user-designated secret source
+  solely for the specified service. Agents MUST keep the value opaque and MUST NOT reveal it in
+  arguments or output, inspect it, copy it, cache it, persist it, or send it elsewhere.
+- Outside that authentication flow, agents MUST query only secret metadata or identifiers with
+  commands verified not to reveal values.
 
-## 7) Environment Defaults
+## Repository and change discipline
 
-- Primary OS: NixOS & macOS.
-- Shell: default to Nushell, Bash also exists.
+When remote state matters, agents SHOULD fetch `origin` when available and use the baseline
+appropriate to the task. If local history materially conflicts or makes the baseline ambiguous,
+agents MUST ask which state to use before editing.
 
-## 8) Script Engineering Principles
+- Agents MUST keep work in scope and MUST NOT revert user changes or refactor unrelated areas unless
+  asked.
+- Agents SHOULD preserve backward compatibility and keep diffs minimal and logically grouped. They
+  MUST NOT introduce breaking changes unless explicitly requested.
+- Documentation SHOULD be self-contained for its intended reader and omit irrelevant history.
+- Agents SHOULD verify changes in proportion to their risk and MUST NOT claim a check passed unless
+  it was run.
 
-Treat scripts as interruptible jobs that must be diagnosable and safe to rerun:
+### Commit messages
 
-- Verbose logging of progress, decisions, and errors.
-- Stage workflows with selective execution via cli flags.
-- Idempotent reruns; persist progress and support resume.
-- Cache external data with invalidation.
-- Separate HTTP transport from business success; retry with backoff.
-- Verify key outputs independently.
+- When committing, agents MUST follow the repository convention, falling back to Conventional
+  Commits when none exists. They MUST derive the message from the staged diff and use an imperative
+  subject no longer than 72 characters.
+- Each commit MUST contain one logical change. Agents MUST NOT amend commits or skip hooks unless
+  explicitly requested.
 
-## 9) Communication Defaults
+## Tools and environment
 
-- Respond in the language the user is currently using, prefer English & Chinese.
-- Code, commands, identifiers, and code comments: Prefer English.
-- Be concise, concrete, and action-oriented.
+- On the primary NixOS and macOS platforms, agents SHOULD prefer existing task runners and
+  specialized CLIs over reimplementation.
+- On NixOS, agents MUST NOT assume FHS paths or conventional system package installers. They MUST
+  use `nix run`, the project flake or dev shell, or an existing `uv` or `pnpm` workflow, and ask
+  before using another installation method.
+- Agents MAY use `npx` for temporary or skill-provided CLIs when it does not modify project
+  dependencies or lock files.
+- Agents SHOULD use `gh` for authorized GitHub operations and SSH for GitHub Git remotes.
 
-## 10) Project Overlay
+## Shell and scripts
 
-Project-local policy may add stricter constraints (build/test/deploy/style/ownership/environment).
-It must not weaken this baseline.
+### Local commands on personal machines
+
+- Agents SHOULD choose tools in the following order:
+  1. Direct executables with native filtering and output options (shell-neutral)
+  2. Nushell for pipelines and lightweight orchestration
+  3. Python for substantial logic
+- Local orchestration MUST use Nushell or Python; local pipelines MUST use Nushell. Agents MUST NOT
+  use Bash or another POSIX shell for local pipelines.
+
+### Project and target-environment scripts
+
+- Scripts and commands evaluated on remote hosts, CI, or containers MUST follow the project's
+  language and target environment, including its shell. Agents MUST NOT introduce Nushell unless
+  already used or explicitly requested.
+- Without a project convention, agents SHOULD default to Python and use Bash only for simple,
+  portable scripts.
+
+### Script validation
+
+- After creating or modifying persistent script files, agents MUST run available language-aware
+  checks and report unavailable validation. Python files MUST at minimum pass
+  `python -m py_compile <file>` using the project-approved runtime unless existing checks are
+  equivalent or stronger.
+- Nushell files MUST pass `nu-check --debug`, treating `false` as failure and using `--as-module`
+  for modules. Non-trivial changes SHOULD also be inspected with `nu --ide-check 100 <file>`.
+
+### Script and job reliability
+
+- Multi-step, long-running, networked, or expensive jobs SHOULD report progress, bound retries,
+  support safe resumption when practical, and verify outcomes independently.
+- Agents SHOULD prefer native wait or subscription mechanisms over fixed sleeps. Any polling SHOULD
+  use target-appropriate intervals and an explicit deadline.
+
+## Communication
+
+- Agents MUST respond in the user's language, defaulting to English when unclear, and SHOULD be
+  concise, concrete, and action-oriented.
+- Code, commands, identifiers, and code comments SHOULD use English.

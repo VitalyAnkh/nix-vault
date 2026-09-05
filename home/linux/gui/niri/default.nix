@@ -3,13 +3,18 @@
   config,
   lib,
   niri,
+  pyclipsync,
   ...
 }@args:
 let
   cfg = config.modules.desktop.niri;
 in
 {
-  imports = [ niri.homeModules.niri ];
+  imports = [
+    niri.homeModules.niri
+    # provides `services.pyclipsync.enable`
+    pyclipsync.homeModules.default
+  ];
   options.modules.desktop.niri = {
     enable = lib.mkEnableOption "niri compositor";
   };
@@ -52,6 +57,13 @@ in
             TimeoutStopSec = 10;
           };
         };
+
+        # xwayland-satellite has no compositor-level clipboard bridging, so X11
+        # clients (WeChat/QQ, run via xwayland-satellite) and Wayland clients
+        # cannot see each other's clipboard. This daemon mirrors the X11
+        # CLIPBOARD and the Wayland data device both directions (see the
+        # pyclipsync repo for details).
+        services.pyclipsync.enable = true;
 
         # NOTE: this executable is used by greetd to start a wayland session when system boot up
         # with such a vendor-no-locking script, we can switch to another wayland compositor without modifying greetd's config in NixOS module

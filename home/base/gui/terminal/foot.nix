@@ -2,7 +2,7 @@
 {
   programs.foot = {
     # foot is designed only for Linux
-    enable = pkgs.stdenv.isLinux;
+    enable = pkgs.stdenv.hostPlatform.isLinux;
 
     # foot can also be run in a server mode. In this mode, one process hosts multiple windows.
     # All Wayland communication, VT parsing and rendering is done in the server process.
@@ -28,6 +28,10 @@
       colors-dark = {
         alpha = 0.93; # background transparency
         blur = true; # requires foot >= 1.26 and compositor support (e.g. niri v26.04+)
+      };
+
+      csd = {
+        preferred = "none"; # no title bar / menu button
       };
 
       mouse = {

@@ -12,7 +12,8 @@
     clash-verge-rev
     clash-nyanpasu
     # hiddify-app
-    flclash
+    # flclash was removed from nixpkgs (low usage / unmaintained). Keep
+    # `.config/flclash` preserved so existing data stays on /persistent.
     kdiskmark
     # clash-party
     #daed

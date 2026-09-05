@@ -48,7 +48,8 @@ window-rule {
 
 // Chat applications - open in workspace 3
 window-rule {
-    match app-id="org.telegram.desktop"
+    // match app-id="org.telegram.desktop"
+    match title="^Telegram"
     open-on-workspace "3chat"
 }
 window-rule {
@@ -106,8 +107,7 @@ window-rule {
     open-on-workspace "5utility"
 }
 window-rule {
-    match app-id="clash-verge"
-    match app-id="^Clash-verge$"
+    match app-id="(?i)^clash-verge$"
     match app-id="^[.]clash-verge-wrapped$"
     open-on-workspace "5utility"
 }

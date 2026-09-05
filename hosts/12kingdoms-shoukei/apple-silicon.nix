@@ -3,13 +3,16 @@
   pkgs,
   nixos-apple-silicon,
   my-asahi-firmware ? null,
-  nixpkgs-mesa,
   ...
 }:
 {
   imports = [
     nixos-apple-silicon.nixosModules.default
   ];
+
+  # NOTE: do NOT autologin here (a bare session command = greetd restarts the desktop
+  # without any authentication whenever the session exits, e.g. logout from the lock
+  # screen would bypass it entirely). Keep tuigreet from modules/nixos/desktop.nix.
 
   zramSwap.memoryPercent = lib.mkForce 75;
 
@@ -26,7 +29,7 @@
     box64 # Linux Userspace x86 and x86_64 Emulator, run x86_64 apps(such as games, gui apps) on aarch64.
     # https://asahilinux.org/2024/12/muvm-x11-bridging/
     # https://github.com/nix-community/nixos-apple-silicon/issues/237
-    muvm # run x86_64 Apps/Games in a microVM, used as a workaround of apple silicon's 16k page size.
+    # muvm # run x86_64 Apps/Games in a microVM, used as a workaround of apple silicon's 16k page size.
   ];
 
   # networking.wireless.iwd = {
@@ -37,13 +40,12 @@
   networking.networkmanager.enable = true;
 
   # Specify path to peripheral firmware files.
-  warnings =
-    lib.optional (my-asahi-firmware == null)
-      "shoukei: flake input \"my-asahi-firmware\" missing; not setting hardware.asahi.peripheralFirmwareDirectory";
+  warnings = lib.optional (my-asahi-firmware == null) ''
+    shoukei: flake input "my-asahi-firmware" missing; not setting hardware.asahi.peripheralFirmwareDirectory
+  '';
 
   hardware.asahi = {
     enable = my-asahi-firmware != null;
-
     # since mesa 25.1(already in nixpkgs), support for asahi is enabled by default.
   }
   // lib.optionalAttrs (my-asahi-firmware != null) {
@@ -57,13 +59,13 @@
   #
   # NOTE: Hibernate is not supported by Asahi Linux.
   services.logind.settings.Login = {
-    lidSwitch = "suspend";
-    lidSwitchExternalPower = "lock";
+    HandleLidSwitch = "suspend";
+    HandleLidSwitchExternalPower = "suspend";
     # 'Docked' means: more than one display is connected or the system is inserted in a docking station
-    lidSwitchDocked = "ignore";
+    HandleLidSwitchDocked = "ignore";
 
-    powerKey = "suspend";
-    powerKeyLongPress = "poweroff";
+    HandlePowerKey = "suspend";
+    HandlePowerKeyLongPress = "poweroff";
   };
   systemd.targets.sleep.enable = true;
   systemd.sleep.settings.Sleep = {

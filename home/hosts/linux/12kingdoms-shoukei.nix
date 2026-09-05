@@ -4,13 +4,16 @@ let
   mkSymlink = config.lib.file.mkOutOfStoreSymlink;
 in
 {
-  imports = [ ../../linux/gui.nix ];
+  imports = [
+    ../../linux/gui.nix
+    ./12kingdoms-shoukei/wluma.nix
+  ];
 
   programs.ssh.settings."github.com".IdentityFile = "${config.home.homeDirectory}/.ssh/${hostName}";
 
   modules.desktop.gaming.enable = false;
   modules.desktop.niri.enable = true;
-  modules.desktop.nvidia.enable = false;
+  modules.desktop.hypridle.enable = true;
 
   xdg.configFile."niri/niri-hardware.kdl".source =
     mkSymlink "${config.home.homeDirectory}/nix-config/hosts/12kingdoms-shoukei/niri-hardware.kdl";
