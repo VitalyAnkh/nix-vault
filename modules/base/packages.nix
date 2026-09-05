@@ -68,6 +68,7 @@
       doggo # DNS client for humans
       wget
       curl
+      sshpass # non-interactive SSH password helper (`sshpass`)
       curlie # curl with httpie
       httpie
       aria2 # A lightweight multi-protocol & multi-source command-line download utility

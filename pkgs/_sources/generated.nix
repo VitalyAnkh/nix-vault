@@ -8,13 +8,13 @@
 {
   source-codex-desktop-linux = {
     pname = "source-codex-desktop-linux";
-    version = "13895a608077151d314e5f2b6e442b92cd9f2f3b";
+    version = "241435e57b27da16e1a4381dabeb9c63876dfab2";
     src = fetchFromGitHub {
       owner = "ilysenko";
       repo = "codex-desktop-linux";
-      rev = "13895a608077151d314e5f2b6e442b92cd9f2f3b";
+      rev = "241435e57b27da16e1a4381dabeb9c63876dfab2";
       fetchSubmodules = false;
-      sha256 = "sha256-OrqBaIHflpZIcn2OjiMKCXyZNeK/zDbBWyy0lVOarr8=";
+      sha256 = "sha256-d6Mcm0MUzuY/1A30vktTgdUiT84CtklN7TPOs5nLbFs=";
     };
   };
   source-emacs-lsp-booster = {
@@ -46,13 +46,13 @@
   };
   source-godot-master = {
     pname = "source-godot-master";
-    version = "893cf5cbfe789ae67c9389708e1428141bb39b18";
+    version = "5ec4857b340b6284a18b49b2eda462bd250f219a";
     src = fetchFromGitHub {
       owner = "godotengine";
       repo = "godot";
-      rev = "893cf5cbfe789ae67c9389708e1428141bb39b18";
+      rev = "5ec4857b340b6284a18b49b2eda462bd250f219a";
       fetchSubmodules = false;
-      sha256 = "sha256-kEqkeIt74S1YxyXjG3exK1LPUBbTvLcLfDyaYX+dlG4=";
+      sha256 = "sha256-UdWl+6zQjaryEespQ6qlWGNEb/1tv1IaAF1KpGFGxho=";
     };
   };
   source-nutstore-client = {
@@ -81,13 +81,13 @@
   };
   source-warp-terminal = {
     pname = "source-warp-terminal";
-    version = "19548aec6285e82b1a4cde526e7ec7e04513c248";
+    version = "9c2879ab6d4ee8760fbbbc9bbb7457b2cfa5fc3f";
     src = fetchFromGitHub {
       owner = "warpdotdev";
       repo = "Warp";
-      rev = "19548aec6285e82b1a4cde526e7ec7e04513c248";
+      rev = "9c2879ab6d4ee8760fbbbc9bbb7457b2cfa5fc3f";
       fetchSubmodules = false;
-      sha256 = "sha256-iPm/LxGDlJ6JLPIbNEp5tu6P7DqXByrw81RKDkSAgW0=";
+      sha256 = "sha256-BxVeVxMugNCuWALIOlBwyqrexpBNg+bDji5mM8rgqG4=";
     };
   };
 }
