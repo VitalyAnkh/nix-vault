@@ -82,6 +82,14 @@ in
   # networking.useNetworkd = true;
   # systemd.network.enable = true;
 
+  # Ported from upstream idols-ai. These only take effect if networkd is
+  # enabled later; eva currently uses NetworkManager. Do not enable networkd
+  # here — that would change the live networking stack.
+  # networkd removes routing policy rules not defined in .network files
+  # (ManageForeignRoutingPolicyRules defaults to yes) each time it reconfigures
+  # a link. Keep foreign rules so VPN/TUN (mihomo/Tailscale) rules survive.
+  systemd.network.config.networkConfig.ManageForeignRoutingPolicyRules = false;
+
   systemd.network.networks."10-${iface}" = {
     matchConfig.Name = [ iface ];
     networkConfig = {
@@ -93,6 +101,10 @@ in
       DHCP = "ipv6"; # enable DHCPv6 only, so we can get a GUA.
       IPv6AcceptRA = true; # for Stateless IPv6 Autoconfiguraton (SLAAC)
       LinkLocalAddressing = "ipv6";
+      # r8169 drops carrier on S3 resume; without this, networkd tears down the
+      # static address/route and clash's TUN auto-detect briefly loses its
+      # outbound interface, leaving routing broken until clash is restarted.
+      IgnoreCarrierLoss = "10s";
     };
     routes = [
       {

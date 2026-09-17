@@ -9,7 +9,14 @@ in
 
   modules.desktop.gaming.enable = true;
   modules.desktop.niri.enable = true;
-  modules.desktop.hypridle.enable = true;
+
+  # PC: keep the screen on longer than the laptop.
+  modules.desktop.hypridle = {
+    enable = true;
+    keyboardBacklightTimeout = 900;
+    screenOffTimeout = 1200;
+    lockTimeout = 1800;
+  };
 
   programs.zed-editor.userSettings = {
     ui_font_size = 18.0;
@@ -20,4 +27,7 @@ in
 
   xdg.configFile."niri/niri-hardware.kdl".source =
     mkSymlink "${config.home.homeDirectory}/nix-config/hosts/idols-ai/niri-hardware.kdl";
+
+  # The desktop speakers are already loud, so use the broadcast-standard -23 dB.
+  services.easyeffects.extraPresets."loudness-normalization".output."autogain#0".target = -23.0;
 }

@@ -20,4 +20,7 @@ in
     agent_ui_font_size = 18.0;
     agent_buffer_font_size = 17.0;
   };
+
+  # Desktop speakers: EBU R128 broadcast-standard target, same as eva / upstream ai host.
+  services.easyeffects.extraPresets."loudness-normalization".output."autogain#0".target = -23.0;
 }

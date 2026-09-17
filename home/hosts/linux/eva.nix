@@ -24,6 +24,9 @@ in
     agent_buffer_font_size = 17.0;
   };
 
+  # Desktop speakers: EBU R128 broadcast-standard target, same as upstream ai host.
+  services.easyeffects.extraPresets."loudness-normalization".output."autogain#0".target = -23.0;
+
   xdg.configFile."niri/niri-hardware.kdl".source =
     mkSymlink "${config.home.homeDirectory}/nix-vault/hosts/${hostName}/niri-hardware.kdl";
 }

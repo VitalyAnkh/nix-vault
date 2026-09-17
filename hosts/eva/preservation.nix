@@ -248,6 +248,9 @@ in
         ".zcode"
         ".config/ZCode"
         ".config/zcode"
+        # herdr: plugin registry, plugin checkouts/config, session layout
+        ".config/herdr"
+        ".local/state/herdr"
 
         # nvim
         ".local/share/nvim"
@@ -404,6 +407,7 @@ in
         ".cache/chromium"
         ".config/microsoft-edge"
         ".cache/microsoft-edge"
+        ".config/BraveSoftware/Brave-Origin"
         ".config/RoxyBrowser"
         ".cache/RoxyBrowser"
         ".roxybrowser"

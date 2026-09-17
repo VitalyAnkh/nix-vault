@@ -6,24 +6,6 @@
 }:
 let
   system = pkgs.stdenv.hostPlatform.system;
-
-  microsoft-edge =
-    if pkgs.stdenv.isAarch64 then
-      null
-    else
-      pkgs.symlinkJoin {
-        name = "microsoft-edge-wrapped";
-        paths = [ pkgs.microsoft-edge ];
-        nativeBuildInputs = [ pkgs.makeWrapper ];
-        postBuild = ''
-          wrapProgram $out/bin/microsoft-edge \
-            --add-flags "--ozone-platform-hint=auto" \
-            --add-flags "--ozone-platform=x11" \
-            --add-flags "--gtk-version=4" \
-            --add-flags "--enable-wayland-ime" \
-            --add-flags "--enable-features=Vulkan"
-        '';
-      };
 in
 {
   home.packages =
@@ -35,12 +17,26 @@ in
     ]
     ++ lib.optionals pkgs.stdenv.isx86_64 [
       pkgs.roxy-browser
-    ]
-    ++ lib.optionals (microsoft-edge != null) [ microsoft-edge ];
+    ];
 
   # source code: https://github.com/nix-community/home-manager/blob/master/modules/programs/chromium.nix
-  programs.google-chrome = {
-    enable = true;
-    package = if pkgs.stdenv.hostPlatform.isAarch64 then pkgs.chromium else pkgs.google-chrome;
+
+  # open-source upstream Chromium, the base for all the browsers below
+  programs.chromium.enable = true;
+  # the world's most widely used browser, with deep Google account and services integration
+  programs.google-chrome.enable = true;
+  # Brave's privacy-first build (Shields ad/tracker blocking), minus the crypto/AI extras
+  programs.brave-origin.enable = true;
+  # Microsoft's browser, with built-in phishing/malware protection, x86_64 build only.
+  # Keep the local Wayland/IME/Vulkan flags that the previous wrapProgram used.
+  programs.microsoft-edge = {
+    enable = pkgs.stdenv.hostPlatform.isx86_64;
+    commandLineArgs = [
+      "--ozone-platform-hint=auto"
+      "--ozone-platform=x11"
+      "--gtk-version=4"
+      "--enable-wayland-ime"
+      "--enable-features=Vulkan"
+    ];
   };
 }

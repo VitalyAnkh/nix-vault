@@ -159,6 +159,7 @@ in
       "squirrel-app" # input method for Chinese, rime-squirrel
       "firefox"
       "google-chrome"
+      "microsoft-edge"
 
       "ghostty" # terminal emulator
 

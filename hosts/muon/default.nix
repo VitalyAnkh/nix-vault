@@ -141,6 +141,10 @@ in
   # networking.useNetworkd = true;
   # systemd.network.enable = true;
 
+  # Shared with eva / upstream idols-ai. Inert while NetworkManager owns the
+  # stack; do not enable networkd here.
+  systemd.network.config.networkConfig.ManageForeignRoutingPolicyRules = false;
+
   systemd.network.networks."10-${iface}" = {
     matchConfig.Name = [ iface ];
     networkConfig = {
@@ -152,6 +156,7 @@ in
       DHCP = "ipv6"; # enable DHCPv6 only, so we can get a GUA.
       IPv6AcceptRA = true; # for Stateless IPv6 Autoconfiguraton (SLAAC)
       LinkLocalAddressing = "ipv6";
+      IgnoreCarrierLoss = "10s";
     };
     routes = [
       {

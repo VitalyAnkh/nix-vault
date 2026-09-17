@@ -22,7 +22,6 @@ in
     ++ (with llmAgentPackages; [
       grok
       kimi-code
-      herdr # Terminal workspace manager for AI coding agents
       orca
       zcode
       #codex
@@ -30,7 +29,7 @@ in
       #opencode
       #rtk
     ])
-    ++ (lib.optionals stdenv.isLinux [
+    ++ (lib.optionals stdenv.hostPlatform.isLinux [
       mitmproxy # http/https proxy tool
       wireshark # network analyzer
       qrtool # decode/encode qr code
@@ -38,7 +37,7 @@ in
       xeyes
       xvfb-run
     ])
-    ++ (lib.optionals stdenv.isx86_64 [
+    ++ (lib.optionals stdenv.hostPlatform.isx86_64 [
       insomnia # REST client
     ]);
 }
