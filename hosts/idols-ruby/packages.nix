@@ -1,4 +1,7 @@
 { pkgs, llm-agents, ... }:
+let
+  agentPackages = llm-agents.packages.${pkgs.stdenv.hostPlatform.system};
+in
 {
   # https://github.com/Mic92/nix-ld
   #
@@ -45,7 +48,6 @@
 
           # model downloaders
           huggingface-hub
-          modelscope
         ]
       ))
 
@@ -62,7 +64,6 @@
       # cloud-native
       kubectl
       istioctl
-      kubevirt # virtctl
       kubernetes-helm
       fluxcd
       terraform
@@ -80,15 +81,12 @@
       conda
     ]
     # AI Agent Tools
-    ++ (with llm-agents.packages.${pkgs.stdenv.hostPlatform.system}; [
+    ++ [
       # Agents
-      codex
-      cursor-cli
-      claude-code
-      opencode
-      kimi-code
-
-      # Utilities
-      rtk # CLI proxy that reduces LLM token consumption
-    ]);
+      agentPackages.codex
+      agentPackages.opencode
+      agentPackages.kimi-code
+      agentPackages.pi
+      agentPackages.omp
+    ];
 }

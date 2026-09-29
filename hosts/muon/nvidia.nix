@@ -1,4 +1,9 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 {
   # ===============================================================================================
   # for Nvidia GPU
@@ -42,6 +47,14 @@
     # needed by nvidia-docker
     enable32Bit = true;
   };
+
+  # Keep muon's NVIDIA desktop monitoring aligned with EVA and the upstream
+  # AI host, without enabling Niri-specific services.
+  modules.btop = {
+    package = pkgs.btop-cuda;
+    perfmon = true;
+  };
+  environment.systemPackages = [ pkgs.nvtopPackages.full ];
 
   nixpkgs.config.cudaSupport = true;
 

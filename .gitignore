@@ -19,3 +19,25 @@ progress.md
 
 # oh-my-codex local state
 .omx/
+
+# =============== Python ===========================
+
+# Byte-compiled / optimized files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# virtualenvs
+.venv/
+venv/
+env/
+
+# local secrets
+.env
+
+# tooling caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/

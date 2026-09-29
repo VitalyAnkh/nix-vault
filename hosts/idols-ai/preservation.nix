@@ -48,9 +48,6 @@ in
 
       "/var/log"
 
-      # preserve davfs2 driver's cache to avoid large memory usage
-      "/var/cache/davfs2"
-
       # system-core
       "/var/lib/nixos"
       "/var/lib/systemd"
@@ -149,17 +146,13 @@ in
         ".config/zed"
         ".local/share/zed"
 
-        # cursor ai editor / cli
-        ".cursor"
-        ".config/cursor"
-        ".config/Cursor"
-
         # ai agents
         ".agents" # skills for all agents
         ".config/agents"
-        ".claude"
         ".codex"
         ".kimi-code"
+        ".pi"
+        ".omp"
         ".config/opencode"
         ".local/share/opencode"
         ".local/state/opencode"
@@ -356,10 +349,6 @@ in
         {
           file = ".config/zoom.conf";
           how = "symlink";
-        }
-        {
-          file = ".claude.json";
-          how = "bindmount";
         }
       ];
     };

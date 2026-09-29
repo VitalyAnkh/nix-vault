@@ -5,7 +5,7 @@
   ...
 }:
 let
-  llmAgentPackages = llm-agents.packages.${pkgs.stdenv.hostPlatform.system};
+  agentPackages = llm-agents.packages.${pkgs.stdenv.hostPlatform.system};
 in
 {
   home.packages =
@@ -14,30 +14,31 @@ in
       # IDEs
       jetbrains-toolbox
 
-      # AI cli tools
+      # AI cli tools packaged in nixpkgs
       k8sgpt
-      kubectl-ai # an ai helper opensourced by google
-      cursor-cli # packaged in nixpkgs, not llm-agents
+      kubectl-ai
+      cursor-cli
+      qrtool
     ]
-    ++ (with llmAgentPackages; [
+    ++ (with agentPackages; [
+      # Codex is intentionally installed through pnpm, not Nix.
       grok
       kimi-code
+      # `dsh` is the llm-agents package for DeepSeek Harness.
+      dsh
+      opencode
       orca
+      pi
+      omp
       zcode
-      #codex
-      #claude-code
-      #opencode
-      #rtk
     ])
-    ++ (lib.optionals stdenv.hostPlatform.isLinux [
-      mitmproxy # http/https proxy tool
-      wireshark # network analyzer
-      qrtool # decode/encode qr code
-
+    ++ (lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+      mitmproxy
+      wireshark
       xeyes
       xvfb-run
     ])
-    ++ (lib.optionals stdenv.hostPlatform.isx86_64 [
-      insomnia # REST client
+    ++ (lib.optionals pkgs.stdenv.hostPlatform.isx86_64 [
+      insomnia
     ]);
 }

@@ -25,7 +25,9 @@ let
         # common
         "secrets/nixos.nix"
         "modules/nixos/server/server.nix"
-        "modules/nixos/server/kubevirt-hardware-configuration.nix"
+        "modules/nixos/server/qemu-guest-hardware-configuration.nix"
+        # headless computer-use environment (sway + desktop automation)
+        "modules/nixos/desktop/computer-use.nix"
         # host specific
         "hosts/idols-${name}"
       ])
@@ -33,6 +35,7 @@ let
       ];
     home-modules = map mylib.relativeToRoot [
       "home/linux/tui.nix"
+      "home/hosts/linux/idols-${name}.nix"
     ];
   };
 
@@ -42,8 +45,6 @@ in
   nixosConfigurations.${name} = mylib.nixosSystem systemArgs;
 
   colmena.${name} = mylib.colmenaSystem (systemArgs // { inherit tags ssh-user; });
-
-  packages.${name} = inputs.self.nixosConfigurations.${name}.config.system.build.images.kubevirt;
 
   # nixos tests
   packages."${name}-nixos-tests" = import ../nixos-tests/idols-ruby.nix systemArgs;

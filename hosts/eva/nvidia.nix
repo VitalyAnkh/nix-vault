@@ -1,4 +1,9 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   inherit (lib)
     mkEnableOption
@@ -126,6 +131,14 @@ in
       # needed by nvidia-docker
       enable32Bit = true;
     };
+
+    # Port the upstream AI host's GPU-aware monitoring without importing its
+    # Intel PRIME/Niri assumptions. EVA uses the NVIDIA GPU directly.
+    modules.btop = {
+      package = pkgs.btop-cuda;
+      perfmon = true;
+    };
+    environment.systemPackages = [ pkgs.nvtopPackages.full ];
 
     nixpkgs.config.cudaSupport = true;
 

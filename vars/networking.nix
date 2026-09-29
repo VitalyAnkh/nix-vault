@@ -2,6 +2,8 @@
 rec {
   mainGateway = "192.168.5.1"; # main router
   mainGateway6 = "fe80::5"; # main router's link-local address
+  # The trusted home LAN; the shared host firewall trusts this by source.
+  lanCidr = "192.168.5.0/24";
   # use suzi as the default gateway
   # it's a subrouter with a transparent proxy
   # VR_TODO: what the default gateway should be?
@@ -22,19 +24,36 @@ rec {
   ];
   prefixLength = 24;
 
+  # Dedicated VIP block for the k3s clusters, outside the router's DHCP pool
+  # (.2-.99). One /29 per cluster, handed to kube-vip: the first usable address
+  # is the control-plane API VIP, the rest are LoadBalancer service VIPs.
+  k8sVip = {
+    cidr = "192.168.5.192/27";
+    clusters = {
+      k3s-test-1 = {
+        cidr = "192.168.5.192/29";
+        apiVip = "192.168.5.193";
+      };
+      # Reserved for future clusters:
+      #   .200/29  apiVip .201
+      #   .208/29  apiVip .209
+      #   .216/29  apiVip .217
+    };
+  };
+
   hostsAddr = {
     # ============================================
-    # Homelab's Physical Machines (KubeVirt Nodes)
+    # Homelab's Physical Machines (VM hosts)
     # ============================================
-    kubevirt-shoryu = {
+    shoryu = {
       iface = "eno1";
       ipv4 = "192.168.5.181";
     };
-    kubevirt-shushou = {
+    shushou = {
       iface = "eno1";
       ipv4 = "192.168.5.182";
     };
-    kubevirt-youko = {
+    youko = {
       iface = "eno1";
       ipv4 = "192.168.5.183";
     };
@@ -92,13 +111,6 @@ rec {
       iface = "end1";
       ipv4 = "192.168.5.107";
     };
-    shoukei = {
-      # Apple M2 + NixOS
-      # Used only when at home
-      iface = "wlan0";
-      ipv4 = "192.168.5.108";
-      ipv6 = "fe80::11"; # Link-local Address
-    };
     rakushun = {
       # Orange Pi 5 - ARM
       # RJ45 port 1 - enP4p65s0
@@ -119,51 +131,35 @@ rec {
     # ============================================
     # Kubernetes Clusters
     # ============================================
-    k3s-prod-1-master-1 = {
-      # VM
-      iface = "enp2s0";
-      ipv4 = "192.168.5.108";
-    };
-    k3s-prod-1-master-2 = {
-      # VM
-      iface = "enp2s0";
-      ipv4 = "192.168.5.109";
-    };
-    k3s-prod-1-master-3 = {
-      # VM
-      iface = "enp2s0";
-      ipv4 = "192.168.5.110";
-    };
-    k3s-prod-1-worker-1 = {
-      # VM
-      iface = "enp2s0";
-      ipv4 = "192.168.5.111";
-    };
-    k3s-prod-1-worker-2 = {
-      # VM
-      iface = "enp2s0";
-      ipv4 = "192.168.5.112";
-    };
-    k3s-prod-1-worker-3 = {
-      # VM
-      iface = "enp2s0";
-      ipv4 = "192.168.5.113";
-    };
-
     k3s-test-1-master-1 = {
-      # KubeVirt VM
+      # VM
       iface = "enp2s0";
       ipv4 = "192.168.5.114";
     };
     k3s-test-1-master-2 = {
-      # KubeVirt VM
+      # VM
       iface = "enp2s0";
       ipv4 = "192.168.5.115";
     };
     k3s-test-1-master-3 = {
-      # KubeVirt VM
+      # VM
       iface = "enp2s0";
       ipv4 = "192.168.5.116";
+    };
+    k3s-test-1-worker-1 = {
+      # VM
+      iface = "enp2s0";
+      ipv4 = "192.168.5.111";
+    };
+    k3s-test-1-worker-2 = {
+      # VM
+      iface = "enp2s0";
+      ipv4 = "192.168.5.112";
+    };
+    k3s-test-1-worker-3 = {
+      # VM
+      iface = "enp2s0";
+      ipv4 = "192.168.5.113";
     };
   };
 
@@ -218,6 +214,8 @@ rec {
           # Define the root user's host key for remote builders, so that nix can verify all the remote builders
 
           # aquamarine.publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEOXFhFu9Duzp6ZBE288gDZ6VLrNaeWL4kDrFUh9Neic root@aquamarine";
+          # the restic backup server
+          youko.publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEs8b3CmxM+utXZVKvJBssXBupBXvvzjHP40HcY7PSyZ root@youko";
           # ruby.publicKey = "";
           # kana.publicKey = "";
 

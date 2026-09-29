@@ -24,7 +24,6 @@ in
     # disks
     ./disko-fs.nix
     ./disko-fs-data.nix
-    ./netdev-mount.nix
 
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
@@ -33,6 +32,8 @@ in
 
     ./preservation.nix
     ./secureboot.nix
+
+    ./restic.nix
 
     # others
     ./ai
@@ -58,6 +59,8 @@ in
 
   services.sunshine.enable = true;
   services.tuned.ppdSettings.main.default = lib.mkForce "performance";
+
+  modules.btrbk.enable = true;
 
   powerManagement.resumeCommands = ''
     # Insta360 Link may stay enumerated with a stalled UVC endpoint after S3 resume.

@@ -9,7 +9,7 @@ home/
 ├── base/              # Cross-platform home manager configurations
 │   ├── core/          # Essential applications and settings
 │   │   ├── editors/   # Editor configurations (Neovim, Helix)
-│   │   ├── shells/    # Shell configurations (Nushell, Zellij)
+│   │   ├── shells/    # Shell configurations (bash, Nushell)
 │   │   └── ...
 │   ├── gui/           # GUI applications and desktop settings
 │   │   ├── terminal/  # Terminal emulators (Kitty, Alacritty, etc.)
@@ -22,10 +22,13 @@ home/
 ├── linux/             # Linux-specific home manager configurations
 │   ├── base/          # Linux base configurations
 │   ├── gui/           # Linux GUI applications
+│   │   ├── i3/        # i3 — headless computer-use session (see i3/README.md)
 │   │   ├── niri/      # Niri window manager
 │   │   └── ...
-│   ├── editors/       # Linux-specific editors
 │   └── ...
+├── hosts/             # Host-specific home manager entry modules
+│   ├── linux/         # Linux host home modules (ai, shoukei, kana, ruby, k3s-*, etc.)
+│   └── darwin/        # macOS host home modules (fern, frieren)
 └── darwin/            # macOS-specific home manager configurations
     ├── proxy/         # Proxy configurations
     └── ...
@@ -39,12 +42,13 @@ home/
 
 2. **linux**: Linux-specific configuration
    - Desktop environments (Noctalia Shell, Niri compositor)
+   - Headless computer-use session (`gui/i3`, Xvfb + i3; see `gui/i3/README.md`)
    - Linux-specific GUI applications
    - System integration tools
 
 3. **darwin**: macOS-specific configuration
    - macOS applications and services
-   - Platform-specific integrations (Aerospace, Squirrel, etc.)
+   - Platform-specific integrations (Squirrel, etc.)
 
 4. **hosts**: Host entry modules for Home Manager
    - Each output should reference only one host home module file

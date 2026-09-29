@@ -50,7 +50,10 @@ let
 in
 {
   nixosConfigurations = {
-    "${name}" = mylib.nixosSystem (modules-niri // args);
+    # EVA is the GNOME desktop configuration. Keep Niri as an explicit,
+    # opt-in variant so upstream Niri fixes remain available without changing
+    # the default login/session path.
+    "${name}" = mylib.nixosSystem (base-modules // args);
     "${name}-niri" = mylib.nixosSystem (modules-niri // args);
   };
 

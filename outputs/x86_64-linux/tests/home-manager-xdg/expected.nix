@@ -5,7 +5,6 @@ in
 lib.genAttrs
   [
     "eva"
-    "aquamarine"
     "ruby"
   ]
   (_: {

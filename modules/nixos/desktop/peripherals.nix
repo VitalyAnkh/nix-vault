@@ -39,7 +39,8 @@ in
 
   #============================= Bluetooth =============================
 
-  # enable bluetooth & gui paring tools - blueman
+  # Pairing UI lives in Noctalia's bluetooth widget / control-center tab, which
+  # registers its own org.bluez pairing agent, so no blueman applet is needed.
   # or you can use cli:
   # $ bluetoothctl
   # [bluetooth] # power on
@@ -52,7 +53,6 @@ in
   # Bluetooth devices automatically connect with bluetoothctl as well:
   # [bluetooth] # trust [hex-address]
   hardware.bluetooth.enable = true;
-  services.blueman.enable = true;
 
   #================================= Misc =================================
 

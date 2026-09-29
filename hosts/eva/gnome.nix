@@ -18,7 +18,7 @@
     # clash-party
     #daed
     warp-terminal
-    waveterm
+    # waveterm was removed from current nixpkgs (EOL Electron application).
     zotero
     kdePackages.okular
     v2raya

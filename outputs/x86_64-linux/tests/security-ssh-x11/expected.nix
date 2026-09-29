@@ -8,11 +8,13 @@ let
     "eva"
     "eva-niri"
     "muon"
+    "muon-niri"
   ];
   keepRootLogin = [
     "eva"
     "eva-niri"
     "muon"
+    "muon-niri"
   ];
 in
 lib.genAttrs (builtins.attrNames outputs.nixosConfigurations) (

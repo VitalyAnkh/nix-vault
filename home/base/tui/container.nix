@@ -25,7 +25,6 @@
     kubebuilder
     istioctl
     clusterctl # for kubernetes cluster-api
-    kubevirt # virtctl
     pkgs-2505.kubernetes-helm
     fluxcd
     argocd

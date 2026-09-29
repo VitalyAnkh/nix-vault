@@ -21,6 +21,9 @@ let
     in
     inputs
     // {
+      # Keep the complete flake input set available to nested configurations
+      # such as MicroVM guests, which may instantiate shared modules directly.
+      inherit inputs;
       inherit mylib myvars pkgs-stable;
 
       # use unstable branch for some packages to get the latest updates
@@ -67,7 +70,7 @@ let
 
         # To use chrome, we need to allow the installation of non-free software
         config.allowUnfree = true;
-
+        overlays = import ../overlays args;
       };
 
       # Some modules expect this input to exist in specialArgs even when the flake input

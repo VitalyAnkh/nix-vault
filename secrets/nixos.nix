@@ -183,6 +183,12 @@ in
           mode = "0400";
           owner = "sftpgo";
         })
+
+        # RustFS root credentials used by the homelab object-store service.
+        (optionalSecret "rustfs.env" "${mysecrets}/server/rustfs.env.age" {
+          mode = "0400";
+          owner = "root";
+        })
       ];
     })
 
@@ -192,6 +198,16 @@ in
           mode = "0400";
           owner = "grafana";
         })
+
+        (optionalSecret "grafana-secret-key" "${mysecrets}/server/grafana-secret-key.age" {
+          mode = "0400";
+          owner = "grafana";
+        })
+
+        (optionalSecret "postgres-playground-password"
+          "${mysecrets}/server/postgres-playground-password.age"
+          high_security
+        )
 
         (optionalSecret "alertmanager.env" "${mysecrets}/server/alertmanager.env.age" high_security)
       ];
@@ -216,6 +232,11 @@ in
           mode = "0400";
           owner = "postgres";
         })
+
+        (optionalSecret "cloudflare-dns-api-token" "${mysecrets}/server/cloudflare-dns-api-token.env.age" {
+          mode = "0400";
+          owner = "root";
+        })
       ];
     })
 
@@ -224,6 +245,16 @@ in
         (optionalSecret "hdd-luks-crypt-key" "${mysecrets}/hdd-luks-crypt-key.age" {
           mode = "0400";
           owner = "root";
+        })
+
+        (optionalSecret "restic-password" "${mysecrets}/restic-password-homelab.age" {
+          mode = "0400";
+          owner = "root";
+        })
+
+        (optionalSecret "restic-rest-htpasswd" "${mysecrets}/restic-rest-htpasswd.age" {
+          mode = "0400";
+          owner = "restic";
         })
       ];
 

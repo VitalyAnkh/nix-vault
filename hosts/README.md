@@ -10,12 +10,16 @@ This directory contains all host-specific configurations for my NixOS and macOS 
 
 Named after characters from "Oshi no Ko":
 
-| Host         | Platform    | Hardware              | Purpose               | Status      |
-| ------------ | ----------- | --------------------- | --------------------- | ----------- |
-| `ai`         | NixOS       | i5-13600KF + RTX 4090 | Gaming & Daily Use    | ✅ Active   |
-| `aquamarine` | KubeVirt VM | Virtual               | Monitoring & Services | ✅ Active   |
-| `kana`       | NixOS       | Virtual               | Reserved              | ⚪ Not Used |
-| `ruby`       | NixOS       | Virtual               | Reserved              | ⚪ Not Used |
+| Host         | Platform        | Hardware              | Purpose               | Status      |
+| ------------ | --------------- | --------------------- | --------------------- | ----------- |
+| `ai`         | NixOS           | i5-13600KF + RTX 4090 | Gaming & Daily Use    | ✅ Active   |
+| `aquamarine` | NixOS (libvirt) | Virtual               | Monitoring & Services | ⚪ Not Used |
+| `kana`       | NixOS (libvirt) | Virtual               | Run AI Agents         | ✅ Active   |
+| `ruby`       | NixOS (libvirt) | Virtual               | Run AI Agents         | ✅ Active   |
+| `akane`      | NixOS (aarch64) | Virtual (UTM)         | aarch64 test VM       | ✅ Active   |
+
+`aquamarine` is retired; its services now run directly on `youko`
+(`hosts/12kingdoms-youko/homelab-services/`).
 
 #### `darwin` - macOS Systems
 
@@ -30,20 +34,29 @@ Named after characters from "Frieren: Beyond Journey's End":
 
 Named after "Twelve Kingdoms":
 
-| Host      | Platform | Hardware                               | Purpose                    | Status    |
-| --------- | -------- | -------------------------------------- | -------------------------- | --------- |
-| `shoukei` | NixOS    | MacBook Pro M2                         | NixOS on Apple Silicon     | ✅ Active |
-| `shoryu`  | NixOS    | MoreFine S500Plus (AMD Ryzen 9 5900HX) | KubeVirt Host & K3s Master | ✅ Active |
-| `shushou` | NixOS    | MinisForum UM560 (AMD Ryzen 5 5625U)   | KubeVirt Host & K3s Master | ✅ Active |
-| `youko`   | NixOS    | MinisForum HX99G (AMD Ryzen 9 6900HX)  | KubeVirt Host & K3s Master | ✅ Active |
+| Host      | Platform | Hardware                             | Purpose                | Status    |
+| --------- | -------- | ------------------------------------ | ---------------------- | --------- |
+| `shoukei` | NixOS    | MacBook Pro M2                       | NixOS on Apple Silicon | ✅ Active |
+| `shoryu`  | NixOS    | MoreFine S500+ (AMD Ryzen 7 5825U)   | VM Host                | ✅ Active |
+| `shushou` | NixOS    | MinisForum UM560 (AMD Ryzen 5 5625U) | VM Host                | ✅ Active |
+| `youko`   | NixOS    | Beelink GTR5 (AMD Ryzen 9 5900HX)    | Homelab Core           | ✅ Active |
+
+On 2026-09-29 the NVMe SSDs of `youko` and `shushou` were physically swapped, and the 2×4TB USB HDDs
+moved with the `youko` role to the other chassis. The reason was Jellyfin: HDR transcoding on the
+5625U's Barceló iGPU could not keep up (~0.4–0.8×), while the 5900HX's Cezanne iGPU can (~1.68× for
+1080p HDR). So the homelab-core role (all services + one k3s VM + the HDDs + the UPS) now runs on
+the Beelink GTR5 and the k3s VM-host role on the UM560; the other services moving along is a side
+effect of swapping the role's disk, not a separate migration. Hostnames, IPs, and state followed the
+disks.
 
 ### Virtual Machines & Clusters
 
 #### `k8s` - Kubernetes Infrastructure
 
-- **KubeVirt Cluster**: 3 physical mini PCs (shoryu, shushou, youko) running all VMs
-- **K3s Production**: 3 masters + 3 workers for production workloads
-- **K3s Testing**: 3 masters for testing and development
+- **VM Cluster**: 3 physical mini PCs (shoryu, shushou, youko) running all VMs
+- **K3s Testing**: `k3s-test-1-master-{1,2,3}` (control plane; one per host) +
+  `k3s-test-1-worker-{1,2,3}` (workloads; `worker-1` on `shoryu`, `worker-2` on `youko`, `worker-3`
+  on `shushou`), running as microVMs
 
 ### External Systems
 
@@ -106,9 +119,34 @@ Use existing hosts as templates. The key files typically include:
 ### Examples to Reference
 
 - **Desktop systems**: See `idols-ai/` for gaming/workstation setup
-- **Server systems**: See `kubevirt-shoryu/` for K8s/KubeVirt hosts
+- **Server systems**: See `12kingdoms-shoryu/` for VM hosts
 - **macOS systems**: See `darwin-fern/` for macOS configurations
 - **Apple Silicon**: See `12kingdoms-shoukei/` for ARM Linux setup
+
+## Deploying VM Hosts
+
+The three VM hosts (`shoryu`, `shushou`, `youko`) attach their VMs (microVM taps and libvirt
+domains) to the Linux bridge `br0`, with the physical NIC as a bridge port. The `k3s-test-1` cluster
+runs as microVMs on top, using Cilium as its pod network (flannel disabled).
+
+- `switch` is fine for changes that don't touch the network stack (e.g. journald or other service
+  settings). Deploy serially (`-p 1`) and re-check VM reachability afterwards.
+- Use `boot` + a serial reboot for anything that can drop the network mid-flight — `systemd.network`
+  / `br0` changes, nixpkgs updates, or any broad rebuild.
+- If a host loses VM networking, check `br0` and the VM taps, or reboot the host.
+
+## Common Build Commands
+
+Use the Just recipes for host configuration checks and builds:
+
+```sh
+just eval-host <host>
+just build-host <host>
+```
+
+`eval-host` only evaluates the configuration. `build-host` builds the system closure without
+activating it. Host activation remains an explicit Colmena operation such as `just shoryu`,
+`just shushou`, or `just youko`.
 
 ## Distributed Building
 

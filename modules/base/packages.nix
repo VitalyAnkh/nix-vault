@@ -27,7 +27,6 @@
 
       # system monitoring
       procs # a moreden ps
-      btop
 
       # archives
       zip

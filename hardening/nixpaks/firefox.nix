@@ -31,7 +31,7 @@ let
         imports = [
           ./modules/gui-base.nix
           ./modules/network.nix
-          ./modules/common.nix
+          ./modules/custom-policy.nix
         ];
 
         bubblewrap = {
@@ -42,6 +42,15 @@ let
             # given the read write permission to the following directories.
             # NOTE: sloth.mkdir is used to create the directory if it does not exist!
             (sloth.mkdir (sloth.concat' sloth.homeDir "/.mozilla"))
+
+            # MPRIS artwork: Firefox writes covers here and advertises the same
+            # path over MPRIS. Without this bind it lands under the sandboxed
+            # XDG_DATA_HOME and Noctalia (outside) cannot read it.
+            (sloth.mkdir (sloth.concat' sloth.homeDir "/.local/share/firefox-mpris"))
+
+            # Files deleted from Firefox go to the real trash instead of a
+            # private one under the sandboxed XDG_DATA_HOME.
+            (sloth.mkdir (sloth.concat' sloth.homeDir "/.local/share/Trash"))
 
             sloth.xdgDocumentsDir
             sloth.xdgDownloadDir
@@ -62,15 +71,16 @@ let
             (sloth.concat' sloth.homeDir "/.local/share/password-store") # my secrets
             (sloth.concat' sloth.runtimeDir "/gnupg") # for access gpg-agent socket
 
+            # Match the host's default-app associations and XDG user dirs.
+            (sloth.concat' sloth.homeDir "/.config/mimeapps.list")
+            (sloth.concat' sloth.homeDir "/.config/user-dirs.dirs")
+
+            # Shared NSS client-certificate store (imported outside Firefox).
+            (sloth.concat' sloth.homeDir "/.pki/nssdb")
+
             # Unsure
             (sloth.concat' sloth.xdgConfigHome "/dconf")
           ];
-
-          sockets = {
-            x11 = false;
-            wayland = true;
-            pipewire = true;
-          };
         };
       };
   };

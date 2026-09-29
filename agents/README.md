@@ -33,7 +33,8 @@ Current targets:
 
 - Codex: `AGENTS.md` -> `${CODEX_HOME:-~/.codex}/AGENTS.md`
 - OpenCode: `AGENTS.md` -> `${XDG_CONFIG_HOME:-~/.config}/opencode/AGENTS.md`
-- Claude Code: `AGENTS.md` -> `~/.claude/CLAUDE.md`
+- Pi: `AGENTS.md` -> `~/.pi/agent/AGENTS.md`
+- OMP: `AGENTS.md` -> `~/.omp/agent/AGENTS.md`
 - Generic cross-tool (read by Kimi Code): `AGENTS.md` -> `~/.agents/AGENTS.md`
 
 Behavior:
@@ -71,9 +72,9 @@ Ideas worth adopting once a concrete need appears; nothing here is implemented y
 scripts above do not cover it.
 
 - **Shared instructions and skills.** Deploy one rules body plus declared skills to every agent
-  (Claude Code, Codex, OpenCode) instead of maintaining a copy per agent. Reference:
-  `mirkolenz/infra` `options/home-manager/agents.nix` (custom `programs.agents`, follows the Agent
-  Skills spec) and `khaneliman/khanelinix` `modules/common/ai-tools/`.
+  instead of maintaining a copy per agent. Reference: `mirkolenz/infra`
+  `options/home-manager/agents.nix` (custom `programs.agents`, follows the Agent Skills spec) and
+  `khaneliman/khanelinix` `modules/common/ai-tools/`.
 - **Single-source permissions.** Keep allow/ask/deny command lists and agent role definitions in one
   place and render them per harness. Reference: `khaneliman/khanelinix`
   `modules/common/ai-tools/{permissions,agents}.nix`.

@@ -5,7 +5,7 @@
 }:
 #############################################################
 #
-#  Kana - a NixOS VM running on Proxmox/KubeVirt
+#  Kana - a NixOS VM running under libvirt
 #
 #############################################################
 let
@@ -16,7 +16,11 @@ let
   ipv4WithMask = "${ipv4}/24";
 in
 {
-  imports = mylib.scanPaths ./.;
+  imports = [
+    ../idols-ruby/packages.nix
+    ../idols-ruby/computer-use.nix
+    ../idols-ruby/oci-containers
+  ];
 
   # supported file systems, so we can mount any removable disks with these filesystems
   boot.supportedFilesystems = [
@@ -48,7 +52,8 @@ in
     matchConfig.Name = [ iface ];
     networkConfig = {
       Address = [ ipv4WithMask ];
-      DNS = nameservers;
+      # DNS = nameservers;
+      DNS = [ proxyGateway ];
       DHCP = "ipv6"; # enable DHCPv6 only, so we can get a GUA.
       IPv6AcceptRA = true; # for Stateless IPv6 Autoconfiguraton (SLAAC)
       LinkLocalAddressing = "ipv6";
@@ -65,6 +70,13 @@ in
       }
     ];
     linkConfig.RequiredForOnline = "routable";
+  };
+
+  # systemd-journal - reduce disk usage
+  # https://www.freedesktop.org/software/systemd/man/latest/journald.conf.html
+  services.journald.settings.Journal = {
+    SystemMaxUse = "2G";
+    RuntimeMaxUse = "256M";
   };
 
   # This value determines the NixOS release from which the default

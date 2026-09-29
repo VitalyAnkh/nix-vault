@@ -239,6 +239,9 @@ in
         ".context7"
         ".kimi"
         ".kimi-code"
+        # DeepSeek Harness (dsh) keeps sessions, credentials, profiles, and
+        # cache together under DSH_HOME, which defaults to ~/.dsh.
+        ".dsh"
         ".local/state/codex-desktop"
         # Orca ADE (llm-agents), distinct from OrcaSlicer
         ".orca"

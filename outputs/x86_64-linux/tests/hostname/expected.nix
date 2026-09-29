@@ -8,6 +8,7 @@ let
     # eva-niri is an "eva" variant (different desktop stack), so the actual hostName stays "eva".
     "eva-niri" = "eva";
     "muon" = "muon";
+    "muon-niri" = "muon";
   };
   specialHostNames = builtins.attrNames specialExpected;
 
