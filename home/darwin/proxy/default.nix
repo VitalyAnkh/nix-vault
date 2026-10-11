@@ -6,7 +6,7 @@
   ...
 }:
 let
-  repoRoot = myvars.repoRoot or "${config.home.homeDirectory}/nix-config";
+  repoRoot = myvars.repoRoot or "${config.home.homeDirectory}/nix-vault";
 in
 {
   options.modules.desktop.proxy.enable =
