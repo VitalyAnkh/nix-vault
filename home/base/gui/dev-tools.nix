@@ -23,13 +23,16 @@ in
       grok
       kimi-code
       herdr # Terminal workspace manager for AI coding agents
-      orca
-      zcode
       #codex
       #claude-code
       #opencode
       #rtk
     ])
+    # llm-agents packages these two for Linux only.
+    ++ lib.optionals stdenv.isLinux [
+      llmAgentPackages.orca
+      llmAgentPackages.zcode
+    ]
     ++ (lib.optionals stdenv.isLinux [
       mitmproxy # http/https proxy tool
       wireshark # network analyzer
