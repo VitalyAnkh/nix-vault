@@ -211,6 +211,9 @@ the recorded combination.
 
 ## Verification
 
+`just karabiner-test` runs both commands below; it skips the lint when Karabiner-Elements is not
+installed.
+
 ```sh
 PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s home/darwin/karabiner -p 'test_*.py' -v
 "/Library/Application Support/org.pqrs/Karabiner-Elements/bin/karabiner_cli" \

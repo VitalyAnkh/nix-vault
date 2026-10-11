@@ -236,6 +236,21 @@ reset-launchpad:
   defaults write com.apple.dock ResetLaunchPad -bool true
   killall Dock
 
+# Test the Karabiner rule sync, then lint the rules if Karabiner-Elements is installed
+[macos]
+[group('desktop')]
+karabiner-test:
+  #!/usr/bin/env nu
+  with-env { PYTHONDONTWRITEBYTECODE: "1" } {
+    python3 -m unittest discover -s home/darwin/karabiner -p 'test_*.py'
+  }
+  let cli = "/Library/Application Support/org.pqrs/Karabiner-Elements/bin/karabiner_cli"
+  if ($cli | path exists) {
+    ^$cli --lint-complex-modifications home/darwin/karabiner/linux-shortcuts.json
+  } else {
+    print "karabiner_cli not found; skipped the rule lint"
+  }
+
 ############################################################################
 #
 #  Homelab - Kubevirt Cluster related commands
