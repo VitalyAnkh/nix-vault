@@ -128,8 +128,9 @@ For NixOS:
 > [./nixos-installer/](./nixos-installer/)
 
 ```bash
-# deploy one of the configuration based on the hostname
-sudo nixos-rebuild switch --flake .#eva
+# deploy one of the configurations; evaluate as your user, who can fetch the private `mysecrets`
+# input over SSH, and let `--sudo` run the activation as root
+nixos-rebuild switch --sudo --flake .#eva
 
 # deploy via `just`(a command runner with similar syntax to make) & justfile
 # Deploy the nixosConfiguration matching the hostname immediately

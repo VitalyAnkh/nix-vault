@@ -191,7 +191,7 @@
     # my private secrets, it's a private repository, you need to replace it with your own.
     # use ssh protocol to authenticate via ssh-agent/ssh-key, and shallow clone to save time
     mysecrets = {
-      url = "github:VitalyAnkh/vr-nix-secrets";
+      url = "git+ssh://git@github.com/VitalyAnkh/vr-nix-secrets.git?shallow=1";
       flake = false;
     };
 

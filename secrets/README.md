@@ -103,7 +103,8 @@ sub modules via `specialArgs`:
     agenix.url = "github:ryantm/agenix/db5637d10f797bb251b94ef9040b237f4702cde3";
 
     # my private secrets, it's a private repository, you need to replace it with your own.
-    mysecrets = { url = "github:VitalyAnkh/vr-nix-secrets"; flake = false; };
+    # Nix fetches it over SSH: evaluate the flake as a user with GitHub SSH access, not as root.
+    mysecrets = { url = "git+ssh://git@github.com/VitalyAnkh/vr-nix-secrets.git?shallow=1"; flake = false; };
   };
 
   outputs = inputs@{ self, nixpkgs, ... }: {
