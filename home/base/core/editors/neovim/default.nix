@@ -1,5 +1,6 @@
 {
   config,
+  lib,
   nixvim,
   pkgs,
   ...
@@ -87,6 +88,12 @@
         nu
       ];
     };
+
+    # Neo-tree opens its log in the data directory at startup, before Neovim itself
+    # creates that directory; create it first so that a new home directory works.
+    extraConfigLuaPre = lib.mkBefore ''
+      vim.fn.mkdir(vim.fn.stdpath('data'), 'p')
+    '';
 
     plugins.neo-tree = {
       enable = true;
