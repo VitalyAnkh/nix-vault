@@ -9,4 +9,6 @@ lib.genAttrs (builtins.attrNames outputs.nixosConfigurations) (_: {
   hasCgroupsFeature = true;
   hasNoExplicitSandboxPaths = true;
   hasDevNetExtraSandboxPath = true;
+  substitutersUnique = true;
+  trustsCacheNixosOrg = true;
 })
