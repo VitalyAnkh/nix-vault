@@ -83,6 +83,8 @@
   programs.fzf = {
     enable = true;
     package = pkgs.fzf;
+    # Atuin below owns history search; fzf still provides completion and file search.
+    historyWidget.command = "";
   };
 
   # very fast version of tldr in Rust
