@@ -278,6 +278,12 @@ Model flag normalization contract:
 
 <project_merge_protocol> Project-specific merge rules for this repository:
 
+- The canonical command-runner file at the repository root is lowercase `justfile`. Treat upstream
+  `Justfile` as the source lineage for this file: merge future upstream recipe changes into local
+  `justfile` while preserving local recipes and intentional overrides. Do not retain both case
+  variants or discard upstream changes merely because the local filename differs. On
+  case-insensitive filesystems, compare the distinct Git blobs rather than assuming both
+  working-tree paths expose different files; preserve unstaged edits before resolving the collision.
 - When merging from upstream `ryan/main`, treat upstream `idols-ai` / `ai` host changes as the
   source lineage for local `eva`. The local `eva` host is the adapted successor of upstream's AI
   host, so safe capability improvements from upstream `idols-ai` should be migrated into `eva`
@@ -306,6 +312,9 @@ Model flag normalization contract:
 
 Minimum acceptance checks for upstream `ryan/main` merges:
 
+- Confirm Git tracks only root `justfile`, with no root `Justfile`; review upstream recipe changes
+  against the lowercase result, preserve local commands, and check recipe parsing plus `utils.nu`
+  argument compatibility without executing deployment or cleanup recipes as a syntax check.
 - Read upstream and local commit messages before resolving conflicts, especially for `flake.lock`,
   host modules, Home Manager modules, and package plumbing.
 - Prefer newer flake lock hashes when they are compatible with local customizations, but do not keep
@@ -323,10 +332,10 @@ Minimum acceptance checks for upstream `ryan/main` merges:
 - Verify local package mechanisms with targeted `nix eval`, including `pkgs` packages, fcitx5
   package/data wiring, `emacs-master-pgtk-with-igc`, Nutstore packages, and Doom Emacs Home Manager
   wiring.
-- Run the strongest feasible build check, normally `nixos-rebuild build --impure --flake .#eva`. If
-  a build cannot complete due to network-only substitute or source-fetch failures, capture the exact
-  failing derivation and error and do not misreport it as a configuration success.
-  </project_merge_protocol>
+- Run the strongest feasible build check, normally
+  `nixos-rebuild build --impure --max-jobs 1 --cores 1 --flake .#eva`. If a build cannot complete
+  due to network-only substitute or source-fetch failures, capture the exact failing derivation and
+  error and do not misreport it as a configuration success. </project_merge_protocol>
 
 <project_desktop_font_protocol> Project-specific desktop font and GTK troubleshooting rules:
 
@@ -363,6 +372,36 @@ Minimum acceptance checks for upstream `ryan/main` merges:
   or GTK theme parser warnings. On Wayland, GNOME Shell itself may retain stale font faces until
   logout or shell restart; report that separately from application-level success.
   </project_desktop_font_protocol>
+
+<project_astra_protocol> Project-specific rules for the `astra` macOS (nix-darwin) host:
+
+- `astra` is the Apple Silicon nix-darwin host with Home Manager integrated (`hosts/darwin-astra`,
+  `home/hosts/darwin/darwin-astra.nix`, `docs/astra-macos-host.md`). Its account name comes from the
+  private `mysecrets` input (`hosts/astra/account.nix`); never write it into this public repository.
+- Build as the user, never as root: root cannot fetch the private `mysecrets` input over SSH. Use
+  `nix build --no-write-lock-file --max-jobs 1 --cores 1 --out-link result-astra .#darwinConfigurations.astra.system`,
+  or `just local`, which builds and then activates. Do not use `sudo darwin-rebuild switch --flake`.
+  macOS has no cgroups, so the 16 GiB builder memory cap from the build resource limits below cannot
+  be enforced there; keep `--max-jobs 1 --cores 1` unless resource headroom has been checked.
+- Activate only when the user explicitly asks for it in the current conversation.
+- Before activating, run `brew bundle cleanup --file=<Brewfile>` and `brew bundle check` with
+  `HOMEBREW_NO_AUTO_UPDATE=1` against the Brewfile that `<system>/activate` references. Homebrew
+  uses `cleanup = "check"`, so activation aborts while any undeclared Homebrew package is installed.
+- Set the system profile first (`nix-env -p /nix/var/nix/profiles/system --set <system>`), then run
+  `<system>/sw/bin/darwin-rebuild activate`; `just local` does the same. Activating before setting
+  the profile can leave `/etc/static` on the previous generation. Never use `darwin-rebuild check`
+  as a dry run: it runs the full activation.
+- After activating, confirm that `readlink /etc/static` equals
+  `readlink -f /run/current-system/etc`.
+- Activate from a terminal app that has Full Disk Access and App Management (Warp on `astra`).
+  Without them, activation can block on a privacy prompt that never appears, and Home Manager's App
+  Management check resets that permission for every app and aborts.
+- Karabiner-Elements seizes the keyboards, so macOS modifier remaps do not apply; express modifier
+  changes as rules in `home/darwin/karabiner`. Karabiner rewrites `karabiner.json` itself, and
+  activation merges the repository's rules into it.
+- Run `doom sync` only from a clean login shell (`env -i HOME=... /bin/zsh -lc 'doom sync -e'`) and
+  never while the user's own sync runs: Doom's env file records the environment of the process that
+  runs the sync. </project_astra_protocol>
 
 ---
 

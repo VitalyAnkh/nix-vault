@@ -5,10 +5,17 @@
   ...
 }:
 let
+  cfg = config.modules.password-store.personalIdentity;
   passwordStoreDir = "${config.xdg.dataHome}/password-store";
 in
 {
-  programs.password-store = {
+  options.modules.password-store.personalIdentity.enable =
+    lib.mkEnableOption "the repository's personal password-store encryption and signing keys"
+    // {
+      default = true;
+    };
+
+  config.programs.password-store = {
     enable = true;
     package = pkgs.pass.withExtensions (exts: [
       # support for one-time-password (OTP) tokens
@@ -21,6 +28,11 @@ in
     # See the “Environment variables” section of pass(1) and the extension man pages for more information about the available keys.
     settings = {
       PASSWORD_STORE_DIR = passwordStoreDir;
+      PASSWORD_STORE_CLIP_TIME = "60";
+      PASSWORD_STORE_GENERATED_LENGTH = "12";
+      PASSWORD_STORE_ENABLE_EXTENSIONS = "true";
+    }
+    // lib.optionalAttrs cfg.enable {
       # Overrides the default gpg key identification set by init.
       # Hexadecimal key signature is recommended.
       # Multiple keys may be specified separated by spaces.
@@ -34,16 +46,13 @@ in
       PASSWORD_STORE_SIGNING_KEY = lib.strings.concatStringsSep " " [
         "EF1F78DCD5D612112001BBDCF99E5166373E5FF6" # VitalyR <vr@vitalyr.com>
       ];
-      PASSWORD_STORE_CLIP_TIME = "60";
-      PASSWORD_STORE_GENERATED_LENGTH = "12";
-      PASSWORD_STORE_ENABLE_EXTENSIONS = "true";
     };
   };
 
   # password-store extensions for browsers
   # you need to install the browser extension for this to work
   # https://github.com/browserpass/browserpass-extension
-  programs.browserpass = {
+  config.programs.browserpass = {
     enable = true;
     browsers = [
       "chrome"

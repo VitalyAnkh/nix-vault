@@ -34,6 +34,8 @@ See [./hosts](./hosts) for the host inventory, [./outputs](./outputs) for how th
 composed, [./BACKUP.md](./BACKUP.md) for the backup design, and [./AGENTS.md](./AGENTS.md) for the
 repository conventions.
 
+The Apple Silicon `astra` host has a dedicated [deployment guide](./docs/astra-macos-host.md).
+
 ## Why NixOS & Flakes?
 
 Nix allows for easy-to-manage, collaborative, reproducible deployments. This means that once
@@ -141,6 +143,17 @@ nix-shell -p just nushell
 # Deploy the darwinConfiguration by hostname match (fern, frieren)
 just local
 just local debug  # detailed output (macOS has no switch/boot mode)
+```
+
+For `astra`, evaluate the flake as the logged-in user so the private `mysecrets` input can be
+fetched over SSH. Install Nix and Homebrew first, then follow the
+[Astra deployment guide](./docs/astra-macos-host.md); activation manages the Homebrew entries but
+does not upgrade or remove existing ones.
+
+```bash
+nix build --no-write-lock-file --max-jobs 8 --cores 8 --out-link result-astra .#darwinConfigurations.astra.system
+sudo -H env NIX_REMOTE=daemon ./result-astra/sw/bin/nix-env -p /nix/var/nix/profiles/system --set "$(readlink -f result-astra)"
+sudo -H ./result-astra/sw/bin/darwin-rebuild activate
 ```
 
 Remote / cluster hosts are deployed with [Colmena](https://github.com/zhaofengli/colmena) on top of

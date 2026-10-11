@@ -37,7 +37,7 @@ let
         bubblewrap = {
           # To trace all the home files Firefox accesses, you can use the following nushell command:
           #   just trace-access firefox
-          # See the Justfile in the root of this repository for more information.
+          # See the justfile in the root of this repository for more information.
           bind.rw = [
             # given the read write permission to the following directories.
             # NOTE: sloth.mkdir is used to create the directory if it does not exist!

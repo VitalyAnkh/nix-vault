@@ -1,6 +1,7 @@
 .Trash-1000/
 result
 result/
+/result-*
 .direnv/
 .worktrees/
 .DS_Store

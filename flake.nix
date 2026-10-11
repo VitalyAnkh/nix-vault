@@ -182,8 +182,9 @@
     ########################  Some non-flake repositories  #########################################
 
     # doom-emacs is a configuration framework for GNU Emacs.
+    # Its modules are the git submodule sources/doom+, which GitHub tarballs omit.
     doomemacs = {
-      url = "github:doomemacs/doomemacs";
+      url = "git+https://github.com/doomemacs/doomemacs?submodules=1&shallow=1";
       flake = false;
     };
 
@@ -202,7 +203,7 @@
     # my private secrets, it's a private repository, you need to replace it with your own.
     # use ssh protocol to authenticate via ssh-agent/ssh-key, and shallow clone to save time
     mysecrets = {
-      url = "github:VitalyAnkh/vr-nix-secrets";
+      url = "git+ssh://git@github.com/VitalyAnkh/vr-nix-secrets.git?shallow=1";
       flake = false;
     };
 

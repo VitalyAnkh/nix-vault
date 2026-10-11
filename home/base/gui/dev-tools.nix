@@ -27,10 +27,13 @@ in
       # `dsh` is the llm-agents package for DeepSeek Harness.
       dsh
       opencode
-      orca
       pi
       omp
-      zcode
+    ])
+    # llm-agents packages these two for Linux only.
+    ++ (lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+      agentPackages.orca
+      agentPackages.zcode
     ])
     ++ (lib.optionals pkgs.stdenv.hostPlatform.isLinux [
       mitmproxy

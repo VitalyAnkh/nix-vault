@@ -1,0 +1,112 @@
+Subject: [PATCH] ns: Read accessibility text from the queried window safely
+
+The selected frame and current buffer need not belong to the queried NSWindow.
+Resolve its own live frame and window, and copy text with the buffer substring
+helper so a gap or moving buffer storage cannot corrupt the accessibility value.
+Read active regions from that window and buffer instead of the global PRIMARY
+selection, clipping them to the buffer's accessible range.  Empty or unavailable
+regions leave AXValue describing the accessible buffer and AXSelectedText empty.
+
+--- a/src/nsterm.m
++++ b/src/nsterm.m
+@@ -10137,57 +10137,58 @@
+ #ifdef NS_IMPL_COCOA
+ - (id)accessibilityAttributeValue:(NSString *)attribute
+ {
+-  Lisp_Object str = Qnil;
+-  struct frame *f = SELECTED_FRAME ();
+-  struct buffer *curbuf = XBUFFER (XWINDOW (f->selected_window)->contents);
+-
+   NSTRACE ("[EmacsWindow accessibilityAttributeValue:]");
+ 
+   if ([attribute isEqualToString:NSAccessibilityRoleAttribute])
+     return NSAccessibilityWindowRole;
+ 
+-  if ([attribute isEqualToString:NSAccessibilitySelectedTextAttribute]
+-      && curbuf && ! NILP (BVAR (curbuf, mark_active)))
+-    {
+-      str = ns_get_local_selection (QPRIMARY, QUTF8_STRING);
+-    }
+-  else if (curbuf && [attribute isEqualToString:NSAccessibilityValueAttribute])
+-    {
+-      if (! NILP (BVAR (curbuf, mark_active)))
+-          str = ns_get_local_selection (QPRIMARY, QUTF8_STRING);
+-
+-      if (NILP (str))
++  bool selected_text
++    = [attribute isEqualToString:NSAccessibilitySelectedTextAttribute];
++  if (!selected_text
++      && ![attribute isEqualToString:NSAccessibilityValueAttribute])
++    return [super accessibilityAttributeValue:attribute];
++
++  /* Accessibility can query a window other than the selected frame.  */
++  EmacsView *view = (EmacsView *) [self delegate];
++  if (!view || !view->emacsframe)
++    return [super accessibilityAttributeValue:attribute];
++  struct frame *f = *view->emacsframe;
++  if (!f || !FRAME_LIVE_P (f) || !WINDOW_LIVE_P (f->selected_window))
++    return [super accessibilityAttributeValue:attribute];
++  struct window *w = XWINDOW (f->selected_window);
++  struct buffer *curbuf = XBUFFER (w->contents);
++  if (!BUFFER_LIVE_P (curbuf))
++    return [super accessibilityAttributeValue:attribute];
++
++  /* PRIMARY can belong to another frame.  Use this window's region.  */
++  Lisp_Object mark = BVAR (curbuf, mark);
++  bool region_active = (!NILP (BVAR (curbuf, mark_active))
++                        && MARKERP (mark)
++                        && XMARKER (mark)->buffer == curbuf);
++  if (selected_text && !region_active)
++    return @"";
++
++  specpdl_ref count = SPECPDL_INDEX ();
++  record_unwind_current_buffer ();
++  set_buffer_internal (curbuf);
++
++  ptrdiff_t start = BEGV;
++  ptrdiff_t end = selected_text ? BEGV : ZV;
++  if (region_active)
++    {
++      ptrdiff_t point = clip_to_bounds (BEGV, window_point (w), ZV);
++      ptrdiff_t markpos = clip_to_bounds (BEGV, marker_position (mark), ZV);
++      if (point != markpos)
+         {
+-          ptrdiff_t start_byte = BUF_BEGV_BYTE (curbuf);
+-          ptrdiff_t byte_range = BUF_ZV_BYTE (curbuf) - start_byte;
+-          ptrdiff_t range = BUF_ZV (curbuf) - BUF_BEGV (curbuf);
+-
+-          if (! NILP (BVAR (curbuf, enable_multibyte_characters)))
+-            str = make_uninit_multibyte_string (range, byte_range);
+-          else
+-            str = make_uninit_string (range);
+-          /* To check: This returns emacs-utf-8, which is a superset of utf-8.
+-             Is this a problem?  */
+-          memcpy (SDATA (str), BYTE_POS_ADDR (start_byte), byte_range);
++          start = min (point, markpos);
++          end = max (point, markpos);
+         }
+     }
+ 
+-
+-  if (! NILP (str))
+-    {
+-      if (CONSP (str) && SYMBOLP (XCAR (str)))
+-        {
+-          str = XCDR (str);
+-          if (CONSP (str) && NILP (XCDR (str)))
+-            str = XCAR (str);
+-        }
+-      if (STRINGP (str))
+-        {
+-          return [NSString stringWithLispString:str];
+-        }
+-    }
+-
+-  return [super accessibilityAttributeValue:attribute];
++  /* This handles both sides of the gap and storage moved by allocation.  */
++  Lisp_Object str = make_buffer_string (start, end, false);
++  unbind_to (count, Qnil);
++  return [NSString stringWithLispString:str];
+ }
+ #endif /* NS_IMPL_COCOA */
+ 

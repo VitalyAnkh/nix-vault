@@ -1,11 +1,21 @@
 {
   config,
+  lib,
   pkgs,
   mysecrets,
   ...
 }:
+let
+  cfg = config.modules.gpg.personalIdentity;
+in
 {
-  programs.gpg = {
+  options.modules.gpg.personalIdentity.enable =
+    lib.mkEnableOption "the repository's personal GPG keys, with a read-only keyring and trust database"
+    // {
+      default = true;
+    };
+
+  config.programs.gpg = {
     enable = true;
     package = pkgs.gnupg;
     homedir = "${config.home.homeDirectory}/.gnupg";
@@ -13,14 +23,14 @@
     #
     # If set `mutableTrust` to false, the path $GNUPGHOME/trustdb.gpg will be overwritten on each activation.
     # Thus we can only update trsutedb.gpg via home-manager.
-    mutableTrust = false;
+    mutableTrust = !cfg.enable;
 
     # $GNUPGHOME/pubring.kbx stores all the public keys you specified in `programs.gpg.publicKeys` option.
     #
     # If set `mutableKeys` to false, the path $GNUPGHOME/pubring.kbx will become an immutable link to the Nix store, denying modifications.
     # Thus we can only update pubring.kbx via home-manager
-    mutableKeys = false;
-    publicKeys = [
+    mutableKeys = !cfg.enable;
+    publicKeys = lib.optionals cfg.enable [
       # https://www.gnupg.org/gph/en/manual/x334.html
       {
         source = "${mysecrets}/public/vitalyr-gpg-keys-2024-11-25.pub";

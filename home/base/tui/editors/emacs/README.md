@@ -31,7 +31,54 @@
 
 ## Install or Update
 
-After deploying this nix flake, run the following command to install or update emacs:
+`modules.editors.emacs.enable` installs the repository's Emacs package, `emacs-lsp-booster`, and the
+`e` / `et` client aliases. Doom management and the daemon have separate switches:
+
+```nix
+modules.editors.emacs = {
+  enable = true;
+  doom.enable = false;
+  daemon.enable = false;
+};
+```
+
+`doom.enable` defaults to `true`. It installs Doom dependencies, copies the pinned Doom source to
+the Emacs configuration directory, links `~/.config/doom` to the configuration in
+`~/projects/dev/emacs-projects/doom`, and adds Doom's `bin` directory to PATH in Bash, Zsh and Fish.
+Emacs starts from `~/.emacs.d`, `~/.emacs` or `~/.emacs.el` instead whenever one of them exists;
+activation removes an empty `~/.emacs.d`, which Emacs creates when it runs before Doom is installed,
+and warns about the others. When it is disabled, this module does not manage Doom files or add its
+dependencies and PATH.
+
+Doom's modules live in its git submodule `sources/doom+`. GitHub tarballs omit submodules, so the
+`doomemacs` flake input is a git input with `submodules=1`; without the modules, Doom loads only its
+core and none of the modules enabled in `init.el`.
+
+The copied Doom source carries `doom-straight-dependency-versions.patch`. The Doom configuration
+unpins straight.el, whose build cache records each dependency with its minimum version; without the
+patch, `doom sync` fails with `(wrong-type-argument listp "9.7")` while generating the profile's
+init file. Drop the patch once the pinned Doom reads these records itself: the build fails when the
+patch no longer applies.
+
+The Emacs package in `pkgs/emacs` carries a backport of the fix for Emacs bug#81906, which the IGC
+branch lacks. Without it, the obsolete `make-autoload` fails on every autoload cookie; Doom uses it
+to generate its autoloads, so every `doom` command fails with
+`cl-assertion-failed: ((> (point) output-start))`.
+
+On macOS, `pkgs/emacs` also applies `ns-accessibility-buffer-text.patch`, a local fix with no
+upstream reference. Without it, Emacs answers the accessibility attributes `AXValue` and
+`AXSelectedText` from the selected frame rather than the queried window, takes the region from the
+global PRIMARY selection, and copies raw buffer bytes, so an accessibility client such as VoiceOver
+can receive another window's text or bytes from the buffer gap. The patch reads the queried window's
+own buffer and region through the buffer-substring helper. Drop it once the pinned Emacs source
+handles these attributes the same way; the build fails when the patch no longer applies.
+
+`daemon.enable` defaults to `true` on macOS and `false` on Linux. It controls the launchd agent on
+macOS and the Home Manager Emacs user service on Linux. With the daemon disabled, start Emacs
+directly or start a daemon manually before using `e` / `et`.
+
+When Doom management is enabled, run the following command after deploying this nix flake to install
+or update Doom packages:
 
 ```bash
 doom sync
@@ -41,16 +88,13 @@ when in doubt, run `doom sync`!
 
 ## Testing
 
-> via `Justfile` located at the root of this repo.
+> via `justfile` located at the root of this repo. These recipes run `doom`, so they need Doom
+> management; `emacs-reload` also restarts the daemon, so it needs `daemon.enable`.
 
 ```bash
-# testing
 just emacs-test
 just emacs-purge
 just emacs-reload
-
-# clear test data
-just emacs-clean
 ```
 
 ## Limits

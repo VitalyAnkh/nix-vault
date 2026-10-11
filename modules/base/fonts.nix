@@ -50,6 +50,9 @@ in
       # 霞鹜文楷 屏幕阅读版
       # https://github.com/lxgw/LxgwWenKai-Screen
       lxgw-wenkai-screen
+      # 霞鹜文楷，Doom Emacs 配置中东亚文字使用的字体
+      # https://github.com/lxgw/LxgwWenKai
+      lxgw-wenkai
       lxgw-wenkai-tc
       lxgw-neoxihei
 

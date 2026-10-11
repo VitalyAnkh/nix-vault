@@ -17,26 +17,25 @@
     #    2. command line args `--options substituers http://xxx`
     trusted-users = [ myvars.username ];
 
-    # Substituters in priority order (most reliable first). Putting mirrors first can lead to noisy
-    # `error: file 'nar/…' does not exist in binary cache ...` messages when a mirror lags behind.
+    # Nix queries substituters in priority order, lowest value first. Each cache
+    # advertises a priority in its nix-cache-info; `?priority=` overrides it. NixOS and
+    # nix-darwin add https://cache.nixos.org/ (priority 40) and its key themselves.
     substituters = [
-      # official cache
-      "https://cache.nixos.org"
-
-      # community cache
+      # community caches (priority 41)
       "https://nix-community.cachix.org"
       "https://catppuccin.cachix.org"
-      # llm-agents.nix (grok, wrap-buddy, and other agent CLIs)
-      "https://cache.numtide.com"
+      # llm-agents.nix (grok, wrap-buddy, and other agent CLIs). It advertises priority 30
+      # but serves only these packages, so query it after the general caches.
+      "https://cache.numtide.com?priority=42"
 
-      # cache mirrors located in China (fallback)
-      "https://mirrors.sustech.edu.cn/nix-channels/store"
-      "https://mirrors.tuna.tsinghua.edu.cn/nix-channels/store"
-      "https://mirrors.ustc.edu.cn/nix-channels/store"
+      # cache mirrors located in China, as a fallback. Querying mirrors before
+      # cache.nixos.org leads to noisy `error: file 'nar/…' does not exist in binary
+      # cache ...` messages when a mirror lags behind.
+      "https://mirrors.tuna.tsinghua.edu.cn/nix-channels/store?priority=50"
+      "https://mirrors.ustc.edu.cn/nix-channels/store?priority=50"
     ];
 
     trusted-public-keys = [
-      "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
       "catppuccin.cachix.org-1:noG/4HkbhJb+lUAdKrph6LaozJvAeEEZj4N732IysmU="
       "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
