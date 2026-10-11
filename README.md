@@ -116,12 +116,15 @@ Run `just --list` to see every recipe.
 
 For NixOS:
 
+The recipes evaluate the flake as your user, who can fetch the private `mysecrets` input over SSH;
+`--sudo` runs only the activation as root.
+
 > To deploy this flake from NixOS's official ISO image (purest installation method), please refer to
 > [./nixos-installer/](./nixos-installer)
 
 ```bash
 # Desktops: deploy the <hostname>-niri nixosConfiguration (e.g. ai-niri, shoukei-niri)
-just niri           # equals `sudo nixos-rebuild switch --flake .#<hostname>-niri`
+just niri           # equals `nixos-rebuild switch --sudo --flake .#<hostname>-niri`
 just niri boot      # set as the next boot configuration without switching
 just niri switch debug  # detailed output
 
@@ -133,27 +136,30 @@ just local switch debug
 
 For macOS (nix-darwin):
 
-```bash
-# If you are deploying for the first time,
-# 1. install nix & homebrew manually.
-# 2. prepare the deployment environment with essential packages available
-nix-shell -p just nushell
-# 3. comment home-manager's code in lib/macosSystem.nix to speed up the first deployment.
+Install Nix and Homebrew first; nix-darwin does not install Homebrew. If `just` and `nu` are not on
+PATH yet, run the recipes from `nix shell nixpkgs#just nixpkgs#nushell`. `just local` evaluates and
+builds `result-<host>` as the logged-in user, who can fetch the private `mysecrets` input over SSH,
+for the host named by `scutil --get HostName` (or `LocalHostName` while `HostName` is unset). It
+then activates exactly that build: it sets the system profile first and runs
+`darwin-rebuild activate`. Review the target host's applications, credentials and file changes
+first.
 
-# Deploy the darwinConfiguration by hostname match (fern, frieren)
+```bash
 just local
-just local debug  # detailed output (macOS has no switch/boot mode)
+# Deploy with details (macOS has no switch/boot mode argument)
+just local debug
+# Deploy, building with more jobs and cores (1 to 16 each; both default to 1)
+just local normal 4 4
 ```
 
-For `astra`, evaluate the flake as the logged-in user so the private `mysecrets` input can be
-fetched over SSH. Install Nix and Homebrew first, then follow the
-[Astra deployment guide](./docs/astra-macos-host.md); activation manages the Homebrew entries but
-does not upgrade or remove existing ones.
+`astra` activates Home Manager as part of nix-darwin and declares its Homebrew casks and formulae in
+`hosts/darwin-astra/homebrew.nix`. Activation installs missing entries, never upgrades or uninstalls
+them, and stops before changing anything while an undeclared Homebrew package is installed. Read
+[the astra deployment guide](./docs/astra-macos-host.md) before first activation. Build and review
+the configuration without changing the running system:
 
 ```bash
-nix build --no-write-lock-file --max-jobs 8 --cores 8 --out-link result-astra .#darwinConfigurations.astra.system
-sudo -H env NIX_REMOTE=daemon ./result-astra/sw/bin/nix-env -p /nix/var/nix/profiles/system --set "$(readlink -f result-astra)"
-sudo -H ./result-astra/sw/bin/darwin-rebuild activate
+nix build --no-write-lock-file --max-jobs 1 --cores 1 --out-link result-astra .#darwinConfigurations.astra.system
 ```
 
 Remote / cluster hosts are deployed with [Colmena](https://github.com/zhaofengli/colmena) on top of
