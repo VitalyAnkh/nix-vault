@@ -218,14 +218,15 @@ darwin-rollback:
   use {{utils_nu}} *;
   darwin-rollback
 
-# Deploy the darwinConfiguration by hostname match
+# Deploy the darwinConfiguration matching the macOS HostName (jobs and cores: 1 to 16)
 [macos]
 [group('desktop')]
-local mode="default": 
+local verbosity="normal" jobs="1" cores="1":
   #!/usr/bin/env nu
   use {{utils_nu}} *;
-  darwin-build (hostname) {{mode}};
-  darwin-switch (hostname) {{mode}}
+  let name = (darwin-hostname)
+  darwin-build $name {{quote(verbosity)}} --max-jobs {{jobs}} --cores {{cores}};
+  darwin-switch $name
 
 
 # Reset launchpad to force it to reindex Applications
