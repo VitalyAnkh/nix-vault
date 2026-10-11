@@ -1,0 +1,15 @@
+--- a/lisp/doom-profiles.el
++++ b/lisp/doom-profiles.el
+@@ -510,7 +510,11 @@
+                                                         'built-in))
+                                                (gethash pkglist straight--build-cache))))
+                                   (progn
+-                                    (walk-packages (nth 1 deps))
++                                    ;; straight.el records each dependency with its
++                                    ;; minimum version; older versions record names.
++                                    (walk-packages
++                                     (mapcar (lambda (dep) (if (consp dep) (car dep) dep))
++                                             (straight--get-dependencies pkglist)))
+                                     (cl-pushnew (straight--autoloads-file pkglist)
+                                                 autoloads
+                                                 :test #'equal))

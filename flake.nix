@@ -171,8 +171,9 @@
     ########################  Some non-flake repositories  #########################################
 
     # doom-emacs is a configuration framework for GNU Emacs.
+    # Its modules are the git submodule sources/doom+, which GitHub tarballs omit.
     doomemacs = {
-      url = "github:doomemacs/doomemacs";
+      url = "git+https://github.com/doomemacs/doomemacs?submodules=1&shallow=1";
       flake = false;
     };
 
