@@ -34,7 +34,7 @@ let
         bubblewrap = {
           # To trace all the home files QQ accesses, you can use the following nushell command:
           #   just trace-access qq
-          # See the Justfile in the root of this repository for more information.
+          # See the justfile in the root of this repository for more information.
           bind.rw = [
             sloth.xdgDocumentsDir
             sloth.xdgDownloadDir

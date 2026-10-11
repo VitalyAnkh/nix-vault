@@ -131,7 +131,7 @@ For NixOS:
 # deploy one of the configuration based on the hostname
 sudo nixos-rebuild switch --flake .#eva
 
-# deploy via `just`(a command runner with similar syntax to make) & Justfile
+# deploy via `just`(a command runner with similar syntax to make) & justfile
 # Deploy the nixosConfiguration matching the hostname immediately
 just local
 

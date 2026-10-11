@@ -1,8 +1,9 @@
-# just is a command runner, Justfile is very similar to Makefile, but simpler.
+# just is a command runner with simpler syntax than Makefile.
+# Keep this lowercase justfile as the canonical file when merging upstream changes.
 
 # Use nushell for shell commands
 # To use this justfile, you need to enter a shell with just & nushell installed:
-# 
+#
 #   nix shell nixpkgs#just nixpkgs#nushell
 set shell := ["nu", "-c"]
 
@@ -131,6 +132,13 @@ shell:
 shell:
   nix shell nixpkgs#git nixpkgs#neovim
 
+# Upgrade Determinate Nix only; this is not the upstream/community Nix upgrade command.
+[macos]
+[group('nix')]
+nix-upgrade:
+  if (which determinate-nixd | is-empty) { error make {msg: "nix-upgrade requires Determinate Nix (determinate-nixd)"} }
+  sudo determinate-nixd upgrade
+
 [group('nix')]
 fmt:
   # format the nix files in this repo
@@ -173,24 +181,29 @@ override-pkgs hash:
 # Deploy the nixosConfiguration by hostname match
 [linux]
 [group('homelab')]
-local mode="default":
+local mode="switch" verbosity="normal":
   #!/usr/bin/env nu
   use {{utils_nu}} *;
-  nixos-switch (hostname) {{mode}}
+  nixos-switch (hostname) {{mode}} {{verbosity}}
 
 # Deploy the niri nixosConfiguration by hostname match
 [linux]
 [group('desktop')]
-niri mode="default":
+niri mode="switch" verbosity="normal":
   #!/usr/bin/env nu
   use {{utils_nu}} *;
-  nixos-switch $"(hostname)-niri" {{mode}}
+  nixos-switch $"(hostname)-niri" {{mode}} {{verbosity}}
 
 ############################################################################
 #
 #  Darwin related commands
 #
 ############################################################################
+
+[macos]
+[group('desktop')]
+brew-upgrade:
+  brew upgrade --cask --greedy
 
 [macos]
 [group('desktop')]
@@ -231,37 +244,37 @@ reset-launchpad:
 # Remote deployment via colmena
 [linux]
 [group('homelab')]
-col tag:
-  colmena apply --on '@{{tag}}' --verbose --show-trace
+col tag mode="switch":
+  colmena apply {{mode}} --on '@{{tag}}' --verbose --show-trace
 
 # Build and upload a vm image
 [linux]
 [group('homelab')]
-upload-vm name mode="default":
+upload-vm name verbosity="normal":
   #!/usr/bin/env nu
   use {{utils_nu}} *;
-  upload-vm {{name}} {{mode}}
+  upload-vm {{name}} {{verbosity}}
 
 # Deploy all the KubeVirt nodes(Physical machines running KubeVirt)
 [linux]
 [group('homelab')]
-lab:
-  colmena apply --on '@virt-*' --verbose --show-trace
+lab mode="switch":
+  colmena apply {{mode}} --on '@virt-*' --verbose --show-trace
 
 [linux]
 [group('homelab')]
-shoryu:
-  colmena apply --on '@kubevirt-shoryu' --verbose --show-trace
+shoryu mode="switch":
+  colmena apply {{mode}} --on '@kubevirt-shoryu' --verbose --show-trace
 
 [linux]
 [group('homelab')]
-shushou:
-  colmena apply --on '@kubevirt-shushou' --verbose --show-trace
+shushou mode="switch":
+  colmena apply {{mode}} --on '@kubevirt-shushou' --verbose --show-trace
 
 [linux]
 [group('homelab')]
-youko:
-  colmena apply --on '@kubevirt-youko' --verbose --show-trace
+youko mode="switch":
+  colmena apply {{mode}} --on '@kubevirt-youko' --verbose --show-trace
 
 ############################################################################
 #
@@ -272,27 +285,27 @@ youko:
 # Build and upload a vm image
 [linux]
 [group('homelab')]
-upload-idols mode="default":
+upload-idols verbosity="normal":
   #!/usr/bin/env nu
-  use {{utils_nu}} *; 
-  upload-vm aquamarine {{mode}}
-  upload-vm ruby {{mode}}
-  upload-vm kana {{mode}}
+  use {{utils_nu}} *;
+  upload-vm aquamarine {{verbosity}}
+  upload-vm ruby {{verbosity}}
+  upload-vm kana {{verbosity}}
 
 [linux]
 [group('homelab')]
-aqua:
-  colmena apply --on '@aqua' --verbose --show-trace
+aqua mode="switch":
+  colmena apply {{mode}} --on '@aqua' --verbose --show-trace
 
 [linux]
 [group('homelab')]
-ruby:
-  colmena apply --on '@ruby' --verbose --show-trace
+ruby mode="switch":
+  colmena apply {{mode}} --on '@ruby' --verbose --show-trace
 
 [linux]
 [group('homelab')]
-kana:
-  colmena apply --on '@kana' --verbose --show-trace
+kana mode="switch":
+  colmena apply {{mode}} --on '@kana' --verbose --show-trace
 
 ############################################################################
 #
@@ -303,34 +316,34 @@ kana:
 # Build and upload a vm image
 [linux]
 [group('homelab')]
-upload-k3s-prod mode="default":
+upload-k3s-prod verbosity="normal":
   #!/usr/bin/env nu
-  use {{utils_nu}} *; 
-  upload-vm k3s-prod-1-master-1 {{mode}}; 
-  upload-vm k3s-prod-1-master-2 {{mode}}; 
-  upload-vm k3s-prod-1-master-3 {{mode}}; 
-  upload-vm k3s-prod-1-worker-1 {{mode}}; 
-  upload-vm k3s-prod-1-worker-2 {{mode}}; 
-  upload-vm k3s-prod-1-worker-3 {{mode}};
+  use {{utils_nu}} *;
+  upload-vm k3s-prod-1-master-1 {{verbosity}};
+  upload-vm k3s-prod-1-master-2 {{verbosity}};
+  upload-vm k3s-prod-1-master-3 {{verbosity}};
+  upload-vm k3s-prod-1-worker-1 {{verbosity}};
+  upload-vm k3s-prod-1-worker-2 {{verbosity}};
+  upload-vm k3s-prod-1-worker-3 {{verbosity}};
 
 [linux]
 [group('homelab')]
-upload-k3s-test mode="default":
+upload-k3s-test verbosity="normal":
   #!/usr/bin/env nu
-  use {{utils_nu}} *; 
-  upload-vm k3s-test-1-master-1 {{mode}}; 
-  upload-vm k3s-test-1-master-2 {{mode}}; 
-  upload-vm k3s-test-1-master-3 {{mode}};
+  use {{utils_nu}} *;
+  upload-vm k3s-test-1-master-1 {{verbosity}};
+  upload-vm k3s-test-1-master-2 {{verbosity}};
+  upload-vm k3s-test-1-master-3 {{verbosity}};
 
 [linux]
 [group('homelab')]
-k3s-prod:
-  colmena apply --on '@k3s-prod-*' --verbose --show-trace
+k3s-prod mode="switch":
+  colmena apply {{mode}} --on '@k3s-prod-*' --verbose --show-trace
 
 [linux]
 [group('homelab')]
-k3s-test:
-  colmena apply --on '@k3s-test-*' --verbose --show-trace
+k3s-test mode="switch":
+  colmena apply {{mode}} --on '@k3s-test-*' --verbose --show-trace
 
 # =================================================
 # Emacs related commands
@@ -418,30 +431,26 @@ list-systemd:
 
 # =================================================
 #
-# Nixpkgs Review via Github Action
+# GitHub CLI + Nixpkgs Review via Github Action
 # (pass the repo explicitly, e.g. `OWNER/nixpkgs-review-gha`)
 #
 # =================================================
 
-[linux]
-[group('nixpkgs')]
+[group('github')]
 gh-login:
-  gh auth login -h github.com --skip-ssh-key --git-protocol ssh --web
+  gh auth login -h github.com --skip-ssh-key --git-protocol ssh
 
 # Run nixpkgs-review for PR
-[linux]
 [group('nixpkgs')]
 pkg-review pr repo:
   gh workflow run review.yml --repo {{repo}} -f x86_64-darwin=no -f post-result=true -f pr={{pr}}
 
 # Run package tests for PR
-[linux]
 [group('nixpkgs')]
 pkg-test pr pname repo:
   gh workflow run review.yml --repo {{repo}} -f x86_64-darwin=no -f post-result=true -f pr={{pr}} -f extra-args="-p {{pname}}.passthru.tests"
 
 # View the summary of a workflow
-[linux]
 [group('nixpkgs')]
 pkg-summary repo:
   gh workflow view review.yml --repo {{repo}}
