@@ -1,0 +1,69 @@
+From 008a667120408ac53c9690c0c4cb12dd94ff1138 Mon Sep 17 00:00:00 2001
+From: Stefan Monnier <monnier@iro.umontreal.ca>
+Date: Sun, 27 Sep 2026 14:19:52 -0400
+Subject: [PATCH] (make-autoload): Fix regression introduced by commit
+ 085e2d33a3a3
+
+* lisp/obsolete/autoload.el (make-autoload): Re-establish its old arg-list.
+* lisp/emacs-lisp/loaddefs-gen.el (loaddefs-generate--make-autoload):
+Handle the case where FILE is nil.
+
+Fixes bug#81906.
+---
+ lisp/emacs-lisp/loaddefs-gen.el | 18 ++++++++++++------
+ lisp/obsolete/autoload.el       |  3 ++-
+ 2 files changed, 14 insertions(+), 7 deletions(-)
+
+diff --git a/lisp/emacs-lisp/loaddefs-gen.el b/lisp/emacs-lisp/loaddefs-gen.el
+index 2a230dd864ab..6c1e60d12d00 100644
+--- a/lisp/emacs-lisp/loaddefs-gen.el
++++ b/lisp/emacs-lisp/loaddefs-gen.el
+@@ -205,22 +205,28 @@ expand)' among their `declare' forms."
+           (when exps (cons 'progn exps)))))
+ 
+      ;; For macros which request it, try again on their expansion.
+-     ((progn
++     ((let ((file-name (or file load-name)))
+         ;; If the car is an unknown symbol, we load the file first to
+         ;; give packages a chance to define their macros.
+         (unless (or (not (symbolp car)) (fboundp car)
+                     ;; Special cases handled below
+                     (memq car '(defclass defcustom deftheme defgroup nil))
+-                    (assoc file load-history)
+-                    (member file loaddefs--load-error-files))
+-          (let ((load-path (cons (file-name-directory file) load-path)))
++                    (assoc file-name load-history)
++                    (member file-name loaddefs--load-error-files))
++          ;; FIXME: We used to tweak `load-path' because we passed
++          ;; LOAD-NAME to `load', but now that we have the full FILE,
++          ;; we probably should refrain from doing it, since it can have
++          ;; undesirable consequences.
++          (let ((load-path (if file (cons (file-name-directory file) load-path)
++                             load-path)))
+             (message "loaddefs-gen: loading file %s (for %s)" load-name car)
+             (condition-case err
+                 ;; Don't load the `.elc' file, in case the file wraps
+                 ;; the macro-definition in `eval-when-compile' (bug#80180).
+-                (load file nil nil 'nosuffix)
++                (if file (load file nil nil 'nosuffix)
++                  (eval-buffer))
+               (error
+-               (push file loaddefs--load-error-files) ; do not attempt again
++               (push file-name loaddefs--load-error-files) ;Do not try again,
+                (warn "loaddefs-gen: load error for %s:\n\t%S" load-name err)))))
+         (and (macrop car)
+ 	     (eq 'expand (function-get car 'autoload-macro 'macro))
+diff --git a/lisp/obsolete/autoload.el b/lisp/obsolete/autoload.el
+index 0ce1b98b8dda..124b0eb147bc 100644
+--- a/lisp/obsolete/autoload.el
++++ b/lisp/obsolete/autoload.el
+@@ -95,7 +95,8 @@ then we use the timestamp of the output file instead.  As a result:
+ 
+ (defvar autoload-modified-buffers)      ;Dynamically scoped var.
+ 
+-(defalias 'make-autoload #'loaddefs-generate--make-autoload)
++(defun make-autoload (form load-name &optional expansion)
++  (loaddefs-generate--make-autoload form load-name nil expansion))
+ 
+ ;; Forms which have doc-strings which should be printed specially.
+ ;; A doc-string-elt property of ELT says that (nth ELT FORM) is
