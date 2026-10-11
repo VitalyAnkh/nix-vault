@@ -57,7 +57,9 @@
       # Server run by `brew services`; its data is in /opt/homebrew/var/postgresql@17.
       "postgresql@17"
       "samply"
-      "sshpass"
+      # Nix now provides sshpass (modules/base/packages.nix). Uninstall the brew before the next
+      # activation: cleanup = "check" stops while an undeclared formula is installed.
+      # "sshpass"
       "tea"
     ];
   };

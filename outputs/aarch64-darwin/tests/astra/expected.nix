@@ -21,10 +21,7 @@ in
     sharesMirrors = true;
     declaresHostApps = true;
     declaresHostFormulae = true;
-    brewsAlsoFromNix = [
-      "fish"
-      "sshpass"
-    ];
+    brewsAlsoFromNix = [ "fish" ];
     casksAlsoFromNix = [ ];
     taps = [ ];
   };
