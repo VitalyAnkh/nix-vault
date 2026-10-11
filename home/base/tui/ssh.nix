@@ -1,13 +1,26 @@
 {
   config,
+  lib,
   mysecrets,
   ...
 }:
+let
+  cfg = config.modules.ssh.personalConfig;
+in
 {
-  home.file.".ssh/romantic.pub".source = "${mysecrets}/public/romantic.pub";
+  options.modules.ssh.personalConfig.enable =
+    lib.mkEnableOption "the repository's personal SSH identities and hosts"
+    // {
+      default = true;
+    };
 
-  programs.ssh = {
-    enable = true;
+  config.home.file.".ssh/romantic.pub" = lib.mkIf cfg.enable {
+    source = "${mysecrets}/public/romantic.pub";
+  };
+
+  config.programs.ssh = {
+    # A default, so that hosts keeping ~/.ssh/config user-managed can turn it off.
+    enable = lib.mkDefault true;
 
     enableDefaultConfig = false;
     settings."*" = {
@@ -24,14 +37,14 @@
     };
 
     settings = {
-      "github.com" = {
+      "github.com" = lib.mkIf cfg.enable {
         HostName = "ssh.github.com";
         Port = 443;
         User = "git";
         IdentitiesOnly = true;
       };
 
-      "192.168.*" = {
+      "192.168.*" = lib.mkIf cfg.enable {
         ForwardAgent = true;
         IdentityFile = "/etc/agenix/ssh-key-romantic";
         IdentitiesOnly = true;

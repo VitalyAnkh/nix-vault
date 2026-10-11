@@ -5,22 +5,35 @@
   myvars,
   ...
 }:
+let
+  cfg = config.modules.git.personalIdentity;
+in
 {
+  options.modules.git.personalIdentity.enable =
+    lib.mkEnableOption "the repository's personal Git identity, work include and GitHub URL rewrite"
+    // {
+      default = true;
+    };
+
   # `programs.git` will generate the config file: ~/.config/git/config
   # to make git use this config file, `~/.gitconfig` should not exist!
+  # Without the personal identity, ~/.gitconfig stays user-managed: Git reads it
+  # after ~/.config/git/config, so the user's own settings keep precedence.
   #
   #    https://git-scm.com/docs/git-config#Documentation/git-config.txt---global
-  home.activation.removeExistingGitconfig = lib.hm.dag.entryBefore [ "checkLinkTargets" ] ''
-    rm -f ${config.home.homeDirectory}/.gitconfig
-  '';
+  config.home.activation.removeExistingGitconfig = lib.mkIf cfg.enable (
+    lib.hm.dag.entryBefore [ "checkLinkTargets" ] ''
+      run rm -f ${lib.escapeShellArg "${config.home.homeDirectory}/.gitconfig"}
+    ''
+  );
 
   # GitHub CLI tool
   # https://cli.github.com/manual/
   # Keep its configuration user-managed and persisted rather than replacing it
   # with a Home Manager-generated file on every activation.
-  home.packages = [ pkgs.gh ];
+  config.home.packages = [ pkgs.gh ];
 
-  programs.git = {
+  config.programs.git = {
     enable = true;
     package = pkgs.git;
     lfs.enable = true;
@@ -31,7 +44,7 @@
     #   signByDefault = true;
     # };
 
-    includes = [
+    includes = lib.optionals cfg.enable [
       {
         # use different email & name for work:
         #
@@ -44,8 +57,8 @@
     ];
 
     settings = {
-      user.email = myvars.useremail;
-      user.name = myvars.userfullname;
+      user.email = lib.mkIf cfg.enable myvars.useremail;
+      user.name = lib.mkIf cfg.enable myvars.userfullname;
 
       init.defaultBranch = "main";
       trim.bases = "develop,master,main"; # for git-trim
@@ -54,7 +67,7 @@
       log.date = "iso"; # use iso format for date
 
       # replace https with ssh
-      url = {
+      url = lib.mkIf cfg.enable {
         "ssh://git@github.com/VitalyAnkh" = {
           insteadOf = "https://github.com/VitalyAnkh";
         };
@@ -92,7 +105,7 @@
   };
 
   # A syntax-highlighting pager for git, diff, grep, and blame output
-  programs.delta = {
+  config.programs.delta = {
     enable = true;
     enableGitIntegration = true;
     options = {
@@ -105,8 +118,8 @@
   };
 
   # Git terminal UI (written in go).
-  programs.lazygit.enable = true;
+  config.programs.lazygit.enable = true;
 
   # Yet another Git TUI (written in rust).
-  programs.gitui.enable = false;
+  config.programs.gitui.enable = false;
 }
