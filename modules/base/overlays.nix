@@ -91,10 +91,11 @@
       });
     })
 
-    # test017-syncreplication-refresh is timing-sensitive and can fail even when
-    # slapd itself built correctly. The other syncrepl tests in this cluster are
-    # the same kind of timing-sensitive integration checks, so skip the cluster
-    # while keeping the rest of OpenLDAP's test suite.
+    # doCheck = false skips OpenLDAP's whole test suite. The preCheck below only
+    # takes effect if checks are re-enabled: it drops
+    # test017-syncreplication-refresh and the other syncrepl tests of its
+    # cluster, timing-sensitive integration checks that can fail even when slapd
+    # itself built correctly, and keeps the rest of the suite.
     (final: prev: {
       openldap = prev.openldap.overrideAttrs (old: {
         doCheck = false;
