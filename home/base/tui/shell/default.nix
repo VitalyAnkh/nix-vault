@@ -1,17 +1,37 @@
 {
+  config,
+  lib,
   nu_scripts,
   ...
 }:
+let
+  cfg = config.modules.shell;
+  workAliasesFile = "/etc/agenix/alias-for-work.nushell";
+in
 {
-  programs.nushell = {
-    # load the alias file for work
-    # the file must exist, otherwise nushell will complain about it!
-    #
-    # currently, nushell does not support conditional sourcing of files
-    # https://github.com/nushell/nushell/issues/8214
-    extraConfig = ''
-      source /etc/agenix/alias-for-work.nushell
+  options.modules.shell = {
+    workAliases.enable =
+      lib.mkEnableOption "the work aliases from ${workAliasesFile} when that file exists"
+      // {
+        default = true;
+      };
+    zai.enable = lib.mkEnableOption "Claude Code with ZAI when ZAI_API_KEY is available" // {
+      default = true;
+    };
+  };
 
+  config.programs.nushell.extraConfig =
+    # Nushell resolves `source` while parsing, and a missing file would reject the
+    # whole config; a null path skips it.
+    lib.optionalString cfg.workAliases.enable ''
+      const work_aliases = if ("${workAliasesFile}" | path exists) {
+        "${workAliasesFile}"
+      } else {
+        null
+      }
+      source $work_aliases
+    ''
+    + ''
       $env.CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC = "1"
       $env.CLAUDE_CODE_ATTRIBUTION_HEADER = "0"
       # using claude-code with kimi k2
@@ -21,13 +41,19 @@
       # $env.ANTHROPIC_MODEL = "kimi-k2-thinking"
       # $env.ANTHROPIC_DEFAULT_HAIKU_MODEL = "kimi-k2-thinking-turbo"
 
+    ''
+    + lib.optionalString cfg.zai.enable ''
       # using claude-code with glm llm
       # https://docs.bigmodel.cn/cn/coding-plan/tool/claude
-      $env.ANTHROPIC_BASE_URL = "https://open.bigmodel.cn/api/anthropic"
-      $env.ANTHROPIC_AUTH_TOKEN = $env.ZAI_API_KEY
-      $env.ANTHROPIC_MODEL = "glm-4.7"
-      $env.ANTHROPIC_DEFAULT_HAIKU_MODEL = "glm-4.5-air"
+      if ($env.ZAI_API_KEY? | default "" | str trim | is-not-empty) {
+        $env.ANTHROPIC_AUTH_TOKEN = $env.ZAI_API_KEY
+        $env.ANTHROPIC_BASE_URL = "https://open.bigmodel.cn/api/anthropic"
+        $env.ANTHROPIC_MODEL = "glm-4.7"
+        $env.ANTHROPIC_DEFAULT_HAIKU_MODEL = "glm-4.5-air"
+      }
 
+    ''
+    + ''
       # using claude-code with qwen llm
       # https://bailian.console.aliyun.com/?tab=doc#/doc/?type=model&url=2949529
       # $env.ANTHROPIC_BASE_URL = "https://dashscope.aliyuncs.com/apps/anthropic"
@@ -61,13 +87,14 @@
       use ${./aliases/gcloud.nu} *
 
       # -*- modules -*-
-      # argx & lg is required by the kubernetes module
-      use modules/argx *
+      # argx & lg is required by the kubernetes module. Import argx under its
+      # namespace: its `parse` would otherwise shadow the built-in one that the
+      # fzf integration calls with --regex, and the whole config would fail.
+      use modules/argx
       use modules/lg *
       # k8s/helm aliases, completions, 
       use modules/kubernetes *
       # a wrapper around the jc cli tool, convert cli outputs to nushell tables
       # use modules/jc
     '';
-  };
 }
