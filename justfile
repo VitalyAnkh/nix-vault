@@ -81,6 +81,21 @@ llvm_latest: config_latest_llvm install_latest_llvm
 test:
   nix eval .#evalTests --show-trace --print-build-logs --verbose
 
+# Evaluate a NixOS host configuration without building it.
+[group('nix')]
+eval-host host:
+  nix eval $".#nixosConfigurations.{{host}}.config.system.build.toplevel.drvPath" --raw --show-trace
+
+# Build a NixOS host system closure without changing the current system.
+[group('nix')]
+build-host host:
+  nix build $".#nixosConfigurations.{{host}}.config.system.build.toplevel" --no-link --print-build-logs
+
+# Build a MicroVM runner locally. Deploy it with microvm-deploy so the closure is copied remotely.
+[group('nix')]
+build-microvm guest:
+  nix build $".#nixosConfigurations.{{guest}}.config.microvm.declaredRunner" --no-link --print-build-logs
+
 # Update all the flake inputs
 [group('nix')]
 up:
@@ -142,7 +157,8 @@ nix-upgrade:
 [group('nix')]
 fmt:
   # format the nix files in this repo
-  ls **/*.nix | each { |it| nixfmt $it.name }
+  # (use external find so symlinked dirs like the `result` build output are not followed)
+  ^find . -name '*.nix' -not -path './.git/*' | lines | each { |it| nixfmt $it | ignore }
 
 # Show all the auto gc roots in the nix store
 [group('nix')]
@@ -207,12 +223,6 @@ brew-upgrade:
 
 [macos]
 [group('desktop')]
-darwin-set-proxy:
-  sudo python3 scripts/darwin_set_proxy.py
-  sleep 1sec
-
-[macos]
-[group('desktop')]
 darwin-rollback:
   #!/usr/bin/env nu
   use {{utils_nu}} *;
@@ -253,7 +263,7 @@ karabiner-test:
 
 ############################################################################
 #
-#  Homelab - Kubevirt Cluster related commands
+#  Homelab - VM host related commands
 #
 ############################################################################
 
@@ -263,15 +273,15 @@ karabiner-test:
 col tag mode="switch":
   colmena apply {{mode}} --on '@{{tag}}' --verbose --show-trace
 
-# Build and upload a vm image
+# Deploy one microVM guest through microvm.nix's SSH deployment workflow.
+# The host is the physical machine running the guest; the guest address is used for activation.
 [linux]
 [group('homelab')]
-upload-vm name verbosity="normal":
-  #!/usr/bin/env nu
-  use {{utils_nu}} *;
-  upload-vm {{name}} {{verbosity}}
+microvm-deploy guest host guest_ip:
+  nix run $".#nixosConfigurations.{{guest}}.config.microvm.deploy.installOnHost" -- root@{{host}}
+  nix run $".#nixosConfigurations.{{guest}}.config.microvm.deploy.sshSwitch" -- root@{{guest_ip}} --use-remote-sudo
 
-# Deploy all the KubeVirt nodes(Physical machines running KubeVirt)
+# Deploy all the VM hosts (physical machines running the VMs)
 [linux]
 [group('homelab')]
 lab mode="switch":
@@ -280,38 +290,23 @@ lab mode="switch":
 [linux]
 [group('homelab')]
 shoryu mode="switch":
-  colmena apply {{mode}} --on '@kubevirt-shoryu' --verbose --show-trace
+  colmena apply {{mode}} --on '@shoryu' --verbose --show-trace
 
 [linux]
 [group('homelab')]
 shushou mode="switch":
-  colmena apply {{mode}} --on '@kubevirt-shushou' --verbose --show-trace
+  colmena apply {{mode}} --on '@shushou' --verbose --show-trace
 
 [linux]
 [group('homelab')]
 youko mode="switch":
-  colmena apply {{mode}} --on '@kubevirt-youko' --verbose --show-trace
+  colmena apply {{mode}} --on '@youko' --verbose --show-trace
 
 ############################################################################
 #
 # Commands for other Virtual Machines
 #
 ############################################################################
-
-# Build and upload a vm image
-[linux]
-[group('homelab')]
-upload-idols verbosity="normal":
-  #!/usr/bin/env nu
-  use {{utils_nu}} *;
-  upload-vm aquamarine {{verbosity}}
-  upload-vm ruby {{verbosity}}
-  upload-vm kana {{verbosity}}
-
-[linux]
-[group('homelab')]
-aqua mode="switch":
-  colmena apply {{mode}} --on '@aqua' --verbose --show-trace
 
 [linux]
 [group('homelab')]
@@ -328,33 +323,6 @@ kana mode="switch":
 # Kubernetes related commands
 #
 ############################################################################
-
-# Build and upload a vm image
-[linux]
-[group('homelab')]
-upload-k3s-prod verbosity="normal":
-  #!/usr/bin/env nu
-  use {{utils_nu}} *;
-  upload-vm k3s-prod-1-master-1 {{verbosity}};
-  upload-vm k3s-prod-1-master-2 {{verbosity}};
-  upload-vm k3s-prod-1-master-3 {{verbosity}};
-  upload-vm k3s-prod-1-worker-1 {{verbosity}};
-  upload-vm k3s-prod-1-worker-2 {{verbosity}};
-  upload-vm k3s-prod-1-worker-3 {{verbosity}};
-
-[linux]
-[group('homelab')]
-upload-k3s-test verbosity="normal":
-  #!/usr/bin/env nu
-  use {{utils_nu}} *;
-  upload-vm k3s-test-1-master-1 {{verbosity}};
-  upload-vm k3s-test-1-master-2 {{verbosity}};
-  upload-vm k3s-test-1-master-3 {{verbosity}};
-
-[linux]
-[group('homelab')]
-k3s-prod mode="switch":
-  colmena apply {{mode}} --on '@k3s-prod-*' --verbose --show-trace
 
 [linux]
 [group('homelab')]
