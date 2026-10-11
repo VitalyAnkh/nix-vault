@@ -30,8 +30,9 @@ in
       pi
       omp
     ])
-    # llm-agents packages these two for Linux only.
+    # These llm-agents packages are Linux-only upstream.
     ++ (lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+      agentPackages.grok-bot
       agentPackages.orca
       agentPackages.zcode
     ])

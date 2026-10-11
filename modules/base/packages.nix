@@ -94,6 +94,9 @@
       trash-cli # freedesktop trash can CLI: trash-list / trash-restore / trash-put / trash-empty
     ])
     ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+      # openconnect is not needed on Darwin, where Astra keeps the Homebrew source.
+      pkgs.openconnect
+
       # appimage tools (Linux-only; `buildFHSEnv` is not supported on Darwin)
       pkgs.appimage-run
 
