@@ -25,6 +25,8 @@ This repository is home to the nix code that builds my systems:
 
 See [./hosts](./hosts) for details of each host.
 
+For the Apple Silicon `astra` host, see [its deployment guide](./docs/astra-macos-host.md).
+
 See [./Virtual-Machine.md](./Virtual-Machine.md) for details of how to create & manage KubeVirt's
 Virtual Machine from this flake.
 
@@ -152,19 +154,31 @@ just niri boot debug
 
 For macOS:
 
-```bash
-# If you are deploying for the first time,
-# 1. install nix & homebrew manually.
-# 2. prepare the deployment environment with essential packages available
-nix-shell -p just nushell
-# 3. comment home-manager's code in lib/macosSystem.nix to speed up the first deployment.
-# 4. comment out the proxy settings in scripts/darwin_set_proxy.py if the proxy is not ready yet.
+Install Nix and Homebrew first; nix-darwin does not install Homebrew.
 
-# Deploy the darwinConfiguration by hostname match
+`astra` activates Home Manager as part of nix-darwin and declares its Homebrew casks and formulae in
+`hosts/darwin-astra/homebrew.nix`. Activation installs missing entries, never upgrades or uninstalls
+them, and stops before changing anything while an undeclared Homebrew package is installed. Read
+[the astra deployment guide](./docs/astra-macos-host.md) before first activation. Build and review
+the configuration without changing the running system:
+
+```bash
+nix build --no-write-lock-file --max-jobs 1 --cores 1 --out-link result-astra .#darwinConfigurations.astra.system
+```
+
+If `just` and `nu` are not on PATH yet, run the recipes from
+`nix shell nixpkgs#just nixpkgs#nushell`. `just local` builds `result-<host>` for the host named by
+`scutil --get HostName` (or `LocalHostName` while `HostName` is unset) and then activates that
+build; review the target host's applications, credentials and file changes first.
+
+```bash
 just local
 
 # Deploy with details (macOS has no switch/boot mode argument)
 just local debug
+
+# Deploy, building with more jobs and cores (1 to 16 each; both default to 1)
+just local normal 4 4
 ```
 
 > [What y'all will need when Nix drives you to drink.](https://www.youtube.com/watch?v=Eni9PPPPBpg)

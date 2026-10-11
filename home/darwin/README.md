@@ -18,6 +18,17 @@ This directory contains macOS-specific Home Manager configurations for Darwin sy
   - Custom keybindings and workspace management
   - Application-specific window rules
 
+### Keyboard
+
+- **karabiner/**: Opt-in (`modules.desktop.karabiner.enable`)
+  [Karabiner-Elements](https://karabiner-elements.pqrs.org/) rules: Linux-style Ctrl shortcuts in
+  selected GUI apps, a Caps Lock/left Control swap on every keyboard, a Command/Option swap on the
+  built-in keyboard, and a Ctrl+Shift+Q Emacs toggle; see
+  [karabiner/README.md](./karabiner/README.md)
+- **input-source-pro/**: Opt-in (`modules.desktop.inputSourcePro.enable`) preferences for
+  [Input Source Pro](https://inputsource.pro/), which selects ABC whenever an app becomes active;
+  the app itself comes from a Homebrew cask
+
 ### Network Configuration
 
 - **proxy/**: Network proxy configurations
