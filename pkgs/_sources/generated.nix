@@ -8,13 +8,13 @@
 {
   source-codex-desktop-linux = {
     pname = "source-codex-desktop-linux";
-    version = "13895a608077151d314e5f2b6e442b92cd9f2f3b";
+    version = "839dbb50fbd2ad041089981441a82f2460dac455";
     src = fetchFromGitHub {
       owner = "ilysenko";
       repo = "codex-desktop-linux";
-      rev = "13895a608077151d314e5f2b6e442b92cd9f2f3b";
+      rev = "839dbb50fbd2ad041089981441a82f2460dac455";
       fetchSubmodules = false;
-      sha256 = "sha256-OrqBaIHflpZIcn2OjiMKCXyZNeK/zDbBWyy0lVOarr8=";
+      sha256 = "sha256-i5En3yRYX2UuqJqSVqOT5h+2Q9knqwmQx25oggpMrNg=";
     };
   };
   source-emacs-lsp-booster = {
@@ -46,13 +46,13 @@
   };
   source-godot-master = {
     pname = "source-godot-master";
-    version = "893cf5cbfe789ae67c9389708e1428141bb39b18";
+    version = "232e6b14abf6e590b41d60f11704e42de22bff72";
     src = fetchFromGitHub {
       owner = "godotengine";
       repo = "godot";
-      rev = "893cf5cbfe789ae67c9389708e1428141bb39b18";
+      rev = "232e6b14abf6e590b41d60f11704e42de22bff72";
       fetchSubmodules = false;
-      sha256 = "sha256-kEqkeIt74S1YxyXjG3exK1LPUBbTvLcLfDyaYX+dlG4=";
+      sha256 = "sha256-KV4t9RNWvt4j9uzJ85LTDwcOtlutMAySZ/mzzWmBbWs=";
     };
   };
   source-nutstore-client = {
@@ -73,21 +73,21 @@
   };
   source-roxy-browser = {
     pname = "source-roxy-browser";
-    version = "4.0.3";
+    version = "4.0.7";
     src = fetchurl {
-      url = "https://lumibrowser.oss-cn-shenzhen.aliyuncs.com/public/package/app/Linux/x64/4.0.3/RoxyBrowser_x64_4.0.3.deb";
-      sha256 = "sha256-t7ff3HSl7uiq0akdcbHdCM/pEs+MGFDEGqQikYCYovY=";
+      url = "https://lumibrowser.oss-cn-shenzhen.aliyuncs.com/public/package/app/Linux/x64/4.0.7/RoxyBrowser_x64_4.0.7.deb";
+      sha256 = "sha256-Tjg37bGa778G68mvzBG3m+XeLpBJsSdcEYWNL8VchfU=";
     };
   };
   source-warp-terminal = {
     pname = "source-warp-terminal";
-    version = "19548aec6285e82b1a4cde526e7ec7e04513c248";
+    version = "c1ec372cbd3e4960661779a031172e854e7964e8";
     src = fetchFromGitHub {
       owner = "warpdotdev";
       repo = "Warp";
-      rev = "19548aec6285e82b1a4cde526e7ec7e04513c248";
+      rev = "c1ec372cbd3e4960661779a031172e854e7964e8";
       fetchSubmodules = false;
-      sha256 = "sha256-iPm/LxGDlJ6JLPIbNEp5tu6P7DqXByrw81RKDkSAgW0=";
+      sha256 = "sha256-qRT45U5VqmLk+sWWP4WJSy+wS1K7xyrAEgmIZsFfteE=";
     };
   };
 }
