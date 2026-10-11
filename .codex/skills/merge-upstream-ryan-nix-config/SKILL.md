@@ -161,7 +161,7 @@ Standard Nix checks:
 
 ```bash
 nix flake check --no-build --impure
-nixos-rebuild build --impure --flake .#eva
+nixos-rebuild build --impure --max-jobs 1 --cores 1 --flake .#eva
 ```
 
 If full `eva` build fails on an unrelated source/substitute/package-test issue, capture the exact
@@ -188,4 +188,4 @@ Final reports should state:
 - What local customization was preserved.
 - Any deliberate upstream change not adopted and why.
 - Exact verification commands and outcomes, especially `nix flake check --no-build --impure` and
-  `nixos-rebuild build --impure --flake .#eva`.
+  `nixos-rebuild build --impure --max-jobs 1 --cores 1 --flake .#eva`.
