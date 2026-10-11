@@ -7,6 +7,11 @@ b.nix} 最终会得到 pkgs.a pkgs.b
 
 定义完后，git add file 即可。
 
+与 nixpkgs 已有属性同名的文件会替换该属性，例如 `nodejs/nodejs-slim_24.nix` 替换
+`pkgs.nodejs-slim_24`。callPackage 的参数集把 nixpkgs 包集合合并在本仓库的包之后，同名时以 nixpkgs 为准：本目录的文件把这类属性声明为参数时，得到的都是 nixpkgs 中的原包，因此可以在其上
+`overrideAttrs`。`modules/base/overlays.nix`、`lib/homeManagerConfiguration.nix` 和
+`outputs/default.nix` 三处调用都要保持这个合并顺序，否则替换同名属性的文件会无限递归。
+
 ## Unreal 说明
 
 `pkgs/unreal` 是一个本地 Unreal Engine 5 wrapper：
@@ -30,7 +35,7 @@ src.regex = "\\A\\s*\\{\\s*\"sha\"\\s*:\\s*\"([0-9a-f]{40})\""
 fetch.github = "emacs-mirror/emacs"
 ```
 
-然后在 `emacs/emacs-master-igc-pgtk.nix` 中，传入的函数加上 `source-emacs-master-igc`
+然后在 `emacs/emacs-master-pgtk-with-igc.nix` 中，传入的函数加上 `source-emacs-master-igc`
 参数，并替换掉原有的src
 
 ```nix
@@ -52,6 +57,17 @@ emacs.overrideAttrs (
 cd pkgs
 nvfetcher --keep-old --keep-going
 ```
+
+nvfetcher 写出的 `_sources/generated.json` 和 `_sources/generated.nix` 未经格式化。提交前在 `pkgs`
+目录中格式化，使 diff 只包含版本变化：
+
+```bash
+prettier --write _sources/generated.json
+nixfmt _sources/generated.nix
+```
+
+更新 `source-emacs-master-igc` 后，确认 `emacs/emacs-master-pgtk-with-igc.nix` 的 `version` 与新源码
+`configure.ac` 中 `AC_INIT` 的版本一致。
 
 然后 `git add` / `git commit` 更新的 `_sources/generated.nix`、`_sources/generated.json`，以及
 `cargo_lock` 产生的 `Cargo.lock` 等附属文件。
