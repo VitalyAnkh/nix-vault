@@ -6,6 +6,14 @@ This directory contains all host-specific configurations for my NixOS and macOS 
 
 ### Physical Machines
 
+#### This fork's hosts
+
+| Host    | Platform | Hardware                | Purpose                                      | Status    |
+| ------- | -------- | ----------------------- | -------------------------------------------- | --------- |
+| `eva`   | NixOS    | AMD CPU + NVIDIA GPU    | Main workstation, successor of upstream `ai` | ✅ Active |
+| `muon`  | NixOS    | Intel CPU + NVIDIA GPU  | Multi-user workstation, based on `eva`       | ✅ Active |
+| `astra` | macOS    | MacBook Pro M5 Pro 48GB | Work Use                                     | ✅ Active |
+
 #### `idols` - Main Workstations
 
 Named after characters from "Oshi no Ko":
