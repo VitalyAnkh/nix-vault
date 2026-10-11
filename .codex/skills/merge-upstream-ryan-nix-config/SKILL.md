@@ -75,6 +75,23 @@ Treat upstream `idols-ai` / `ai` host changes as source lineage for local `eva`.
 - If an upstream `ai-niri` output is stale in the local tree because `eva` is the successor, remove
   or disable the stale output only after confirming `eva` / `eva-niri` still evaluate.
 
+## Command-Runner File Lineage
+
+The root command-runner file is lowercase `justfile`. Upstream `Justfile` is its source lineage, so
+every merge must port applicable upstream recipe additions and fixes into local `justfile`,
+preserving local recipes and intentional overrides. Do not reintroduce a root `Justfile` or ignore
+its changes because the filename differs.
+
+On case-insensitive filesystems, read each side from Git objects (for example,
+`git show refs/remotes/ryan/main:Justfile`) and preserve current working-tree edits before resolving
+the case collision. Merge content before removing the uppercase index entry; never remove the shared
+working-tree file merely to drop one spelling. Keep nested projects' own `Justfile` files.
+
+Verify that `git ls-files -- Justfile justfile` lists only root `justfile`, compare retained local
+recipes and upstream changes, and check recipe parsing and `utils.nu` argument compatibility. Use
+parse/list checks; do not execute deployment, cleanup, or build recipes to validate the merge.
+Update references to the root file when needed and record deliberate recipe overrides.
+
 ## Lockfile Strategy
 
 For `flake.lock`, `uv.lock`, generated sources, and similar lock files:

@@ -278,6 +278,12 @@ Model flag normalization contract:
 
 <project_merge_protocol> Project-specific merge rules for this repository:
 
+- The canonical command-runner file at the repository root is lowercase `justfile`. Treat upstream
+  `Justfile` as the source lineage for this file: merge future upstream recipe changes into local
+  `justfile` while preserving local recipes and intentional overrides. Do not retain both case
+  variants or discard upstream changes merely because the local filename differs. On
+  case-insensitive filesystems, compare the distinct Git blobs rather than assuming both
+  working-tree paths expose different files; preserve unstaged edits before resolving the collision.
 - When merging from upstream `ryan/main`, treat upstream `idols-ai` / `ai` host changes as the
   source lineage for local `eva`. The local `eva` host is the adapted successor of upstream's AI
   host, so safe capability improvements from upstream `idols-ai` should be migrated into `eva`
@@ -306,6 +312,9 @@ Model flag normalization contract:
 
 Minimum acceptance checks for upstream `ryan/main` merges:
 
+- Confirm Git tracks only root `justfile`, with no root `Justfile`; review upstream recipe changes
+  against the lowercase result, preserve local commands, and check recipe parsing plus `utils.nu`
+  argument compatibility without executing deployment or cleanup recipes as a syntax check.
 - Read upstream and local commit messages before resolving conflicts, especially for `flake.lock`,
   host modules, Home Manager modules, and package plumbing.
 - Prefer newer flake lock hashes when they are compatible with local customizations, but do not keep
