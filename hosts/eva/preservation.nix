@@ -264,7 +264,6 @@ in
         ".config/opencode"
         ".local/share/opencode"
         ".local/state/opencode"
-        ".context7"
         # ctx7 docs lookup login
         {
           directory = ".config/context7";
@@ -275,6 +274,7 @@ in
         # DeepSeek Harness (dsh) keeps sessions, credentials, profiles, and
         # cache together under DSH_HOME, which defaults to ~/.dsh.
         ".dsh"
+        ".pi"
         ".local/state/codex-desktop"
         # Orca ADE (llm-agents), distinct from OrcaSlicer
         ".orca"

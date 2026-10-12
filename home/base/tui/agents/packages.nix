@@ -20,7 +20,6 @@ in
     agentPackages.dsh
     agentPackages.opencode2
     agentPackages.pi
-    agentPackages.omp
 
     # Docs lookup CLI behind the find-docs skill (agents/skills/find-docs). The skill's flags are
     # written against this package, not against upstream's npx instructions.
