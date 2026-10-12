@@ -4,7 +4,6 @@
   mysecrets,
   osConfig,
   pkgs,
-  pkgs-stable,
   ...
 }:
 let
@@ -156,20 +155,4 @@ in
 
   # Zed's official signed app, at the version of nixpkgs' Zed, without a Rust build.
   programs.zed-editor.package = pkgs.zed-editor-bin;
-
-  # Start the language servers that the shared Nixvim module declares.
-  programs.nixvim.plugins.lsp.enable = true;
-
-  # The pinned Nixvim release targets the 26.05 package set.
-  programs.nixvim.nixpkgs = {
-    useGlobalPackages = lib.mkForce false;
-    # Reuse the system's Node fix within Nixvim's stable package set.
-    pkgs = pkgs-stable.extend (
-      _final: _prev: {
-        nodejs-slim_24 = pkgs.nodejs-slim_24;
-        # The core uses Node only in its checks; runtime tools retain patched Node.
-        neovim-unwrapped = pkgs-stable.neovim-unwrapped;
-      }
-    );
-  };
 }

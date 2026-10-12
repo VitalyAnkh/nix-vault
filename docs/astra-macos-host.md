@@ -145,12 +145,11 @@ PATH 的顺序与来源：
 `hosts/darwin-astra/homebrew.nix`，HM 导出同一组变量。认证令牌和密钥仍由本机应用管理。
 
 Node.js 和其它声明的软件由 HM 包集合提供。Atuin 负责历史搜索，fzf 保留命令本体并关闭重复的 shell 历史绑定。Nushell 的 argx 使用命名空间导入，保留内置
-`parse`，避免干扰 fzf 初始化。Nixvim 会在插件初始化前创建标准数据目录，使 Neo-tree 在新家目录中也能正常启动。
+`parse`，避免干扰 fzf 初始化。Neovim 的 init.lua 先创建标准数据目录，使 Neo-tree 在新家目录中也能正常启动。
 
 Darwin 的 Node 24 由 `pkgs/nodejs/nodejs-slim_24.nix`
 应用上游 V8 哈希修复，修正工作线程的文件描述符跟踪。未修复时 Wrangler 的构建会因 `EBADF`
-失败，上游缓存中也没有 Wrangler，因此该修复对所有 Darwin 主机生效。Astra 的 Nixvim 包集合也复用这一 Node 核心。自带 Node 的包不在此列，例如 llm-agents 的 kimi-code 和使用 Node
-22 的 mongosh。更新 Node 或 nixpkgs 时，需确认上游是否已包含该修复（截至 Node
+失败，上游缓存中也没有 Wrangler，因此该修复对所有 Darwin 主机生效。Neovim 本身不依赖它，仍来自上游缓存；pyright 等基于 Node 的语言服务器在 astra 上本地构建。自带 Node 的包不在此列，例如 llm-agents 的 kimi-code。更新 Node 或 nixpkgs 时，需确认上游是否已包含该修复（截至 Node
 24.21.0 尚未包含），再调整本地补丁。包构建保留上游检查，并额外执行文件描述符回归测试；两个测试补丁中，文件监视补丁从 Node
 24.19.0 起自动不再应用。
 
@@ -326,14 +325,12 @@ nix build --no-write-lock-file --max-jobs 1 --cores 1 --out-link result-astra .#
 - pnpm 全局包使用 `~/Library/pnpm` 布局，`~/Library/pnpm/global/v11/pnpm-workspace.yaml` 含
   `enableGlobalVirtualStore: false`。
 - Zed 官方 App 的架构、签名、版本和两个 CLI 入口有效；Android 工具的解包路径和启动命令有效。
-- Nixvim 启用共享声明的 Nix、Rust、Go、Python 和 Shell 语言服务器，验证实际连接，不仅检查服务器包是否存在。
+- Neovim 通过 `vim.lsp.enable`
+  启动共享声明的 Nix、Rust、Go、Python 和 Shell 语言服务器，验证实际连接，不仅检查服务器包是否存在。
 - `fern` / `frieren` 和既有独立 HM 输出的用户身份及相关默认行为保持；共享模块修改按范围扩展回归。
 - 实际 system/HM 构建完成，并审查全部 activation 脚本与 HM `home-files`。
 
 求值成功、构建成功和系统激活成功是不同结果。来源下载失败、既有上游问题及新增回归应分别记录。验证日志和本机配置盘点保存在仓库外，不将临时测试目录写入配置。
-
-Nixvim 在 astra 使用与其版本匹配的 26.05 包集合；其求值库仍来自全局 26.11，因此会报告版本未完全对齐的 warning。保留该提示，构建和运行结果单独验证；不为消除提示修改所有主机共用的 input
-follows。
 
 ## 首次激活准备
 

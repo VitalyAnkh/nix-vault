@@ -90,11 +90,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nixvim = {
-      url = "github:nix-community/nixvim/nixos-26.05";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     # https://github.com/catppuccin/nix
     # main carries the rust-overlay-style deprecation fix for its vscode
     # package (nodejs -> nodejs-slim).
