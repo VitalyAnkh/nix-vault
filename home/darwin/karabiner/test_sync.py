@@ -611,7 +611,7 @@ class ConfigTests(unittest.TestCase):
         self.assertEqual(self.apply(), (False, None))
 
     def test_application_paths_must_be_absolute_or_in_home(self):
-        for path in ("Applications/Emacs.app", "~quan/Applications/Emacs.app", "~", "", 42):
+        for path in ("Applications/Emacs.app", "~user/Applications/Emacs.app", "~", "", 42):
             with self.subTest(path=path):
                 asset = copy.deepcopy(ASSET)
                 hotkey = next(r for r in asset["rules"] if r["description"] == EMACS_RULE)
