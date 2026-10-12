@@ -11,14 +11,17 @@ description: >-
 
 ## Overview
 
-Use this workflow from the current repository checkout when merging upstream `ryan/main` into local
-`vr`. Do not assume the checkout lives at a fixed filesystem path. Optimize for preserving both
-sides: keep upstream fixes where safe, keep local customizations where they are intentional, and
-document any deliberate non-migration.
+Use this workflow when merging upstream `ryan/main` into local `vr`. `docs/upstream-sync.md` is the
+fixed process and wins over this skill where they differ: merge every file in one merge, in a
+separate worktree (never in `eva`'s own checkout), audit with `just merge-audit`, compare hosts with
+`just host-diff`, and record decisions in that document. Do not assume the checkout lives at a fixed
+filesystem path. Optimize for preserving both sides: keep upstream fixes where safe, keep local
+customizations where they are intentional, and document any deliberate non-migration.
 
 ## Start With Evidence
 
-1. Read the repository `AGENTS.md` merge rules and any active planning files.
+1. Read `docs/upstream-sync.md`, the repository `AGENTS.md` merge rules and any active planning
+   files.
 2. Use `planning-with-files` for non-trivial merges: keep `task_plan.md`, `findings.md`, and
    `progress.md` current, but do not stage them unless explicitly requested.
 3. Inspect `git status --short --branch` before touching anything. If unrelated tracked changes
@@ -58,7 +61,8 @@ verification proves they must change:
 
 Prefer migration over deletion when upstream changes overlap a local successor. If an upstream
 improvement is safe but targets a renamed or replaced local component, port it to the local
-component instead of ignoring it.
+component instead of ignoring it. Code for tools and features removed together with upstream is
+deleted, not left commented out; only the Doom Emacs configuration keeps commented-out settings.
 
 ## Host Lineage
 
@@ -127,7 +131,11 @@ If upstream removes a feature that local `vr` had, distinguish between:
 - Local customization that must remain, such as package pipeline, input method, Emacs, Nutstore, or
   `eva` storage semantics.
 
-Ask only when the choice is materially branching and cannot be inferred from local rules.
+Ask the user before following an upstream change whose adoption is not clear-cut: removing or
+replacing tools and features the hosts use, changing defaults or the UI, trading convenience for
+security, or replacing a local setup with upstream's. "The local side never touched these lines" is
+not enough on its own. Gather upstream's reason, any replacement, and the measured effect on the
+real host first, then record the outcome in `docs/upstream-sync.md`.
 
 ## Verification Gates
 
@@ -157,11 +165,13 @@ Evaluate host and package invariants:
   `nutstore-nautilus`.
 - Confirm removed upstream inputs are really absent when removal is intended.
 
-Standard Nix checks:
+Standard checks:
 
 ```bash
+just merge-audit <merge>    # or --ours <local before> --theirs ryan/main HEAD after fix commits
+just host-diff <local before> eva muon
 nix flake check --no-build --impure
-nixos-rebuild build --impure --max-jobs 1 --cores 1 --flake .#eva
+nixos-rebuild build --impure --max-jobs 8 --cores 8 --flake .#eva
 ```
 
 If full `eva` build fails on an unrelated source/substitute/package-test issue, capture the exact
@@ -188,4 +198,4 @@ Final reports should state:
 - What local customization was preserved.
 - Any deliberate upstream change not adopted and why.
 - Exact verification commands and outcomes, especially `nix flake check --no-build --impure` and
-  `nixos-rebuild build --impure --max-jobs 1 --cores 1 --flake .#eva`.
+  `nixos-rebuild build --impure --max-jobs 8 --cores 8 --flake .#eva`.

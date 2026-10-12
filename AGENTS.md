@@ -278,8 +278,10 @@ Model flag normalization contract:
 
 <project_merge_protocol> Project-specific merge rules for this repository:
 
-- Follow `docs/upstream-sync.md` to absorb upstream `ryan/main`: merge it on `eva` only. On `astra`,
-  review upstream Darwin changes by path (`just upstream-darwin`), port them by hand, and advance
+- Follow `docs/upstream-sync.md` to absorb upstream `ryan/main`. One machine merges everything,
+  Linux and Darwin files alike; `astra` can merge and verify the Linux hosts on `eva` over Tailscale
+  SSH, in a separate worktree there (never in `eva`'s own checkout). Review upstream Darwin changes
+  by path (`just upstream-darwin`), port what a merge resolution left out by hand, and advance
   `darwin.reviewed` in `docs/upstream-sync.toml`. Git records merged commits as merged even when a
   resolution kept the local side, so later merges never bring those changes back.
 - The canonical command-runner file at the repository root is lowercase `justfile`. Treat upstream
@@ -291,16 +293,25 @@ Model flag normalization contract:
 - When merging from upstream `ryan/main`, treat upstream `idols-ai` / `ai` host changes as the
   source lineage for local `eva`. The local `eva` host is the adapted successor of upstream's AI
   host, so upstream capability improvements should be migrated into `eva` rather than ignored.
+- Ask the user before following an upstream change whose adoption is not clear-cut: removing or
+  replacing tools and features the hosts use, changing defaults or the interface, trading
+  convenience for security, or replacing a local setup with upstream's. First research upstream's
+  reason (commit messages, PRs, `WORKAROUNDS.md`), any replacement, and the measured effect on the
+  host (for example the live sysctl values, not only the configuration); then discuss the list with
+  the user and record each outcome in `docs/upstream-sync.md`. That the local side never touched the
+  lines is not by itself a reason to take such a change.
 - The preferred merge policy is to absorb upstream refactors into local hosts when the result is
-  functionally equivalent or stronger: migrate `zellij` to `tuios`, `clash-verge` to native
-  `mihomo`, and remove obsolete NetBird/legacy hardening modules where their replacements are
-  present. Keep every locally added host, but map upstream host-specific improvements to its local
-  successor: `idols-ai`/`ai` to `eva`, and upstream Darwin/macOS improvements to `astra`.
-- The user explicitly authorizes adapting the upstream AI host's `disko`, swap, NVMe, networkd, and
-  mihomo DNS-lifecycle design to `eva`. Do not copy AI hardware identifiers or disk UUIDs blindly:
-  translate each capability to EVA's hardware and storage layout, keep bootability and required
-  persistent state intact, and validate the resulting filesystem/network/activation semantics before
-  deployment.
+  functionally equivalent or stronger. The user asked for `zellij` to `tuios`, `clash-verge` to
+  native `mihomo`, and removing NetBird and the legacy hardening modules. Keep every locally added
+  host, but map upstream host-specific improvements to its local successor: `idols-ai`/`ai` to
+  `eva`, and upstream Darwin/macOS improvements to `astra`.
+- The user also asked to adapt the upstream AI host's `disko`, swap and NVMe design to `eva`. Do not
+  copy AI hardware identifiers or disk UUIDs blindly: translate each capability to EVA's hardware
+  and storage layout, keep bootability and required persistent state intact, and validate the
+  resulting filesystem/network/activation semantics before deployment.
+- `eva` uses NetworkManager for every interface, never systemd-networkd or systemd-resolved (the
+  user's decision, which replaced the earlier request to migrate the AI host's networkd and
+  resolvectl DNS setup). The networkd block in `hosts/eva/default.nix` stays inert.
 - Apply this mapping as an organic refactor rather than a second parallel implementation: shared
   module improvements land in the shared modules, upstream AI host-specific improvements are adapted
   into `eva`, and upstream Darwin/macOS improvements are adapted into `astra`. Do not add an `ai`
@@ -308,16 +319,17 @@ Model flag normalization contract:
 - The replacement policy is functional, not cosmetic: `tuios` must provide the interactive terminal
   workflow previously provided by zellij, native `mihomo` must replace Clash GUI/core use on Linux,
   and obsolete NetBird or legacy hardening modules may be removed only when their active consumers
-  have a maintained replacement. Keep old state directories only when they are needed for a safe
-  migration; they must not keep the removed service active.
-- For EVA's disk migration, keep the checked-in hardware scan as the boot/runtime source of truth
-  and set Disko's NixOS integration to installer-only when its generated mounts would duplicate or
-  alter the existing UUID/subvolume layout. A Disko profile must match the observed EVA disk and
-  must not contain Ryan's LUKS, NVMe, partition, or swap identifiers.
-- For EVA networking, migrate the AI networkd routing-policy and mihomo DNS lifecycle safeguards,
-  but adapt ownership to the live topology: networkd may own the wired uplink while NetworkManager
-  remains available for EVA's roaming Wi-Fi. Never hard-code a gateway outside the address subnet;
-  DHCP/RA is preferred when the wired gateway is not verified.
+  have a maintained replacement (Tailscale, for NetBird). A replacement that cannot work yet stays
+  behind a local option: mihomo needs the host's private `~/.config/mihomo/sources.yaml`, so `eva`
+  and `muon` keep Clash Verge through `vr.proxy.backend` until it exists. Keep old state directories
+  only when they are needed for a safe migration; they must not keep the removed service active.
+- For EVA's disk, keep the checked-in hardware scan as the boot/runtime source of truth and keep
+  Disko's NixOS integration installer-only (`disko.enableConfig = false`). The Disko profile must
+  match the observed EVA disk (by-id path, partition labels and sizes, subvolumes) and must not
+  contain Ryan's LUKS, NVMe, partition, or swap identifiers. Swap follows the AI host (disk swapfile
+  plus zswap, no zram) using the swapfile EVA already has on `@swap`; `muon` keeps zram until a
+  swapfile there is verified. The AI host's NVMe APST parameter works around its own drive (upstream
+  `WORKAROUNDS.md` WA-008) and is not migrated.
 - Preserve `eva` boot, disk, filesystem, and activation semantics unless the user explicitly asks
   for those to change. For potentially disruptive upstream host changes, keep them disabled behind
   local options or record why they were not migrated.
@@ -343,7 +355,9 @@ Model flag normalization contract:
 Minimum acceptance checks for upstream `ryan/main` merges:
 
 - Run `just merge-audit <merge>` and review every file it lists: a resolution that takes one side of
-  a file wholesale silently drops the other side's changes, even where they merge cleanly.
+  a file wholesale silently drops the other side's changes, even where they merge cleanly. When the
+  result spans several commits (a merge and its fixes), audit the final tree against both sides with
+  `just merge-audit --ours <local before> --theirs ryan/main <result>`.
 - Confirm Git tracks only root `justfile`, with no root `Justfile`; review upstream recipe changes
   against the lowercase result, preserve local commands, and check recipe parsing plus `utils.nu`
   argument compatibility without executing deployment or cleanup recipes as a syntax check.

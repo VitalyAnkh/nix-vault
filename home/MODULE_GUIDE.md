@@ -172,7 +172,7 @@ home/
 #### home/base/gui/terminal/
 
 - **作用**: 终端模拟器
-- **包含**: alacritty, kitty, foot, warp, ghostty
+- **包含**: kitty, warp, ghostty
 
 ### 4. Linux 特定模块 (home/linux/)
 

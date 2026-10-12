@@ -13,7 +13,7 @@
 | `hosts/darwin-astra/default.nix`       | 主机名、Nix 托管、系统 shell、PAM 和字体                                                |
 | `hosts/darwin-astra/homebrew.nix`      | Homebrew 软件清单、激活时的 Homebrew 行为及镜像设置                                     |
 | `home/hosts/darwin/darwin-astra.nix`   | HM 工作环境及本机选择                                                                   |
-| `modules/darwin/overlays.nix`          | 所有 Darwin 主机共用：仅构建期使用 Node 的包复用上游构建、Jeepney 测试修复              |
+| `modules/darwin/overlays.nix`          | 所有 Darwin 主机共用：仅构建期使用 Node 的包复用上游构建                                |
 | `modules/darwin/nix-daemon.nix`        | 所有 Darwin 主机共用：nix-darwin 管理 Nix 时，daemon 日志写入 `/var/log/nix-daemon.log` |
 | `modules/darwin/system-paths.nix`      | 所有 Darwin 主机共用：在 Nix 路径之后补回 `/etc/paths`、`/etc/paths.d` 中的目录         |
 | `home/darwin`、`home/base`             | 与 `fern`、`frieren` 共用的编辑器、shell、开发工具和应用配置                            |
@@ -150,8 +150,7 @@ Node.js 和其它声明的软件由 HM 包集合提供。Atuin 负责历史搜�
 Darwin 的 Node 24 由 `pkgs/nodejs/nodejs-slim_24.nix`
 应用上游 V8 哈希修复，修正工作线程的文件描述符跟踪。未修复时 Wrangler 的构建会因 `EBADF`
 失败，上游缓存中也没有 Wrangler，因此该修复对所有 Darwin 主机生效。Neovim 本身不依赖它，仍来自上游缓存；pyright 等基于 Node 的语言服务器在 astra 上本地构建。自带 Node 的包不在此列，例如 llm-agents 的 kimi-code。更新 Node 或 nixpkgs 时，需确认上游是否已包含该修复（截至 Node
-24.21.0 尚未包含），再调整本地补丁。包构建保留上游检查，并额外执行文件描述符回归测试；两个测试补丁中，文件监视补丁从 Node
-24.19.0 起自动不再应用。
+24.21.0 尚未包含），再调整本地补丁。包构建保留上游检查，并额外执行文件描述符回归测试；另有一个测试补丁（`test-net-autoselectfamily-loopback.patch`）。
 
 全局 Node CLI 的安装位置都与 Node 版本无关，命令目录都在 PATH 中：
 
@@ -285,9 +284,8 @@ CLI。本地包只替换归档来源，其中的脚本已带 Mac 标题。Google
 `commandlinetools-mac` 文件名止于 15641748），两个哈希都要更新。23.0 起 `sdkmanager` 已弃用，会转调
 `android sdk`；它仍接受显式的 `--sdk_root=<SDK 目录>`，用来指定可写 SDK，不把 SDK 安装进只读 store。
 
-`pass-import`
-保留全部导入后端。上游缓存中没有 Darwin 的 Jeepney，而它的测试需要 Nix 构建中不可用的 launchd 会话总线；`modules/darwin/overlays.nix`
-让 Darwin 主机构建时使用临时 Unix D-Bus 会话运行原有测试，不安装或启动常驻 D-Bus 服务。
+`pass-import` 保留全部导入后端。nixpkgs 现在自己让 Darwin 上 Jeepney 的测试使用私有的 Unix
+D-Bus 套接字，仓库不再注入替代方案，`tests/darwin-packages` 检查这一点。
 
 构建计划中的 derivation 还包括配置文件、命令包装和 shell 补全，不能把条目总数当作需要从源码编译的软件数量。固定 inputs 或修改底层依赖后，相关缓存身份可能变化；不通过关闭测试来减少构建时间。
 
@@ -448,10 +446,10 @@ daemon。之后恢复文件、权限、链接和原先不存在项，再恢复�
 - [nix-darwin Homebrew](https://github.com/nix-darwin/nix-darwin/blob/4cff07de74b50e64bdd68cd4e722ab5b6b35ee48/modules/homebrew.nix)
 - [nix-darwin 激活顺序](https://github.com/nix-darwin/nix-darwin/blob/4cff07de74b50e64bdd68cd4e722ab5b6b35ee48/modules/system/activation-scripts.nix)
 - [nix-darwin Karabiner-Elements](https://github.com/nix-darwin/nix-darwin/blob/4cff07de74b50e64bdd68cd4e722ab5b6b35ee48/modules/services/karabiner-elements/default.nix)
-- [Home Manager activation](https://github.com/nix-community/home-manager/blob/17903129f47656fa4d07e78ad87f6592ff4f2527/modules/home-environment.nix)
-- [Home Manager Darwin 集成](https://github.com/nix-community/home-manager/blob/17903129f47656fa4d07e78ad87f6592ff4f2527/nix-darwin/default.nix)
-- [Home Manager 应用复制](https://github.com/nix-community/home-manager/blob/17903129f47656fa4d07e78ad87f6592ff4f2527/modules/targets/darwin/copyapps.nix)
-- [Home Manager 字体同步](https://github.com/nix-community/home-manager/blob/17903129f47656fa4d07e78ad87f6592ff4f2527/modules/targets/darwin/fonts.nix)
-- [Home Manager Zed 设置](https://github.com/nix-community/home-manager/blob/17903129f47656fa4d07e78ad87f6592ff4f2527/modules/programs/zed-editor.nix)
+- [Home Manager activation](https://github.com/nix-community/home-manager/blob/c58f54c733a7894d84fa2fdff26cc12088c4b78c/modules/home-environment.nix)
+- [Home Manager Darwin 集成](https://github.com/nix-community/home-manager/blob/c58f54c733a7894d84fa2fdff26cc12088c4b78c/nix-darwin/default.nix)
+- [Home Manager 应用复制](https://github.com/nix-community/home-manager/blob/c58f54c733a7894d84fa2fdff26cc12088c4b78c/modules/targets/darwin/copyapps.nix)
+- [Home Manager 字体同步](https://github.com/nix-community/home-manager/blob/c58f54c733a7894d84fa2fdff26cc12088c4b78c/modules/targets/darwin/fonts.nix)
+- [Home Manager Zed 设置](https://github.com/nix-community/home-manager/blob/c58f54c733a7894d84fa2fdff26cc12088c4b78c/modules/programs/zed-editor.nix)
 - [Zed 官方发布](https://github.com/zed-industries/zed/releases)
 - [Nix 2.35 实验性 CA 格式变化](https://github.com/NixOS/nix/blob/2.35.2/doc/manual/source/release-notes/rl-2.35.md)
