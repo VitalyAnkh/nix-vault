@@ -206,6 +206,12 @@ override-pkgs hash:
 merge-audit *args:
   python3 scripts/merge-audit.py {{args}}
 
+# Usage: just host-diff <old-rev> <host>...
+# Compare hosts' boot, storage, network, secrets and services between <old-rev> and the working tree
+[group('upstream')]
+host-diff old +hosts:
+  python3 scripts/host-diff.py --old {{quote(old)}} {{hosts}}
+
 # By default up to the newest ryan/main commit in HEAD; pass e.g. ryan/main to include unmerged ones.
 # List upstream Darwin commits that astra has not reviewed yet
 [group('upstream')]
