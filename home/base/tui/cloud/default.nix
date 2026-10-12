@@ -22,9 +22,9 @@
 
     # aws
     awscli2
-    ssm-session-manager-plugin # Amazon SSM Session Manager Plugin
+    # ssm-session-manager-plugin # Amazon SSM Session Manager Plugin
     aws-iam-authenticator
-    eksctl
+    # eksctl
 
     # aliyun
     aliyun-cli
@@ -37,7 +37,7 @@
         gke-gcloud-auth-plugin
       ]
     ))
-    google-cloud-sql-proxy
+    # google-cloud-sql-proxy
     google-alloydb-auth-proxy
 
     # cloud tools that nix do not have cache for.

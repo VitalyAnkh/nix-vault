@@ -9,15 +9,21 @@ Markdown with no Nix dependency; this module only wires it into place.
 
 ## Files
 
-- `rules.nix`: links the global rules to every agent's config location.
+- `rules.nix`: links the global rules to every agent's config location. Off unless
+  `modules.agents.globalRules.enable` is set: these hosts keep `~/.codex/AGENTS.md` and the other
+  rule files user-managed (oh-my-codex writes its own).
 - `skills.nix`: links the global skills into `~/.agents/skills/<name>`, from pinned flake inputs and
   from `agents/skills/`; the inventory is
-  [agents/skills/README.md](../../../../agents/skills/README.md).
-- `packages.nix`: agent CLIs (`codex`, `opencode2`, `pi`) from the `llm-agents` flake input, plus
-  `pkgs.mcp-grafana` for the Grafana MCP server.
+  [agents/skills/README.md](../../../../agents/skills/README.md). Off unless
+  `modules.agents.skills.enable` is set, for the same reason.
+- `packages.nix`: agent CLIs (`grok`, `kimi-code`, `dsh`, `opencode`, `pi`, `omp`, and on Linux
+  `grok-bot`, `orca` and `zcode`) from the `llm-agents` flake input, plus `pkgs.ctx7` (the find-docs
+  skill's CLI) and `pkgs.mcp-grafana` (the Grafana MCP server). Codex is installed through pnpm
+  instead.
 - `env.nix`: telemetry and auto-update opt-outs for the agents.
 
-dsh is installed by this module but configured at runtime, not by Nix: profile patches live in
+dsh is installed by this module (the `llm-agents` build; upstream uses nur-ryan4yin's shim) but
+configured at runtime, not by Nix: profile patches live in
 `~/.dsh/profiles/<name>/cordis.patch.yml`. See [dsh.md](./dsh.md) for the layer order and the
 settings that bite.
 

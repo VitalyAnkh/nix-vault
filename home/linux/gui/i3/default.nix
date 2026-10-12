@@ -1,6 +1,5 @@
 {
   pkgs,
-  pkgs-x64,
   config,
   lib,
   ...
@@ -12,7 +11,7 @@ let
   screen = "1920x1080x24";
 
   # Keep this list minimal: the goal is to look like a real user device, not to
-  # harden the browser. The browser goes out through mihomo's proxy, so
+  # harden the browser. The browser goes out through Clash Verge's proxy, so
   # non-proxied WebRTC UDP must stay disabled (a real IP leak would contradict
   # the exit region); everything else is a stock-looking setting.
   #
@@ -58,7 +57,7 @@ let
 
     ${lib.optionalString cfg.cuaDriver ''
       # cua-driver sends content-free telemetry by default; turn it off.
-      ${pkgs-x64.cua-driver}/bin/cua-driver telemetry disable >/dev/null 2>&1 || true
+      ${pkgs.cua-driver}/bin/cua-driver telemetry disable >/dev/null 2>&1 || true
     ''}
   '';
 in
@@ -84,10 +83,10 @@ in
       ]
       ++ [
         # MCP server / CLI that drives the desktop (see overlays/computer-use-linux.nix).
-        pkgs-x64.computer-use-linux
+        pkgs.computer-use-linux
       ]
       ++ lib.optional cfg.vnc pkgs.x11vnc
-      ++ lib.optional cfg.cuaDriver pkgs-x64.cua-driver;
+      ++ lib.optional cfg.cuaDriver pkgs.cua-driver;
 
     # Headless X server.
     systemd.user.services.xvfb = {
@@ -202,7 +201,7 @@ in
           "DISPLAY=${display}"
           "XDG_SESSION_TYPE=x11"
         ];
-        ExecStart = "${pkgs-x64.cua-driver}/bin/cua-driver serve";
+        ExecStart = "${pkgs.cua-driver}/bin/cua-driver serve";
         Restart = "always";
         RestartSec = 2;
       };

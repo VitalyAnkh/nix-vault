@@ -13,7 +13,7 @@ in
 {
   options.modules.desktop = {
     gaming = {
-      enable = mkEnableOption "Install Game Suite(steam, lutris, etc)";
+      enable = mkEnableOption "Enable desktop gaming support";
     };
   };
 
@@ -21,9 +21,12 @@ in
     # ==========================================================================
     # Other Optimizations
     # Usage:
-    #  Lutris - enable advanced options, go to the System options -> Command prefix, add: `mangohud`
-    #  Steam  - add this as a launch option: `mangohud %command%` / `gamemoderun %command%`
+    #  UMU game launchers use MangoHud by default; set ENABLE_MANGOHUD=0 in their conf to disable.
+    #  Steam - add this as a launch option: `mangohud %command%` / `gamemoderun %command%`
     # ==========================================================================
+
+    # The nix-config-umu-game skill and the launchers it generates rely on
+    # umu-launcher, mangohud, winetricks and bbe from this list.
 
     home.packages =
       (with pkgs; [
@@ -31,9 +34,6 @@ in
         # a simple overlay program for monitoring FPS, temperature, CPU and GPU load, and more.
         mangohud
 
-        # GUI for installing custom Proton versions like GE_Proton
-        # proton - a Wine distribution aimed at gaming
-        protonplus
         # Script to install various redistributable runtime libraries in Wine.
         winetricks
         # https://github.com/Open-Wine-Components/umu-launcher
@@ -44,12 +44,12 @@ in
         # required by some games to fix problems
         bbe
       ])
-      ++ (with pkgs-x64; [
+      ++ (with pkgs; [
         # Heroic Games Launcher - primarily for Epic Games & GOG
         # https://heroicgameslauncher.com/
         (heroic.override {
           extraPkgs = _pkgs: [
-            pkgs.gamescope # aarch64
+            pkgs.gamescope
           ];
         })
       ]);

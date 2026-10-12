@@ -122,6 +122,11 @@ window-rule {
     open-on-workspace "5utility"
 }
 window-rule {
+    match app-id="(?i)^clash-verge$"
+    match app-id="^[.]clash-verge-wrapped$"
+    open-on-workspace "5utility"
+}
+window-rule {
     match app-id="^org[.]kde[.]easyeffects$"
     open-on-workspace "5utility"
 }

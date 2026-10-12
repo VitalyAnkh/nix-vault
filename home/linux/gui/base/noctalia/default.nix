@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  myvars,
   pkgs,
   wallpapers,
   ...
@@ -18,8 +19,9 @@
   # (~/.local/state/noctalia/settings.toml), which loads last and wins - keeping
   # volatile runtime data (wallpaper rotation, widget geometry) out of the repo.
   # Host-specific tweaks are separate config-layer files (~/.config/noctalia/host-<host>.toml).
-  xdg.configFile."noctalia/config.toml".source =
-    config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nix-config/home/linux/gui/base/noctalia/config/config.toml";
+  xdg.configFile."noctalia/config.toml".source = config.lib.file.mkOutOfStoreSymlink "${
+    myvars.repoRoot or "${config.home.homeDirectory}/nix-vault"
+  }/home/linux/gui/base/noctalia/config/config.toml";
 
   # Noctalia v5 is started by niri's spawn-at-startup (see the niri conf), so
   # app2unit is still used to launch desktop entries as systemd user units.

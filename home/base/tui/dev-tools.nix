@@ -17,8 +17,10 @@
       # Databases
       mycli
       pgcli
-      mongosh
       sqlite
+
+      # spreadsheets / data files: interactive viewer for csv, xlsx, tsv, json, sqlite
+      visidata
 
       # Embedded development
       minicom
@@ -42,7 +44,6 @@
       (lib.lowPrio wrangler)
       # Darwin hosts get it here too; upstream moved it from Homebrew to Nix (e6245cad).
       git-trim
-      gitleaks
     ]
     ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
       conda

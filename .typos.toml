@@ -11,9 +11,6 @@ extend-exclude = [
   "rime-data/",
   "home/base/tui/editors/emacs/doom/init.el",
   "home/linux/gui/base/fcitx5/pinyin.conf",
-  # small-duck flypy user dictionary: entries are pinyin codes ("delt", "juli"),
-  # not English words, so the spell checker flags every one of them
-  "home/base/gui/rime/flypy_user.txt",
 ]
 
 [default]

@@ -19,29 +19,7 @@ in
   xdg.configFile."tuios/config.toml".source =
     config.lib.file.mkOutOfStoreSymlink "${configDir}/config.toml";
 
-  # auto-start tuios in interactive shells, except when already inside tuios.
-  # `work` for the ~/work tree, `personal` for everything else (a host with no
-  # ~/work gets `personal` everywhere).
-  programs.nushell.extraConfig = ''
-    if $nu.is-interactive and (not ("TUIOS_SESSION" in $env)) {
-      # Exit 3 means the daemon is stopped; stdout still lists saved sessions.
-      let listing = (^tuios ls --json | complete)
-      if $listing.exit_code not-in [0 3] {
-        error make {msg: $"tuios ls failed: ($listing.stderr)"}
-      }
-      let sessions = ($listing.stdout | from json | get name)
-      let work_root = ($nu.home-dir | path join "work")
-      if $env.PWD == $work_root or ($env.PWD | str starts-with $"($work_root)/") {
-        if "work" not-in $sessions {
-          ^tuios new work --detach --cwd $work_root
-        }
-        ^tuios attach work
-      } else {
-        if "personal" not-in $sessions {
-          ^tuios new personal --detach --cwd $nu.home-dir
-        }
-        ^tuios attach personal
-      }
-    }
-  '';
+  # Upstream auto-starts tuios in every interactive nushell. Not here: the
+  # zellij setup tuios replaces did not start on its own either, so run `tuios`
+  # when needed.
 }

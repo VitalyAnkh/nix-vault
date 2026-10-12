@@ -18,14 +18,6 @@
     size = 24;
   };
 
-  # set dpi for 4k monitor
-  xresources.properties = {
-    # dpi for Xorg's font
-    "Xft.dpi" = 150;
-    # or set a generic dpi
-    "*.dpi" = 150;
-  };
-
   home.activation.refreshFontconfigCache = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     if [ -d "${config.xdg.cacheHome}/fontconfig" ]; then
       run rm -f ${config.xdg.cacheHome}/fontconfig/*.cache-* ${config.xdg.cacheHome}/fontconfig/CACHEDIR.TAG
@@ -60,14 +52,14 @@
     gtk2.configLocation = "${config.xdg.configHome}/gtk-2.0/gtkrc";
     gtk4.theme = config.gtk.theme;
 
-    iconTheme = lib.mkForce {
+    iconTheme = {
       name = "fluent-light";
       package = pkgs.fluent-icon-theme.override {
         colorVariants = [ "pink" ];
       };
     };
 
-    theme = lib.mkForce {
+    theme = {
       # https://github.com/vinceliuice/Fluent-gtk-theme
       name = "Fluent-round-pink-Light-compact";
       package = pkgs.fluent-gtk-theme.override {

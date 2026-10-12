@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  myvars,
   mattpocock-skills,
   i-have-adhd,
   humanizer,
@@ -8,11 +9,13 @@
   ...
 }:
 let
+  cfg = config.modules.agents.skills;
   # Skills kept in this repository (agents/skills/<name>) are linked
   # out-of-store, like the rules, so an edit reaches the next agent session
   # without a switch; adding or removing one still needs a switch.
   local = ../../../../agents/skills;
-  checkout = "${config.home.homeDirectory}/nix-config/agents/skills";
+  repoRoot = myvars.repoRoot or "${config.home.homeDirectory}/nix-vault";
+  checkout = "${repoRoot}/agents/skills";
   localNames = lib.attrNames (
     lib.filterAttrs (name: type: type == "directory") (builtins.readDir local)
   );
@@ -49,25 +52,32 @@ let
   };
 in
 {
-  assertions = [
-    {
-      assertion = lib.all (name: !(upstream ? ${name}) && name != "humanizer") localNames;
-      message = "agents/skills and the upstream skill set define the same skill name";
-    }
-  ];
+  # Off by default: ~/.agents/skills is user-managed on these hosts (personal
+  # skills, and oh-my-codex installs its own there).
+  options.modules.agents.skills.enable =
+    lib.mkEnableOption "the repository's and upstream's agent skills in ~/.agents/skills";
 
-  # ~/.agents/skills is the cross-tool Agent Skills scope.
-  home.file =
-    lib.listToAttrs (
-      map (
-        name:
-        lib.nameValuePair ".agents/skills/${name}" {
-          source = config.lib.file.mkOutOfStoreSymlink "${checkout}/${name}";
-        }
-      ) localNames
-    )
-    // lib.mapAttrs' (
-      name: path: lib.nameValuePair ".agents/skills/${name}" { source = path; }
-    ) upstream
-    // humanizerFiles;
+  config = lib.mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = lib.all (name: !(upstream ? ${name}) && name != "humanizer") localNames;
+        message = "agents/skills and the upstream skill set define the same skill name";
+      }
+    ];
+
+    # ~/.agents/skills is the cross-tool Agent Skills scope.
+    home.file =
+      lib.listToAttrs (
+        map (
+          name:
+          lib.nameValuePair ".agents/skills/${name}" {
+            source = config.lib.file.mkOutOfStoreSymlink "${checkout}/${name}";
+          }
+        ) localNames
+      )
+      // lib.mapAttrs' (
+        name: path: lib.nameValuePair ".agents/skills/${name}" { source = path; }
+      ) upstream
+      // humanizerFiles;
+  };
 }

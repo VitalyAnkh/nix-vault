@@ -39,7 +39,7 @@
     marksman # language server for markdown
     glow # markdown previewer
     pandoc # document converter
-    pkgs-master.hugo # static site generator
+    hugo # static site generator
 
     #-- sql
     sqlfluff

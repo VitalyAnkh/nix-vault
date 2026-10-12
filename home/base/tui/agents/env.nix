@@ -1,5 +1,7 @@
 {
   home.sessionVariables = {
+    KIMI_DISABLE_TELEMETRY = "1";
+
     PI_TELEMETRY = "0";
     PI_SKIP_VERSION_CHECK = "1";
 

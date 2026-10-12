@@ -1,13 +1,10 @@
 {
   lib,
-  llm-agents,
   pkgs,
   ...
 }:
-let
-  agentPackages = llm-agents.packages.${pkgs.stdenv.hostPlatform.system};
-in
 {
+  # Agent CLIs from llm-agents live in home/base/tui/agents/packages.nix.
   home.packages =
     with pkgs;
     [
@@ -20,22 +17,6 @@ in
       cursor-cli
       qrtool
     ]
-    ++ (with agentPackages; [
-      # Codex is intentionally installed through pnpm, not Nix.
-      grok
-      kimi-code
-      # `dsh` is the llm-agents package for DeepSeek Harness.
-      dsh
-      opencode
-      pi
-      omp
-    ])
-    # These llm-agents packages are Linux-only upstream.
-    ++ (lib.optionals pkgs.stdenv.hostPlatform.isLinux [
-      agentPackages.grok-bot
-      agentPackages.orca
-      agentPackages.zcode
-    ])
     ++ (lib.optionals pkgs.stdenv.hostPlatform.isLinux [
       mitmproxy
       wireshark

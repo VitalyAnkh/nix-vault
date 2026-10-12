@@ -1,5 +1,11 @@
-{ config, myvars, ... }:
+{
+  config,
+  lib,
+  myvars,
+  ...
+}:
 let
+  cfg = config.modules.agents.globalRules;
   # The global rules are edited often, so link them out-of-store: an edit reaches
   # the next agent session without a Home Manager switch. Same rationale as
   # `home/base/tui/tuios`; keep the checkout path host-aware for Astra and
@@ -11,13 +17,21 @@ let
   link = config.lib.file.mkOutOfStoreSymlink rules;
 in
 {
-  # One canonical rules file, projected into every agent's config location.
-  home.file = {
-    ".codex/AGENTS.md".source = link; # Codex
-    ".pi/agent/AGENTS.md".source = link; # Pi
-    ".agents/AGENTS.md".source = link; # cross-tool; dsh's `$DSH_AGENTS_HOME` from 0.2.1-alpha.2
-    ".dsh/AGENTS.md".source = link; # dsh's `$DSH_HOME`, its only global scope before that
-  };
+  # Off by default: these hosts keep ~/.codex/AGENTS.md and the other global rule
+  # files user-managed (oh-my-codex writes its own), and enabling this replaces
+  # them with links to upstream's rules.
+  options.modules.agents.globalRules.enable =
+    lib.mkEnableOption "the repository's global agent rules (agents/global-rules.md) in every agent's config location";
 
-  xdg.configFile."opencode/AGENTS.md".source = link; # OpenCode
+  config = lib.mkIf cfg.enable {
+    # One canonical rules file, projected into every agent's config location.
+    home.file = {
+      ".codex/AGENTS.md".source = link; # Codex
+      ".pi/agent/AGENTS.md".source = link; # Pi
+      ".agents/AGENTS.md".source = link; # cross-tool; dsh's `$DSH_AGENTS_HOME` from 0.2.1-alpha.2
+      ".dsh/AGENTS.md".source = link; # dsh's `$DSH_HOME`, its only global scope before that
+    };
+
+    xdg.configFile."opencode/AGENTS.md".source = link; # OpenCode
+  };
 }

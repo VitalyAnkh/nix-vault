@@ -112,8 +112,6 @@ in
       diff-so-fancy = true;
       line-numbers = true;
       true-color = "always";
-      # features => named groups of settings, used to keep related settings organized
-      # features = "";
     };
   };
 
