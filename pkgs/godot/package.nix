@@ -11,15 +11,15 @@ let
   rev = source-godot-master.version;
   shortRev = builtins.substring 0 7 rev;
 
-  # Godot master currently uses XR_EXT_spatial_container, which is only present
-  # in the OpenXR SDK development branch and not in the latest stable release.
+  # Godot master bundles OpenXR 1.1.63 and uses XR_EXT_spatial_container, while
+  # nixpkgs' openxr-loader is still 1.1.62. Build the loader from OpenXR-SDK-Source main.
   openxr-loader-main = openxr-loader.overrideAttrs (_old: {
-    version = "unstable-2026-09-12";
+    version = "unstable-2026-09-17";
     src = fetchFromGitHub {
       owner = "KhronosGroup";
       repo = "OpenXR-SDK-Source";
-      rev = "2b99fec95e9cdf352c1a98e9cb23bf4def1cf8e6";
-      hash = "sha256-LQ27i1hOKt9Zylgw6Wn8cpOF81EVepS6p99ur+CNmyM=";
+      rev = "3ed64d0f9bb680f24b80a085091e5c8fab38f7b7";
+      hash = "sha256-eUZEultLvLpm/ycVpYxwjibs1dK3qrF8KricIIxz9OE=";
     };
   });
 in

@@ -3,19 +3,20 @@
   stdenv,
   fetchurl,
   autoPatchelfHook,
+  libxkbcommon,
 }:
 let
-  version = "0.7.1";
+  version = "0.7.15";
 
   # Prebuilt release binaries; the crate is not packaged in nixpkgs.
   assets = {
     x86_64-linux = {
       target = "x86_64-unknown-linux-gnu";
-      hash = "sha256-Wp91gQrUKBjIoxIeEsRug4MYgZ6o6bcaDJoqq+RmmbQ=";
+      hash = "sha256-7NBcwxAnoS3h5rTLI61XYEIO8o+co7ewOU+ksm7Zqdk=";
     };
     aarch64-linux = {
       target = "aarch64-unknown-linux-gnu";
-      hash = "sha256-e376naC15EyNGfDN3ERTmvCPzd97v7WPzzVYq4zCjps=";
+      hash = "sha256-/j6H5YyqMp4RN5Vs/22ncFXZdTy/1Dd21HjcRw1AgRo=";
     };
   };
 
@@ -34,6 +35,9 @@ stdenv.mkDerivation {
 
   nativeBuildInputs = [ autoPatchelfHook ];
   buildInputs = [ stdenv.cc.cc.lib ];
+  # It dlopens libxkbcommon to check literal text typed through the GNOME portal,
+  # which autoPatchelf cannot see.
+  runtimeDependencies = [ libxkbcommon ];
 
   dontUnpack = true;
 
