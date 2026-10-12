@@ -300,6 +300,12 @@ f32d67a5（93700824）。之后在 astra 上把它与 vr 合并（78d4ade4），
   `modules/nixos/base/user-group.nix`。改为路径后，muon 的用户和组只来自
   `hosts/muon/users.nix`：fish 照旧开启，muon 用不到的 `fileshare`
   组随之去掉，root 的 SSH 公钥不再重复列出。
+- 安装器 flake 只导入 `modules/base`
+  中它能求值的文件（overlays 需要安装器没有的 input），shoukei 补上 `mylib` 和
+  `myvars`。muon 的安装配置改用 `hosts/muon/users.nix`，与 muon 本身一致：`preservation-users.nix`
+  保留的用户都有定义，主用户也用 muon 固定的 UID，首次部署完整配置后文件属主不变。shoukei 没有
+  `my-asahi-firmware` input，`apple-silicon.nix`
+  因此关闭 Asahi 支持（主 flake 中也是这样），这个目标能求值，但装不出可启动的 shoukei。
 
 ### 切换到 mihomo
 

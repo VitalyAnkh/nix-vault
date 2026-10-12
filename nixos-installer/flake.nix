@@ -26,6 +26,9 @@
       # my-asahi-firmware,
       ...
     }:
+    # The configurations import single files from ../modules/base rather than the
+    # whole directory: its overlays build this repository's pkgs/ packages and need
+    # inputs (nix-gaming, crane, rust-overlay) that an installer does not.
     let
       inherit (inputs.nixpkgs) lib;
       mylib = import ../lib { inherit lib; };
@@ -44,7 +47,10 @@
 
             ./configuration.nix
 
-            ../modules/base
+            ../modules/base/nix.nix
+            ../modules/base/packages.nix
+            ../modules/base/security.nix
+            ../modules/base/users.nix
             ../modules/nixos/base/i18n.nix
             ../modules/nixos/base/user-group.nix
             ../modules/nixos/base/ssh.nix
@@ -65,9 +71,14 @@
 
             ./configuration.nix
 
-            ../modules/base
+            ../modules/base/nix.nix
+            ../modules/base/packages.nix
+            ../modules/base/security.nix
+            ../modules/base/users.nix
             ../modules/nixos/base/i18n.nix
-            ../modules/nixos/base/user-group.nix
+            # muon's own accounts, as in hosts/muon/default.nix: the main user's
+            # fixed UID and the users preservation-users.nix preserves.
+            ../hosts/muon/users.nix
             ../modules/nixos/base/ssh.nix
 
             ../hosts/muon/hardware-configuration.nix
@@ -79,7 +90,12 @@
         shoukei = nixpkgs.lib.nixosSystem {
           system = "aarch64-linux";
           specialArgs = inputs // {
-            # inherit mylib myvars my-asahi-firmware;
+            inherit mylib myvars;
+            # The input above is commented out. With null, apple-silicon.nix
+            # turns hardware.asahi off (no Asahi kernel, boot files or
+            # firmware), as in the main flake, so this target evaluates but
+            # does not install a bootable shoukei until the input is restored.
+            my-asahi-firmware = null;
           };
           modules = [
             { networking.hostName = "shoukei"; }
@@ -87,7 +103,10 @@
             nixos-apple-silicon.nixosModules.default
             ./configuration.nix
 
-            ../modules/base
+            ../modules/base/nix.nix
+            ../modules/base/packages.nix
+            ../modules/base/security.nix
+            ../modules/base/users.nix
             ../modules/nixos/base/i18n.nix
             ../modules/nixos/base/user-group.nix
             ../modules/nixos/base/ssh.nix

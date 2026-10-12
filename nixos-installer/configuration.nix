@@ -18,5 +18,8 @@
     # configures the network interface(include wireless) via `nmcli` & `nmtui`
     networkmanager.enable = true;
   };
+  # The extra terminfo entries pull in whole terminal emulators; an installer
+  # does not need them.
+  vr.nixos.ssh.installExtraTerminfo = false;
   system.stateVersion = "25.11";
 }
