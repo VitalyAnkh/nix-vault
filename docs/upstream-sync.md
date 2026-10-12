@@ -335,6 +335,11 @@ f32d67a5（93700824）。之后在 astra 上把它与 vr 合并（78d4ade4），
 - contour、Cataclysm DDA 和 Warzone 2100 暂用 nixpkgs
   26.05 的包（`modules/nixos/base/ssh.nix`、`home/base/gui/games.nix`）：unstable 改用 GCC
   16 后编译不了它们，缓存里也没有。unstable 能构建后改回。
+- Zotero 暂用 vr 合并前那版 nixpkgs（`nixpkgs-zotero`
+  input，e158d9ed）中已缓存的 10.0.2（`home/base/gui/academia.nix`，eva 和 muon 的
+  `gnome.nix`）：unstable 把 Zotero 10.0.4 构建在 Firefox ESR 153 上，而 Zotero 10 面向 ESR
+  140，它的构建要删除的 AboutTranslations actor 在 ESR
+  153.4 中已经没有，构建因此失败，缓存里也没有。unstable 能构建 10.0.2 或更新的版本后删掉这个 input。Zotero 的数据库只能向新版本升级，旧版本打不开新版本升级过的数据库，所以不要换成更旧的版本（例如 26.05 的 9.0.6）。
 
 ## 常见问题
 
@@ -356,6 +361,13 @@ done
 ```
 
 **在 astra 上求值 eva 失败**：eva 的配置用到 IFD（例如 codex-desktop-linux、Warp 的源码），需要 x86_64-linux 构建。改到 eva 上求值。
+
+**eva 构建 Firefox ESR 时被 OOM 杀掉**：eva 和 muon 设置了
+`nixpkgs.config.cudaSupport = true`，它们的 Firefox
+ESR 因此与缓存中的不同，只能本地编译；链接 libxul 约需 37
+GB 内存，与 CUDA 包同时构建时会耗尽 eva 的 60 GB。先用 `--max-jobs 1`
+单独构建它，再构建整个系统。目前只有 Zotero 用到 Firefox
+ESR，而 Zotero 暂用缓存中的 10.0.2（见“待处理”），所以现在不必编译。
 
 **拉取合并后 astra 求值失败**：先运行 `just merge-audit <合并提交>`（合并后又有修正提交时，用上文的
 `--ours`/`--theirs` 形式），检查合并有没有整个文件取一侧；再看 `just upstream-darwin`

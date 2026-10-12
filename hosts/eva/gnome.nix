@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, nixpkgs-zotero, ... }:
 {
   environment.systemPackages = with pkgs; [
     digital
@@ -19,7 +19,8 @@
     #daed
     warp-terminal
     # waveterm was removed from current nixpkgs (EOL Electron application).
-    zotero
+    # Pinned, see home/base/gui/academia.nix.
+    nixpkgs-zotero.legacyPackages.${pkgs.stdenv.hostPlatform.system}.zotero
     kdePackages.okular
     v2raya
   ];

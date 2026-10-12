@@ -1,5 +1,6 @@
 {
   pkgs,
+  nixpkgs-zotero,
   lib,
   ...
 }:
@@ -56,7 +57,8 @@ in
     kdiskmark
     # daed
     warp-terminal
-    zotero
+    # Pinned, see home/base/gui/academia.nix.
+    nixpkgs-zotero.legacyPackages.${pkgs.stdenv.hostPlatform.system}.zotero
     kdePackages.okular
     v2raya
   ];
