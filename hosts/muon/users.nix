@@ -111,6 +111,10 @@ in
   # Don't allow mutation of users outside the config.
   users.mutableUsers = false;
 
+  # The shared modules/nixos/base/user-group.nix (disabled in default.nix)
+  # enables fish on every host.
+  programs.fish.enable = true;
+
   users.users = (builtins.listToAttrs (builtins.map mkUserAttr additionalUsers)) // {
     # Main user (existing user)
     "${mainUser}" = {

@@ -296,6 +296,10 @@ f32d67a5（93700824）。之后在 astra 上把它与 vr 合并（78d4ade4），
 
 - 按用户决定删除未导入的 `hosts/{eva,muon}/mihomo.nix`（2025 年的 mihomo 开关）和
   `hosts/muon/preservation.nix`（已被 eva 的 preservation 取代）。
+- muon 的 `disabledModules` 原来写成字符串，按 nixpkgs 的模块目录解析，从未禁用共享的
+  `modules/nixos/base/user-group.nix`。改为路径后，muon 的用户和组只来自
+  `hosts/muon/users.nix`：fish 照旧开启，muon 用不到的 `fileshare`
+  组随之去掉，root 的 SSH 公钥不再重复列出。
 
 ### 切换到 mihomo
 

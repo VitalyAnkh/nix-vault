@@ -41,10 +41,10 @@ in
     ./docker.nix # Use real Docker instead of Podman for this host
   ];
 
-  # Disable the global user-group.nix module since we have our own users.nix
-  disabledModules = [
-    "../../modules/nixos/base/user-group.nix"
-  ];
+  # Disable the global user-group.nix module since we have our own users.nix.
+  # A path, not a string: disabledModules resolves strings against nixpkgs'
+  # module directory, so the string form never matched this module.
+  disabledModules = [ ../../modules/nixos/base/user-group.nix ];
 
   # GDM owns muon's graphical seat. kmscon can grab KMS/DRM on tty1 during boot
   # and make GNOME Shell's greeter fail to register with GDM.
