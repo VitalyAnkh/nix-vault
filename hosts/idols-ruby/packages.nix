@@ -1,6 +1,7 @@
 {
   pkgs,
   llm-agents,
+  nur-ryan4yin,
   ...
 }:
 let
@@ -89,8 +90,8 @@ in
       agentPackages.codex
       agentPackages.opencode2
       agentPackages.pi
-      # Keep the same pinned llm-agents package used by the shared Home Manager
-      # agent module; the NUR snapshot no longer exports a dsh attribute.
-      agentPackages.dsh
+      # dsh from nur-packages: llm-agents.nix's dsh cannot boot on nixpkgs node
+      # (node-addon-require-builtin probe), this one shims it.
+      nur-ryan4yin.packages.${pkgs.stdenv.hostPlatform.system}.dsh
     ];
 }
