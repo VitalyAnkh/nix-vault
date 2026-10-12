@@ -23,9 +23,10 @@ in
     "nfs"
   ];
 
-  # KVM for the microVMs and the libvirt domains.
+  # KVM for the microVMs and the libvirt domains. AMD-specific: an Intel VM host
+  # would need kvm-intel instead (see hosts/idols-ai/hardware-intel.nix).
   boot.kernelModules = [ "kvm-amd" ];
-  boot.extraModprobeConfig = "options kvm_amd nested=1"; # for amd cpu
+  boot.extraModprobeConfig = "options kvm_amd nested=1";
 
   boot.kernel.sysctl = {
     # --- filesystem --- #
@@ -94,7 +95,7 @@ in
         Address = [ ipv4WithMask ];
         DNS = nameservers;
         DHCP = "ipv6"; # enable DHCPv6 only, so we can get a GUA.
-        IPv6AcceptRA = true; # for Stateless IPv6 Autoconfiguraton (SLAAC)
+        IPv6AcceptRA = true; # for Stateless IPv6 Autoconfiguration (SLAAC)
         LinkLocalAddressing = "ipv6";
       };
       routes = [
