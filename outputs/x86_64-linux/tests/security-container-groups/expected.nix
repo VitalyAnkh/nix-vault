@@ -8,8 +8,9 @@ let
     userHasInputAccess = false;
   };
 
-  # MUON intentionally keeps its multi-user container workflow. The local
-  # role is rootful Podman/docker-compatible access, unlike the desktop hosts.
+  # MUON intentionally keeps its multi-user container workflow: the rootful
+  # Docker daemon shares images between its users (hosts/muon/docker.nix).
+  # Podman is off there, so the podman group grants nothing.
   muon = baseline // {
     userHasDockerAccess = true;
     userHasPodmanAccess = true;

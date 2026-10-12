@@ -1,5 +1,5 @@
 {
-  description = "NixOS configuration of Ryan Yin";
+  description = "NixOS configuration of VitalyR";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
@@ -13,18 +13,17 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    my-asahi-firmware = {
-      url = "git+ssh://git@github.com/ryan4yin/asahi-firmware.git?shallow=1";
-      flake = false;
-    };
+    # my-asahi-firmware = {
+    #   url = "git+ssh://git@github.com/AsahiLinux/asahi-firmware.git?shallow=1";
+    #   flake = false;
+    # };
   };
 
   outputs =
     inputs@{
       nixpkgs,
-      disko,
       nixos-apple-silicon,
-      my-asahi-firmware,
+      # my-asahi-firmware,
       ...
     }:
     let
@@ -34,14 +33,14 @@
     in
     {
       nixosConfigurations = {
-        ai = nixpkgs.lib.nixosSystem {
+        eva = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           specialArgs = inputs // {
             inherit mylib myvars;
           };
 
           modules = [
-            { networking.hostName = "ai"; }
+            { networking.hostName = "eva"; }
 
             ./configuration.nix
 
@@ -50,17 +49,37 @@
             ../modules/nixos/base/user-group.nix
             ../modules/nixos/base/ssh.nix
 
-            disko.nixosModules.default
-            ../hosts/idols-ai/disko-fs.nix
-            ../hosts/idols-ai/hardware-configuration.nix
-            ../hosts/idols-ai/preservation.nix
+            ../hosts/eva/hardware-configuration.nix
+            ../hosts/eva/preservation.nix
+          ];
+        };
+
+        muon = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = inputs // {
+            inherit mylib myvars;
+          };
+
+          modules = [
+            { networking.hostName = "muon"; }
+
+            ./configuration.nix
+
+            ../modules/base
+            ../modules/nixos/base/i18n.nix
+            ../modules/nixos/base/user-group.nix
+            ../modules/nixos/base/ssh.nix
+
+            ../hosts/muon/hardware-configuration.nix
+            ../hosts/eva/preservation.nix
+            ../hosts/muon/preservation-users.nix
           ];
         };
 
         shoukei = nixpkgs.lib.nixosSystem {
           system = "aarch64-linux";
           specialArgs = inputs // {
-            inherit mylib myvars my-asahi-firmware;
+            # inherit mylib myvars my-asahi-firmware;
           };
           modules = [
             { networking.hostName = "shoukei"; }
@@ -74,8 +93,8 @@
             ../modules/nixos/base/ssh.nix
 
             ../hosts/12kingdoms-shoukei/hardware-configuration.nix
-            # shoukei reuses ai's preservation layout; no host-specific overrides yet
-            ../hosts/idols-ai/preservation.nix
+            # VR_TODO:
+            ../hosts/eva/preservation.nix
           ];
         };
       };

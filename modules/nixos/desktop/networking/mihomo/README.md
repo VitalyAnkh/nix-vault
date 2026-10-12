@@ -1,8 +1,7 @@
 # Mihomo
 
 Native mihomo core + metacubexd dashboard, replacing the Clash Verge GUI. Enable per host with
-`modules.networking.mihomo.enable = true` (`eva`, `muon`, or another host that supplies a compatible
-persistent config).
+`modules.networking.mihomo.enable = true` (`ai`, `shoukei`).
 
 ## Usage
 

@@ -7,7 +7,9 @@
   ...
 }@args:
 {
-  nixpkgs.overlays = [
+  # ../../overlays as upstream applies them (computer-use-linux and cua-driver
+  # from pkgs/, the smartctl_exporter pin), then the local overlays.
+  nixpkgs.overlays = import ../../overlays args ++ [
     nix-gaming.overlays.default
     # nix-vault/modules/overlays has been deleted
     # use nix-vault/modules/pkgs

@@ -66,10 +66,6 @@ in
     # wait for it: otherwise activation can start mihomo before the mount is up
     # and fail with "Failed to set up credentials: No such file or directory".
     systemd.services.mihomo.unitConfig.RequiresMountsFor = builtins.dirOf configFile;
-    # A fresh checkout has no subscription/config file yet. Skip the unit until
-    # the user generates it instead of turning a missing optional proxy into a
-    # failed boot target; the DNS takeover below only runs for an active core.
-    systemd.services.mihomo.unitConfig.ConditionPathExists = configFile;
 
     # Force the TUN's v6 address up: left to itself mihomo skips the v6 half when
     # no NIC has an IPv6 address at startup, yet still installs its strict-route v6

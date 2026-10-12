@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }:
 {
@@ -34,16 +33,6 @@
   # Docker/podman API. Disable it anyway so it cannot be reached by accident.
   # The per-user rootless socket (systemd.user.sockets.podman) is unaffected.
   systemd.sockets.podman.enable = false;
-
-  # Shared desktop capabilities formerly provided by virtualisation.nix.
-  # Keep them here so the container refactor does not remove Flatpak, VFIO, or
-  # local QEMU tooling from EVA/MUON.
-  boot.kernelModules = [ "vfio-pci" ];
-  services.flatpak.enable = true;
-  environment.systemPackages = with pkgs; [
-    qemu_kvm
-    qemu
-  ];
 
   # Prune the rootless store (the module's autoPrune only covered the rootful
   # one). Runs in the user's session, so it fires while the desktop is logged in.

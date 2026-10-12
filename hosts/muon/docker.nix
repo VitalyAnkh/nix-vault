@@ -5,8 +5,8 @@
   ...
 }:
 {
-  # Override the desktop virtualisation module settings for muon
-  # Use real Docker in daemon mode for multi-user image sharing
+  # Override the desktop containers module (modules/nixos/desktop/containers.nix)
+  # for muon: use real Docker in daemon mode for multi-user image sharing
 
   virtualisation = {
     # Enable real Docker in daemon mode (not rootless) for image sharing
@@ -52,6 +52,11 @@
       backend = lib.mkForce "docker";
     };
   };
+
+  # The containers module prunes every user's rootless podman store weekly;
+  # with podman off, that would only create empty stores for muon's users.
+  systemd.user.services.podman-prune.enable = false;
+  systemd.user.timers.podman-prune.enable = false;
 
   # Users are already added to docker group in users.nix
   # No need to duplicate the configuration here

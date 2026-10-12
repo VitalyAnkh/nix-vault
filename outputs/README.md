@@ -7,18 +7,14 @@ There is no need to do this when you have a small number of machines.
 But when you have a large number of machines, it is necessary to manage them in a fine-grained way,
 otherwise, it will be difficult to manage and maintain them.
 
-The number of my machines has grown past a dozen, and the increase in scale has shown signs of
-getting out of control of complexity, so it is a natural and reasonable choice to use this
-fine-grained architecture to manage.
+I have more than a dozen machines now, and a fine-grained layout keeps them manageable.
 
 ## Tests
 
-Testing is not necessary when your configuration is not complex, but with the increase in the number
-and configuration of your machines, testing becomes more and more important.
+Simple configurations do not need tests, but a dozen machines make a broken setting easy to miss.
 
-We have two types of tests: eval tests and nixos tests, both of which can help us detect many
-obscure errors early, so as to avoid testing directly in the real world, and to avoid failures in
-personal computers and even corporate online environments.
+There are two types of tests: eval tests and NixOS tests. They catch configuration errors before a
+change reaches a real machine.
 
 Related projects & docs:
 
@@ -28,8 +24,6 @@ Related projects & docs:
 
 ### 1. Eval Tests
 
-> TODO: More Tests!
-
 Eval Tests evaluate the expressions and compare the results with the expected results. It runs fast,
 but it doesn't build a real machine. We use eval tests to ensure that some attributes are correctly
 set for each NixOS and nix-darwin host.
@@ -37,7 +31,7 @@ set for each NixOS and nix-darwin host.
 How to run all the eval tests:
 
 ```bash
-nix eval .#evalTests --show-trace --print-build-logs --verbose
+just test
 ```
 
 `just test` exits non-zero unless the suite returns `true`. The underlying
@@ -129,3 +123,8 @@ All the outputs of this flake are defined here.
     └── tests         # eval tests (btrbk, computer-use-headless, hostname,
                       # kernel, security-*, ups-metrics, ...)
 ```
+
+The tree lists the per-host sources and tests. The flake also exposes a `checks` output: every
+system has `eval-tests` and `pre-commit-check`, and `x86_64-linux` adds `security-exporters`, which
+imports the top-level `tests/security-exporters.nix`. See [`../SECURITY.md`](../SECURITY.md) for
+when to run it.

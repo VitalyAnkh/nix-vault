@@ -1,57 +1,62 @@
 {
-  config,
   lib,
+  config,
   pkgs,
   ...
 }:
 let
-  debugTools = config.modules.debugTools;
+  inherit (config.modules) hardwareTools debugTools;
 in
 {
+  options.modules.hardwareTools.enable =
+    lib.mkEnableOption ''
+      Basic hardware and disk introspection tools (lm_sensors, pciutils,
+      usbutils, dmidecode, parted, smartmontools, nvme-cli).
+
+      On by default for physical hosts; MicroVM guests turn it off since they
+      share the host's store and cannot use any of it.
+    ''
+    // {
+      default = true;
+    };
+
   options.modules.debugTools.enable = lib.mkEnableOption ''
     Tracing and benchmarking tools (strace, bpftrace, sysstat, iotop-c,
     sysbench and the BCC tools).
 
-    Off by default: opt in on hosts where you actually profile them.
+    Off by default: opt in on hosts where you actually profile with them
+    (currently idols-ai).
   '';
 
   config = {
-    # List packages installed in system profile. To search, run:
-    # $ nix search wget
-    environment.systemPackages = with pkgs; [
-      # system call monitoring
-      strace
-      ltrace
-      lsof
+    environment.systemPackages =
+      with pkgs;
+      [
+        # broadly useful on every host
+        lsof # list open files
+        psmisc # killall/pstree/prtstat/fuser/...
+        ethtool
+        pv # pipe view
+      ]
+      ++ lib.optionals hardwareTools.enable [
+        lm_sensors # `sensors` command
+        pciutils # lspci
+        usbutils # lsusb
+        dmidecode # SMBIOS/DMI hardware info (from the BIOS)
+        parted
+        smartmontools # smartctl -a /dev/nvme0n1
+        nvme-cli
+      ]
+      ++ lib.optionals debugTools.enable [
+        strace # system call tracing
+        bpftrace # eBPF tracing, https://github.com/bpftrace/bpftrace
+        sysstat
+        iotop-c
+        sysbench
+      ];
 
-      # ebpf related tools
-      bpftrace
-      bpftop
-      bpfmon
-
-      # system monitoring
-      sysstat
-      iotop-c
-      iftop
-      nmon
-      sysbench
-      systemctl-tui
-      pv
-
-      # system tools
-      psmisc
-      lm_sensors
-      ethtool
-      pciutils
-      usbutils
-      hdparm
-      dmidecode
-      parted
-      smartmontools
-      nvme-cli
-    ];
-
-    # BCC - Tools for BPF-based Linux IO analysis, networking, monitoring, and more.
+    # BCC - tools for BPF-based IO/network analysis/monitoring
+    # https://github.com/iovisor/bcc
     programs.bcc.enable = debugTools.enable;
   };
 }

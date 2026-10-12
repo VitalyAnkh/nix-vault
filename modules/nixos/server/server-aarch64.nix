@@ -1,6 +1,5 @@
 {
   lib,
-  pkgs,
   mylib,
   ...
 }:
@@ -10,6 +9,7 @@
     ../base/btop.nix
     ../base/core.nix
     ../base/i18n.nix
+    (mylib.relativeToRoot "hardening/kernel-hardening.nix")
     ../base/monitoring.nix
     ../base/nix.nix
     ../base/packages.nix

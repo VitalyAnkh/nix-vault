@@ -70,7 +70,7 @@ Named after "Twelve Kingdoms":
 On 2026-09-29 the NVMe SSDs of `youko` and `shushou` were physically swapped, and the 2×4TB USB HDDs
 moved with the `youko` role to the other chassis. The reason was Jellyfin: HDR transcoding on the
 5625U's Barceló iGPU could not keep up (~0.4–0.8×), while the 5900HX's Cezanne iGPU can (~1.68× for
-1080p HDR). So the homelab-core role (all services + one k3s VM + the HDDs + the UPS) now runs on
+1080p HDR). So the homelab-core role (all services + the k3s VMs + the HDDs + the UPS) now runs on
 the Beelink GTR5 and the k3s VM-host role on the UM560; the other services moving along is a side
 effect of swapping the role's disk, not a separate migration. Hostnames, IPs, and state followed the
 disks.
@@ -90,7 +90,7 @@ disks.
 
 All my riscv64 hosts:
 
-![](/_img/nixos-riscv-cluster.webp)
+![](../_img/2023-08-16_nixos-riscv-cluster.webp)
 
 ## Naming Conventions
 
@@ -101,59 +101,18 @@ All my riscv64 hosts:
 
 ## How to Add a New Host
 
-The easiest way to add a new host is to copy and adapt an existing similar configuration. All host
-configurations follow similar patterns but are customized for specific hardware and use cases.
-
-### General Process
-
-1. **Identify a similar existing host** from the directory structure above
-2. **Copy the entire directory** and rename it for your new host
-3. **Adapt the configuration files** for your specific hardware and requirements
-4. **Update references** in the flake outputs and networking configuration
-
-### Essential Steps
-
-1. Under `hosts/`
-   1. Create a new folder under `hosts/` with the name of the new host.
-   2. Create & add the new host's `hardware-configuration.nix` to the new folder, and add the new
-      host's `configuration.nix` to `hosts/<name>/default.nix`.
-   3. If the new host needs Home Manager, add a single host-home entry module under `home/hosts/...`
-      and make the corresponding output point at it.
-      - Linux hosts usually use `home/hosts/linux/<name>.nix`.
-      - Darwin hosts usually use `home/hosts/darwin/darwin-<name>.nix`.
-1. Under `outputs/`
-   1. Add a new nix file named `outputs/<system-architecture>/src/<name>.nix`.
-   2. Copy the content from one of the existing similar host, and modify it to fit the new host.
-      1. Usually, you only need to modify the `name` and `tags` fields.
-   3. [Optional] Add a new unit test file under `outputs/<system-architecture>/tests/<name>.nix` to
-      test the new host's nix file.
-   4. [Optional] Add a new integration test file under
-      `outputs/<system-architecture>/integration-tests/<name>.nix` to test whether the new host's
-      nix config can be built and deployed correctly.
-1. Under `vars/networking.nix`
-   1. Add the new host's static IP address.
-   1. Skip this step if the new host is not in the local network or is a mobile device.
-
-### File Templates
-
-Use existing hosts as templates. The key files typically include:
-
-- `default.nix` - Main host configuration
-- `hardware-configuration.nix` - Auto-generated hardware settings
-- Platform-specific files (e.g., `nvidia.nix`, `apple-silicon.nix`, etc.)
-
-### Examples to Reference
-
-- **Desktop systems**: See `idols-ai/` for gaming/workstation setup
-- **Server systems**: See `12kingdoms-shoryu/` for VM hosts
-- **macOS systems**: See `darwin-fern/` for macOS configurations
-- **Apple Silicon**: See `12kingdoms-shoukei/` for ARM Linux setup
+Copy the closest existing host and adapt it. The step-by-step procedure, including the outputs and
+networking wiring, secrets, and the eval tests a new host must pass, is in
+[`.agents/skills/nix-config-new-host/SKILL.md`](../.agents/skills/nix-config-new-host/SKILL.md).
 
 ## Deploying VM Hosts
 
-The three VM hosts (`shoryu`, `shushou`, `youko`) attach their VMs (microVM taps and libvirt
-domains) to the Linux bridge `br0`, with the physical NIC as a bridge port. The `k3s-test-1` cluster
-runs as microVMs on top, using Cilium as its pod network (flannel disabled).
+The three VM hosts (`shoryu`, `shushou`, `youko`) put their VMs on the Linux bridge `br0`, with the
+physical NIC as a bridge port. NixOS guests run as microVMs (`microvm.nix`); the `k3s-test-1`
+cluster is microVMs on top, using Cilium as its pod network (flannel disabled). Full-machine guests
+run with qemu-kvm under libvirt instead: `shoryu` is the only host that enables `libvirtd` today
+(the agent desktops `kana`/`ruby`). Non-NixOS guests (Ubuntu, Windows, Qubes OS) would take the same
+qemu-kvm path; there are none right now.
 
 - `switch` is fine for changes that don't touch the network stack (e.g. journald or other service
   settings). Deploy serially (`-p 1`) and re-check VM reachability afterwards.
@@ -184,22 +143,22 @@ various changes under the hood, so I need to build much more packages than usual
 the reasons why the cluster was originally built, and another reason is distributed building is
 cool!
 
-![](/_img/nix-distributed-building.webp)
+![](../_img/2023-06-17_nix-distributed-building.webp)
 
-![](/_img/nix-distributed-building-log.webp)
+![](../_img/2023-06-17_nix-distributed-building-log.webp)
 
 ## References
 
 [Oshi no Ko 【推しの子】 - Wikipedia](https://en.wikipedia.org/wiki/Oshi_no_Ko):
 
-![](/_img/idols-famaily.webp) ![](/_img/eva.webp)
+![](../_img/idols-family.webp) ![](../_img/eva.webp)
 
 [The Rolling Girls【ローリング☆ガールズ】 - Wikipedia](https://en.wikipedia.org/wiki/The_Rolling_Girls):
 
-![](/_img/rolling_girls.webp)
+![](../_img/rolling_girls.webp)
 
 [List of Twelve Kingdoms characters](https://en.wikipedia.org/wiki/List_of_Twelve_Kingdoms_characters)
 
-![](/_img/12kingdoms-1.webp) ![](/_img/12kingdoms-Youko-Rakushun.webp)
+![](../_img/12kingdoms-1.webp) ![](../_img/12kingdoms-Youko-Rakushun.webp)
 
 [List of Frieren characters](https://en.wikipedia.org/wiki/List_of_Frieren_characters)

@@ -12,7 +12,6 @@ let
   # exporters.
   hostAddr = myvars.networking.hostsAddr.${config.networking.hostName} or { };
   lanAddr = if hostAddr.homeOnly or false then null else hostAddr.ipv4 or null;
-  hardwareToolsEnabled = config.services.smartd.enable;
 in
 {
   # node_exporter on every host that has a static LAN IPv4 (see `lanAddr` above)
@@ -53,14 +52,16 @@ in
   # Drive SMART health (wear, spare, media errors, temperature, bytes written)
   # on physical hosts. node_exporter's nvme collector only exposes
   # node_nvme_info and namespace capacity, NOT SMART health, so this is the only
-  # source of SSD lifespan data. The exporter follows `services.smartd.enable`,
-  # which is enabled only on hosts with an explicit physical-disk policy.
-  services.prometheus.exporters.smartctl = lib.mkIf (lanAddr != null && hardwareToolsEnabled) {
-    enable = true;
-    listenAddress = lanAddr;
-    port = 9633;
-    maxInterval = "60s";
-  };
+  # source of SSD lifespan data. `hardwareTools` is off on MicroVM/QEMU guests,
+  # which have no physical disks to inspect.
+  services.prometheus.exporters.smartctl =
+    lib.mkIf (lanAddr != null && config.modules.hardwareTools.enable)
+      {
+        enable = true;
+        listenAddress = lanAddr;
+        port = 9633;
+        maxInterval = "60s";
+      };
 
   # LAN-bound exporters race networkd's address assignment at boot; without
   # ordering they trip the start limit (seen on ai). wait-online is best-effort
@@ -69,7 +70,7 @@ in
     lib.genAttrs
       (
         [ "prometheus-node-exporter" ]
-        ++ lib.optionals hardwareToolsEnabled [ "prometheus-smartctl-exporter" ]
+        ++ lib.optionals config.modules.hardwareTools.enable [ "prometheus-smartctl-exporter" ]
       )
       (_: {
         after = [ "network-online.target" ];

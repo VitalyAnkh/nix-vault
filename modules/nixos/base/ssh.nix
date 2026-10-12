@@ -34,8 +34,9 @@ in
   };
 
   config = {
-    # Secure by default: firewall ON everywhere unless a host explicitly disables it
-    # (servers disable it in modules/nixos/server/{server,server-aarch64}.nix).
+    # Secure by default: firewall ON everywhere. Servers run the same shared
+    # firewall (modules/nixos/base/networking/firewall.nix) as every other host,
+    # as defence in depth behind the router.
     networking.firewall.enable = lib.mkDefault true;
     # Enable the OpenSSH daemon.
     services.openssh = {
@@ -50,6 +51,13 @@ in
       };
       openFirewall = true;
     };
+
+    # NixOS appends an `Include` of systemd's ssh_config.d drop-in to
+    # /etc/ssh/ssh_config, and OpenSSH re-applies SSHCONF_CHECKPERM to included
+    # files.  A bubblewrap sandbox (`--unshare-user`) exposes root-owned store
+    # files as `nobody`, which would abort ssh there.  We do not use
+    # systemd-ssh-proxy (.host, machine/*, unix/*, vsock/*).
+    programs.ssh.systemd-ssh-proxy.enable = false;
 
     # Add common terminal terminfo entries to the system profile.
     # Do not use enableAllTerminfo directly: nixpkgs 26.05 includes obsolete

@@ -6,10 +6,10 @@ rec {
   lanCidr = "192.168.5.0/24";
   # use suzi as the default gateway
   # it's a subrouter with a transparent proxy
-  # suzi is the transparent-proxy gateway used by VM guests.
-  proxyGateway = "192.168.5.178";
-  proxyGateway6 = "fe80::8";
-  # Muon's isolated network keeps its own gateway values.
+  # VR_TODO: what the default gateway should be?
+  proxyGateway = "192.168.10.0";
+  proxyGateway6 = defaultGateway6;
+  # proxyGateway = "192.168.5.178";
   defaultGateway = "192.168.10.0";
   defaultGateway6 = "fe80::8";
   # node identity must not ride the WAN /64: the ISP retires it, Cilium never refreshes it.
@@ -67,9 +67,13 @@ rec {
     # Other VMs and Physical Machines
     # ============================================
     eva = {
+      # Desktop PC
+      # VR_TODO: what the ipv6 address should be?
+      # iface = "wlp14s0";
+      # ipv4 = "192.168.10.1";
       iface = "enp15s0";
       ipv4 = "192.168.31.126";
-      ipv6 = "fe80::10";
+      ipv6 = "fe80::10"; # Link-local Address
     };
     muon = {
       # Desktop PC

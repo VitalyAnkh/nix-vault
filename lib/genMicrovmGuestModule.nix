@@ -147,6 +147,7 @@ in
   # MicroVM guests share the host's store and have no physical hardware to
   # inspect, nothing to trace, no persisted /var/cache for a `locate` index,
   # and nothing to advertise over mDNS.
+  modules.hardwareTools.enable = false;
   modules.debugTools.enable = false;
   modules.locate.enable = false;
   modules.mdns.enable = false;

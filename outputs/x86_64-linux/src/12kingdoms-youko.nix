@@ -64,8 +64,6 @@ else
       systemArgs
       // {
         inherit tags ssh-user;
-        # reach the host by IP: its DNS name changes with the hostname
-        targetHost = myvars.networking.hostsAddr.${name}.ipv4;
       }
     );
 

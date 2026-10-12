@@ -30,8 +30,10 @@ costs a lock bump plus a rebuild and switch on every host that reads it.
 Anything else is a synced dotfile: Nix does not read it, it changes often, or it is a config file
 its tool keeps rewriting that happens to carry a few secrets inside. The private repository syncs
 those as age ciphertext under `dotfiles/`, by hand and outside Nix, so there is no `secrets.nix`
-entry and no lock bump. `nushell-secrets.nu` moved that way and is `~/.secrets/nushell-secrets.nu`
-now; do not re-add it to `age.secrets`. The file list stays in the private repository.
+entry and no lock bump. Upstream moved its `nushell-secrets.nu` that way
+(`~/.secrets/nushell-secrets.nu`); this fork still decrypts its work aliases,
+`alias-for-work.nushell`, through agenix (`secrets/nixos.nix`), see `docs/upstream-sync.md`. The
+file list stays in the private repository.
 
 ## Which Keys Go on a Secret
 
@@ -84,9 +86,11 @@ The one exception is the desktop's own restic repository password (`restic-passw
 
 ## Adding or Updating Secrets
 
-> The encrypted `.age` files and `secrets.nix` live in my private `nix-secrets` repository. The
-> `Justfile` referenced below lives in this repository and runs its recipes with `working-directory`
-> set to a local `~/codes/nix-secrets` checkout, so invoke it from this repository's root.
+> The encrypted `.age` files and `secrets.nix` live in your private secrets repository (the one
+> referenced by `mysecrets` in `flake.nix`, e.g. `vr-nix-secrets`). The `Justfile` referenced below
+> lives in this repository and runs its recipes in `../../codes/nix-secrets` relative to its own
+> directory, which is `~/codes/nix-secrets` for a `~/nix-vault` checkout (upstream's layout); clone
+> the secrets repository there, and invoke the recipes from this repository's root.
 
 This task is accomplished using the [agenix](https://github.com/ryantm/agenix) CLI tool with the
 `./secrets.nix` file in the private `nix-secrets` repository, so you need to have it installed

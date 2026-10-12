@@ -15,6 +15,7 @@ in
   imports = [
     ./hardware-configuration.nix
     ./game
+    # shoukei reuses eva's preservation layout (upstream: ai's); no host-specific overrides yet
     ../eva/preservation.nix
   ];
 
