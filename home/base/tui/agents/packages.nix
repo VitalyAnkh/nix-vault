@@ -1,5 +1,4 @@
 {
-  lib,
   pkgs,
   llm-agents,
   ...
@@ -29,11 +28,5 @@ in
 
     # MCP servers, configured project-scoped in opencode.jsonc / .codex/config.toml
     pkgs.mcp-grafana
-  ]
-  # These llm-agents packages are Linux-only upstream.
-  ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
-    agentPackages.grok-bot
-    agentPackages.orca
-    agentPackages.zcode
   ];
 }

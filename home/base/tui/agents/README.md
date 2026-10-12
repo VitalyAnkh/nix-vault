@@ -16,10 +16,10 @@ Markdown with no Nix dependency; this module only wires it into place.
   from `agents/skills/`; the inventory is
   [agents/skills/README.md](../../../../agents/skills/README.md). Off unless
   `modules.agents.skills.enable` is set, for the same reason.
-- `packages.nix`: agent CLIs (`grok`, `kimi-code`, `dsh`, `opencode2`, `pi`, `omp`, and on Linux
-  `grok-bot`, `orca` and `zcode`) from the `llm-agents` flake input, plus `pkgs.ctx7` (the find-docs
-  skill's CLI) and `pkgs.mcp-grafana` (the Grafana MCP server). Codex is installed through pnpm
-  instead.
+- `packages.nix`: agent CLIs (`grok`, `kimi-code`, `dsh`, `opencode2`, `pi`, `omp`) from the
+  `llm-agents` flake input, plus `pkgs.ctx7` (the find-docs skill's CLI) and `pkgs.mcp-grafana` (the
+  Grafana MCP server). Codex is installed through pnpm instead. The Linux desktop agent apps
+  (`grok-bot`, `orca`, `zcode`) are installed by the GUI layer, `home/base/gui/dev-tools.nix`.
 - `env.nix`: telemetry and auto-update opt-outs for the agents.
 
 dsh is installed by this module (the `llm-agents` build; upstream uses nur-ryan4yin's shim) but
