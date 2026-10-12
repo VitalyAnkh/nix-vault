@@ -88,6 +88,11 @@ astra 只在 `outputs/aarch64-darwin/src/astra.nix` 中覆盖 `myvars`
   `git@github.com:`，因此 Doom 克隆和更新 GitHub 上的包时走 SSH，需要可用的 SSH 密钥；其他程序的 git 配置不受影响。
 - Doom 配置不固定 straight.el 的版本，Emacs 模块因此给复制的 Doom 源码打补丁，使 Doom 能读取 straight.el 构建缓存中带最低版本的依赖记录；否则
   `doom sync` 报 `(wrong-type-argument listp "9.7")`。
+- `doom sync` 把当时 Emacs 自带 Lisp 目录的 store 路径写进生成的
+  `~/.config/emacs/.local/etc/@/init.<版本>.el`。Emacs 的 store 路径变化后（例如更新 IGC
+  pin 或 nixpkgs），即使 `emacs-version` 不变，也要在激活后重新运行一次
+  `doom sync`：否则新 Emacs 加载旧构建的 `comp.el`，其中 libgccjit 的 `-B`
+  路径属于旧工具链，所有原生编译都报 `error invoking gcc driver`，`.eln` 缓存为空。
 - `pkgs/emacs` 补回 IGC 分支缺少的 bug#81906 上游修复，否则所有 `doom` 命令都报
   `cl-assertion-failed: ((> (point) output-start))`；在 Darwin 上它还带有读取辅助功能文本的本地修复。这些补丁的原因与移除条件见
   [Emacs 模块说明](../home/base/tui/editors/emacs/README.md)。

@@ -70,7 +70,10 @@ nixfmt _sources/generated.nix
 `configure.ac` 中 `AC_INIT` 的版本一致，否则 `postPatch`
 会让构建失败。本地补丁和 nixpkgs 的 Emacs 补丁都要能打在新源码上：IGC 源码已经包含 nixpkgs 以
 `CVE-2024-53920.patch` 回移的修复，所以该补丁被过滤掉。`emacs-lsp-booster` 的 `version`
-同样要与源码的 `Cargo.toml` 一致，可以查看 `_sources` 中复制的 `Cargo.lock`。
+同样要与源码的 `Cargo.toml` 一致，可以查看 `_sources` 中复制的
+`Cargo.lock`。新的 Emacs 激活后，在新登录 shell 中重新运行
+`doom sync`，否则 Doom 仍加载旧构建的 Lisp，原生编译全部失败（见
+[astra 文档](../docs/astra-macos-host.md)的 Emacs 一节）。
 
 然后 `git add` / `git commit` 更新的 `_sources/generated.nix`、`_sources/generated.json`，以及
 `cargo_lock` 产生的 `Cargo.lock` 等附属文件。
