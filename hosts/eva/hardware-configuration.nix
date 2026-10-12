@@ -69,6 +69,8 @@
     device = "tmpfs";
     fsType = "tmpfs";
     options = [
+      "nosuid" # Ignore setuid bit; no suid binaries live on the root tmpfs
+      "nodev" # Ignore device files; nothing here needs to be a device node
       "relatime"
       "mode=755"
     ];
@@ -93,7 +95,12 @@
   fileSystems."/tmp" = {
     device = "/dev/disk/by-uuid/8072ac84-5bee-42f2-861f-555b862148ad";
     fsType = "btrfs";
-    options = [ "subvol=@tmp" ];
+    options = [
+      "subvol=@tmp"
+      "nosuid"
+      "nodev"
+      "noatime" # Temp files don't need access times; saves btrfs metadata writes
+    ];
   };
 
   fileSystems."/swap" = {
@@ -117,7 +124,11 @@
   fileSystems."/snapshots" = {
     device = "/dev/disk/by-uuid/8072ac84-5bee-42f2-861f-555b862148ad";
     fsType = "btrfs";
-    options = [ "subvol=@snapshots" ];
+    options = [
+      "subvol=@snapshots"
+      "nosuid"
+      "nodev"
+    ];
   };
 
   fileSystems."/boot" = {

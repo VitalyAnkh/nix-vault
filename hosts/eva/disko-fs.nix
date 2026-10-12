@@ -15,6 +15,8 @@
     nodev."/" = {
       fsType = "tmpfs";
       mountOptions = [
+        "nosuid"
+        "nodev"
         "relatime"
         "mode=755"
       ];
@@ -55,7 +57,14 @@
                   ];
                 };
                 "@guix".mountpoint = "/gnu";
-                "@tmp".mountpoint = "/tmp";
+                "@tmp" = {
+                  mountpoint = "/tmp";
+                  mountOptions = [
+                    "nosuid"
+                    "nodev"
+                    "noatime"
+                  ];
+                };
                 "@swap" = {
                   mountpoint = "/swap";
                   swap.swapfile.size = "64G";
@@ -67,7 +76,13 @@
                     "compress-force=zstd:5"
                   ];
                 };
-                "@snapshots".mountpoint = "/snapshots";
+                "@snapshots" = {
+                  mountpoint = "/snapshots";
+                  mountOptions = [
+                    "nosuid"
+                    "nodev"
+                  ];
+                };
               };
             };
           };

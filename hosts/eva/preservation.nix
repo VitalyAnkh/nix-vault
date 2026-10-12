@@ -48,6 +48,19 @@ in
       "/var/log"
       # preserve davfs2 cache to keep WebDAV mounts from shifting load into RAM
       "/var/cache/davfs2"
+      # General scratch space. It is re-creatable and can grow large, so keep it
+      # off the root tmpfs and on the persistent volume. Contents only
+      # accumulate between reboots: the tmpfiles rule below wipes it at boot.
+      # World-writable scratch, so harden the bind mount like /tmp; the mode
+      # must stay 1777 to match that `D!` rule.
+      {
+        directory = "/var/tmp";
+        mode = "1777";
+        mountOptions = [
+          "nosuid"
+          "nodev"
+        ];
+      }
 
       # VR_TODO: for proxy apps run with sudo
       "/root/.local"
@@ -59,6 +72,8 @@ in
         inInitrd = true;
       }
       "/var/lib/systemd"
+      # upower's battery history of wireless devices
+      "/var/lib/upower"
       {
         directory = "/var/lib/private";
         mode = "0700";
@@ -403,6 +418,7 @@ in
 
         "Games"
         ".steam"
+        ".config/MangoHud"
         ".config/blender"
         ".config/LDtk"
         ".config/heroic"
@@ -566,9 +582,17 @@ in
     "/var/lib/logrotate/status"
   ];
 
+  # /var/tmp is re-creatable scratch, but it must not consume RAM, so it is
+  # bind-mounted onto the persistent volume above. Wipe it at boot (mirrors
+  # nixpkgs `boot.tmp.cleanOnBoot` for /tmp) so contents only accumulate
+  # between reboots.
+  #
   # Crash dumps live in the persisted /var/lib/systemd and can contain secrets
-  # copied out of process memory, so don't keep them across reboots.
-  systemd.tmpfiles.rules = [ "D! /var/lib/systemd/coredump 0755 root root" ];
+  # copied out of process memory, so don't keep them across reboots either.
+  systemd.tmpfiles.rules = [
+    "D! /var/tmp 1777 root root"
+    "D! /var/lib/systemd/coredump 0755 root root"
+  ];
 
   # systemd-machine-id-commit.service would fail but it is not relevant
   # in this specific setup for a persistent machine-id so we disable it
