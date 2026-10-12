@@ -1,0 +1,15 @@
+# Upstream (ryan/main) sync state, read by `just upstream-darwin`. See docs/upstream-sync.md.
+
+[darwin]
+# Newest ryan/main commit whose Darwin changes have been reviewed, and ported where needed, on astra.
+reviewed = "9ab5eca60c7263e1c91b1d7ea25dd4d4e3d53ae7"
+# Git pathspecs whose upstream changes only affect Darwin hosts.
+paths = [
+  "modules/darwin",
+  "home/darwin",
+  "home/hosts/darwin",
+  "hosts/darwin-*",
+  "outputs/aarch64-darwin",
+  "secrets/darwin.nix",
+  "lib/macosSystem.nix",
+]

@@ -66,8 +66,11 @@ prettier --write _sources/generated.json
 nixfmt _sources/generated.nix
 ```
 
-更新 `source-emacs-master-igc` 后，确认 `emacs/emacs-master-pgtk-with-igc.nix` 的 `version` 与新源码
-`configure.ac` 中 `AC_INIT` 的版本一致。
+更新 `source-emacs-master-igc` 后，`emacs/emacs-master-pgtk-with-igc.nix` 的 `version` 必须与新源码
+`configure.ac` 中 `AC_INIT` 的版本一致，否则 `postPatch`
+会让构建失败。本地补丁和 nixpkgs 的 Emacs 补丁都要能打在新源码上：IGC 源码已经包含 nixpkgs 以
+`CVE-2024-53920.patch` 回移的修复，所以该补丁被过滤掉。`emacs-lsp-booster` 的 `version`
+同样要与源码的 `Cargo.toml` 一致，可以查看 `_sources` 中复制的 `Cargo.lock`。
 
 然后 `git add` / `git commit` 更新的 `_sources/generated.nix`、`_sources/generated.json`，以及
 `cargo_lock` 产生的 `Cargo.lock` 等附属文件。
@@ -110,3 +113,45 @@ rm -f ~/.local/share/nvfetcher/.shake.lock
 
 默认 nvfetcher 启动会删旧附属文件。请始终加 `--keep-old`，并用 `git restore pkgs/_sources/`
 恢复误删文件。
+
+## 手动固定的包
+
+下列包不经过 nvfetcher，版本和哈希直接写在包文件中，更新时手动改到最新版：
+
+| 文件                               | 最新版本的来源                                                                                                      | 要更新的内容                                                                                      |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `zed-editor/zed-editor-bin.nix`    | [Zed 最新稳定版](https://github.com/zed-industries/zed/releases/latest)                                             | `version`，aarch64 和 x86_64 两个 DMG 的哈希                                                      |
+| `android-studio-tools/package.nix` | [仓库索引](https://dl.google.com/android/repository/repository2-3.xml)中最新的 cmdline-tools 构建号                 | `version`，`mac_arm64` 和 `mac_x86_64` 两个归档的哈希                                             |
+| `computer-use-linux/default.nix`   | [最新 release](https://github.com/agent-sh/computer-use-linux/releases/latest)                                      | `version`，x86_64 和 aarch64 两个文件的哈希                                                       |
+| `cua-driver/default.nix`           | [trycua/cua](https://github.com/trycua/cua/releases) 中最新的 `cua-driver-rs-v*`                                    | `version` 与哈希                                                                                  |
+| `jetbrains-toolbox/package.nix`    | [JetBrains 的最新 release](https://data.services.jetbrains.com/products/releases?code=TBA&latest=true&type=release) | Darwin 的 `version` 与 `macM1` DMG 的哈希（`checksumLink` 给出 SHA-256）；Linux 沿用 nixpkgs 的包 |
+| `godot/package.nix`                | [OpenXR-SDK-Source](https://github.com/KhronosGroup/OpenXR-SDK-Source) 的 `main`                                    | OpenXR loader 的 `rev`、`hash` 和 `version` 中的日期；Godot 本身由 nvfetcher 更新                 |
+
+`nodejs/nodejs-slim_24.nix`
+沿用 nixpkgs 的 Node 版本，只加本地补丁；nixpkgs 升级 Node 后，确认每个补丁仍然需要并且能打上。`codex-desktop`
+的后端版本直接读取源码中的 `Cargo.toml`，不需要手动维护。
+
+获取哈希：
+
+- `fetchurl` 下载的文件（Zed、computer-use-linux、cua-driver）：GitHub
+  API 给出每个 release 资产的 SHA-256，不必先下载：
+
+  ```bash
+  curl -s https://api.github.com/repos/zed-industries/zed/releases/latest |
+    jq -r '.assets[] | select(.name | endswith(".dmg")) | "\(.name) \(.digest)"'
+  # digest 形如 sha256:<十六进制>，换成 SRI 格式
+  nix hash convert --hash-algo sha256 --to sri <十六进制>
+  ```
+
+- `fetchzip` 解包后的哈希（Android）：`nix store prefetch-file --unpack --json <url>` 输出中的
+  `hash`。
+- `fetchFromGitHub`（OpenXR）：`nix flake prefetch --json github:<owner>/<repo>/<rev>` 输出中的
+  `hash`。
+
+GitHub 对单个连接的 release 下载可能很慢。可以多连接分段下载，再把文件加入 store，`fetchurl`
+会直接使用它（文件名必须与 `fetchurl` 的 `name` 相同，默认是 URL 的最后一段）：
+
+```bash
+nix shell nixpkgs#aria2 -c aria2c -x 16 -s 16 -d /tmp/zed <资产 URL>
+nix-store --add-fixed sha256 /tmp/zed/Zed-aarch64.dmg
+```

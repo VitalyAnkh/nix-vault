@@ -278,6 +278,10 @@ Model flag normalization contract:
 
 <project_merge_protocol> Project-specific merge rules for this repository:
 
+- Follow `docs/upstream-sync.md` to absorb upstream `ryan/main`: merge it on `eva` only. On `astra`,
+  review upstream Darwin changes by path (`just upstream-darwin`), port them by hand, and advance
+  `darwin.reviewed` in `docs/upstream-sync.toml`. Git records merged commits as merged even when a
+  resolution kept the local side, so later merges never bring those changes back.
 - The canonical command-runner file at the repository root is lowercase `justfile`. Treat upstream
   `Justfile` as the source lineage for this file: merge future upstream recipe changes into local
   `justfile` while preserving local recipes and intentional overrides. Do not retain both case
@@ -312,6 +316,8 @@ Model flag normalization contract:
 
 Minimum acceptance checks for upstream `ryan/main` merges:
 
+- Run `just merge-audit <merge>` and review every file it lists: a resolution that takes one side of
+  a file wholesale silently drops the other side's changes, even where they merge cleanly.
 - Confirm Git tracks only root `justfile`, with no root `Justfile`; review upstream recipe changes
   against the lowercase result, preserve local commands, and check recipe parsing plus `utils.nu`
   argument compatibility without executing deployment or cleanup recipes as a syntax check.

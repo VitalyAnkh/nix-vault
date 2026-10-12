@@ -190,6 +190,32 @@ override-pkgs hash:
 
 ############################################################################
 #
+#  Upstream (ryan/main) sync, see docs/upstream-sync.md
+#
+############################################################################
+
+# Usage: just merge-audit [--diff] <merge> [-- <path>...]
+# Audit a merge: files whose result differs from a clean three-way merge of its parents
+[group('upstream')]
+merge-audit *args:
+  python3 scripts/merge-audit.py {{args}}
+
+# By default up to the newest ryan/main commit in HEAD; pass e.g. ryan/main to include unmerged ones.
+# List upstream Darwin commits that astra has not reviewed yet
+[group('upstream')]
+upstream-darwin upstream="":
+  #!/usr/bin/env nu
+  if not ("ryan" in (^git remote | lines)) {
+    error make {msg: "add the upstream remote first: git remote add ryan git@github.com:ryan4yin/nix-config.git"}
+  }
+  let state = (open docs/upstream-sync.toml).darwin
+  let upstream = {{quote(upstream)}}
+  let tip = if ($upstream | is-empty) { ^git merge-base HEAD ryan/main | str trim } else { $upstream }
+  print $"Upstream commits touching Darwin paths in ($state.reviewed)..($tip):"
+  ^git log --no-merges --date=short --format="%h %ad %s" $"($state.reviewed)..($tip)" -- ...$state.paths
+
+############################################################################
+#
 #  NixOS Desktop related commands
 #
 ############################################################################
