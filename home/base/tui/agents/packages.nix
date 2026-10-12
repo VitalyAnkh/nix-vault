@@ -19,7 +19,7 @@ in
     # node it cannot boot on (node-addon-require-builtin probe):
     # nur-ryan4yin.packages.${pkgs.stdenv.hostPlatform.system}.dsh
     agentPackages.dsh
-    agentPackages.opencode
+    agentPackages.opencode2
     agentPackages.pi
     agentPackages.omp
 
