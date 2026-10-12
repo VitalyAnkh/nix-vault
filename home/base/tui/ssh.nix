@@ -48,6 +48,7 @@ in
 
       "192.168.*" = lib.mkIf cfg.enable {
         ForwardAgent = true;
+        # decrypted secret: AI agents must not read it
         IdentityFile = "/etc/agenix/ssh-key-romantic";
         IdentitiesOnly = true;
       };

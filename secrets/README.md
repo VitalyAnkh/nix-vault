@@ -20,6 +20,20 @@ repository.
 This directory contains this `README.md`, and a `nixos.nix`/`darwin.nix` file that is used to
 decrypt all my secrets via `agenix`. Then, I can use them in this flake.
 
+## Which Keys Go on a Secret
+
+**Every secret is decryptable by the desktops and by the offline `recovery_key`, and those two have
+identical access.** The desktops hold the trusted admin keys and are where secrets are added, edited
+and rekeyed — including `agenix -r`, which has to decrypt every secret in this repository first.
+`recovery_key` is a member of `desktop_keys`, so one rule covers both: every recipient set is
+`desktop_keys ++ <the hosts that need it>`.
+
+That also means a lost host never makes a secret unrecoverable, and that narrowing a set to the
+servers alone breaks the desktops and the recovery key together.
+
+The one exception is the desktop's own restic repository password (`restic-password-desktop.age`):
+`desktop_keys` alone, because the backup servers must not be able to read desktop data.
+
 ## Adding or Updating Secrets
 
 > All the operations in this section should be performed in your private secrets repository (the one
@@ -99,12 +113,18 @@ sub modules via `specialArgs`:
   inputs = {
     # ......
 
-    # secrets management, lock with git commit at 2023/5/15
-    agenix.url = "github:ryantm/agenix/db5637d10f797bb251b94ef9040b237f4702cde3";
+    # secrets management, lock with git commit at May 18, 2025
+    agenix = {
+      url = "github:ryantm/agenix/4835b1dc898959d8547a871ef484930675cb47f1";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # my private secrets, it's a private repository, you need to replace it with your own.
     # Nix fetches it over SSH: evaluate the flake as a user with GitHub SSH access, not as root.
-    mysecrets = { url = "git+ssh://git@github.com/VitalyAnkh/vr-nix-secrets.git?shallow=1"; flake = false; };
+    mysecrets = {
+      url = "git+ssh://git@github.com/VitalyAnkh/vr-nix-secrets.git?shallow=1";
+      flake = false;
+    };
   };
 
   outputs = inputs@{ self, nixpkgs, ... }: {
@@ -119,7 +139,7 @@ sub modules via `specialArgs`:
           # ......
 
           # import & decrypt secrets in `mysecrets` in this module
-          ./secrets/default.nix
+          ./secrets/nixos.nix
         ];
       };
     };
@@ -127,7 +147,7 @@ sub modules via `specialArgs`:
 }
 ```
 
-Then, create `./secrets/default.nix` with the following content:
+Then, create `./secrets/nixos.nix` (or `./secrets/darwin.nix` on macOS) with the following content:
 
 ```nix
 # import & decrypt secrets in `mysecrets` in this module
