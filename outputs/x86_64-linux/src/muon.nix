@@ -13,18 +13,16 @@
 let
   name = "muon";
   base-modules = {
-    nixos-modules =
-      map mylib.relativeToRoot [
-        # common
-        "secrets/nixos.nix"
-        "modules/nixos/desktop.nix"
-        # host specific
-        "hosts/${name}"
-        # nixos hardening
-        "hardening/nixpaks"
-        "hardening/bwraps"
-      ]
-      ++ [ { modules.networking.mihomo.enable = true; } ];
+    nixos-modules = map mylib.relativeToRoot [
+      # common
+      "secrets/nixos.nix"
+      "modules/nixos/desktop.nix"
+      # host specific
+      "hosts/${name}"
+      # nixos hardening
+      "hardening/nixpaks"
+      "hardening/bwraps"
+    ];
     home-modules = map mylib.relativeToRoot [
       "home/hosts/linux/${name}.nix"
     ];
@@ -37,9 +35,6 @@ let
         modules.desktop.wayland.enable = true;
         modules.secrets.desktop.enable = true;
         modules.secrets.preservation.enable = true;
-        # Use the shared native mihomo service rather than the retired
-        # Clash-Verge/host-local wrapper.
-        modules.networking.mihomo.enable = true;
       }
       { programs.niri.enable = true; }
     ]

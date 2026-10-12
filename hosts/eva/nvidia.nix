@@ -139,7 +139,6 @@ in
       perfmon = true;
     };
     environment.systemPackages = [ pkgs.nvtopPackages.full ];
-    services.prometheus.exporters.nvidia-gpu.enable = true;
 
     # EVA renders directly on NVIDIA; retain the explicit Vulkan layer choice
     # used by the upstream VR service without importing Intel PRIME variables.

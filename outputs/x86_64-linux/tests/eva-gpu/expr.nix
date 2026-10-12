@@ -18,8 +18,12 @@ in
   sunshineUsesNvencPreset = cfg.services.sunshine.settings.nvenc_preset or null;
   sunshineUsesNvencTwopass = cfg.services.sunshine.settings.nvenc_twopass or null;
   loadsVirtualDisplay = builtins.elem "vkms" cfg.boot.kernelModules;
+  # Upstream ai's memory scheme: the disk swapfile behind zswap, no zram.
   zramEnabled = cfg.zramSwap.enable;
-  zramPercent = cfg.zramSwap.memoryPercent;
+  zswapEnabled = cfg.boot.zswap.enable;
+  swapDevices = map (s: s.device) cfg.swapDevices;
+  # Installer-only disko: the mounts stay those of hardware-configuration.nix.
+  diskoEnablesConfig = cfg.disko.enableConfig;
   preservesMoonlight = hasDirSuffix ".config/Moonlight Game Streaming Project";
   permitRootLogin = cfg.services.openssh.settings.PermitRootLogin;
   passwordAuth = cfg.services.openssh.settings.PasswordAuthentication;

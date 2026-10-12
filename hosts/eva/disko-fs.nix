@@ -1,12 +1,16 @@
-# Declarative reinstall/mount layout for EVA.
+# Declarative layout of eva's system disk, after upstream ai's disko-fs.nix.
 #
-# This is deliberately adapted to EVA's existing unencrypted Btrfs layout:
-# there is no upstream AI LUKS mapper or data-disk identifier here. The device
-# id and subvolumes mirror the live EVA hardware scan. `destroy,format` is
-# destructive; use `--mode mount` for an already provisioned EVA disk.
+# Only for a reinstall: default.nix sets `disko.enableConfig = false`, so the
+# running system keeps the mounts from hardware-configuration.nix and this file
+# changes nothing on activation. It mirrors the disk as installed: the GPT
+# labels ESP and primary, a 1950 MiB ESP, one unencrypted btrfs with these
+# subvolumes and mount options, and the 64 GiB swapfile on @swap. There is no
+# LUKS layer and no data disk, unlike upstream's ai.
+#
+#   nix run github:nix-community/disko -- --mode mount hosts/eva/disko-fs.nix
+#
+# `--mode destroy,format,mount` wipes the disk.
 {
-  fileSystems."/persistent".neededForBoot = true;
-
   disko.devices = {
     nodev."/" = {
       fsType = "tmpfs";
@@ -24,9 +28,8 @@
         partitions = {
           ESP = {
             priority = 1;
-            name = "ESP";
-            start = "1M";
-            end = "2G";
+            label = "ESP";
+            size = "1950M";
             type = "EF00";
             content = {
               type = "filesystem";
@@ -38,7 +41,8 @@
               ];
             };
           };
-          root = {
+          primary = {
+            label = "primary";
             size = "100%";
             content = {
               type = "btrfs";
@@ -50,15 +54,11 @@
                     "noatime"
                   ];
                 };
-                "@guix" = {
-                  mountpoint = "/gnu";
-                };
-                "@tmp" = {
-                  mountpoint = "/tmp";
-                };
+                "@guix".mountpoint = "/gnu";
+                "@tmp".mountpoint = "/tmp";
                 "@swap" = {
                   mountpoint = "/swap";
-                  swap.swapfile.size = "96G";
+                  swap.swapfile.size = "64G";
                 };
                 "@persistent" = {
                   mountpoint = "/persistent";
@@ -67,9 +67,7 @@
                     "compress-force=zstd:5"
                   ];
                 };
-                "@snapshots" = {
-                  mountpoint = "/snapshots";
-                };
+                "@snapshots".mountpoint = "/snapshots";
               };
             };
           };

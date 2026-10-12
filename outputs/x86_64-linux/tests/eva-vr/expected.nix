@@ -13,5 +13,5 @@
   wivrnImportsOpenXRToSteam = true;
   wivrnUsesNvidiaVulkan = true;
   wivrnStatePreserved = true;
-  adbStatePreserved = false;
+  adbStatePreserved = true;
 }

@@ -5,7 +5,9 @@
   sunshineUsesNvencTwopass = "full_res";
   loadsVirtualDisplay = false;
   zramEnabled = false;
-  zramPercent = 50;
+  zswapEnabled = true;
+  swapDevices = [ "/swap/swapfile" ];
+  diskoEnablesConfig = false;
   preservesMoonlight = true;
   permitRootLogin = "prohibit-password";
   passwordAuth = true;

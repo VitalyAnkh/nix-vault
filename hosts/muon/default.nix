@@ -33,6 +33,7 @@ in
 
     # Use eva's preservation configuration for muon as well
     ../eva/preservation.nix
+    ../eva/proxy.nix
     ./preservation-users.nix
     #./boot.nix
     #./secureboot.nix
@@ -103,7 +104,6 @@ in
     systemd-timesyncd.serviceConfig = serviceConfigNoMountNamespaceWithDevices;
 
     avahi-daemon.serviceConfig = serviceConfigNoMountNamespaceWithDevices;
-
   };
 
   networking = {
@@ -159,4 +159,11 @@ in
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "25.05"; # Did you read the comment?
+
+  # Upstream binds the exporters to the static LAN IPv4 in vars/networking.nix.
+  # NetworkManager assigns this host its address (DHCP, Wi-Fi on eva), which need
+  # not be that one, and a bound exporter then restarts forever. Keep listening
+  # on all addresses as before; the firewall does not open the exporter ports.
+  services.prometheus.exporters.node.listenAddress = lib.mkForce "0.0.0.0";
+  services.prometheus.exporters.smartctl.listenAddress = lib.mkForce "0.0.0.0";
 }

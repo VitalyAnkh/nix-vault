@@ -9,7 +9,8 @@
     gnomeExtensions.kimpanel
     gnomeExtensions.user-themes
     gnome-screenshot-portal
-    # Mihomo runs as the shared native service; no Clash GUI is installed.
+    clash-verge-rev
+    clash-nyanpasu
     # hiddify-app
     # flclash was removed from nixpkgs (low usage / unmaintained). Keep
     # `.config/flclash` preserved so existing data stays on /persistent.

@@ -84,6 +84,12 @@ in
       "/var/lib/bluetooth"
       "/var/lib/NetworkManager"
       "/var/lib/iwd"
+
+      # CUPS state (the print spool lives in /var/spool/cups, not here)
+      "/var/lib/cups"
+      # logrotate state. Persist the directory: a single-file bind mount cannot
+      # be replaced by logrotate's atomic rename() (EBUSY).
+      "/var/lib/logrotate"
     ];
     files = [
       # auto-generated machine ID
@@ -129,7 +135,10 @@ in
         "Android"
         # Android Studio
         ".config/Google"
-        ".android"
+        {
+          directory = ".android"; # ADB host keys, also for Quest USB authorization
+          mode = "0700";
+        }
 
         # google gemini
         ".gemini"
@@ -256,6 +265,11 @@ in
         ".local/share/opencode"
         ".local/state/opencode"
         ".context7"
+        # ctx7 docs lookup login
+        {
+          directory = ".config/context7";
+          mode = "0700";
+        }
         ".kimi"
         ".kimi-code"
         # DeepSeek Harness (dsh) keeps sessions, credentials, profiles, and
@@ -270,9 +284,6 @@ in
         ".zcode"
         ".config/ZCode"
         ".config/zcode"
-        # herdr: plugin registry, plugin checkouts/config, session layout
-        ".config/herdr"
-        ".local/state/herdr"
 
         # nvim
         ".local/share/nvim"
@@ -304,6 +315,12 @@ in
         ".config/vlc/"
         # mpv
         ".config/mpv/"
+
+        # go-musicfox: Home Manager resets config.toml on each rebuild; this keeps
+        # the runtime themes/ directory and the edits between rebuilds. Its login
+        # cookie, library database and logs are under the preserved .local/share
+        # and .local/state.
+        ".config/go-musicfox"
 
         # wine
         ".wine"
@@ -535,6 +552,18 @@ in
       "/home/${username}/.local/state/nix".d = permission;
       "/home/${username}/.terraform.d".d = permission;
     };
+
+  # Keep logrotate's state inside the directory preserved above instead of the
+  # default /var/lib/logrotate.status, which lives on the tmpfs root and is lost
+  # at every boot.
+  services.logrotate.extraArgs = [
+    "--state"
+    "/var/lib/logrotate/status"
+  ];
+
+  # Crash dumps live in the persisted /var/lib/systemd and can contain secrets
+  # copied out of process memory, so don't keep them across reboots.
+  systemd.tmpfiles.rules = [ "D! /var/lib/systemd/coredump 0755 root root" ];
 
   # systemd-machine-id-commit.service would fail but it is not relevant
   # in this specific setup for a persistent machine-id so we disable it
