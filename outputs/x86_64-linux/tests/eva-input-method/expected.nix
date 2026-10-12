@@ -1,6 +1,6 @@
 {
-  enablesLocalAsr = false;
+  enablesLocalAsr = true;
   enablesLitePackage = false;
-  hasVinputDaemon = false;
+  hasVinputDaemon = true;
   usesCustomRime = true;
 }

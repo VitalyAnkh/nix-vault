@@ -1,7 +1,7 @@
 # Fcitx5 Vinput
 
-Voice input on `ai` and `shoukei`, backed by a Sherpa-ONNX model. Open Vinput from the application
-launcher for settings.
+Voice input on `ai`, `shoukei`, `eva` and `muon`, backed by a Sherpa-ONNX model. Open Vinput from
+the application launcher for settings.
 
 ## Key bindings
 
@@ -30,9 +30,9 @@ systemctl --user restart vinput-daemon
 
 Models are stored in `~/.local/share/vinput/models/sherpa-onnx/` and the core config lives in
 `~/.config/vinput/config.json`. Both directories are bind-mounted from `/persistent` on the
-tmpfs-root hosts (see `hosts/idols-ai/preservation.nix`); without that they are wiped on every
-reboot and the daemon logs `Local ASR provider model is not configured`. Review model source and
-license before installing.
+tmpfs-root hosts (see `hosts/idols-ai/preservation.nix` and `hosts/eva/preservation.nix`); without
+that they are wiped on every reboot and the daemon logs
+`Local ASR provider model is not configured`. Review model source and license before installing.
 
 ## Diagnostics
 

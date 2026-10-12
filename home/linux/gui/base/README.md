@@ -76,7 +76,7 @@ Noctalia consolidates functionality that previously required multiple tools:
 
 - **[`fcitx5/`](./fcitx5/)**: Fcitx5 input method with Rime (Chinese), Mozc (Japanese), and Hangul
   (Korean) engines
-- **[`vinput/`](./vinput/)**: Voice input on `ai` (OpenVINO) and `shoukei` (CPU)
+- **[`vinput/`](./vinput/)**: Voice input (Sherpa-ONNX) on `ai`, `shoukei`, `eva` and `muon`
 
 ### Applications
 

@@ -8,6 +8,9 @@ in
   imports = [ ../../linux/gui.nix ];
 
   modules.desktop.gaming.enable = true;
+  # Voice input (fcitx5-vinput), as on upstream ai; one-time model setup in
+  # home/linux/gui/base/vinput/README.md.
+  modules.desktop.vinput.enable = true;
   # GNOME remains the default session; retain Niri configuration for opt-in use.
   modules.desktop.niri.enable = false;
   modules.desktop.nvidia.enable = true;
