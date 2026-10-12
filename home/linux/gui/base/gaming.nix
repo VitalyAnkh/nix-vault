@@ -1,7 +1,5 @@
 {
   pkgs,
-  pkgs-x64,
-  osConfig,
   config,
   lib,
   ...
@@ -54,26 +52,5 @@ in
         })
       ]);
 
-    # Game launchers for Epic/GOG/Ubisoft/etc. (use Steam + DWProton for common games)
-
-    # a GUI game launcher for Steam/GoG/Epic/Ubisoft
-    # https://lutris.net/games?ordering=-popularity
-    programs.lutris = {
-      enable = true;
-      defaultWinePackage = pkgs-x64.proton-ge-bin;
-      steamPackage = osConfig.programs.steam.package;
-      protonPackages = [ pkgs-x64.proton-ge-bin ];
-      winePackages = with pkgs-x64; [
-        wineWow64Packages.full
-        wineWow64Packages.stagingFull
-      ];
-      extraPackages = with pkgs-x64; [
-        winetricks
-        gamescope
-        gamemode
-        mangohud
-        umu-launcher
-      ];
-    };
   };
 }

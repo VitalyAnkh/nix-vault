@@ -57,14 +57,6 @@ let
         };
       };
 
-      pkgs-x64 = import nixpkgs {
-        system = "x86_64-linux";
-
-        # To use chrome, we need to allow the installation of non-free software
-        config.allowUnfree = true;
-        overlays = import ../overlays args;
-      };
-
       # Some modules expect this input to exist in specialArgs even when the flake input
       # is not configured in `flake.nix` (e.g. on machines that don't need Asahi firmware).
       my-asahi-firmware =

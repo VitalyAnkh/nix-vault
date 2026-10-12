@@ -1,7 +1,6 @@
 # Overlays
 
-Overlays for both NixOS and Nix-Darwin (`modules/base/overlays.nix`), and for the `pkgs-x64` package
-set (`outputs/default.nix`).
+Overlays for both NixOS and Nix-Darwin.
 
 If you don't know much about overlays, it is recommended to learn the function and usage of overlays
 through [Overlays - NixOS & Flakes Book](https://nixos-and-flakes.thiscute.world/nixpkgs/overlays).
