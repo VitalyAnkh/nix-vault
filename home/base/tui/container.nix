@@ -7,6 +7,7 @@
   home.packages = with pkgs; [
     podman-compose
     dive # explore docker layers
+    lazydocker # Docker terminal UI.
 
     # `skopeo`: inspect/move images between registries and local formats
     # (oci / dir / docker-archive) without a daemon; also supports sync + signing.
@@ -17,6 +18,7 @@
     #   skopeo copy docker://nginx:latest oci:/tmp/n:latest
     #   skopeo sync --src docker --dest dir nginx /tmp/n
     skopeo
+    go-containerregistry # provides `crane` & `gcrane`, it's similar to skopeo
 
     kubectl
     kustomize
@@ -24,11 +26,14 @@
     kubectx # kubectx & kubens
     kubie # same as kubectl-ctx, but per-shell (won’t touch kubeconfig).
     kubectl-view-secret # kubectl view-secret
+    kubectl-tree # kubectl tree
     kubectl-node-shell # exec into node
     kubepug # kubernetes pre upgrade checker
     kubectl-cnpg # cloudnative-pg's cli tool
 
+    kubebuilder
     istioctl
+    clusterctl # for kubernetes cluster-api
     pkgs-2505.kubernetes-helm
     fluxcd
     argocd
