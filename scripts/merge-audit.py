@@ -3,9 +3,13 @@
 
 A resolution that takes one side of a file wholesale silently drops the other side's changes, even
 where they would have merged without conflicts. This lists every such file, plus modify/delete
-outcomes, so each one can be checked by hand.
+outcomes, so each one can be checked by hand. For a conflicted file that ended up as one side, it
+also says whether the other side's non-conflicting hunks were lost.
 
-Usage: scripts/merge-audit.py [--diff] [MERGE] [-- PATHSPEC...]
+With --ours and --theirs, RESULT may be any commit, e.g. a branch tip that a merge and later fix
+commits produced; the base defaults to their merge base.
+
+Usage: scripts/merge-audit.py [--diff] [--ours REV --theirs REV [--base REV]] [RESULT] [-- PATHSPEC...]
 """
 
 import argparse
@@ -40,6 +44,21 @@ def blob(entry):
     return git("cat-file", "blob", entry[1]) if entry else b""
 
 
+def merge_file(tmp, base, ours, theirs, *flags):
+    """git merge-file of three blobs; returns (exit code, merged bytes)."""
+    files = []
+    for name, data in (("ours", ours), ("base", base), ("theirs", theirs)):
+        p = os.path.join(tmp, name)
+        with open(p, "wb") as f:
+            f.write(data)
+        files.append(p)
+    m = subprocess.run(
+        ["git", "merge-file", "-p", *flags, "-L", "ours", "-L", "base", "-L", "theirs", *files],
+        capture_output=True,
+    )
+    return m.returncode, m.stdout
+
+
 def side_name(result, ours, theirs):
     if result == ours and result == theirs:
         return "both"
@@ -49,15 +68,23 @@ def side_name(result, ours, theirs):
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--diff", action="store_true", help="show clean merge -> recorded result diffs")
-    ap.add_argument("merge", nargs="?", default="HEAD")
+    ap.add_argument("--ours", help="first side (default: the merge's first parent)")
+    ap.add_argument("--theirs", help="second side (default: the merge's second parent)")
+    ap.add_argument("--base", help="merge base (default: git merge-base OURS THEIRS)")
+    ap.add_argument("merge", nargs="?", default="HEAD", metavar="RESULT")
     ap.add_argument("pathspec", nargs="*")
     a = ap.parse_args()
 
-    parents = git("rev-list", "--parents", "-n1", a.merge).decode().split()[1:]
-    if len(parents) != 2:
-        sys.exit(f"{a.merge} has {len(parents)} parents; expected a two-parent merge")
+    if bool(a.ours) != bool(a.theirs):
+        sys.exit("give both --ours and --theirs, or neither")
+    if a.ours:
+        parents = [git("rev-parse", "--verify", f"{rev}^{{commit}}").decode().strip() for rev in (a.ours, a.theirs)]
+    else:
+        parents = git("rev-list", "--parents", "-n1", a.merge).decode().split()[1:]
+        if len(parents) != 2:
+            sys.exit(f"{a.merge} has {len(parents)} parents; expected a two-parent merge (or pass --ours/--theirs)")
     ours, theirs = parents
-    base = git("merge-base", ours, theirs).decode().strip()
+    base = git("rev-parse", "--verify", f"{a.base}^{{commit}}").decode().strip() if a.base else git("merge-base", ours, theirs).decode().strip()
     names = set()
     for parent in parents:
         names.update(git("diff", "--name-only", "-z", parent, a.merge, "--", *a.pathspec).decode().split("\0"))
@@ -70,6 +97,12 @@ def main():
     with tempfile.TemporaryDirectory() as tmp:
         for path in paths:
             b, o, t, r = tb.get(path), to.get(path), tt.get(path), tr.get(path)
+            if o == b and t == b:  # neither side changed it
+                if r != b:
+                    findings += 1
+                    state = "deleted" if r is None else "added" if b is None else "changed"
+                    print(f"unchanged on both sides, result {state}: {path}")
+                continue
             if o == b:  # only theirs changed it, so a clean merge takes theirs
                 if r != t:
                     findings += 1
@@ -90,27 +123,27 @@ def main():
                     findings += 1
                     print(f"same change on both sides, result is neither: {path}")
                 continue
-            files = []
-            for name, entry in (("ours", o), ("base", b), ("theirs", t)):
-                p = os.path.join(tmp, name)
-                with open(p, "wb") as f:
-                    f.write(blob(entry))
-                files.append(p)
-            m = subprocess.run(
-                ["git", "merge-file", "-p", "-L", "ours", "-L", "base", "-L", "theirs", *files],
-                capture_output=True,
-            )
-            if m.returncode == 0 and r is not None and m.stdout == blob(r):
+            code, merged = merge_file(tmp, blob(b), blob(o), blob(t))
+            if code == 0 and r is not None and merged == blob(r):
                 continue
             findings += 1
-            kind = "clean merge" if m.returncode == 0 else "conflicted"
+            kind = "clean merge" if code == 0 else "conflicted"
             state = "deleted" if r is None else side_name(r, o, t)
+            expected_name = "3-way"
+            if code != 0 and state in ("ours", "theirs"):
+                # Resolve only the conflicts toward the side the result took; anything that still
+                # differs is the other side's non-conflicting change, which the result dropped.
+                _, merged = merge_file(tmp, blob(b), blob(o), blob(t), f"--{state}")
+                expected_name = f"3-way --{state}"
+                lost = "keeps" if merged == blob(r) else "drops"
+                other = "theirs" if state == "ours" else "ours"
+                state += f", {lost} {other}' non-conflicting hunks"
             print(f"{kind}, result is {state}: {path}")
             if a.diff:
-                expected = m.stdout.decode(errors="replace").splitlines(keepends=True)
+                expected = merged.decode(errors="replace").splitlines(keepends=True)
                 recorded = blob(r).decode(errors="replace").splitlines(keepends=True)
                 sys.stdout.writelines(
-                    difflib.unified_diff(expected, recorded, f"3-way/{path}", f"result/{path}")
+                    difflib.unified_diff(expected, recorded, f"{expected_name}/{path}", f"result/{path}")
                 )
     print(f"{findings} file(s) to review")
 

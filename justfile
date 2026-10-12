@@ -200,7 +200,7 @@ override-pkgs hash:
 #
 ############################################################################
 
-# Usage: just merge-audit [--diff] <merge> [-- <path>...]
+# Usage: just merge-audit [--diff] [--ours <rev> --theirs <rev>] <result> [-- <path>...]
 # Audit a merge: files whose result differs from a clean three-way merge of its parents
 [group('upstream')]
 merge-audit *args:
