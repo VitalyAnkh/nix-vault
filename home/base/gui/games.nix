@@ -1,6 +1,7 @@
 {
   lib,
   pkgs,
+  pkgs-stable,
   ...
 }:
 let
@@ -15,8 +16,10 @@ in
 
       # some games
       beyond-all-reason
-      warzone2100
-      cataclysm-dda-git
+      # GCC 16, the default compiler in nixpkgs unstable, fails to build these two
+      # and the cache has no build; 26.05 builds them with GCC 15.
+      pkgs-stable.warzone2100
+      pkgs-stable.cataclysm-dda-git
       zeroad-unwrapped
       zeroad-data
     ])

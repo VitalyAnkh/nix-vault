@@ -81,7 +81,9 @@
     })
 
     # Warzone 2100 4.7.0 uses a Vulkan-Hpp enum alias removed in Vulkan 1.4.350.
-    # Backport the upstream compatibility fix until nixpkgs includes it.
+    # Backport the upstream compatibility fix until nixpkgs includes it. The
+    # games module takes Warzone from nixpkgs 26.05 (Vulkan 1.4.341) for now,
+    # while GCC 16 fails to build it in unstable.
     (_final: prev: {
       warzone2100 = prev.warzone2100.overrideAttrs (old: {
         patches = (old.patches or [ ]) ++ [

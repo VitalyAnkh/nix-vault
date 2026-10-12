@@ -322,6 +322,9 @@ f32d67a5（93700824）。之后在 astra 上把它与 vr 合并（78d4ade4），
   `~/.secrets/nushell-secrets.nu`，未采用；私有仓库目前没有这两个文件。
 - fern/frieren 的 `codex-app` cask 已被 Homebrew 停用（替代品为 `chatgpt` cask），上游仍在使用。
 - 切换到 mihomo（见上文），需要先准备 `sources.yaml`。
+- contour、Cataclysm DDA 和 Warzone 2100 暂用 nixpkgs
+  26.05 的包（`modules/nixos/base/ssh.nix`、`home/base/gui/games.nix`）：unstable 改用 GCC
+  16 后编译不了它们，缓存里也没有。unstable 能构建后改回。
 
 ## 常见问题
 
