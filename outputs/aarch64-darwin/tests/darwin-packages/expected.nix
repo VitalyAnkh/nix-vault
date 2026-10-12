@@ -2,7 +2,7 @@
   lib,
   outputs,
 }:
-lib.genAttrs (builtins.attrNames outputs.darwinConfigurations) (name: {
+lib.genAttrs (builtins.attrNames outputs.darwinConfigurations) (_: {
   nodejsHasV8Fix = true;
   emacsIsNs = true;
   emacsHasAutoloadFix = true;
@@ -17,6 +17,6 @@ lib.genAttrs (builtins.attrNames outputs.darwinConfigurations) (name: {
     furo = true;
   };
   jeepneyPrivateBus = false;
-  # Only astra replaces the shared OpenLDAP override with the upstream package.
-  openldapUsesUpstream = name == "astra";
+  # No shared override replaces nixpkgs' OpenLDAP any more.
+  openldapUsesUpstream = true;
 })

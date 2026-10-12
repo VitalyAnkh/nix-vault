@@ -93,22 +93,6 @@
       });
     })
 
-    # doCheck = false skips OpenLDAP's whole test suite. The preCheck below only
-    # takes effect if checks are re-enabled: it drops
-    # test017-syncreplication-refresh and the other syncrepl tests of its
-    # cluster, timing-sensitive integration checks that can fail even when slapd
-    # itself built correctly, and keeps the rest of the suite.
-    (final: prev: {
-      openldap = prev.openldap.overrideAttrs (old: {
-        doCheck = false;
-        preCheck = (old.preCheck or "") + ''
-          rm -f tests/scripts/test017-syncreplication-refresh
-          rm -f tests/scripts/test018-syncreplication-persist
-          rm -f tests/scripts/test019-syncreplication-cascade
-        '';
-      });
-    })
-
     # cli-helpers 2.10.0 has color-sequence assertions that no longer match
     # current Pygments output, which breaks mycli/pgcli builds.
     (final: prev: {

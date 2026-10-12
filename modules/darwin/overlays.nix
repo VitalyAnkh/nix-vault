@@ -1,8 +1,6 @@
-{ config, lib, ... }:
+{ lib, ... }:
 {
-  options.modules.darwin.upstreamOpenldap = lib.mkEnableOption "nixpkgs' OpenLDAP, with its checks, instead of the shared override that disables them; GnuPG and its consumers then match upstream and come from the binary cache";
-
-  config.nixpkgs.overlays = lib.mkAfter [
+  nixpkgs.overlays = lib.mkAfter [
     (
       _final: prev:
       # Cross and static package sets keep their own builds.
@@ -41,9 +39,6 @@
 
             })
           ];
-        }
-        // lib.optionalAttrs config.modules.darwin.upstreamOpenldap {
-          inherit (upstreamPkgs) openldap;
         }
       )
     )

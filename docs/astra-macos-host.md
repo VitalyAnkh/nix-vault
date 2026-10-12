@@ -10,7 +10,7 @@
 | 文件                                   | 职责                                                                                    |
 | -------------------------------------- | --------------------------------------------------------------------------------------- |
 | `outputs/aarch64-darwin/src/astra.nix` | 注册主机、声明账号和仓库路径、向系统及 HM 传入相同主机变量                              |
-| `hosts/darwin-astra/default.nix`       | 主机名、Nix 托管、系统 shell、PAM、字体及 OpenLDAP 来源                                 |
+| `hosts/darwin-astra/default.nix`       | 主机名、Nix 托管、系统 shell、PAM 和字体                                                |
 | `hosts/darwin-astra/homebrew.nix`      | Homebrew 软件清单、激活时的 Homebrew 行为及镜像设置                                     |
 | `home/hosts/darwin/darwin-astra.nix`   | HM 工作环境及本机选择                                                                   |
 | `modules/darwin/overlays.nix`          | 所有 Darwin 主机共用：仅构建期使用 Node 的包复用上游构建、Jeepney 测试修复              |
@@ -266,11 +266,9 @@ ESR 源码构建）、Marksman（基于 .NET 源码构建）、Furo 的静态资
 CD 嵌入 Go 程序的静态网页资源。没有这层复用，`fern` / `frieren` 也要从源码重建 Firefox
 ESR、.NET、kitty 和数十个 Python 包。这些包的运行依赖不含 Node；nixpkgs 中运行时使用 Node 的工具仍使用修复版。
 
-astra 启用 `modules.darwin.upstreamOpenldap`（定义在
-`modules/darwin/overlays.nix`），OpenLDAP 使用同一 nixpkgs
-pin 的原始配方及测试设置，使 GnuPG、Pass 等依赖保持上游缓存身份。其它主机使用
-`modules/base/overlays.nix`
-中关闭测试的 OpenLDAP 覆盖；缓存身份一致不保证缓存服务器一定有对应产物或当前网络能够下载。
+所有主机都使用 nixpkgs 原始的 OpenLDAP 配方及测试设置，GnuPG、Pass 等依赖因此保持上游缓存身份：nixpkgs 已经跳过 OpenLDAP 不稳定的测试，`modules/base/overlays.nix`
+中关闭测试的覆盖随上游 e8f80990 删除，astra 原来的 `modules.darwin.upstreamOpenldap`
+选项也一并删除。缓存身份一致不保证缓存服务器一定有对应产物或当前网络能够下载。
 
 Zed 使用 `pkgs.zed-editor-bin` 提供的官方 macOS 应用，版本跟随 Zed 的最新稳定版（不低于 nixpkgs 的
 `zed-editor`，astra 的 eval 测试检查这一点），下载地址和 SHA-256 固定在仓库中。打包保留完整签名 App、`zed`

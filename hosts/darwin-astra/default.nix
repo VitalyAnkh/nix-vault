@@ -12,10 +12,9 @@ in
   system.stateVersion = 7;
   time.timeZone = "Asia/Singapore";
 
-  modules.darwin.upstreamOpenldap = true;
-
   # nix-darwin manages Nix here, unlike modules/darwin/nix-core.nix (Determinate Nix on
-  # fern and frieren); automatic GC and store optimisation are off, as there.
+  # fern and frieren); automatic GC is off, as there. Store optimisation stays off too,
+  # although upstream dropped its Darwin workaround for nix#7273 (d056aece).
   nix.enable = true;
   nix.settings.auto-optimise-store = false;
   nix.gc.automatic = false;
