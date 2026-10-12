@@ -30,7 +30,8 @@ let
 
   computerUseBackend = rustPlatform.buildRustPackage {
     pname = "codex-computer-use-linux";
-    version = "0.1.2-linux-alpha1";
+    # Follow the crate version of the pinned source instead of a hand-kept label.
+    inherit ((lib.importTOML "${upstreamSource}/computer-use-linux/Cargo.toml").package) version;
     src = upstreamSource;
 
     cargoLock = {

@@ -1,5 +1,4 @@
 {
-  lib,
   stdenv,
   nodejs-slim_24,
 }:
@@ -16,8 +15,6 @@ else
         # https://github.com/v8/v8/commit/65ce14d8731e929584344a0d65d6efd2296fa797
         ./v8-std-hash.patch
       ]
-      # Test only: tolerate duplicate watcher events, as upstream does from 24.19.0.
-      ++ lib.optional (lib.versionOlder old.version "24.19.0") ./test-watch-file-shared-dependency.patch
       # Test only: make the Happy Eyeballs fallback attempts fail on loopback rather
       # than depend on public addresses refusing the connection.
       ++ [ ./test-net-autoselectfamily-loopback.patch ];

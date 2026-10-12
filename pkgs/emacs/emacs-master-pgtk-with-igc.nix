@@ -35,7 +35,7 @@ in
   (old: rec {
     pname = if isDarwin then "emacs-master-ns-with-igc" else "emacs-master-pgtk-with-igc";
     # Match AC_INIT in the pinned IGC configure.ac, not the base nixpkgs recipe;
-    # recheck it whenever the pin moves.
+    # postPatch below fails the build when a pin bump changes it.
     version = "32.0.50";
     # Prefer nvfetcher git `date` when present; webpage-based pins only have `version` (commit).
     name = "${pname}-${
@@ -48,7 +48,9 @@ in
     # nixpkgs' patches and postPatch apply to the IGC pin; its native-comp patch
     # adds the toolchain and SDK paths to Emacs' own driver options.
     patches =
-      old.patches
+      # The IGC source already has the flymake trust check that nixpkgs backports to
+      # Emacs 30 and 31 as CVE-2024-53920.patch, which therefore no longer applies.
+      builtins.filter (patch: !lib.hasSuffix "-CVE-2024-53920.patch" (toString patch)) old.patches
       ++ [
         # The IGC branch lacks master's fix for bug#81906 (commit 008a667120): the
         # obsolete `make-autoload`, which Doom uses to generate autoloads, fails on
@@ -62,6 +64,13 @@ in
         # copies raw bytes across the buffer gap. Drop it once upstream fixes this.
         ./ns-accessibility-buffer-text.patch
       ];
+    postPatch = old.postPatch + ''
+      grep -qF 'AC_INIT([GNU Emacs], [${version}],' configure.ac || {
+        echo "emacs: version ${version} does not match AC_INIT in configure.ac:" >&2
+        grep -F 'AC_INIT(' configure.ac >&2
+        exit 1
+      }
+    '';
     # IGC builds the MPS copy bundled in its source tree (mps/); no system libmps is linked.
     configureFlags =
       old.configureFlags

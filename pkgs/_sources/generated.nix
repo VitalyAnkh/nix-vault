@@ -8,13 +8,13 @@
 {
   source-codex-desktop-linux = {
     pname = "source-codex-desktop-linux";
-    version = "249cd4b64d42434f51417fec4a318750d461b676";
+    version = "839dbb50fbd2ad041089981441a82f2460dac455";
     src = fetchFromGitHub {
       owner = "ilysenko";
       repo = "codex-desktop-linux";
-      rev = "249cd4b64d42434f51417fec4a318750d461b676";
+      rev = "839dbb50fbd2ad041089981441a82f2460dac455";
       fetchSubmodules = false;
-      sha256 = "sha256-7sLIeoSdA6RpneCPr+FI4b61V7Nh4DcWVYvNd5s9bsE=";
+      sha256 = "sha256-i5En3yRYX2UuqJqSVqOT5h+2Q9knqwmQx25oggpMrNg=";
     };
   };
   source-emacs-lsp-booster = {
@@ -30,29 +30,30 @@
     cargoLock."Cargo.lock" = {
       lockFile = ./. + "/sha256-aOkvOyRlkG7gzMy5_x15CMm_voOFOX98QcWVbvfuVLM=/Cargo.lock";
       outputHashes = {
+
       };
     };
   };
   source-emacs-master-igc = {
     pname = "source-emacs-master-igc";
-    version = "3a1cc4964ff68a0beb115625ec34cd7ba48b19c4";
+    version = "9ab13c0bf8284d99905784e141b84537ec42000a";
     src = fetchFromGitHub {
       owner = "emacs-mirror";
       repo = "emacs";
-      rev = "3a1cc4964ff68a0beb115625ec34cd7ba48b19c4";
+      rev = "9ab13c0bf8284d99905784e141b84537ec42000a";
       fetchSubmodules = false;
-      sha256 = "sha256-QihSP8DI/GPWnzqNUNp4fGBR4vPeVvHnlvXehHCqGBo=";
+      sha256 = "sha256-+L6UjFUI/K/o6L7HjfbSDC0LvWoqhq1stojMpTIM98A=";
     };
   };
   source-godot-master = {
     pname = "source-godot-master";
-    version = "c24bf5d933c53d9477d5e82c51403856a9e7da62";
+    version = "232e6b14abf6e590b41d60f11704e42de22bff72";
     src = fetchFromGitHub {
       owner = "godotengine";
       repo = "godot";
-      rev = "c24bf5d933c53d9477d5e82c51403856a9e7da62";
+      rev = "232e6b14abf6e590b41d60f11704e42de22bff72";
       fetchSubmodules = false;
-      sha256 = "sha256-YTZd6ypxJGFpAbkWvWHh22eA7quyCF/aCxJ7Y7INF5s=";
+      sha256 = "sha256-KV4t9RNWvt4j9uzJ85LTDwcOtlutMAySZ/mzzWmBbWs=";
     };
   };
   source-nutstore-client = {
@@ -73,21 +74,21 @@
   };
   source-roxy-browser = {
     pname = "source-roxy-browser";
-    version = "4.0.5";
+    version = "4.0.7";
     src = fetchurl {
-      url = "https://lumibrowser.oss-cn-shenzhen.aliyuncs.com/public/package/app/Linux/x64/4.0.5/RoxyBrowser_x64_4.0.5.deb";
-      sha256 = "sha256-Tljd5NXX45bwdco5y005JLWsWImEYS+bz21qoJ59zQA=";
+      url = "https://lumibrowser.oss-cn-shenzhen.aliyuncs.com/public/package/app/Linux/x64/4.0.7/RoxyBrowser_x64_4.0.7.deb";
+      sha256 = "sha256-Tjg37bGa778G68mvzBG3m+XeLpBJsSdcEYWNL8VchfU=";
     };
   };
   source-warp-terminal = {
     pname = "source-warp-terminal";
-    version = "a06279712f838d01295575b0dc0f14b7a34ba049";
+    version = "25e82210a59c8e535a14c3e22c39ec1d3361a7f7";
     src = fetchFromGitHub {
       owner = "warpdotdev";
       repo = "Warp";
-      rev = "a06279712f838d01295575b0dc0f14b7a34ba049";
+      rev = "25e82210a59c8e535a14c3e22c39ec1d3361a7f7";
       fetchSubmodules = false;
-      sha256 = "sha256-xlOX3G4ZmCFP/B6ItPTitmOLBkgEDSwH7+wv4TWTQY8=";
+      sha256 = "sha256-aEY4vJ5bTpXQ/DYRuZGIoNPmP4bYIQ4DqOv/XY/gB/g=";
     };
   };
 }
