@@ -38,17 +38,17 @@ Run `:tutor` inside Helix, or `hx --tutor` from the shell
 
 ### Terminal related
 
-tuios shortcuts used often (leader is `Ctrl + B`):
+tuios shortcuts used often (leader is `Ctrl + Z`, see `home/base/tui/tuios/config.toml`):
 
 | Action            | tuios shortcut             |
 | ----------------- | -------------------------- |
 | New pane          | `n` (window mode)          |
-| Floating terminal | `Ctrl + B`, then `Alt + F` |
-| Split horizontal  | `Ctrl + B`, then `-`       |
-| Split vertical    | `Ctrl + B`, then `\`       |
+| Floating terminal | `Ctrl + Z`, then `Alt + F` |
+| Split horizontal  | `Ctrl + Z`, then `-`       |
+| Split vertical    | `Ctrl + Z`, then `\`       |
 | Command palette   | `Ctrl + P`                 |
 | Launcher          | `Alt + Space`              |
-| Detach            | `Ctrl + B`, then `d`       |
+| Detach            | `Ctrl + Z`, then `d`       |
 
 In Helix, `|` / `!` and variants pipe or insert shell output on selections (see **Changes**).
 

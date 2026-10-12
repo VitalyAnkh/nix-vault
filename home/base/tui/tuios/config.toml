@@ -216,7 +216,8 @@ needs_input = ''
 
 [notifications.mail]
 [keybindings]
-leader_key = 'ctrl+b'
+# Ctrl+Z, the zellij setup's unlock key: Ctrl+B is Emacs' backward-char.
+leader_key = 'ctrl+z'
 
 [keybindings.window_management]
 close_window = ['w', 'x']
