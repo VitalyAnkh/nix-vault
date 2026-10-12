@@ -121,14 +121,14 @@ rm -f ~/.local/share/nvfetcher/.shake.lock
 
 下列包不经过 nvfetcher，版本和哈希直接写在包文件中，更新时手动改到最新版：
 
-| 文件                               | 最新版本的来源                                                                                                      | 要更新的内容                                                                                      |
-| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| `zed-editor/zed-editor-bin.nix`    | [Zed 最新稳定版](https://github.com/zed-industries/zed/releases/latest)                                             | `version`，aarch64 和 x86_64 两个 DMG 的哈希                                                      |
-| `android-studio-tools/package.nix` | [仓库索引](https://dl.google.com/android/repository/repository2-3.xml)中最新的 cmdline-tools 构建号                 | `version`，`mac_arm64` 和 `mac_x86_64` 两个归档的哈希                                             |
-| `computer-use-linux/default.nix`   | [最新 release](https://github.com/agent-sh/computer-use-linux/releases/latest)                                      | `version`，x86_64 和 aarch64 两个文件的哈希                                                       |
-| `cua-driver/default.nix`           | [trycua/cua](https://github.com/trycua/cua/releases) 中最新的 `cua-driver-rs-v*`                                    | `version` 与哈希                                                                                  |
-| `jetbrains-toolbox/package.nix`    | [JetBrains 的最新 release](https://data.services.jetbrains.com/products/releases?code=TBA&latest=true&type=release) | Darwin 的 `version` 与 `macM1` DMG 的哈希（`checksumLink` 给出 SHA-256）；Linux 沿用 nixpkgs 的包 |
-| `godot/package.nix`                | [OpenXR-SDK-Source](https://github.com/KhronosGroup/OpenXR-SDK-Source) 的 `main`                                    | OpenXR loader 的 `rev`、`hash` 和 `version` 中的日期；Godot 本身由 nvfetcher 更新                 |
+| 文件                               | 最新版本的来源                                                                                                      | 要更新的内容                                                                                                                                         |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `zed-editor/zed-editor-bin.nix`    | [Zed 最新稳定版](https://github.com/zed-industries/zed/releases/latest)                                             | `version`，aarch64 和 x86_64 两个 DMG 的哈希                                                                                                         |
+| `android-studio-tools/package.nix` | [仓库索引](https://dl.google.com/android/repository/repository2-3.xml)中最新的 cmdline-tools 构建号                 | `version`，`mac_arm64` 和 `mac_x86_64` 两个归档的哈希                                                                                                |
+| `computer-use-linux/default.nix`   | [最新 release](https://github.com/agent-sh/computer-use-linux/releases/latest)                                      | `version`，x86_64 和 aarch64 两个文件的哈希                                                                                                          |
+| `cua-driver/default.nix`           | [trycua/cua](https://github.com/trycua/cua/releases) 中最新的 `cua-driver-rs-v*`                                    | `version` 与哈希                                                                                                                                     |
+| `jetbrains-toolbox/package.nix`    | [JetBrains 的最新 release](https://data.services.jetbrains.com/products/releases?code=TBA&latest=true&type=release) | Darwin 的 `version` 与 `macM1` DMG 的哈希（`checksumLink` 给出 SHA-256）；Linux 沿用 nixpkgs 的版本和哈希，只把下载地址换成 `download.jetbrains.com` |
+| `godot/package.nix`                | [OpenXR-SDK-Source](https://github.com/KhronosGroup/OpenXR-SDK-Source) 的 `main`                                    | OpenXR loader 的 `rev`、`hash` 和 `version` 中的日期；Godot 本身由 nvfetcher 更新                                                                    |
 
 `nodejs/nodejs-slim_24.nix`
 沿用 nixpkgs 的 Node 版本，只加本地补丁；nixpkgs 升级 Node 后，确认每个补丁仍然需要并且能打上。`codex-desktop`
