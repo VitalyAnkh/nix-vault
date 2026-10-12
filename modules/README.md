@@ -21,8 +21,11 @@ modules/
 │   ├── apps.nix           # macOS applications
 │   ├── default.nix
 │   ├── nix-core.nix       # Core Nix configuration
+│   ├── nix-daemon.nix     # Nix daemon log file
+│   ├── overlays.nix       # Darwin package fixes shared by all macOS hosts
 │   ├── security.nix       # macOS security settings
 │   ├── ssh.nix           # SSH configuration
+│   ├── system-paths.nix  # /etc/paths entries after the Nix paths
 │   ├── system.nix        # System-level settings
 │   └── users.nix         # macOS user management
 └── nixos/                   # NixOS-specific modules
