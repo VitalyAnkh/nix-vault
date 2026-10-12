@@ -1,21 +1,20 @@
 # Base Desktop Environment Configuration
 
-This directory contains base configurations for Linux desktop environments, providing essential
-components for a complete Wayland desktop experience.
+This directory contains base configurations for Linux desktop environments.
 
 ## Overview
 
-The configuration is organized into modular components that can be selectively enabled:
+The configuration is split into modules:
 
-- **Desktop Shell**: Noctalia Shell for unified desktop environment
-- **Applications**: Desktop tools, browsers, editors, media players, etc.
-- **Development Tools**: IDEs and development utilities
-- **System Integration**: Input methods, theming, XDG specifications, GPU settings
+- Desktop shell: Noctalia Shell
+- Applications: desktop tools, browsers, editors, media players
+- Development tools: IDEs and development utilities
+- System integration: input methods, theming, XDG specifications, GPU settings
 
 ## Noctalia
 
-**Noctalia** (v5) is a native C++/Wayland all-in-one desktop shell that replaces multiple separate
-tools with a single, unified solution. It is installed through the upstream
+**Noctalia** (v5) is a native C++/Wayland desktop shell that replaces multiple separate tools. It is
+installed through the upstream
 [`programs.noctalia`](https://docs.noctalia.dev/noctalia/getting-started/nixos/) Home Manager
 module.
 
@@ -62,9 +61,9 @@ Noctalia consolidates functionality that previously required multiple tools:
 - **[`noctalia/config/config.toml`](./noctalia/config/config.toml)**: declarative baseline (v5
   TOML), tracked in the repo and hot-reloaded
 
-  Key features: bar and widgets, control center, desktop widgets, night light, wallpaper, session
+  Covers the bar and widgets, control center, desktop widgets, night light, wallpaper, session
   panel, screenshots with annotation, system monitor, audio/volume, brightness, calendar/weather,
-  color schemes, dock, notifications, OSD, clipboard, and more.
+  color schemes, dock, notifications, OSD, and clipboard.
 
 - **[`hypridle/`](./hypridle/)**: Idle management
 
@@ -75,12 +74,14 @@ Noctalia consolidates functionality that previously required multiple tools:
 
 ### Input & Localization
 
-- **[`fcitx5/`](./fcitx5/)**: Fcitx5 input method with Mozc (Japanese input)
+- **[`fcitx5/`](./fcitx5/)**: Fcitx5 input method with Rime (Chinese), Mozc (Japanese), and Hangul
+  (Korean) engines
+- **[`vinput/`](./vinput/)**: Voice input on `ai` (OpenVINO) and `shoukei` (CPU)
 
 ### Applications
 
-- **[`desktop-tools.nix`](./desktop-tools.nix)**: Wayland session tools (clipboard, color picker,
-  brightness, audio, screen recording, auto-mount, `wlogout` emergency fallback)
+- **[`desktop-tools.nix`](./desktop-tools.nix)**: Wayland session tools (clipboard, brightness,
+  screen recording, auto-mount, virt-manager/virt-viewer, `wlogout` emergency fallback)
 - **[`browsers.nix`](./browsers.nix)**: Web browsers
 - **[`vscode.nix`](./vscode.nix)**: VS Code (GUI editor; the primary Zed config is shared from
   [`home/base/gui/zed-editor.nix`](../../../base/gui/zed-editor.nix))
@@ -96,7 +97,6 @@ Noctalia consolidates functionality that previously required multiple tools:
 ### System Utilities
 
 - **[`misc.nix`](./misc.nix)**: Misc GUI apps (e-book reader, remote desktop, hardened IM clients)
-- **[`immutable-file.nix`](./immutable-file.nix)**: Immutable file handling
 
 ## Related Documentation
 

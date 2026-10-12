@@ -36,6 +36,10 @@
 
   boot.loader.systemd-boot.enable = true;
 
+  # Ported from the upstream AI host, without changing EVA's disk identity:
+  # allow NVMe APST up to 100 ms and let binfmt use static emulators.
+  boot.kernelParams = [ "nvme_core.default_ps_max_latency_us=100000" ];
+
   # boot.kernelPackages = pkgs.linuxPackages_latest;
   # boot.kernelPackages = pkgs.linuxPackages_xanmod_latest;
   boot.kernelPackages = pkgs.linuxPackages_zen;
@@ -52,6 +56,7 @@
     "aarch64-linux"
     "riscv64-linux"
   ];
+  boot.binfmt.preferStaticEmulators = true;
 
   # supported file systems, so we can mount any removable disks with these filesystems
   boot.supportedFilesystems = [
@@ -129,7 +134,15 @@
     ];
   };
 
-  swapDevices = [ ];
+  # NixOS creates the file on first activation when it is absent. Keeping the
+  # size here makes the AI host's disk-backed swap strategy reproducible without
+  # requiring a destructive Disko run on EVA.
+  swapDevices = [
+    {
+      device = "/swap/swapfile";
+      size = 96 * 1024;
+    }
+  ];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
   # (the default) this is the recommended approach. When using systemd-networkd it's

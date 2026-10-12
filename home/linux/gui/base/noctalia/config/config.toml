@@ -21,12 +21,48 @@ setup_wizard_enabled = false
 annotate = true
 directory = "~/Pictures/Screenshots"
 
-# On-screen display popups: move the input-method/keyboard-layout OSD (shown on
-# every IM change, e.g. focusing an input box) out of the top-center lane and
-# pair it with notifications in the top-right corner. Also moves volume,
-# brightness, and the other OSD kinds; notifications keep their own position.
+# Session (power) menu: any explicit action list replaces the built-in defaults,
+# so re-declare all five default actions. Everything except lock gets a 10 s
+# confirm countdown: first press arms it, press again to run now, Esc or moving away cancels.
+[[shell.session.actions]]
+action = "lock"
+shortcut = "1"
+
+[[shell.session.actions]]
+action = "logout"
+shortcut = "2"
+countdown_seconds = 10
+
+[[shell.session.actions]]
+action = "lock_and_suspend"
+shortcut = "3"
+countdown_seconds = 10
+
+[[shell.session.actions]]
+action = "reboot"
+shortcut = "4"
+countdown_seconds = 10
+
+[[shell.session.actions]]
+action = "shutdown"
+shortcut = "5"
+variant = "destructive"
+countdown_seconds = 10
+
+# On-screen display popups: the input-method/keyboard-layout OSD shows on every
+# IM change (e.g. focusing an input box), so keep it clear of the top bar in the
+# bottom-right corner. Also moves volume, brightness, and the other OSD kinds.
 [osd]
-position = "top_right"
+position = "bottom_right"
+# go-musicfox posts its own desktop notification on every track change, so the
+# MPRIS media OSD would be a second popup.
+[osd.kinds]
+media = false
+
+# Desktop notification toasts (separate from the OSD above); same bottom-right
+# corner so transient popups no longer sit under the top bar.
+[notification]
+position = "bottom_right"
 
 [theme]
 source = "builtin"

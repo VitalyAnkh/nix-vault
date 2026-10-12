@@ -15,8 +15,8 @@ Manager.
 ### Base Desktop Environment
 
 - **base**: Common desktop configurations shared across all environments, including:
-  - **Noctalia**: native (v5) all-in-one Wayland desktop shell (replaces gammastep, swaylock,
-    anyrun, mako, waybar, wallpaper-switcher, wlogout, grim/slurp/satty, and other desktop tools)
+  - **Noctalia**: native (v5) all-in-one Wayland desktop shell; see
+    [`base/README.md`](./base/README.md) for the components it replaces
   - Creative tools and media applications
   - Development tools
   - Fcitx5 input method framework

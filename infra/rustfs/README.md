@@ -4,6 +4,12 @@ RustFS replaced the retired MinIO at `s3.writefor.fun` (console: `s3-console.wri
 service is declared in nix-config on the youko host; this directory manages its buckets/lifecycle
 and documents the IAM setup.
 
+## Installing `rc`
+
+`rc` is RustFS's S3-compatible CLI ([rustfs/cli](https://github.com/rustfs/cli)); it is not in
+nixpkgs. Download the Linux release archive from <https://github.com/rustfs/cli/releases> and put
+the `rc` binary on `PATH`.
+
 ## Credentials
 
 RustFS has no separate "root user" name: the root **access key** acts as the user and the **secret
@@ -14,6 +20,9 @@ to `/run/agenix/rustfs.env` (variables `RUSTFS_ACCESS_KEY` / `RUSTFS_SECRET_KEY`
 set -a; . <(sudo cat /run/agenix/rustfs.env); set +a
 rc alias set rustfs https://s3.writefor.fun "$RUSTFS_ACCESS_KEY" "$RUSTFS_SECRET_KEY"
 ```
+
+Sourcing the file is a deliberate exception to the rule against reading decrypted secrets: `cat`
+runs inside the process substitution, so the values go into the shell and are never printed.
 
 ## Buckets
 
@@ -28,7 +37,7 @@ rc ilm rule add rustfs/k3s-test-1-loki-chunks --expiry-days 7
 ```
 
 If the buckets were carried over from MinIO (S3-level copy), they already exist; import them into
-Terraform instead (`terraform import`, see the workspace READMEs).
+Terraform instead (the `terraform import` commands are in each workspace's `run.sh`).
 
 ## IAM
 

@@ -1,4 +1,5 @@
 {
+  lib,
   config,
   pkgs,
   agenix,
@@ -11,7 +12,6 @@
     agenix.darwinModules.default
   ];
 
-  # enable logs for debugging
   launchd.daemons."activate-agenix".serviceConfig = {
     StandardErrorPath = "/Library/Logs/org.nixos.activate-agenix.stderr.log";
     StandardOutPath = "/Library/Logs/org.nixos.activate-agenix.stdout.log";
@@ -21,14 +21,19 @@
     agenix.packages."${pkgs.stdenv.hostPlatform.system}".default
   ];
 
-  # if you changed this key, you need to regenerate all encrypt files from the decrypt contents!
-  age.identityPaths = [
-    # Generate manually via `sudo ssh-keygen -A`
-    "/etc/ssh/ssh_host_ed25519_key" # macOS, using the host key for decryption
-  ];
+  age.identityPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
 
   age.secrets =
     let
+      hasSecretFile = path: builtins.pathExists path;
+      optionalSecret =
+        name: file: extra:
+        lib.optionalAttrs (hasSecretFile file) ({
+          "${name}" = {
+            inherit file;
+          }
+          // extra;
+        });
       noaccess = {
         mode = "0000";
         owner = "root";
@@ -42,79 +47,51 @@
         owner = myvars.username;
       };
     in
-    {
-      # ---------------------------------------------
-      # no one can read/write this file, even root.
-      # ---------------------------------------------
+    lib.mkMerge [
+      (optionalSecret "vitalyr-gpg-subkeys.priv.age"
+        "${mysecrets}/vitalyr-gpg-subkeys-2024-01-27.priv.age.age"
+        noaccess
+      )
+      (optionalSecret "rclone.conf" "${mysecrets}/rclone.conf.age" high_security)
+      (optionalSecret "nix-access-tokens" "${mysecrets}/nix-access-tokens.age" user_readable)
+      (optionalSecret "ssh-key-romantic" "${mysecrets}/ssh-key-romantic.age" user_readable)
+      (optionalSecret "work-gitconfig" "${mysecrets}/desktop/work-gitconfig.age" user_readable)
+    ];
 
-      # .age means the decrypted file is still encrypted by age(via a passphrase)
-      "vitalyr-gpg-subkeys.priv.age" = {
-        file = "${mysecrets}/vitalyr-gpg-subkeys-2024-01-27.priv.age.age";
-      }
-      // noaccess;
+  environment.etc = lib.mkMerge [
+    (lib.optionalAttrs (builtins.hasAttr "rclone.conf" config.age.secrets) {
+      "agenix/rclone.conf".source = config.age.secrets."rclone.conf".path;
+    })
+    (lib.optionalAttrs (builtins.hasAttr "ssh-key-romantic" config.age.secrets) {
+      "agenix/ssh-key-romantic".source = config.age.secrets."ssh-key-romantic".path;
+    })
+    (lib.optionalAttrs (builtins.hasAttr "vitalyr-gpg-subkeys.priv.age" config.age.secrets) {
+      "agenix/vitalyr-gpg-subkeys.priv.age".source =
+        config.age.secrets."vitalyr-gpg-subkeys.priv.age".path;
+    })
+    (lib.optionalAttrs (builtins.hasAttr "work-gitconfig" config.age.secrets) {
+      "agenix/work-gitconfig".source = config.age.secrets."work-gitconfig".path;
+    })
+  ];
 
-      # ---------------------------------------------
-      # only root can read this file.
-      # ---------------------------------------------
-
-      "rclone.conf" = {
-        file = "${mysecrets}/rclone.conf.age";
-      }
-      // high_security;
-
-      "nix-access-tokens" = {
-        file = "${mysecrets}/nix-access-tokens.age";
-      }
-      # access-token needs to be readable by the user running the `nix` command
-      // user_readable;
-
-      # ---------------------------------------------
-      # user can read this file.
-      # ---------------------------------------------
-
-      "ssh-key-romantic" = {
-        file = "${mysecrets}/ssh-key-romantic.age";
-      }
-      // user_readable;
-
-      # decrypted secret: AI agents must not read it, only reference the path
-      "nushell-secrets.nu" = {
-        file = "${mysecrets}/nushell-secrets.nu.age";
-      }
-      // user_readable;
-    };
-
-  # place secrets in /etc/
-  # NOTE: this will fail for the first time. cause it's running before "activate-agenix"
-  environment.etc = {
-    "agenix/rclone.conf" = {
-      source = config.age.secrets."rclone.conf".path;
-    };
-
-    "agenix/ssh-key-romantic" = {
-      source = config.age.secrets."ssh-key-romantic".path;
-    };
-
-    "agenix/vitalyr-gpg-subkeys.priv.age" = {
-      source = config.age.secrets."vitalyr-gpg-subkeys.priv.age".path;
-    };
-
-    # The following secrets are used by home-manager modules
-    # But nix-darwin doesn't support environment.etc.<name>.mode
-    # So we need to change its mode manually
-    "agenix/nushell-secrets.nu" = {
-      source = config.age.secrets."nushell-secrets.nu".path;
-    };
-  };
-
-  # both the original file and the symlink should be readable and executable by the user
-  #
-  # activationScripts are executed every time you run `nixos-rebuild` / `darwin-rebuild` or boot your system
+  # nix-darwin ignores environment.etc mode/owner; restore the intended
+  # ownership after activation without widening root-only secrets.
   system.activationScripts.postActivation.text = ''
-    ${pkgs.nushell}/bin/nu -c '
-      if (ls /etc/agenix/ | length) > 0 {
-        sudo chown ${myvars.username} /etc/agenix/*
-      }
-    '
+    if [ -d /etc/agenix ]; then
+      for file in ssh-key-romantic work-gitconfig; do
+        if [ -e "/etc/agenix/$file" ]; then
+          ${pkgs.coreutils}/bin/chown ${myvars.username} "/etc/agenix/$file"
+          ${pkgs.coreutils}/bin/chmod 0500 "/etc/agenix/$file"
+        fi
+      done
+      if [ -e /etc/agenix/rclone.conf ]; then
+        ${pkgs.coreutils}/bin/chown root /etc/agenix/rclone.conf
+        ${pkgs.coreutils}/bin/chmod 0500 /etc/agenix/rclone.conf
+      fi
+      if [ -e /etc/agenix/vitalyr-gpg-subkeys.priv.age ]; then
+        ${pkgs.coreutils}/bin/chown root /etc/agenix/vitalyr-gpg-subkeys.priv.age
+        ${pkgs.coreutils}/bin/chmod 0000 /etc/agenix/vitalyr-gpg-subkeys.priv.age
+      fi
+    fi
   '';
 }

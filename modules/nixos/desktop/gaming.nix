@@ -1,6 +1,5 @@
 {
   pkgs,
-  pkgs-x64,
   nix-gaming,
   config,
   lib,
@@ -18,7 +17,7 @@ in
 
   options.modules.desktop = {
     gaming = {
-      enable = mkEnableOption "Install Game Suite(steam, lutris, etc)";
+      enable = mkEnableOption "Enable desktop gaming support";
     };
   };
 
@@ -39,11 +38,7 @@ in
       #   ~/.steam/root        - A symlink to ~/.local/share/Steam
       #   ~/.steam             - Some Symlinks & user info
       enable = true;
-      package = pkgs-x64.steam;
-      # https://github.com/ValveSoftware/gamescope
-      # Run a GameScope driven Steam session from your display-manager
-      # fix resolution upscaling and stretched aspect ratios
-      gamescopeSession.enable = true;
+      package = pkgs.steam;
       # https://github.com/Winetricks/winetricks
       # Whether to enable protontricks, a simple wrapper for running Winetricks commands for Proton-enabled games.
       protontricks.enable = true;
@@ -52,6 +47,32 @@ in
       fontPackages = [
         pkgs.wqy_zenhei # Need by steam for Chinese
       ];
+      # DW-Proton (Dawn Winery's Proton fork) carries the anti-cheat and game
+      # patches that mainline Proton/GE-Proton lack, so it is what runs the anime
+      # gacha games (Wuthering Waves, Honkai: Star Rail, Arknights: Endfield, ...);
+      # GE-Proton is the general fallback. Both appear as compatibility tools in
+      # each game's Properties -> Compatibility.
+      # https://dawn.wine/dawn-winery/dwproton
+      extraCompatPackages = [
+        pkgs.dwproton-bin
+        pkgs.proton-ge-bin
+      ];
+    };
+
+    # Expose DW-Proton to umu-run: umu ignores Steam's
+    # STEAM_EXTRA_COMPAT_TOOLS_PATHS, and a store path baked into a generated
+    # launcher goes stale on every dwproton-bin update. The nix-config-umu-game
+    # skill and the run/exec scripts it generates read this first.
+    environment.variables.UMU_PROTONPATH = "${pkgs.dwproton-bin.steamcompattool}";
+
+    # GameScope: run a game in its own nested compositor and let it renice
+    # itself for steadier frame pacing. GPU-specific PRIME render offload belongs
+    # to the host, not here (see programs.gamescope.env in
+    # hosts/idols-ai/hardware-nvidia.nix).
+    # https://github.com/ValveSoftware/gamescope
+    programs.gamescope = {
+      enable = true;
+      capSysNice = true;
     };
 
     # see https://github.com/fufexan/nix-gaming/#pipewire-low-latency

@@ -14,7 +14,7 @@
   ...
 }:
 let
-  inherit (networking) proxyGateway proxyGateway6;
+  inherit (networking) proxyGateway proxyGateway6 clusterULA6;
   inherit (networking.hostsAddr.${hostName}) ipv4;
   ipv4WithMask = "${ipv4}/24";
 
@@ -28,6 +28,9 @@ let
     in
     if builtins.stringLength h == 1 then "0${h}" else h;
   mac = "02:00:00:00:${toHex (builtins.elemAt octets 2)}:${toHex (builtins.elemAt octets 3)}";
+
+  # Same octets as the MAC: 192.168.5.111 -> fd05:5::05:6f. Survives ISP prefix changes.
+  ula = pkgs.lib.toLower "${clusterULA6}${toHex (builtins.elemAt octets 2)}:${toHex (builtins.elemAt octets 3)}/64";
 
   # tap iface name on the host (IFNAMSIZ is 16, so <= 15 chars). All homelab VMs
   # are 192.168.5.0/24, so the last octet is unique per host.
@@ -94,17 +97,18 @@ in
   systemd.network.networks."10-${hostName}" = {
     matchConfig.MACAddress = [ mac ];
     networkConfig = {
-      Address = [ ipv4WithMask ];
+      Address = [
+        ipv4WithMask
+        ula
+      ];
       DNS = [ proxyGateway ];
-      DHCP = "ipv6";
-      IPv6AcceptRA = true;
+      # No SLAAC/DHCPv6: the WAN /64 churns and Cilium keeps probing whatever it
+      # registered at agent start. The ULA above is the node's IPv6 identity.
+      DHCP = false;
+      IPv6AcceptRA = false;
       IPv6PrivacyExtensions = false;
       LinkLocalAddressing = "ipv6";
     };
-    # Keep the static resolver below as the only DNS server; router advertisements and DHCPv6
-    # still provide addresses and routes but must not add their own resolver entries.
-    dhcpV6Config.UseDNS = false;
-    ipv6AcceptRAConfig.UseDNS = false;
     routes = [
       {
         Destination = "0.0.0.0/0";
@@ -119,6 +123,13 @@ in
     linkConfig.RequiredForOnline = "routable";
   };
 
+  # No ULA counterpart to the LAN IPv4 accept in
+  # modules/nixos/base/networking/firewall.nix, so Cilium's node health probe
+  # (TCP 4240) between nodes is dropped. Trust the node plane like the LAN.
+  networking.firewall.extraInputRules = pkgs.lib.mkAfter ''
+    ip6 saddr ${clusterULA6}/64 accept
+  '';
+
   # journald on tmpfs -- keep it small
   services.journald.settings.Journal = {
     SystemMaxUse = "512M";
@@ -126,4 +137,17 @@ in
   };
 
   system.stateVersion = "26.05";
+
+  # The guest shares the host's read-only /nix/store (virtiofs) and has no store
+  # of its own, so its nix-gc.service can never succeed; it just failed on every
+  # k3s guest and tripped HostSystemdServiceCrashed. The host's own nix.gc
+  # reclaims the shared store, so disable automatic GC inside the guest.
+  nix.gc.automatic = false;
+
+  # MicroVM guests share the host's store and have no physical hardware to
+  # inspect, nothing to trace, no persisted /var/cache for a `locate` index,
+  # and nothing to advertise over mDNS.
+  modules.debugTools.enable = false;
+  modules.locate.enable = false;
+  modules.mdns.enable = false;
 }

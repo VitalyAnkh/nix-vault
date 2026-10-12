@@ -2,7 +2,6 @@
   config,
   lib,
   pkgs,
-  pkgs-master,
   myvars,
   ...
 }:
@@ -45,14 +44,5 @@ in
 
     # Browsers keep their profile/preferences in dconf.
     programs.dconf.enable = true;
-
-    # Clash Verge provides the proxy. Its core is started by the GUI, which is
-    # launched inside the session; service mode + TUN mode come from the module.
-    programs.clash-verge = {
-      enable = true;
-      package = pkgs-master.clash-verge-rev;
-      serviceMode = true;
-      tunMode = true;
-    };
   };
 }

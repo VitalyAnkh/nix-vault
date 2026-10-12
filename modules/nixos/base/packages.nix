@@ -1,42 +1,57 @@
-{ pkgs, ... }:
 {
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
-  environment.systemPackages = with pkgs; [
-    # system call monitoring
-    strace # system call monitoring
-    ltrace # library call monitoring
-    lsof # list open files
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+let
+  debugTools = config.modules.debugTools;
+in
+{
+  options.modules.debugTools.enable = lib.mkEnableOption ''
+    Tracing and benchmarking tools (strace, bpftrace, sysstat, iotop-c,
+    sysbench and the BCC tools).
 
-    # ebpf related tools
-    # https://github.com/bpftrace/bpftrace
-    bpftrace # powerful tracing tool
-    bpftop # monitor BPF programs
-    bpfmon # BPF based visual packet rate monitor
+    Off by default: opt in on hosts where you actually profile them.
+  '';
 
-    # system monitoring
-    sysstat
-    iotop-c
-    iftop
-    nmon
-    sysbench
-    systemctl-tui
-    pv # pipe viewer
+  config = {
+    # List packages installed in system profile. To search, run:
+    # $ nix search wget
+    environment.systemPackages = with pkgs; [
+      # system call monitoring
+      strace
+      ltrace
+      lsof
 
-    # system tools
-    psmisc # killall/pstree/prtstat/fuser/...
-    lm_sensors # for `sensors` command
-    ethtool
-    pciutils # lspci
-    usbutils # lsusb
-    hdparm # for disk performance, command
-    dmidecode # a tool that reads information about your system's hardware from the BIOS according to the SMBIOS/DMI standard
-    parted
-    smartmontools # smartctl -a /dev/nvme0n1
-    nvme-cli
-  ];
+      # ebpf related tools
+      bpftrace
+      bpftop
+      bpfmon
 
-  # BCC - Tools for BPF-based Linux IO analysis, networking, monitoring, and more
-  # https://github.com/iovisor/bcc
-  programs.bcc.enable = true;
+      # system monitoring
+      sysstat
+      iotop-c
+      iftop
+      nmon
+      sysbench
+      systemctl-tui
+      pv
+
+      # system tools
+      psmisc
+      lm_sensors
+      ethtool
+      pciutils
+      usbutils
+      hdparm
+      dmidecode
+      parted
+      smartmontools
+      nvme-cli
+    ];
+
+    # BCC - Tools for BPF-based Linux IO analysis, networking, monitoring, and more.
+    programs.bcc.enable = debugTools.enable;
+  };
 }

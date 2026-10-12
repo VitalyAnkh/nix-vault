@@ -118,7 +118,7 @@ Here is the cheatsheet related to my DoomEmacs configs. Please read vim's common
 
 ### Basics
 
-> Terminal(vterm) is useful in GUI mode, I use Zellij instead in terminal mode.
+> Terminal(vterm) is useful in GUI mode, I use TUIOS instead in terminal mode.
 
 | Action                 | Shortcut                                          |
 | ---------------------- | ------------------------------------------------- |

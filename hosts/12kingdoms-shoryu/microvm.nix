@@ -16,6 +16,7 @@
     restartIfChanged = true;
     specialArgs = inputs // {
       inherit
+        inputs
         myvars
         mylib
         agenix
@@ -30,6 +31,7 @@
     restartIfChanged = true;
     specialArgs = inputs // {
       inherit
+        inputs
         myvars
         mylib
         agenix

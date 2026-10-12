@@ -132,5 +132,7 @@ export def darwin-rollback [] {
     if not ($rebuild | path exists) {
         error make { msg: "no activated nix-darwin system at /run/current-system; rollback requires a previous activation" }
     }
-    sudo $rebuild --rollback
+    # darwin-rebuild refuses rollback unless it runs as root. Use the activated
+    # system rather than a stale build result, while preserving the environment.
+    sudo -E $rebuild --rollback
 }

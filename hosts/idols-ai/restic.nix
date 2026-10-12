@@ -25,8 +25,12 @@
       "/home/ryan/work"
       "/home/ryan/Pictures"
       "/home/ryan/codes"
+      "/home/ryan/src"
       "/home/ryan/nix-config"
       "/home/ryan/.local/state"
+      # dsh (DeepSeek Harness) state: session transcripts, workspace storages,
+      # profiles. Its credentials file is excluded below.
+      "/home/ryan/.dsh"
     ];
 
     # anything bigger than this is a re-downloadable artifact (models, datasets,
@@ -78,6 +82,8 @@
       "**/.cache"
       # git object packs: re-fetchable from the remotes
       "**/.git/objects/pack"
+      # dsh login credentials, same rule as the module's built-in credential excludes
+      "**/.dsh/.credentials.yaml"
     ];
   };
 }

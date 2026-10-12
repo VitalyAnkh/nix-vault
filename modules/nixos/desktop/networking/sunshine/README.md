@@ -19,7 +19,7 @@ state is preserved, and Intel `vkms` / `Virtual-1` is not used.
 Options:
 
 ```text
--u USER       session user (defaults to SUDO_USER)
+-u USER       session user (defaults to $SUDO_USER, else ryan)
 -t TTY        tty device, for example /dev/tty2
 -c COMMAND    Wayland session command (defaults to niri --session)
 -f, --force   replace an existing Niri session without confirmation

@@ -4,6 +4,10 @@
 
 1. https://grafana.com/grafana/dashboards/1860-node-exporter-full/
 2. https://grafana.com/grafana/dashboards/9578-alertmanager/
+3. `smartctl.json` — drive/SSD SMART health (wear, spare, media errors, temperature). Custom, built
+   on the `smartctl_exporter` metrics.
+4. `gpu.json` — GPU utilization, VRAM, and temperature.
+5. `nut-exporter.json` — UPS status (battery, load, runtime) from the NUT exporter.
 
 ## Kubernetes
 
@@ -23,7 +27,8 @@ mixin provides a comprehensive package for monitoring Loki in production.
 ## Databases
 
 1. PostgreSQL: https://grafana.com/grafana/dashboards/9628-postgresql-database/
-   - Requires Prometheus PostgreSQL exporter metrics. See: wrouesnel/postgres_exporter
+   - Requires Prometheus PostgreSQL exporter metrics. See:
+     <https://github.com/prometheus-community/postgres_exporter>
 1. CloudNative-PG:
    - Instance:
      https://github.com/cloudnative-pg/grafana-dashboards/blob/main/charts/cluster/grafana-dashboard.json

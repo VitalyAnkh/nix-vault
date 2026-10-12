@@ -1,0 +1,150 @@
+# Portable routing policy: nothing provider-specific lives here.
+#
+# Order matters. The generator appends these last, after the `private_domains`
+# rules, the rules from `sources.yaml` and the rules imported from your
+# subscriptions, so this file is the tail that closes every config.
+#
+# GEOSITE categories come from meta-rules-dat, which the module keeps current
+# (`geo-auto-update`). `mihomo -t` validates the names: `taobao`, `alipay` and
+# `wechat` do not exist in it, hence the hand-written domains below.
+
+# Region node groups. Each entry becomes two groups offered inside PROXY:
+# "<name> 自动" (url-test, lazy: only health-checked once selected) and
+# "<name> 手动" (select), both over the provider nodes whose name matches
+# `filter` (Go regex, case-insensitive). The generator also adds "🌍 其他地区"
+# (manual, everything not matched below) and "🌐 全部地区" (manual, all nodes);
+# AUTO is the all-node auto pick. Edit the regions freely; the single-char
+# keywords (港/台/日/美/韩) deliberately catch naming variants like 美西, 日服
+# and 狮城. Spell a country out where one character would also catch a
+# neighbour: 新 alone catches 新西兰.
+node_groups:
+  - name: "🇭🇰 香港"
+    filter: "(?i)(港|hk|hong ?kong|🇭🇰)"
+  - name: "🇹🇼 台湾"
+    filter: "(?i)(台|tw|taiwan|🇹🇼)"
+  - name: "🇯🇵 日本"
+    filter: "(?i)(日|jp|japan|东京|🇯🇵)"
+  - name: "🇸🇬 新加坡"
+    filter: "(?i)(新加坡|狮城|sg|singapore|🇸🇬)"
+  - name: "🇰🇷 韩国"
+    filter: "(?i)(韩|kr|korea|🇰🇷)"
+  - name: "🇺🇸 美国"
+    filter: "(?i)(美|usa|us[ -]|united states|america|🇺🇸)"
+
+# fake-ip-filter: these must resolve to real IPs, never a fake one. Tencent's
+# multimedia hosts matter because WeChat/QQ fetch images over bare CDN IPs.
+dns_filters:
+  - "*.lan"
+  - "*.local"
+  - "*.arpa"
+  - localhost.ptlogin2.qq.com
+  - localhost.sec.qq.com
+  - localhost.work.weixin.qq.com
+  - multimedia.nt.qq.com.cn
+  - time.*.com
+  - ntp.*.com
+  - "*.msftncsi.com"
+  - www.msftconnecttest.com
+  - +.market.xiaomi.com
+  - "*.tailscale.com"
+
+# CIDRs kept out of TUN: a destination that can never be proxied should not pay
+# the fake-ip round trip. Never add `198.18.0.0/15` -- that is the fake-ip range.
+# Override per machine with `tun_exclude_address:` in sources.yaml.
+tun_exclude_address:
+  - 0.0.0.0/8 # this network on this host
+  - 10.0.0.0/8
+  - 100.64.0.0/10 # RFC 6598 shared space: Tailscale, cloud metadata
+  - 169.254.0.0/16 # link-local: 169.254.169.254
+  - 172.16.0.0/12
+  - 192.0.2.0/24 # documentation prefixes
+  - 192.88.99.0/24 # deprecated 6to4 relay anycast
+  - 192.168.0.0/16
+  - 198.51.100.0/24
+  - 203.0.113.0/24
+  - 224.0.0.0/4 # multicast: mDNS, SSDP
+  - 240.0.0.0/4 # reserved, includes limited broadcast
+  - fd05:5::/64 # clusterULA6: the k3s node plane, on-link on the LAN
+  - fd7a:115c:a1e0::/48 # Tailscale IPv6 CGNAT: stays on tailscale0
+  - fe80::/10
+  - 2001:db8::/32 # IPv6 documentation
+  - 2002::/16 # deprecated 6to4
+
+# Optional extra rule-sets, usable by the rules below:
+#   rule_providers:
+#     my_list:
+#       type: http
+#       behavior: domain
+#       format: text
+#       url: "https://example.invalid/list.txt"
+#       path: ./rulesets/my_list.txt
+#       interval: 86400
+rule_providers: {}
+
+rules:
+  - GEOSITE,private,DIRECT
+  - GEOSITE,category-ads-all,REJECT
+
+  # Steam picks its download caches from the IP it sees on the login (CM) connection:
+  # a proxied login downloads from Tokyo/SG/HK/LA. `cm.steampowered.com` must precede
+  # the `steampowered.com` catch, and both the Valve IP ranges below, which also serve
+  # steamcommunity.com. Sources: README.md, "Steam download region".
+  - DOMAIN-SUFFIX,cm.steampowered.com,DIRECT
+  - DOMAIN-SUFFIX,steamserver.net,DIRECT
+  - DOMAIN-SUFFIX,steam-chat.com,DIRECT
+  - DOMAIN-SUFFIX,steamcontent.com,DIRECT
+  - DOMAIN-SUFFIX,steamcommunity.com,PROXY
+  - DOMAIN-SUFFIX,steampowered.com,PROXY
+  # Steam's mainland CDN partners. Not `manlaxy.com`: Valve's worldwide store/CDN
+  # domain, so pinning it DIRECT would break a proxied store.
+  - DOMAIN-SUFFIX,clngaa.com,DIRECT
+  - DOMAIN-SUFFIX,eccdnx.com,DIRECT
+  - DOMAIN-SUFFIX,pphimalayanrt.com,DIRECT
+  - DOMAIN-SUFFIX,nsclouds.cn,DIRECT
+  - DOMAIN-SUFFIX,wanwang.space,DIRECT
+  - DOMAIN-SUFFIX,baishancdnx.cn,DIRECT
+  # Match Valve by ASN so its content servers stay direct. Steam dials cached CM
+  # IPs without a lookup, so domain rules leak; needs ASN.mmdb via `geox-url.asn`.
+  - IP-ASN,32590,DIRECT,no-resolve
+  - DOMAIN,launcher-webstatic.hoyoverse.com,DIRECT
+
+  # CN consumer services: proxied they fail in ways that look like app bugs --
+  # WeChat pictures spin, JD and Taobao product images go blank. Much of it is
+  # served over bare CDN IPs and IPv6, so pin the whole category DIRECT.
+  - GEOSITE,tencent,DIRECT
+  - GEOSITE,bilibili,DIRECT
+  - GEOSITE,jd,DIRECT
+  - DOMAIN-SUFFIX,taobao.com,DIRECT
+  - DOMAIN-SUFFIX,tmall.com,DIRECT
+  - DOMAIN-SUFFIX,alicdn.com,DIRECT
+  - DOMAIN-SUFFIX,360buyimg.com,DIRECT
+  - DOMAIN-SUFFIX,feishu.cn,DIRECT
+  # WeChat/QQ image CDNs spelled out too, since they are fetched by IP
+  - DOMAIN-SUFFIX,qlogo.cn,DIRECT
+  - DOMAIN-SUFFIX,qpic.cn,DIRECT
+  - DOMAIN-SUFFIX,gtimg.com,DIRECT
+  - DOMAIN-SUFFIX,gtimg.cn,DIRECT
+  - DOMAIN-SUFFIX,gtimg.com.cn,DIRECT
+
+  # local ranges, by address as well as by name
+  - DOMAIN-SUFFIX,lan,DIRECT
+  # MagicDNS names are dialed by name, so the tailnet CIDR rules below cannot see
+  # them; a proxied tailnet peer is unreachable either way.
+  - DOMAIN-SUFFIX,ts.net,DIRECT
+  - IP-CIDR,0.0.0.0/8,DIRECT,no-resolve
+  - IP-CIDR,10.0.0.0/8,DIRECT,no-resolve
+  - IP-CIDR,100.64.0.0/10,DIRECT,no-resolve
+  - IP-CIDR,127.0.0.0/8,DIRECT,no-resolve
+  - IP-CIDR,172.16.0.0/12,DIRECT,no-resolve
+  - IP-CIDR,192.168.0.0/16,DIRECT,no-resolve
+  - IP-CIDR,224.0.0.0/4,DIRECT,no-resolve
+  - IP-CIDR6,fe80::/10,DIRECT,no-resolve
+  # IPv6 counterparts of the LAN and tailnet CIDR rules above; a belt for the
+  # route-exclude-address entries, which keep these off the TUN already.
+  - IP-CIDR6,fd05:5::/64,DIRECT,no-resolve
+  - IP-CIDR6,fd7a:115c:a1e0::/48,DIRECT,no-resolve
+
+  # everything else that is CN by geolocation, then the catch-all
+  - GEOSITE,cn,DIRECT
+  - GEOIP,CN,DIRECT
+  - MATCH,PROXY

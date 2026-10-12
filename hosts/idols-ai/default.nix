@@ -7,7 +7,8 @@
 }:
 #############################################################
 #
-#  Ai - my main computer, with NixOS + I5-13600KF + RTX 4090 GPU, for gaming & daily use.
+#  Ai - my main computer, with NixOS + Core Ultra 7 270K Plus + RTX 4090 GPU,
+#  128G DDR5-4800 (mixed 4-DIMM, see MIXED-MEMORY.md), for gaming & daily use.
 #
 #############################################################
 let
@@ -50,7 +51,8 @@ in
   # - zstd: CPU is not the bottleneck here (llama.cpp peaks ~30% util); its ~2.5x ratio
   #   keeps ~5G more anon bytes in the capped pool than lz4, and ~5us decompress is noise
   #   vs the ~100us SSD fault it avoids.
-  # - 10% pool (~9G): the module default 25% (~23G) would compete with the weight cache.
+  # - 10% pool (~13G on 128G): the module default 25% (~32G) would compete with the weight
+  #   cache.
   boot.zswap = {
     enable = true;
     compressor = "zstd";
@@ -62,6 +64,26 @@ in
 
   modules.btrbk.enable = true;
 
+  # Permit the desktop user to access Intel accelerator devices for local ASR.
+  users.users.${myvars.username}.extraGroups = [ "render" ];
+
+  # systemd-journal - cap disk usage
+  # https://www.freedesktop.org/software/systemd/man/latest/journald.conf.html
+  services.journald.settings.Journal = {
+    SystemMaxUse = "10G";
+    RuntimeMaxUse = "256M";
+  };
+
+  # Monitor SSD/NVMe SMART attributes so a drive going bad is visible before it
+  # fails, and so there is data behind the relaxed NVMe power-management
+  # settings in hardware-configuration.nix. smartd autodetects devices and
+  # reports to the journal (mail notifications stay off without an MTA).
+  services.smartd.enable = true;
+
+  # QEMU/KVM(HostCpuOnly) for local VMs.
+  environment.systemPackages = [ pkgs.qemu_kvm ];
+
+  # Re-evaluate after the Insta360 Link firmware or the kernel's uvcvideo changes.
   powerManagement.resumeCommands = ''
     # Insta360 Link may stay enumerated with a stalled UVC endpoint after S3 resume.
     ${pkgs.coreutils}/bin/sleep 1
@@ -98,8 +120,8 @@ in
       IPv6AcceptRA = true; # for Stateless IPv6 Autoconfiguraton (SLAAC)
       LinkLocalAddressing = "ipv6";
       # r8169 drops carrier on S3 resume; without this, networkd tears down the
-      # static address/route and clash's TUN auto-detect briefly loses its
-      # outbound interface, leaving routing broken until clash is restarted.
+      # static address/route and mihomo's TUN auto-detect briefly loses its
+      # outbound interface, leaving routing broken until mihomo is restarted.
       IgnoreCarrierLoss = "10s";
     };
     routes = [
@@ -114,6 +136,36 @@ in
       }
     ];
     linkConfig.RequiredForOnline = "routable";
+  };
+
+  # Point this link's DNS at mihomo while it runs, and revert it when it stops.
+  #
+  # Why a lifecycle hook: mihomo's sing-tun stack would call resolvectl itself,
+  # but nixpkgs' DynamicUser+hardened unit closes the D-Bus socket and SetLinkDNS
+  # needs privileged authorization; without the takeover resolved's upstream
+  # queries bypass dns-hijack and leave via the NIC. The '+' prefix escapes that
+  # sandbox -- a failed ExecStartPost would kill a healthy service -- and
+  # ExecStopPost also runs on crashes, so a dead mihomo leaves the network usable.
+  #
+  # Why the probe: the core opens :1053 only after parsing the rules, and rule
+  # parsing is where missing geodata gets fetched. Flipping at fork time pointed
+  # that fetch at a port nobody was listening on -- SERVFAIL, a fatal config
+  # error, a unit that could never start.
+  systemd.services.mihomo.serviceConfig = {
+    ExecStartPost = lib.mkDefault "+${pkgs.writeShellScript "mihomo-dns-takeover" ''
+      probe() { (exec 3<>/dev/tcp/127.0.0.1/1053) 2>/dev/null; }
+      up=0
+      for ((i = 0; i < 100; i++)); do
+        if probe; then up=1; break; fi
+        sleep 0.1
+      done
+      if [ "$up" = 0 ]; then
+        echo "mihomo never opened 127.0.0.1:1053; leaving ${iface} on its own DNS" >&2
+        exit 0
+      fi
+      exec ${pkgs.systemd}/bin/resolvectl dns ${iface} 127.0.0.1:1053
+    ''}";
+    ExecStopPost = lib.mkDefault "+${pkgs.systemd}/bin/resolvectl revert ${iface}";
   };
 
   # This value determines the NixOS release from which the default

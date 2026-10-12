@@ -1,7 +1,8 @@
-{ config, ... }:
+{ config, myvars, ... }:
 let
   hostName = "eva";
   mkSymlink = config.lib.file.mkOutOfStoreSymlink;
+  repoRoot = myvars.repoRoot or "${config.home.homeDirectory}/nix-vault";
 in
 {
   imports = [ ../../linux/gui.nix ];
@@ -28,5 +29,5 @@ in
   services.easyeffects.extraPresets."loudness-normalization".output."autogain#0".target = -23.0;
 
   xdg.configFile."niri/niri-hardware.kdl".source =
-    mkSymlink "${config.home.homeDirectory}/nix-vault/hosts/${hostName}/niri-hardware.kdl";
+    mkSymlink "${repoRoot}/hosts/${hostName}/niri-hardware.kdl";
 }

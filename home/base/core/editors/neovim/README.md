@@ -10,7 +10,7 @@ pointers for when you reach for Neovim as a backup.
 1. For deeper skill, read the official docs:
    1. <https://vimhelp.org/> — vim help.
    1. <https://neovim.io/doc/user/> — Neovim user manual.
-1. Prefer **Zellij** for shells and panes; use **Helix** or **Neovim** for buffers and text.
+1. Prefer **tuios** for shells and panes; use **Helix** or **Neovim** for buffers and text.
 1. Two powerful navigation modes on large codebases:
    1. **By path** — when you know the tree layout.
    1. **By content** — when you know what the code says.
@@ -23,18 +23,13 @@ Type `:tutor` (or `:Tutor` in Neovim) for the built-in vim tutorial.
 
 > For a fuller reference: <https://vimhelp.org/quickref.txt.html>
 
-Emacs Evil, Neovim, and vim share the motions below.
+Neovim and vim share the motions below.
 
 ### Terminal related
 
-Zellij shortcuts used often:
-
-| Action                    | Zellij shortcut |
-| ------------------------- | --------------- |
-| Floating terminal         | `Ctrl + p + w`  |
-| Horizontal split terminal | `Ctrl + p + d`  |
-| Vertical split terminal   | `Ctrl + p + n`  |
-| Run a shell command       | `!xxx`          |
+For the common **tuios** pane shortcuts, see the table in
+[`../helix/README.md`](../helix/README.md#terminal-related). To run a shell command from Vim, use
+`:!<command>`.
 
 ### File management
 
@@ -61,9 +56,9 @@ Zellij shortcuts used often:
 | Left / down / up / right            | `h` `j` `k` `l` (counts like `5j` work) |
 | Jump to matchpairs `()`, `{}`, `[]` | `%`                                     |
 | Start / end of line                 | `0` / `$`                               |
-| Sentence forward / backward         | `(` / `)`                               |
-| Paragraph forward / backward        | `{` / `}`                               |
-| Section forward / backward          | `[[` / `]]`                             |
+| Sentence forward / backward         | `)` / `(`                               |
+| Paragraph forward / backward        | `}` / `{`                               |
+| Section forward / backward          | `]]` / `[[`                             |
 | Jump to marks                       | `'` + mark (Neovim may prompt)          |
 
 Text objects:
@@ -102,7 +97,7 @@ Misc:
 | Block visual             | `<Ctrl-v>`  |
 | Fold close / open        | `zc` / `zo` |
 | Go to definition         | `gd`        |
-| Go to references         | `gD`        |
+| Go to declaration        | `gD`        |
 | Comment line (if mapped) | e.g. `gcc`  |
 
 | Action                              | Command        |
@@ -139,7 +134,7 @@ Advanced patterns:
 
 Notes:
 
-- `\v` — “very magic”, less backslash noise in the pattern.
+- `\v` — "very magic", less backslash noise in the pattern.
 - `\1` — first capture group.
 
 ### Specific line ranges

@@ -1,13 +1,12 @@
 # Home Manager's Linux Submodules
 
-This directory contains Linux-specific Home Manager configurations organized for different use
-cases.
+This directory contains Linux-specific Home Manager configurations.
 
 ## Configuration Modules
 
 ### Core Configurations
 
-- **core.nix**: Essential Linux-specific configurations and settings
+- **core.nix**: Linux-specific configurations
 - **base/**: Base Linux configurations including shell, tools, and utilities
   - `shell.nix`: Shell configurations and aliases
   - `tools.nix`: Essential command-line tools and utilities
@@ -16,7 +15,7 @@ cases.
 
 - **gui/**: Desktop environment configurations
   - **niri/**: Niri compositor configuration
-  - **i3/**: Headless X11 computer-use session (Xvfb + i3)
+  - **i3/**: Headless computer-use session (see `gui/i3/README.md`)
   - **base/**: Common desktop applications and services
 
 ### Available Entry Points
@@ -29,4 +28,3 @@ cases.
 
 - **Lightweight/Terminal**: Use `core.nix` or `tui.nix` for terminal-focused setups
 - **Desktops**: Use `gui.nix` for full desktop environments with Noctalia Shell and Niri compositor
-- **Custom**: Mix and match configurations as needed for your specific use case

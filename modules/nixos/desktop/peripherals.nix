@@ -28,7 +28,7 @@ in
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
-    # If you want to use JACK applications, uncomment this
+    # Keep JACK available for audio applications that use it directly.
     jack.enable = true;
     wireplumber.enable = true;
   };
@@ -60,27 +60,29 @@ in
     printing.enable = true; # Enable CUPS to print documents.
     geoclue2.enable = true; # Enable geolocation services.
 
-    udev = {
-      packages = with pkgs; [
-        gnome-settings-daemon
-        webhidHidrawUaccessRules
-        # platformio # udev rules for platformio
-        # openocd # required by paltformio, see https://github.com/NixOS/nixpkgs/issues/224895
-        # openfpgaloader
-      ];
-    };
+    udev.packages = with pkgs; [
+      gnome-settings-daemon
+      webhidHidrawUaccessRules
+      # platformio # udev rules for platformio
+      # openocd # required by paltformio, see https://github.com/NixOS/nixpkgs/issues/224895
+      # openfpgaloader
+    ];
 
     # A key remapping daemon for linux.
     # https://github.com/rvaiya/keyd
-    # keyd = {
-    #   enable = false;
-    #   keyboards.default.settings = {
-    #     main = {
-    #       # overloads the capslock key to function as both escape (when tapped) and control (when held)
-    #       #capslock = "overload(control, esc)";
-    #       #esc = "capslock";
-    #     };
-    #   };
-    # };
+    keyd = {
+      enable = true;
+      keyboards.default.settings = {
+        main = {
+          capslock = "overload(control, esc)";
+          esc = "capslock";
+          # Preserve right-hand modifiers used by vinput and Rime.
+          rightcontrol = "rightcontrol";
+          rightshift = "rightshift";
+          rightmeta = "rightmeta";
+          rightalt = "layer(altgr)";
+        };
+      };
+    };
   };
 }

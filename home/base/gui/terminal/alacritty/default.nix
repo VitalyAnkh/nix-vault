@@ -63,7 +63,7 @@
           ];
         };
         # Controls the ability to write to the system clipboard with the OSC 52 escape sequence.
-        # It's used by zellij to copy text to the system clipboard.
+        # It is used by terminal multiplexers such as tuios to copy text to the system clipboard.
         osc52 = "CopyPaste";
       };
     };

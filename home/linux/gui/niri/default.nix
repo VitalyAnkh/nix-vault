@@ -30,7 +30,7 @@ in
         xdg.configFile =
           let
             mkSymlink = config.lib.file.mkOutOfStoreSymlink;
-            confPath = "${config.home.homeDirectory}/nix-config/home/linux/gui/niri/conf";
+            confPath = "${config.home.homeDirectory}/nix-vault/home/linux/gui/niri/conf";
           in
           {
             "niri/config.kdl".source = mkSymlink "${confPath}/config.kdl";

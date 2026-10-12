@@ -1,5 +1,16 @@
-{ pkgs, ... }:
 {
+  config,
+  myvars,
+  pkgs,
+  ...
+}:
+let
+  repoRoot = myvars.repoRoot or "${config.home.homeDirectory}/nix-vault";
+in
+{
+  # The local profile and Rime data are authoritative for this host family.
+  # Keep Catppuccin from rewriting the generated fcitx5 configuration.
+  catppuccin.fcitx5.enable = false;
   xdg.configFile = {
     "fcitx5/profile" = {
       source = ./profile;
@@ -19,6 +30,9 @@
       source = ./cloudpinyin.conf;
       force = true;
     };
+    # Keep the user-managed Mozc dictionary database outside the store.
+    "mozc/config1.db".source =
+      config.lib.file.mkOutOfStoreSymlink "${repoRoot}/home/linux/gui/base/fcitx5/mozc-config1.db";
   };
 
   i18n.inputMethod = {
@@ -26,13 +40,23 @@
     type = "fcitx5";
     fcitx5.waylandFrontend = true;
     fcitx5.addons = with pkgs; [
-      # for flypy chinese input method
-      fcitx5-rime
       # needed enable rime using configtool after installed
       qt6Packages.fcitx5-configtool
       qt6Packages.fcitx5-chinese-addons
       # fcitx5-mozc    # japanese input method
       fcitx5-gtk # gtk im module
+
+      # Chinese: the flypy (小鹤音形) fcitx5-rime addon is wired in
+      # home/base/gui/rime/default.nix, which is also where the rime-data-flypy
+      # package is resolved. fcitx5-chinese-addons is not used.
+
+      # Japanese
+      # ctrl-i / F7 - convert to takakana
+      # ctrl-u / F6 - convert to hiragana
+      fcitx5-mozc-ut # Moze with UT dictionary
+
+      # Korean
+      fcitx5-hangul
     ];
   };
 }

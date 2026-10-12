@@ -102,29 +102,9 @@ in
     systemd-oomd.serviceConfig = serviceConfigNoMountNamespaceWithDevices;
     systemd-timesyncd.serviceConfig = serviceConfigNoMountNamespaceWithDevices;
 
-    netbird-homelab = {
-      serviceConfig = serviceConfigNoMountNamespaceWithDevices;
-      wantedBy = lib.mkForce [ ];
-    };
     avahi-daemon.serviceConfig = serviceConfigNoMountNamespaceWithDevices;
 
-    # netbird-homelab start-pre can time out on this host (a lot of preservation bind mounts),
-    # and when it's started synchronously from multi-user/graphical targets it can block boot
-    # and even make `nixos-rebuild switch` fail.
-    #
-    # Keep the client unit installed but not in the critical boot chain; start it asynchronously.
-    netbird-homelab-autostart = {
-      description = "Async start netbird-homelab after boot";
-      wantedBy = [ "multi-user.target" ];
-      wants = [ "network.target" ];
-      after = [ "network.target" ];
-      serviceConfig = {
-        Type = "oneshot";
-        ExecStart = "/run/current-system/sw/bin/systemctl start --no-block netbird-homelab.service";
-      };
-    };
   };
-  services.netbird.clients.homelab.autoStart = lib.mkForce false;
 
   networking = {
     inherit hostName;

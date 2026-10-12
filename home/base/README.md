@@ -20,35 +20,33 @@ systems.
   - **theme.nix**: Color schemes and theming
   - **xdg.nix**: XDG base-directory configuration
   - **yazi.nix**: Terminal file manager configuration
-  - **zellij/**: Terminal multiplexer with custom layouts
 
 ### Desktop Environment
 
 - **gui/**: Cross-platform GUI applications and configurations
-  - **dev-tools.nix**: Development tools and IDEs
+  - **dev-tools.nix**: Misc development and network tools (mitmproxy, wireshark)
   - **media.nix**: Media players and utilities
   - **zed-editor.nix**: Zed editor configuration (primary GUI editor)
+  - **rime/**: Rime (flypy) customisation shared by fcitx5-rime (Linux) and Squirrel (macOS)
   - **terminal/**: Terminal emulator configurations
-    - **alacritty/**: Alacritty terminal
+    - **ghostty.nix**: Ghostty terminal (default)
     - **kitty.nix**: Kitty terminal
-    - **foot.nix**: Foot terminal (Linux)
-    - **ghostty.nix**: Ghostty terminal
 
 ### Terminal Interface
 
 - **tui/**: Terminal-based interface configurations
-  - **agent-env.nix**: Telemetry/auto-update opt-outs for AI coding agents
+  - **agents/**: AI coding agents — global rules deployment, CLIs, and telemetry/auto-update
+    opt-outs
   - **cloud/**: Cloud development tools (Terraform, etc.)
   - **container.nix**: Container tools (Docker, Podman)
   - **dev-tools.nix**: Terminal-based development tools
   - **editors/**: Extra terminal editor Nix (see `core/editors/` for docs and baseline enables)
   - **encryption/**: Encryption and security tools
   - **gpg/**: GPG key management
-  - **herdr.nix**: Herdr agent terminal-multiplexer configuration
   - **password-store/**: Password management with pass
   - **shell/**: Shell environment configurations
   - **ssh.nix**: SSH configuration and management
-  - **zellij/**: Terminal workspace management
+  - **tuios/**: Terminal window manager / multiplexer (config + nushell auto-start)
 
 ### System Management
 
@@ -60,10 +58,8 @@ All configurations in this directory are designed to work across:
 
 - **Linux**: All distributions with Nix and Home Manager
 - **macOS**: Darwin systems with Home Manager
-- **WSL**: Windows Subsystem for Linux
 
 ## Usage
 
-These base configurations provide the foundation for both Linux and Darwin systems, ensuring
-consistent environments across different platforms while allowing for platform-specific
-customizations.
+These base configurations provide the foundation for both Linux and Darwin systems while allowing
+for platform-specific customizations.

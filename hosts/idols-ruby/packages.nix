@@ -1,4 +1,8 @@
-{ pkgs, llm-agents, ... }:
+{
+  pkgs,
+  llm-agents,
+  ...
+}:
 let
   agentPackages = llm-agents.packages.${pkgs.stdenv.hostPlatform.system};
 in
@@ -36,7 +40,6 @@ in
       pnpm
 
       #-- python
-      conda
       uv # python project package manager
       (python313.withPackages (
         ps: with ps; [
@@ -84,9 +87,10 @@ in
     ++ [
       # Agents
       agentPackages.codex
-      agentPackages.opencode
-      agentPackages.kimi-code
+      agentPackages.opencode2
       agentPackages.pi
-      agentPackages.omp
+      # Keep the same pinned llm-agents package used by the shared Home Manager
+      # agent module; the NUR snapshot no longer exports a dsh attribute.
+      agentPackages.dsh
     ];
 }

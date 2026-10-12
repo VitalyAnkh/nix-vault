@@ -22,7 +22,6 @@ let
         # host specific
         "hosts/${name}"
         # nixos hardening
-        # "hardening/profiles/default.nix"
         "hardening/nixpaks"
         "hardening/bwraps"
       ])
@@ -33,6 +32,10 @@ let
           modules.secrets.desktop.enable = true;
           modules.secrets.preservation.enable = true;
           modules.desktop.gaming.enable = true;
+          modules.desktop.canokey.enable = true;
+          # Native mihomo core + local web dashboard instead of the Clash Verge
+          # GUI; its config is ~/.config/mihomo/config.yaml (out of the store).
+          modules.networking.mihomo.enable = true;
         }
       ];
     home-modules = map mylib.relativeToRoot [
