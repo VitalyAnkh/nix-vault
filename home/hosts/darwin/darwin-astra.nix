@@ -39,7 +39,8 @@ in
   modules.shell.workAliases.enable = false;
   modules.shell.zai.enable = false;
   modules.desktop.squirrel.enable = false;
-  modules.desktop.aerospace.enable = false;
+  # Upstream removed the AeroSpace module (16e48e57); astra never linked ~/.aerospace.toml.
+  # modules.desktop.aerospace.enable = false;
   modules.desktop.proxy.enable = false;
   # Homebrew casks provide newer Zotero and Obsidian here; a second copy from
   # Home Manager would share their data directories.

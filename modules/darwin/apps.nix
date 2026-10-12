@@ -70,9 +70,6 @@ in
     nushell # my custom shell
     gnugrep # replacee macos's grep
     gnutar # replacee macos's tar
-
-    # darwin only apps
-    utm # virtual machine
   ];
   environment.variables = {
     # Fix https://github.com/LnL7/nix-darwin/wiki/Terminfo-issues
@@ -114,18 +111,11 @@ in
     # otherwise Apple Store will refuse to install them.
     # For details, see https://github.com/mas-cli/mas
     masApps = {
-      Keynote = 409183694;
       Slack = 803453959;
       WireGuard = 1451685025;
       # Xcode = 497799835;
       Wechat = 836500024;
     };
-
-    taps = [
-      "hashicorp/tap"
-      "nikitabobko/tap" # aerospace - an i3-like tiling window manager for macOS
-      "FelixKratz/formulae" # janky borders - highlight active window borders
-    ];
 
     brews = [
       # `brew install`
@@ -133,6 +123,7 @@ in
       "curl" # no not install curl via nixpkgs, it's not working well on macOS!
       "aria2" # download tool
       "wireguard-tools" # wireguard
+      "container" # https://github.com/apple/container
 
       # Usage:
       #  https://github.com/tailscale/tailscale/wiki/Tailscaled-on-macOS#run-the-tailscaled-daemon
@@ -147,11 +138,6 @@ in
       # commands like `gsed` `gtar` are required by some tools
       "gnu-sed"
       "gnu-tar"
-
-      # misc that nix do not have cache for.
-      "git-trim"
-      "terraform"
-      "terraformer"
     ];
 
     # `brew install --cask`
@@ -165,9 +151,6 @@ in
 
       # code editor
       "visual-studio-code"
-      "cursor" # cursor ai editor
-
-      "aerospace" # an i3-like tiling window manager for macOS
 
       # AI agents
       "codex-app" # codex desktop app
@@ -179,14 +162,13 @@ in
       "joplin" # note taking app
 
       "tailscale-app" # tailscale macos app (with gui)
-      "netbirdio/tap/netbird-ui" # netbird gui app
+      # "netbirdio/tap/netbird-ui" # netbird gui app
 
       # IM & audio & remote desktop & meeting
       "telegram"
       "qq"
       "qqmusic"
       # "discord" # update too frequently, use the web version instead
-      "microsoft-remote-desktop"
       # "windows-app"
       "moonlight" # remote desktop client (Sunshine/Moonlight game-stream based)
       # "rustdesk" # meeting
@@ -194,16 +176,12 @@ in
       "zoom" # meeting
 
       # Misc
-      # "shadowsocksx-ng" # proxy tool
       "iina" # video player
-      # "raycast" # (HotKey: alt/option + space)search, calculate and run scripts(with many plugins)
       "stats" # beautiful system status monitor in menu bar
-      "jordanbaird-ice" # Powerful menu bar manager for macOS
       "orcaslicer" # 3d printer slicer app
       "bambu-studio" # bambu 3d printer slicer app
 
       # "reaper"  # audio editor
-      # "sonic-pi" # music programming
       # "tencent-lemon" # macOS cleaner
       "neteasemusic" # music
       "blender@lts" # 3D creation suite
@@ -212,7 +190,6 @@ in
       # Development
       "mitmproxy" # HTTP/HTTPS traffic inspector
       "wireshark-app" # network analyzer
-      # "jdk-mission-control" # Java Mission Control
       # "google-cloud-sdk" # Google Cloud SDK
       "miniforge" # Miniconda's community-driven distribution
 

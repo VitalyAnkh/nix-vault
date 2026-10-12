@@ -40,11 +40,12 @@
       wakatime-cli
       duckdb
       (lib.lowPrio wrangler)
+      # Darwin hosts get it here too; upstream moved it from Homebrew to Nix (e6245cad).
+      git-trim
       gitleaks
     ]
     ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
       conda
-      git-trim
     ];
 
   programs = {

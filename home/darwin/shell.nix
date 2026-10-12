@@ -1,5 +1,7 @@
 { config, lib, ... }:
 let
+  # Upstream (6218bb22) prepends Homebrew here. Appending keeps Nix packages ahead
+  # of Homebrew's, which astra's PATH order relies on (docs/astra-macos-host.md).
   envExtra = ''
     export PATH="$PATH:/opt/homebrew/bin:/usr/local/bin"
   '';

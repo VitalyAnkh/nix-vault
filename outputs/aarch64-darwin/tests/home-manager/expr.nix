@@ -23,9 +23,8 @@ lib.genAttrs hosts (
   in
   {
     inherit (home.home) homeDirectory;
-    # The `j` alias and the AeroSpace and proxychains links all use the checkout.
+    # The `j` alias and the proxychains link use the checkout.
     justAlias = home.home.shellAliases.j;
-    aerospaceConfig = linkTarget ".aerospace.toml";
     proxychainsConfig = linkTarget ".proxychains/proxychains.conf";
   }
 )

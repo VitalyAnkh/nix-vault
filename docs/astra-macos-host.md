@@ -19,7 +19,7 @@
 | `home/darwin`、`home/base`             | 与 `fern`、`frieren` 共用的编辑器、shell、开发工具和应用配置                            |
 
 主机级 `repoRoot` 为家目录下的 `projects/dev/nix/nix-vault`。仓库位置改变时更新该值；`j`（即
-`just -f <repoRoot>/justfile`）、项目模板命令以及启用后的 AeroSpace/proxy 配置使用此路径。
+`just -f <repoRoot>/justfile`）、项目模板命令以及启用后的 proxy 配置使用此路径。
 
 astra 只在 `outputs/aarch64-darwin/src/astra.nix` 中覆盖 `myvars`
 的账号和仓库路径；其它主机和独立 HM 输出使用全局
@@ -55,7 +55,7 @@ astra 只在 `outputs/aarch64-darwin/src/astra.nix` 中覆盖 `myvars`
 - 不导入 agenix secrets，也不从 Nushell 注入工作私有 alias 或替换 AI
   provider。凭据不得写入 Nix 表达式、Nix store 或构建日志。
 
-这些是 astra 的正常主机选择。需要改变应用接管范围时，修改对应能力选项并重新验证产物。AeroSpace、Squirrel 等能力的配置和应用本体须同时就绪，生成配置文件不等于安装了应用。
+这些是 astra 的正常主机选择。需要改变应用接管范围时，修改对应能力选项并重新验证产物。Squirrel、proxy 等能力的配置和应用本体须同时就绪，生成配置文件不等于安装了应用。
 
 ### Emacs
 
