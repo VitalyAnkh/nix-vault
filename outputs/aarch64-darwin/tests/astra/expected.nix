@@ -88,9 +88,7 @@ in
     gnupgUsesUpstream = true;
     argocdUsesUpstream = true;
     zedUsesOfficialBinary = true;
-    # The repository uses the pinned official Zed binary package rather than
-    # nixpkgs' current version, so this is intentionally allowed to differ.
-    zedVersionMatchesUpstream = false;
+    zedVersionAtLeastUpstream = true;
   };
   emacs = {
     enable = true;

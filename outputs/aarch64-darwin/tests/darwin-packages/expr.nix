@@ -25,7 +25,11 @@ lib.genAttrs (builtins.attrNames outputs.darwinConfigurations) (
       patch: lib.hasSuffix "/make-autoload-arglist.patch" (toString patch)
     ) pkgs.emacs-master-pgtk-with-igc.patches;
     # pkgs/android-studio-tools installs Google's macOS command-line tools archive.
-    androidToolsUseMacArchive = builtins.any (lib.hasInfix "commandlinetools-mac-") pkgs.android-studio-tools.src.urls;
+    androidToolsUseMacArchive = builtins.any (lib.hasInfix "/commandlinetools-mac") pkgs.android-studio-tools.src.urls;
+    # Its pin follows Google's newest build, never older than nixpkgs' Linux archive.
+    androidToolsAtLeastUpstream = lib.versionAtLeast pkgs.android-studio-tools.version upstreamPkgs.android-studio-tools.version;
+    # pkgs/jetbrains-toolbox follows JetBrains' newest release on Darwin.
+    jetbrainsToolboxAtLeastUpstream = lib.versionAtLeast pkgs.jetbrains-toolbox.version upstreamPkgs.jetbrains-toolbox.version;
     # modules/darwin/overlays.nix: packages that need Node only to build keep
     # their upstream builds instead of being rebuilt with the patched Node.
     nodeBuildUsersFromUpstream = {

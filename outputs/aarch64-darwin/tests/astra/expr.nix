@@ -167,8 +167,8 @@ in
     argocdUsesUpstream = darwin.pkgs.argocd.drvPath == upstreamPkgs.argocd.drvPath;
     zedUsesOfficialBinary =
       home.programs.zed-editor.package.drvPath == darwin.pkgs.zed-editor-bin.drvPath;
-    zedVersionMatchesUpstream =
-      home.programs.zed-editor.package.version == upstreamPkgs.zed-editor.version;
+    # zed-editor-bin follows Zed's newest stable release, never older than nixpkgs' build.
+    zedVersionAtLeastUpstream = lib.versionAtLeast home.programs.zed-editor.package.version upstreamPkgs.zed-editor.version;
   };
   emacs = {
     inherit (home.modules.editors.emacs) enable;

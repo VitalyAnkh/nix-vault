@@ -267,16 +267,21 @@ pin 的原始配方及测试设置，使 GnuPG、Pass 等依赖保持上游缓�
 `modules/base/overlays.nix`
 中关闭测试的 OpenLDAP 覆盖；缓存身份一致不保证缓存服务器一定有对应产物或当前网络能够下载。
 
-Zed 使用 `pkgs.zed-editor-bin`
-提供的官方 macOS 应用，版本与固定 nixpkgs 的 Zed 一致，下载地址和 SHA-256 固定在仓库中。打包保留完整签名 App、`zed`
+Zed 使用 `pkgs.zed-editor-bin` 提供的官方 macOS 应用，版本跟随 Zed 的最新稳定版（不低于 nixpkgs 的
+`zed-editor`，astra 的 eval 测试检查这一点），下载地址和 SHA-256 固定在仓库中。打包保留完整签名 App、`zed`
 / `zeditor`
 命令入口，沿用共享 HM 设置并关闭应用自行更新。它不构建 Rust 应用和测试依赖，也不提供独立的
 `remote_server` 输出；远程项目按官方应用的方式获取对应服务端。其它主机使用 nixpkgs 的
-`zed-editor`。更新 nixpkgs 后需同步核对官方 Zed 版本和哈希。构建时只做静态检查：`zed` / `zeditor`
+`zed-editor`。更新时两个架构的 DMG 哈希都要换，可直接用 GitHub API 返回的 asset
+digest。构建时只做静态检查：`zed` / `zeditor`
 链接，以及构建沙盒关闭时（Nix 在 Darwin 上的默认设置）的 App 版本和完整签名。构建中不执行 CLI，以免签名应用触发 macOS 保护、妨碍 Nix 整理输出元数据；CLI 在产物完成后手动验证（见“验证应覆盖”）。
 
-Android 命令行工具在 Darwin 使用同版本的官方 macOS 归档，保留其中 Google 签名的 Darwin 原生库；本地包只替换归档来源，其中的脚本已带 Mac 标题。上游版本变化时，显式检查会提示更新归档哈希或移除这一覆盖。
-`sdkmanager` 使用显式 `--sdk_root=<SDK 目录>` 指定可写 SDK，不把 SDK 安装进只读 store。
+Android 命令行工具在 Darwin 使用官方 macOS 归档：nixpkgs 在所有平台上都重新打包 Linux 归档，而 macOS 归档带有 Google 签名的 Darwin 原生代码，包括 JNI 库和 cmdline-tools
+23.0 起新增的原生 `android`
+CLI。本地包只替换归档来源，其中的脚本已带 Mac 标题。Google 的 Linux 和 macOS 归档使用相同的构建号；本地包固定为[仓库索引](https://dl.google.com/android/repository/repository2-3.xml)中最新的构建，并用它作为包版本，所以可能比 nixpkgs 新，eval 测试检查它不低于 nixpkgs 的版本。自 cmdline-tools
+22.0 起，macOS 归档按架构分为 `mac_arm64` 和 `mac_x86_64` 两个文件（不带架构的
+`commandlinetools-mac` 文件名止于 15641748），两个哈希都要更新。23.0 起 `sdkmanager` 已弃用，会转调
+`android sdk`；它仍接受显式的 `--sdk_root=<SDK 目录>`，用来指定可写 SDK，不把 SDK 安装进只读 store。
 
 `pass-import`
 保留全部导入后端。上游缓存中没有 Darwin 的 Jeepney，而它的测试需要 Nix 构建中不可用的 launchd 会话总线；`modules/darwin/overlays.nix`
@@ -448,5 +453,5 @@ daemon。之后恢复文件、权限、链接和原先不存在项，再恢复�
 - [Home Manager 应用复制](https://github.com/nix-community/home-manager/blob/f938277527aa084929261879d50d9832b9eab6d3/modules/targets/darwin/copyapps.nix)
 - [Home Manager 字体同步](https://github.com/nix-community/home-manager/blob/f938277527aa084929261879d50d9832b9eab6d3/modules/targets/darwin/fonts.nix)
 - [Home Manager Zed 设置](https://github.com/nix-community/home-manager/blob/f938277527aa084929261879d50d9832b9eab6d3/modules/programs/zed-editor.nix)
-- [Zed 1.9.0 官方发布](https://github.com/zed-industries/zed/releases/tag/v1.9.0)
+- [Zed 官方发布](https://github.com/zed-industries/zed/releases)
 - [Nix 2.35 实验性 CA 格式变化](https://github.com/NixOS/nix/blob/2.35.2/doc/manual/source/release-notes/rl-2.35.md)

@@ -7,6 +7,8 @@ lib.genAttrs (builtins.attrNames outputs.darwinConfigurations) (name: {
   emacsIsNs = true;
   emacsHasAutoloadFix = true;
   androidToolsUseMacArchive = true;
+  androidToolsAtLeastUpstream = true;
+  jetbrainsToolboxAtLeastUpstream = true;
   nodeBuildUsersFromUpstream = {
     zotero = true;
     marksman = true;
