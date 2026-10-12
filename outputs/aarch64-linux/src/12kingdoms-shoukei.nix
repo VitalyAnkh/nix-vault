@@ -22,7 +22,6 @@ let
         # host specific
         "hosts/12kingdoms-${name}"
         # nixos hardening
-        # "hardening/profiles/default.nix"
         "hardening/nixpaks"
         "hardening/bwraps"
       ])
@@ -34,6 +33,10 @@ let
           modules.secrets.preservation.enable = true;
           # not supported yet
           modules.desktop.gaming.enable = false;
+          modules.desktop.canokey.enable = true;
+          # Native mihomo core + local web dashboard (config is
+          # ~/.config/mihomo/config.yaml, out of the store).
+          modules.networking.mihomo.enable = true;
         }
       ];
     home-modules = map mylib.relativeToRoot [

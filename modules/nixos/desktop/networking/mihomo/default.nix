@@ -1,0 +1,80 @@
+{
+  config,
+  lib,
+  myvars,
+  pkgs,
+  ...
+}:
+# Native mihomo core + metacubexd dashboard, replacing the Clash Verge GUI: the
+# GUI crashed (SIGFPE) and reopened a fake-IP leak window on every core restart.
+#
+# The config stays OUT of the Nix store (it holds subscription URLs and the
+# controller secret) and reaches the service through systemd's LoadCredential.
+# This module only wires up the service; generate the file with ./generate.nu.
+# See README.md for usage and the routing notes, in particular the IPv6
+# condition: the fake-ip v6 pool needs a line whose IPv6 actually works, and
+# mihomo has no reachability probe to notice when the line loses it.
+let
+  cfg = config.modules.networking.mihomo;
+  configFile = "${config.users.users.${myvars.username}.home}/.config/mihomo/config.yaml";
+  host = config.networking.hostName;
+
+  # metacubexd hardcodes its tab title ("MetaCubeXD") in the SPA and exposes no
+  # config hook, so dashboards on different hosts look identical. Append the
+  # hostname: patch the static <title>, then re-apply it from config.js because
+  # Nuxt's useHead rewrites document.title on every route change. config.js is
+  # metacubexd's post-build customization point (and is excluded from the PWA
+  # precache), so this survives version bumps — unlike patching its hashed,
+  # minified JS.
+  webui = pkgs.runCommandLocal "metacubexd-${host}" { } ''
+    cp -r ${pkgs.metacubexd} $out
+    chmod -R u+w $out
+    substituteInPlace $out/index.html $out/200.html $out/404.html \
+      --replace '<title>MetaCubeXD</title>' '<title>MetaCubeXD · ${host}</title>'
+    cat >> $out/config.js <<'EOF'
+
+    ;(function () {
+      var suffix = ' · ${host}'
+      var apply = function () {
+        var title = document.querySelector('title')
+        if (title && title.textContent.indexOf(suffix) === -1) {
+          title.textContent += suffix
+        }
+      }
+      var head = document.head || document.documentElement
+      new MutationObserver(apply).observe(head, { subtree: true, childList: true, characterData: true })
+      apply()
+    })()
+    EOF
+  '';
+in
+{
+  options.modules.networking.mihomo.enable =
+    lib.mkEnableOption "the native Mihomo core with TUN and a local web UI";
+
+  config = lib.mkIf cfg.enable {
+    services.mihomo = {
+      enable = true;
+      package = pkgs.mihomo;
+      inherit configFile;
+      inherit webui;
+      tunMode = true;
+    };
+
+    # The config deliberately stays out of the store, under the user's home. On
+    # tmpfs-root hosts that path is a persistent bind mount, so make the service
+    # wait for it: otherwise activation can start mihomo before the mount is up
+    # and fail with "Failed to set up credentials: No such file or directory".
+    systemd.services.mihomo.unitConfig.RequiresMountsFor = builtins.dirOf configFile;
+    # A fresh checkout has no subscription/config file yet. Skip the unit until
+    # the user generates it instead of turning a missing optional proxy into a
+    # failed boot target; the DNS takeover below only runs for an active core.
+    systemd.services.mihomo.unitConfig.ConditionPathExists = configFile;
+
+    # Force the TUN's v6 address up: left to itself mihomo skips the v6 half when
+    # no NIC has an IPv6 address at startup, yet still installs its strict-route v6
+    # blackhole, which locks the host out of IPv6. Upstream knob (`inet6-address`,
+    # meta-docs tun.md); the full chain is WA-030.
+    systemd.services.mihomo.serviceConfig.Environment = [ "SKIP_SYSTEM_IPV6_CHECK=1" ];
+  };
+}

@@ -4,7 +4,7 @@
   sunshineUsesNvencPreset = 3;
   sunshineUsesNvencTwopass = "full_res";
   loadsVirtualDisplay = false;
-  zramEnabled = true;
+  zramEnabled = false;
   zramPercent = 50;
   preservesMoonlight = true;
   permitRootLogin = "prohibit-password";

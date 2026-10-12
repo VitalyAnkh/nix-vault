@@ -21,17 +21,16 @@ let
     in
     inputs
     // {
-      # Keep the complete flake input set available to nested configurations
-      # such as MicroVM guests, which may instantiate shared modules directly.
-      inherit inputs;
-      inherit mylib myvars pkgs-stable;
+      # The spread above exposes each flake input as a top-level argument.
+      # Also expose the whole set as `inputs`, which the package overlays
+      # (`overlays/*.nix`) receive via `import ../overlays args`.
+      inherit
+        inputs
+        mylib
+        myvars
+        pkgs-stable
+        ;
 
-      # use unstable branch for some packages to get the latest updates
-      # pkgs-unstable = import inputs.nixpkgs-unstable {
-      #   inherit system; # refer the `system` parameter form outer scope recursively
-      #   # To use chrome, we need to allow the installation of non-free software
-      #   config.allowUnfree = true;
-      # };
       pkgs-2505 = import inputs.nixpkgs-2505 {
         inherit system;
         # To use chrome, we need to allow the installation of non-free software
@@ -105,27 +104,10 @@ let
   darwinSystemValues = builtins.attrValues darwinSystems;
   allSystemValues = nixosSystemValues ++ darwinSystemValues;
 
-  # Helper function to generate a set of attributes for each system
-  forAllSystems = func: (nixpkgs.lib.genAttrs allSystemNames func);
-in
-{
-  # Add attribute sets into outputs, for debugging
-  debugAttrs = {
-    inherit
-      nixosSystems
-      darwinSystems
-      allSystems
-      allSystemNames
-      ;
-  };
-
-  # NixOS Hosts
-  nixosConfigurations = lib.attrsets.mergeAttrsList (
-    map (it: it.nixosConfigurations or { }) nixosSystemValues
-  );
-
-  # Colmena - remote deployment via SSH
-  colmena = {
+  # Raw Colmena hive (nodes + meta), evaluated below into the exposed
+  # `colmenaHive` output. The nix-community Colmena rewrite only reads
+  # `colmenaHive`, so the raw hive is not an output of its own.
+  rawColmenaHive = {
     meta =
       (
         let
@@ -148,6 +130,29 @@ in
       };
   }
   // lib.attrsets.mergeAttrsList (map (it: it.colmena or { }) nixosSystemValues);
+
+  # Helper function to generate a set of attributes for each system
+  forAllSystems = func: (nixpkgs.lib.genAttrs allSystemNames func);
+in
+{
+  # Add attribute sets into outputs, for debugging
+  debugAttrs = {
+    inherit
+      nixosSystems
+      darwinSystems
+      allSystems
+      allSystemNames
+      ;
+  };
+
+  # NixOS Hosts
+  nixosConfigurations = lib.attrsets.mergeAttrsList (
+    map (it: it.nixosConfigurations or { }) nixosSystemValues
+  );
+
+  # Colmena - remote deployment via SSH. The nix-community evaluator reads the
+  # evaluated `colmenaHive` output built from the raw hive in the `let` block.
+  colmenaHive = inputs.colmena.lib.makeHive rawColmenaHive;
 
   # macOS Hosts
   darwinConfigurations = lib.attrsets.mergeAttrsList (
@@ -240,6 +245,14 @@ in
           # deadnix.enable = true; # detect unused variable bindings in `*.nix`
           # statix.enable = true; # lints and suggestions for Nix code(auto suggestions)
         };
+      };
+    }
+    // lib.optionalAttrs (system == "x86_64-linux") {
+      # Test the shared firewall in disposable VMs, without real-host imports,
+      # Home Manager or agenix identities. Linux eval tests remain cross-arch.
+      security-exporters = import ../tests/security-exporters.nix {
+        pkgs = nixpkgs.legacyPackages.${system};
+        networking = myvars.networking;
       };
     }
   );

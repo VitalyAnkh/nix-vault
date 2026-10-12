@@ -60,14 +60,14 @@
     gtk2.configLocation = "${config.xdg.configHome}/gtk-2.0/gtkrc";
     gtk4.theme = config.gtk.theme;
 
-    iconTheme = {
+    iconTheme = lib.mkForce {
       name = "fluent-light";
       package = pkgs.fluent-icon-theme.override {
         colorVariants = [ "pink" ];
       };
     };
 
-    theme = {
+    theme = lib.mkForce {
       # https://github.com/vinceliuice/Fluent-gtk-theme
       name = "Fluent-round-pink-Light-compact";
       package = pkgs.fluent-gtk-theme.override {

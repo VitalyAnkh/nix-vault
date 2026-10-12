@@ -32,9 +32,6 @@ let
           modules.secrets.preservation.enable = true;
         }
       ];
-    # home-modules = map mylib.relativeToRoot [
-    #   "home/linux/tui.nix"
-    # ];
   };
 
   systemArgs = modules // args;
@@ -46,8 +43,6 @@ in
     systemArgs
     // {
       inherit tags ssh-user;
-      # reach the host by IP: its DNS name changes with the hostname
-      targetHost = myvars.networking.hostsAddr.${name}.ipv4;
     }
   );
 

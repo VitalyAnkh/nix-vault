@@ -19,7 +19,7 @@ home/
 #### home/base/core/default.nix
 
 - **作用**: 自动导入 core 目录下所有模块
-- **包含**: btop, core, editors, git, npm, pip, shells, starship, theme, yazi, zellij
+- **包含**: btop, core, editors, git, npm, pip, shells, starship, theme, yazi
 
 #### home/base/core/core.nix
 
@@ -72,11 +72,6 @@ home/
 
 - **作用**: Yazi 文件管理器
 - **特点**: 带主题配置
-
-#### home/base/core/zellij/
-
-- **作用**: Zellij 终端复用器
-- **特点**: 自定义配置和键绑定
 
 #### home/base/core/editors/
 
@@ -135,7 +130,7 @@ home/
 #### home/base/tui/shell.nix
 
 - **作用**: Shell 增强工具
-- **包含**: atuin (历史搜索), mcfly, zellij
+- **包含**: atuin (历史搜索), mcfly, tuios
 
 #### home/base/tui/ssh.nix
 

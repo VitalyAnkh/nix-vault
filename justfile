@@ -79,7 +79,28 @@ llvm_latest: config_latest_llvm install_latest_llvm
 # Run eval tests
 [group('nix')]
 test:
-  nix eval .#evalTests --show-trace --print-build-logs --verbose
+  let result = (nix eval .#evalTests --json --max-jobs 8 --cores 8 --show-trace --print-build-logs --verbose | str trim); if $result != "true" { error make { msg: $"eval tests failed: evalTests returned ($result)" } }
+
+# Build and run the runtime security VM test (needs /dev/kvm; not run by just test)
+[linux]
+[group('nix')]
+test-vm:
+  nix build --max-jobs 8 --cores 8 --no-link --print-build-logs .#checks.x86_64-linux.security-exporters
+
+# Evaluate a NixOS host configuration without building it.
+[group('nix')]
+eval-host host:
+  nix eval --max-jobs 8 --cores 8 $".#nixosConfigurations.{{host}}.config.system.build.toplevel.drvPath" --raw --show-trace
+
+# Build a NixOS host system closure without changing the current system.
+[group('nix')]
+build-host host:
+  nix build --max-jobs 8 --cores 8 $".#nixosConfigurations.{{host}}.config.system.build.toplevel" --no-link --print-build-logs
+
+# Build a MicroVM runner locally. microvm-deploy copies the closure to the physical host.
+[group('nix')]
+build-microvm guest:
+  nix build --max-jobs 8 --cores 8 $".#nixosConfigurations.{{guest}}.config.microvm.declaredRunner" --no-link --print-build-logs
 
 # Update all the flake inputs
 [group('nix')]
@@ -194,6 +215,12 @@ niri mode="switch" verbosity="normal":
   use {{utils_nu}} *;
   nixos-switch $"(hostname)-niri" {{mode}} {{verbosity}}
 
+# Pin shoukei's home Wi-Fi to a static IPv4 (run once; the profile persists).
+[linux]
+[group('desktop')]
+shoukei-home-wifi:
+  sudo nu {{absolute_path("scripts/shoukei-home-wifi-static.nu")}}
+
 ############################################################################
 #
 #  Darwin related commands
@@ -270,6 +297,15 @@ upload-vm name verbosity="normal":
   #!/usr/bin/env nu
   use {{utils_nu}} *;
   upload-vm {{name}} {{verbosity}}
+# Deploy one microVM guest: copy its runner to the physical host, then restart the
+# guest unit there. microvm.nix's sshSwitch step is not used: it switches the guest over
+# SSH and dies on the read-only virtiofs /nix/store (WA-026 in WORKAROUNDS.md).
+# The host is the physical machine running the guest.
+[linux]
+[group('homelab')]
+microvm-deploy guest host:
+  nix run $".#nixosConfigurations.{{guest}}.config.microvm.deploy.installOnHost" -- root@{{host}}
+  ssh root@{{host}} systemctl restart microvm@{{guest}}
 
 # Deploy all the KubeVirt nodes(Physical machines running KubeVirt)
 [linux]
@@ -396,6 +432,85 @@ emacs-reload:
 
 # =================================================
 #
+# AI agent commands
+#
+# =================================================
+
+# Start the dsh web UI without opening a browser, proxied via mihomo's mixed port.
+[group('agents')]
+dsh-web:
+  #!/usr/bin/env nu
+  # no_proxy keeps local endpoints out of the proxy; the proxy is here for fake-ip.
+  # dsh's web fetch refuses a DNS answer it does not call public and fake-ip answers
+  # with 198.18.0.0/15, so a proxied hop makes mihomo resolve the origin instead.
+  # That makes mihomo a dependency of every Node fetch the harness makes, so it has
+  # to stop at the LAN: without no_proxy this host's own llama-swap endpoint goes
+  # through it too. Node reads only lowercase `no_proxy` and matches exact hosts,
+  # not CIDR; curl and Go do honor CIDR.
+  with-env {
+    HTTPS_PROXY: "http://127.0.0.1:7897"
+    HTTP_PROXY: "http://127.0.0.1:7897"
+    no_proxy: "localhost,127.0.0.1,::1,[::1],192.168.5.100,192.168.5.178,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+    NO_PROXY: "localhost,127.0.0.1,::1,[::1],192.168.5.100,192.168.5.178,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+  } { ^dsh web --no-open }
+
+# Render the mihomo config from this repo and validate it with the live core.
+[linux]
+[group('services')]
+mihomo-gen:
+  #!/usr/bin/env nu
+  # ~/.config/mihomo holds only the private sources.yaml and the generated
+  # config.yaml. The generator and policy.yaml stay in the repository, so the
+  # live directory can never keep a stale copy of them.
+  let mod = ("{{ justfile() }}" | path dirname | path join modules nixos desktop networking mihomo)
+  nu ($mod | path join generate.nu)
+  # Validate with the core the service actually runs; a nixpkgs one may differ.
+  let core = (systemctl show mihomo.service -p ExecStart | str trim | split row "path=" | get 1 | split row " " | get 0)
+  let check = (^$core -t -f ($env.HOME | path join .config mihomo config.yaml) | complete)
+  if $check.exit_code != 0 {
+    print --stderr ($check.stderr | str trim)
+    exit $check.exit_code
+  }
+  print "validated -- restart: sudo systemctl restart mihomo.service"
+
+# Seed mihomo's geodata into the service's state dir, so a cold start needs no DNS.
+[linux]
+[group('services')]
+mihomo-geo:
+  #!/usr/bin/env nu
+  # Copy geodata in by hand, so a cold start never has to fetch it. The core
+  # fetches it while parsing rules, before its own DNS is up and while the link
+  # DNS points at it -- that fetch can only fail.
+  let src = ($env.HOME | path join .config mihomo)
+  let dst = "/var/lib/private/mihomo"
+  sudo mkdir -p $dst
+  mut seeded = []
+  for f in [GeoSite.dat geoip.metadb ASN.mmdb] {
+    let p = ($src | path join $f)
+    if ($p | path exists) {
+      sudo cp $p $dst
+      $seeded = ($seeded | append ($dst | path join $f))
+    } else {
+      print $"(!) ($f) is not in ($src) -- fetch it first: mihomo -t -d ($src) -f ($src)/config.yaml"
+    }
+  }
+  if ($seeded | is-not-empty) {
+    sudo chmod 644 ...$seeded
+    let names = ($seeded | path basename | str join ', ')
+    print $"seeded ($names) -- restart mihomo to pick them up"
+  }
+
+# Render the mihomo config into a Clash Verge Rev local profile on macOS.
+# sources.yaml comes from the encrypted dotfiles sync (nix-secrets `just restore`).
+[macos]
+[group('services')]
+mihomo-verge *args:
+  #!/usr/bin/env nu
+  let mod = ("{{ justfile() }}" | path dirname | path join modules nixos desktop networking mihomo)
+  nu ($mod | path join verge-sync.nu) {{ args }}
+
+# =================================================
+#
 # Other useful commands
 #
 # =================================================
@@ -428,6 +543,40 @@ game:
 [group('k8s')]
 del-failed:
   kubectl delete pod --all-namespaces --field-selector="status.phase==Failed"
+
+# Start PC VR on idols-ai and route desktop audio to the headset.
+[linux]
+[group('vr')]
+vr:
+  systemctl --user start wivrn.service
+  systemctl --user stop wivrn-audio.service | complete | ignore
+  systemd-run --user --collect --unit=wivrn-audio nu {{absolute_path("scripts/wivrn-audio.nu")}} switch --timeout 600
+
+# Route audio to a headset that is connected right now.
+[linux]
+[group('vr')]
+vr-audio:
+  nu {{absolute_path("scripts/wivrn-audio.nu")}} switch --timeout 60
+
+# Stop PC VR when finished and restore the previous audio devices.
+[linux]
+[group('vr')]
+vr-stop:
+  systemctl --user stop wivrn-audio.service | complete | ignore
+  nu {{absolute_path("scripts/wivrn-audio.nu")}} restore
+  systemctl --user stop wivrn.service
+
+# Show PC VR service status.
+[linux]
+[group('vr')]
+vr-status:
+  systemctl --user status wivrn.service --no-pager
+
+# Follow PC VR service logs.
+[linux]
+[group('vr')]
+vr-logs:
+  journalctl --user -u wivrn.service -f
 
 [linux]
 [group('services')]

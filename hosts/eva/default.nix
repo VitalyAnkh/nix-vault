@@ -1,4 +1,10 @@
-{ myvars, lib, ... }:
+{
+  myvars,
+  lib,
+  pkgs,
+  disko,
+  ...
+}:
 #############################################################
 #
 # EVA - my main computer, with NixOS + 9950x + RTX 4070 Ti Super GPU, for gaming & daily use
@@ -7,16 +13,16 @@
 let
   hostName = "eva"; # Define your hostname.
 
-  inherit (myvars.networking) mainGateway mainGateway6 nameservers;
-  inherit (myvars.networking.hostsAddr.${hostName}) iface ipv4 ipv6;
-  ipv4WithMask = "${ipv4}/24";
-  ipv6WithMask = "${ipv6}/64";
+  inherit (myvars.networking) nameservers;
+  inherit (myvars.networking.hostsAddr.${hostName}) iface;
 in
 {
   imports = [
     ./netdev-mount.nix
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
+    disko.nixosModules.default
+    ./disko-fs.nix
     ./nvidia.nix
     ./ai
 
@@ -52,14 +58,17 @@ in
     "pcie_port_pm=off"
   ];
 
-  # This host repeatedly hit swap/reclaim storms before hard resets.
-  # Keep zram, but make it much less aggressive on the desktop.
-  zramSwap = {
-    algorithm = lib.mkForce "zstd";
-    memoryPercent = lib.mkForce 50;
+  # Follow the upstream AI memory strategy: disk-backed swap avoids a zram
+  # deadlock while large GPU/LLM workloads reclaim memory. zswap remains a
+  # compressed writeback cache in front of the disk swapfile.
+  modules.zram.enable = lib.mkForce false;
+  boot.zswap = {
+    enable = true;
+    compressor = "zstd";
+    maxPoolPercent = 10;
   };
   boot.kernel.sysctl = {
-    "vm.swappiness" = lib.mkForce 100;
+    "vm.swappiness" = lib.mkForce 60;
     "vm.watermark_scale_factor" = lib.mkForce 50;
   };
 
@@ -70,21 +79,19 @@ in
   networking = {
     inherit hostName;
 
-    # VR_TODO:
-    # we use NetworkManager
-    # how to use networkd?
-    networkmanager.enable = true; # provides nmcli/nmtui for wifi adjustment
-    # Let NetworkManager own DHCP; dhcpcd races with it and can leave DNS stale.
+    # Keep NetworkManager for EVA's roaming Wi-Fi. networkd owns only the wired
+    # uplink below, so a Wi-Fi-to-Ethernet move remains usable.
+    networkmanager.enable = true;
+    networkmanager.unmanaged = [ "interface-name:${iface}" ];
     useDHCP = lib.mkForce false;
     dhcpcd.enable = false;
   };
 
-  # networking.useNetworkd = true;
-  # systemd.network.enable = true;
+  # Explicit .network files are enabled while the scripted backend remains off;
+  # this lets networkd manage enp15s0 and leaves Wi-Fi to NetworkManager.
+  networking.useNetworkd = false;
+  systemd.network.enable = true;
 
-  # Ported from upstream idols-ai. These only take effect if networkd is
-  # enabled later; eva currently uses NetworkManager. Do not enable networkd
-  # here — that would change the live networking stack.
   # networkd removes routing policy rules not defined in .network files
   # (ManageForeignRoutingPolicyRules defaults to yes) each time it reconfigures
   # a link. Keep foreign rules so VPN/TUN (mihomo/Tailscale) rules survive.
@@ -93,32 +100,58 @@ in
   systemd.network.networks."10-${iface}" = {
     matchConfig.Name = [ iface ];
     networkConfig = {
-      Address = [
-        ipv4WithMask
-        ipv6WithMask
-      ];
       DNS = nameservers;
-      DHCP = "ipv6"; # enable DHCPv6 only, so we can get a GUA.
-      IPv6AcceptRA = true; # for Stateless IPv6 Autoconfiguraton (SLAAC)
+      DHCP = "yes";
+      IPv6AcceptRA = true;
       LinkLocalAddressing = "ipv6";
       # r8169 drops carrier on S3 resume; without this, networkd tears down the
-      # static address/route and clash's TUN auto-detect briefly loses its
-      # outbound interface, leaving routing broken until clash is restarted.
+      # static address/route and mihomo's TUN auto-detect briefly loses its
+      # outbound interface, leaving routing broken until mihomo is restarted.
       IgnoreCarrierLoss = "10s";
     };
-    routes = [
-      {
-        Destination = "0.0.0.0/0";
-        Gateway = mainGateway;
-      }
-      {
-        Destination = "::/0";
-        Gateway = mainGateway6;
-        GatewayOnLink = true; # it's a gateway on local link.
-      }
-    ];
     linkConfig.RequiredForOnline = "routable";
   };
+
+  # Point resolved at mihomo only after the core has opened its DNS listener;
+  # revert on clean shutdown and crashes so a failed proxy never strands DNS.
+  systemd.services.mihomo.serviceConfig = {
+    ExecStartPost = lib.mkDefault "+${pkgs.writeShellScript "eva-mihomo-dns-takeover" ''
+      link_file=/run/mihomo-dns-link
+      probe() { (exec 3<>/dev/tcp/127.0.0.1/1053) 2>/dev/null; }
+      up=0
+      for ((i = 0; i < 100; i++)); do
+        if probe; then up=1; break; fi
+        sleep 0.1
+      done
+      if [ "$up" = 0 ]; then
+        echo "mihomo did not open 127.0.0.1:1053; leaving ${iface} DNS unchanged" >&2
+        exit 0
+      fi
+      link="$(${pkgs.iproute2}/bin/ip -4 route show default | ${pkgs.gawk}/bin/awk 'NR == 1 { print $5 }')"
+      link="''${link:-${iface}}"
+      if ! ${pkgs.iproute2}/bin/ip link show "$link" >/dev/null 2>&1; then
+        echo "mihomo DNS takeover found no usable uplink; leaving DNS unchanged" >&2
+        exit 0
+      fi
+      printf '%s\n' "$link" > "$link_file"
+      exec ${pkgs.systemd}/bin/resolvectl dns "$link" 127.0.0.1:1053
+    ''}";
+    ExecStopPost = lib.mkDefault "+${pkgs.writeShellScript "eva-mihomo-dns-revert" ''
+      link_file=/run/mihomo-dns-link
+      if [ -r "$link_file" ]; then
+        link=$(${pkgs.coreutils}/bin/cat "$link_file")
+        ${pkgs.systemd}/bin/resolvectl revert "$link" || true
+        ${pkgs.coreutils}/bin/rm -f "$link_file"
+      fi
+    ''}";
+  };
+
+  services.smartd.enable = true;
+
+  # EVA's checked-in hardware scan remains authoritative at runtime. The Disko
+  # profile is available for an explicitly requested reinstall/mount, but must
+  # not generate a second set of fileSystems or swap units during activation.
+  disko.enableConfig = false;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

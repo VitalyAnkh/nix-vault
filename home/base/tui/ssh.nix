@@ -38,7 +38,7 @@ in
 
     settings = {
       "github.com" = lib.mkIf cfg.enable {
-        # avoid clash fake-IP6 hang, see modules/nixos/desktop/networking/clash-verge.nix
+        # avoid mihomo fake-IP6 hangs; the native service keeps SSH on IPv4 when needed
         AddressFamily = "inet";
         HostName = "ssh.github.com";
         Port = 443;

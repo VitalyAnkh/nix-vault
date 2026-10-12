@@ -1,18 +1,6 @@
-// Host-local Niri output/workspace overrides for eva.
+// EVA uses the NVIDIA GPU as its primary renderer. Do not pin an Intel DRM
+// path or create a vkms output here: those are specific to Ryan's hybrid AI
+// workstation and do not exist on EVA's AMD desktop.
 //
-// This file is only consumed when starting Niri. The current eva desktop path
-// remains GDM + GNOME.
-// Connector information was captured from GNOME/Mutter DisplayConfig on eva.
-
-output "DP-3" {
-    scale 2.0
-    transform "normal"
-    position x=0 y=0
-}
-
-workspace "1terminal" { open-on-output "DP-3"; }
-workspace "2browser" { open-on-output "DP-3"; }
-workspace "3chat" { open-on-output "DP-3"; }
-workspace "4entertainment" { open-on-output "DP-3"; }
-workspace "5utility" { open-on-output "DP-3"; }
-workspace "0other" { open-on-output "DP-3"; }
+// Keep this file as an opt-in place for monitor-specific output settings. Niri
+// chooses the available NVIDIA DRM device and connected outputs automatically.

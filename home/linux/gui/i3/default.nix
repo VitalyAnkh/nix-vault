@@ -12,7 +12,7 @@ let
   screen = "1920x1080x24";
 
   # Keep this list minimal: the goal is to look like a real user device, not to
-  # harden the browser. The browser goes out through Clash Verge's proxy, so
+  # harden the browser. The browser goes out through mihomo's proxy, so
   # non-proxied WebRTC UDP must stay disabled (a real IP leak would contradict
   # the exit region); everything else is a stock-looking setting.
   #

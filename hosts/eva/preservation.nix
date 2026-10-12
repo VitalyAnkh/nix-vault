@@ -81,8 +81,6 @@ in
 
       # network
       "/var/lib/tailscale"
-      "/var/lib/netbird-homelab" # netbird's homelab client
-      "/etc/netbird-homelab"
       "/var/lib/bluetooth"
       "/var/lib/NetworkManager"
       "/var/lib/iwd"
@@ -159,6 +157,17 @@ in
         # gnome configurations
         ".config/dconf"
 
+        # Native mihomo configuration contains subscription metadata and the
+        # generated runtime config; keep it outside the Nix store.
+        {
+          directory = ".config/mihomo";
+          mode = "0700";
+        }
+        {
+          directory = ".config/wivrn";
+          mode = "0700";
+        }
+
         ".config/clash-nyanpasu"
         ".config/hiddify"
         ".config/flclash"
@@ -171,6 +180,16 @@ in
 
         ".local/state/home-manager"
         ".local/state/nix/profiles"
+        ".local/state/noctalia"
+        {
+          directory = ".local/state/tuios";
+          mode = "0700";
+        }
+        {
+          directory = ".local/share/tuios";
+          mode = "0700";
+        }
+        ".config/tuios"
         ".local/share/nix"
         ".cache/nix"
         ".cache/nixpkgs-review"

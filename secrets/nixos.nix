@@ -22,6 +22,13 @@ let
 
   hasSecretFile = path: builtins.pathExists path;
 
+  firstExisting =
+    paths:
+    let
+      existing = builtins.filter hasSecretFile paths;
+    in
+    if existing == [ ] then null else builtins.head existing;
+
   optionalSecret =
     name: file: extra:
     optionalAttrs (hasSecretFile file) {
@@ -34,6 +41,27 @@ let
   optionalEtc =
     target: secretName: file: extra:
     optionalAttrs (hasSecretFile file) {
+      "${target}" = {
+        source = config.age.secrets.${secretName}.path;
+      }
+      // extra;
+    };
+
+  optionalSecretFrom =
+    name: files: extra:
+    let
+      file = firstExisting files;
+    in
+    optionalAttrs (file != null) {
+      "${name}" = {
+        inherit file;
+      }
+      // extra;
+    };
+
+  optionalEtcFrom =
+    target: secretName: files: extra:
+    optionalAttrs (firstExisting files != null) {
       "${target}" = {
         source = config.age.secrets.${secretName}.path;
       }
@@ -92,7 +120,10 @@ in
 
       # secrets that are used by all nixos hosts
       age.secrets = mkMerge [
-        (optionalSecret "nix-access-tokens" "${mysecrets}/nix-access-tokens.age" user_readable)
+        (optionalSecretFrom "nix-access-tokens" [
+          "${mysecrets}/nix-access-tokens.age"
+          "${mysecrets}/server/nix-access-tokens.age"
+        ] user_readable)
       ];
 
       assertions = [
@@ -107,15 +138,13 @@ in
     (mkIf cfg.desktop.enable {
       age.secrets = mkMerge [
         # ---------------------------------------------
-        # no one can read/write this file, even root.
+        # No discretionary access; privileged root can still bypass file modes.
         # ---------------------------------------------
 
         # .age means the decrypted file is still encrypted by age(via a passphrase)
-        (optionalSecret "vitalyr-gpg-subkeys.priv.age"
+        (optionalSecretFrom "vitalyr-gpg-subkeys.priv.age" [
           "${mysecrets}/vitalyr-gpg-subkeys-2024-01-27.priv.age.age"
-          noaccess
-        )
-
+        ] noaccess)
         # ---------------------------------------------
         # only root can read this file.
         # ---------------------------------------------
@@ -126,16 +155,24 @@ in
         # smb-credentials is referenced in /etc/fstab, by ../hosts/ai/cifs-mount.nix
         (optionalSecret "smb-credentials" "${mysecrets}/smb-credentials.age" high_security)
 
-        (optionalSecret "rclone.conf" "${mysecrets}/rclone.conf.age" high_security)
+        (optionalSecretFrom "rclone.conf" [
+          "${mysecrets}/rclone.conf.age"
+          "${mysecrets}/desktop/rclone.conf.age"
+        ] high_security)
 
         # ---------------------------------------------
         # user can read this file.
         # ---------------------------------------------
 
-        (optionalSecret "ssh-key-romantic" "${mysecrets}/ssh-key-romantic.age" user_readable)
+        (optionalSecretFrom "ssh-key-romantic" [
+          "${mysecrets}/ssh-key-romantic.age"
+          "${mysecrets}/desktop/ssh-key-romantic.age"
+        ] user_readable)
 
         # alias-for-work
         (optionalSecret "alias-for-work.nushell" "${mysecrets}/alias-for-work.nushell.age" user_readable)
+        # Work git identity, symlinked to ~/work/.gitconfig by Home Manager.
+        (optionalSecretFrom "work-gitconfig" [ "${mysecrets}/desktop/work-gitconfig.age" ] user_readable)
       ];
 
       # place secrets in /etc/
@@ -145,23 +182,43 @@ in
           { }
         )
 
-        (optionalEtc "agenix/rclone.conf" "rclone.conf" "${mysecrets}/rclone.conf.age" { })
+        (optionalEtcFrom "agenix/rclone.conf" "rclone.conf" [
+          "${mysecrets}/rclone.conf.age"
+          "${mysecrets}/desktop/rclone.conf.age"
+        ] { })
 
-        (optionalEtc "agenix/ssh-key-romantic" "ssh-key-romantic" "${mysecrets}/ssh-key-romantic.age" {
-          mode = "0600";
-          user = myvars.username;
-        })
-
-        (optionalEtc "agenix/vitalyr-gpg-subkeys.priv.age" "vitalyr-gpg-subkeys.priv.age"
-          "${mysecrets}/vitalyr-gpg-subkeys-2024-01-27.priv.age.age"
-          { mode = "0000"; }
+        (optionalEtcFrom "agenix/ssh-key-romantic" "ssh-key-romantic"
+          [
+            "${mysecrets}/ssh-key-romantic.age"
+            "${mysecrets}/desktop/ssh-key-romantic.age"
+          ]
+          {
+            mode = "0600";
+            user = myvars.username;
+          }
         )
+
+        (optionalEtcFrom "agenix/vitalyr-gpg-subkeys.priv.age" "vitalyr-gpg-subkeys.priv.age" [
+          "${mysecrets}/vitalyr-gpg-subkeys-2024-01-27.priv.age.age"
+        ] { mode = "0000"; })
 
         # The following secrets are used by home-manager modules
         # So we need to make then readable by the user
         (optionalEtc "agenix/alias-for-work.nushell" "alias-for-work.nushell"
           "${mysecrets}/alias-for-work.nushell.age"
-          { mode = "0644"; }
+          {
+            mode = "0400";
+            user = myvars.username;
+          }
+        )
+        (optionalEtcFrom "agenix/work-gitconfig" "work-gitconfig"
+          [
+            "${mysecrets}/desktop/work-gitconfig.age"
+          ]
+          {
+            mode = "0400";
+            user = myvars.username;
+          }
         )
       ];
     })
@@ -240,27 +297,73 @@ in
       ];
     })
 
+    (mkIf cfg.desktop.enable {
+      # Desktop backups use a separate repository password from homelab hosts.
+      age.secrets = mkMerge [
+        (optionalSecretFrom "restic-password"
+          [
+            "${mysecrets}/desktop/restic-password-desktop.age"
+          ]
+          {
+            mode = "0400";
+            owner = "root";
+          }
+        )
+        (optionalSecretFrom "restic-rest-credentials"
+          [
+            "${mysecrets}/desktop/restic-rest-credentials.age"
+          ]
+          {
+            mode = "0400";
+            owner = "root";
+          }
+        )
+      ];
+    })
+
     (mkIf cfg.server.storage.enable {
       age.secrets = mkMerge [
-        (optionalSecret "hdd-luks-crypt-key" "${mysecrets}/hdd-luks-crypt-key.age" {
-          mode = "0400";
-          owner = "root";
-        })
+        (optionalSecretFrom "hdd-luks-crypt-key"
+          [
+            "${mysecrets}/hdd-luks-crypt-key.age"
+            "${mysecrets}/server/hdd-luks-crypt-key.age"
+          ]
+          {
+            mode = "0400";
+            owner = "root";
+          }
+        )
 
-        (optionalSecret "restic-password" "${mysecrets}/restic-password-homelab.age" {
-          mode = "0400";
-          owner = "root";
-        })
+        (optionalSecretFrom "restic-password"
+          [
+            "${mysecrets}/restic-password-homelab.age"
+            "${mysecrets}/server/restic-password-homelab.age"
+          ]
+          {
+            mode = "0400";
+            owner = "root";
+          }
+        )
 
-        (optionalSecret "restic-rest-htpasswd" "${mysecrets}/restic-rest-htpasswd.age" {
-          mode = "0400";
-          owner = "restic";
-        })
+        (optionalSecretFrom "restic-rest-htpasswd"
+          [
+            "${mysecrets}/restic-rest-htpasswd.age"
+            "${mysecrets}/server/restic-rest-htpasswd.age"
+          ]
+          {
+            mode = "0400";
+            owner = "restic";
+          }
+        )
       ];
 
       # place secrets in /etc/
       environment.etc = mkMerge [
-        (optionalEtc "agenix/hdd-luks-crypt-key" "hdd-luks-crypt-key" "${mysecrets}/hdd-luks-crypt-key.age"
+        (optionalEtcFrom "agenix/hdd-luks-crypt-key" "hdd-luks-crypt-key"
+          [
+            "${mysecrets}/hdd-luks-crypt-key.age"
+            "${mysecrets}/server/hdd-luks-crypt-key.age"
+          ]
           {
             mode = "0400";
             user = "root";

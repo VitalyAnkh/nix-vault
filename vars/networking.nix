@@ -6,12 +6,14 @@ rec {
   lanCidr = "192.168.5.0/24";
   # use suzi as the default gateway
   # it's a subrouter with a transparent proxy
-  # VR_TODO: what the default gateway should be?
-  proxyGateway = "192.168.10.0";
-  proxyGateway6 = defaultGateway6;
-  # proxyGateway = "192.168.5.178";
+  # suzi is the transparent-proxy gateway used by VM guests.
+  proxyGateway = "192.168.5.178";
+  proxyGateway6 = "fe80::8";
+  # Muon's isolated network keeps its own gateway values.
   defaultGateway = "192.168.10.0";
   defaultGateway6 = "fe80::8";
+  # node identity must not ride the WAN /64: the ISP retires it, Cilium never refreshes it.
+  clusterULA6 = "fd05:5::";
   nameservers = [
     # IPv4
     "119.29.29.29" # DNSPod https://www.dnspod.cn/Products/publicdns
@@ -22,7 +24,6 @@ rec {
     "2400:3200::1" # Alidns
     "2606:4700:4700::1111" # Cloudflare
   ];
-  prefixLength = 24;
 
   # Dedicated VIP block for the k3s clusters, outside the router's DHCP pool
   # (.2-.99). One /29 per cluster, handed to kube-vip: the first usable address
@@ -41,6 +42,10 @@ rec {
     };
   };
 
+  # Static LAN addresses, sorted by IPv4 ascending -- keep it sorted when adding
+  # a host so the next free address is obvious. `homeOnly = true` marks an
+  # address that only exists at home (the laptop's home Wi-Fi static); ssh and
+  # monitoring skip those entries.
   hostsAddr = {
     # ============================================
     # Homelab's Physical Machines (VM hosts)
@@ -62,13 +67,9 @@ rec {
     # Other VMs and Physical Machines
     # ============================================
     eva = {
-      # Desktop PC
-      # VR_TODO: what the ipv6 address should be?
-      # iface = "wlp14s0";
-      # ipv4 = "192.168.10.1";
       iface = "enp15s0";
       ipv4 = "192.168.31.126";
-      ipv6 = "fe80::10"; # Link-local Address
+      ipv6 = "fe80::10";
     };
     muon = {
       # Desktop PC
@@ -77,7 +78,7 @@ rec {
       ipv6 = "fe80::c98c"; # Link-local Address
     };
     aquamarine = {
-      # VM
+      # VM (retired)
       iface = "enp2s0";
       ipv4 = "192.168.5.101";
     };
@@ -111,40 +112,12 @@ rec {
       iface = "end1";
       ipv4 = "192.168.5.107";
     };
-    rakushun = {
-      # Orange Pi 5 - ARM
-      # RJ45 port 1 - enP4p65s0
-      # RJ45 port 2 - enP3p49s0
-      iface = "enP4p65s0";
-      ipv4 = "192.168.5.179";
-    };
-    suzi = {
-      iface = "enp2s0"; # fake iface, it's not used by the host
-      ipv4 = "192.168.5.178";
-      ipv6 = "fe80::8"; # Link-local Address, can be used as default gateway
-    };
-    mitsuha = {
-      iface = "enp2s0"; # fake iface, it's not used by the host
-      ipv4 = "192.168.5.177";
-    };
-
-    # ============================================
-    # Kubernetes Clusters
-    # ============================================
-    k3s-test-1-master-1 = {
-      # VM
-      iface = "enp2s0";
-      ipv4 = "192.168.5.114";
-    };
-    k3s-test-1-master-2 = {
-      # VM
-      iface = "enp2s0";
-      ipv4 = "192.168.5.115";
-    };
-    k3s-test-1-master-3 = {
-      # VM
-      iface = "enp2s0";
-      ipv4 = "192.168.5.116";
+    shoukei = {
+      # Laptop: pinned on the home Wi-Fi only, by `just shoukei-home-wifi`; off
+      # the home network it uses DHCP.
+      iface = "wld0";
+      ipv4 = "192.168.5.108";
+      homeOnly = true;
     };
     k3s-test-1-worker-1 = {
       # VM
@@ -161,19 +134,43 @@ rec {
       iface = "enp2s0";
       ipv4 = "192.168.5.113";
     };
-  };
-
-  hostsInterface = lib.attrsets.mapAttrs (key: val: {
-    interfaces."${val.iface}" = {
-      useDHCP = false;
-      ipv4.addresses = [
-        {
-          inherit prefixLength;
-          address = val.ipv4;
-        }
-      ];
+    k3s-test-1-master-1 = {
+      # VM
+      iface = "enp2s0";
+      ipv4 = "192.168.5.114";
     };
-  }) hostsAddr;
+    k3s-test-1-master-2 = {
+      # VM
+      iface = "enp2s0";
+      ipv4 = "192.168.5.115";
+    };
+    k3s-test-1-master-3 = {
+      # VM
+      iface = "enp2s0";
+      ipv4 = "192.168.5.116";
+    };
+    mitsuha = {
+      iface = "enp2s0"; # fake iface, it's not used by the host
+      ipv4 = "192.168.5.177";
+    };
+    suzi = {
+      iface = "enp2s0"; # fake iface, it's not used by the host
+      ipv4 = "192.168.5.178";
+      ipv6 = "fe80::8"; # Link-local Address, can be used as default gateway
+    };
+    rakushun = {
+      # Orange Pi 5 - ARM, now running Armbian (not NixOS)
+      # RJ45 port 1 - enP4p65s0
+      # RJ45 port 2 - enP3p49s0
+      iface = "enP4p65s0";
+      ipv4 = "192.168.5.179";
+    };
+    # akane = {
+    #   # VM (running in macOS's UTM App), using DHCP instead of static ip.
+    #   iface = "enp0s1";
+    #   ipv4 = "192.168.64.2";
+    # };
+  };
 
   ssh = {
     # define the host alias for remote builders
@@ -185,15 +182,20 @@ rec {
     #   IdentityFile — the location of your SSH key authentication file for the account.
     # Format in details:
     #   https://www.ssh.com/academy/ssh/config
+    # `homeOnly` entries get no alias: their address is not reachable off the
+    # home LAN, so an alias would break e.g. `ssh shoukei` over Tailscale.
     extraConfig = (
       lib.attrsets.foldlAttrs (
         acc: host: val:
-        acc
-        + ''
-          Host ${host}
-            HostName ${val.ipv4}
-            Port 22
-        ''
+        if val.homeOnly or false then
+          acc
+        else
+          acc
+          + ''
+            Host ${host}
+              HostName ${val.ipv4}
+              Port 22
+          ''
       ) "" hostsAddr
     );
 

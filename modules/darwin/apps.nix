@@ -179,7 +179,6 @@ in
       "joplin" # note taking app
 
       "tailscale-app" # tailscale macos app (with gui)
-      "netbirdio/tap/netbird-ui" # netbird gui app
 
       # IM & audio & remote desktop & meeting
       "telegram"
@@ -207,7 +206,6 @@ in
       # "tencent-lemon" # macOS cleaner
       "neteasemusic" # music
       "blender@lts" # 3D creation suite
-      "clash-verge-rev" # the same as mihomo-party
 
       # Development
       "mitmproxy" # HTTP/HTTPS traffic inspector

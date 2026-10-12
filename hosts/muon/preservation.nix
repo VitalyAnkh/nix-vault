@@ -141,6 +141,11 @@ in
           # gnome configurations
           ".config/dconf"
 
+          {
+            directory = ".config/mihomo";
+            mode = "0700";
+          }
+
           ".config/clash-nyanpasu"
           ".config/hiddify"
           ".config/flclash"
@@ -151,6 +156,16 @@ in
 
           ".local/state/home-manager"
           ".local/state/nix/profiles"
+          ".local/state/noctalia"
+          {
+            directory = ".local/state/tuios";
+            mode = "0700";
+          }
+          {
+            directory = ".local/share/tuios";
+            mode = "0700";
+          }
+          ".config/tuios"
           ".local/share/nix"
           ".cache/nix"
           ".cache/nixpkgs-review"

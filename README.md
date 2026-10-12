@@ -62,7 +62,7 @@ You don't have to go through the pain I've experienced again! Check out my
 | **Window Manager**          | [Niri][Niri]                                                                                                             |
 | **Desktop Shell**           | [Noctalia][noctalia] — bar/notifications/launcher/lock screen/control center/power menu/screenshots, one native shell    |
 | **Terminal Emulators**      | [foot][foot], [Kitty][Kitty], [Alacritty][Alacritty], [Ghostty][Ghostty]                                                 |
-| **Terminal Multiplexer**    | [Zellij][Zellij]                                                                                                         |
+| **Terminal Multiplexer**    | [TUIOS][TUIOS]                                                                                                           |
 | **Shell**                   | [Nushell][Nushell] + [Starship][Starship]                                                                                |
 | **Editors / IDE**           | [Zed][Zed] (GUI, primary), VS Code (GUI); [Helix][Helix] (TUI, primary), [Neovim][Neovim] (TUI, backup)                  |
 | **Color Scheme**            | [catppuccin-nix][catppuccin-nix]                                                                                         |
@@ -214,7 +214,7 @@ Other dotfiles that inspired me:
 [flypy]: https://flypy.cc/
 [Btop]: https://github.com/aristocratos/btop
 [mpv]: https://github.com/mpv-player/mpv
-[Zellij]: https://github.com/zellij-org/zellij
+[TUIOS]: https://github.com/Gaurav-Gosain/tuios
 [Helix]: https://github.com/helix-editor/helix
 [Neovim]: https://github.com/neovim/neovim
 [Zed]: https://zed.dev

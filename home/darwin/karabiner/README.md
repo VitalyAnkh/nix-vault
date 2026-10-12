@@ -65,7 +65,7 @@ check that every copy matches.
 
 Emacs, VS Code, Zed, other IDEs, Codex, terminals, SSH clients, and remote desktop clients receive
 no generic mapping. Warp (`dev.warp.Warp-Stable`) has only the four explicit combinations above: raw
-Ctrl+C/Z/A/E/V and Option/Meta stay unchanged. The shared Zellij configuration is unchanged. Extra
+Ctrl+C/Z/A/E/V and Option/Meta stay unchanged. The shared TUIOS configuration is unchanged. Extra
 Option, Command, Fn, or Shift modifiers are not absorbed by the GUI shortcuts; redo is the explicit
 exception. Separately from these shortcuts, the [Emacs hotkey](#emacs-hotkey) takes Ctrl+Shift+Q in
 every app, including those listed here, and in both profiles.
@@ -229,7 +229,7 @@ physical keyboard path. On each keyboard, verify physical Caps Lock → Control 
 Caps Lock first. On the built-in keyboard, also verify on both sides that the key next to the space
 bar gives Option and the physical Option key gives Command, while an external keyboard keeps both
 keys; in Emacs, `M-o`, `M-.` and `M-,` then use the key next to the space bar. Then check Ctrl+C/V
-and undo/redo in a GUI app, Ctrl+Shift+C/V/Z/Y in Warp, raw Ctrl+C/Z in Warp and Zellij, and the
+and undo/redo in a GUI app, Ctrl+Shift+C/V/Z/Y in Warp, raw Ctrl+C/Z in Warp and TUIOS, and the
 existing input-language and Warp global shortcuts. For the Emacs hotkey, press Ctrl+Shift+Q in
 another app with Emacs not running, behind other windows, hidden, and minimized, then again with
 Emacs frontmost, including with Emacs still active after its only frame was minimized.

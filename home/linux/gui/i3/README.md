@@ -41,7 +41,7 @@ tree the agent reads, so it stays.
   services: `xvfb` → `i3` → (`x11vnc`, `autocutsel-primary` / `autocutsel-clipboard`,
   `cua-driver serve`).
 - `modules/nixos/desktop/computer-use.nix` provides the system side (`linger`, AT-SPI, fonts, Mesa,
-  Clash Verge proxy, proxy-region timezone).
+  and a `proxyRegion` option that pins the timezone to the proxy's exit region).
 - the generated `computer-use-init` script (exec'd by i3) publishes `DISPLAY`/`XDG_SESSION_TYPE` to
   the systemd user manager, clears any stale `WAYLAND_DISPLAY`, and enables the AT-SPI bridge via a
   gsettings key.
@@ -58,8 +58,8 @@ The generated config is intentionally minimal:
   screen. That matches a real desktop and avoids a full-screen-sized viewport.
 - `exec --no-startup-id .../computer-use-init` — one-time session setup, see above.
 
-There are no keybindings, bars or autostarted apps: agents drive the session through the drivers,
-not the keyboard.
+There are no keybindings or bars, and the only autostart is the one-time `computer-use-init` above:
+agents drive the session through the drivers, not the keyboard.
 
 ## Manual access over VNC
 

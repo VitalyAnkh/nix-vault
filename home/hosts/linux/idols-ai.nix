@@ -1,9 +1,16 @@
-{ config, ... }:
+{
+  config,
+  ...
+}:
 let
   mkSymlink = config.lib.file.mkOutOfStoreSymlink;
 in
 {
-  imports = [ ../../linux/gui.nix ];
+  imports = [
+    ../../linux/gui.nix
+  ];
+
+  modules.desktop.vinput.enable = true;
 
   programs.ssh.settings."github.com".IdentityFile = "${config.home.homeDirectory}/.ssh/idols-ai";
 
@@ -27,6 +34,9 @@ in
 
   xdg.configFile."niri/niri-hardware.kdl".source =
     mkSymlink "${config.home.homeDirectory}/nix-config/hosts/idols-ai/niri-hardware.kdl";
+
+  # Keep Noctalia's network widgets on the physical uplink, not the Mihomo TUN.
+  xdg.configFile."noctalia/host-ai.toml".source = ./idols-ai/noctalia.toml;
 
   # The desktop speakers are already loud, so use the broadcast-standard -23 dB.
   services.easyeffects.extraPresets."loudness-normalization".output."autogain#0".target = -23.0;

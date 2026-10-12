@@ -59,6 +59,9 @@ in
 
   modules.btrbk.enable = true;
 
+  # HDD tuning/diagnostics for the two spinning disks behind the USB-SATA bridge.
+  environment.systemPackages = [ pkgs.hdparm ];
+
   # Beelink GTR5: Radeon iGPU. The ROCm build of btop shows the GPU panel;
   # node_exporter's drm collector exposes its utilization/VRAM.
   modules.btop.package = pkgs.btop-rocm;
@@ -88,13 +91,10 @@ in
   systemd.services.restic-rest-server.unitConfig.RequiresMountsFor = "/data/backups";
 
   boot.kernelParams = [
-    # Use transparent huge pages on demand (madvise) instead of a fixed 1G hugetlb
-    # pool (cannot be overcommitted/shared; it stranded memory and blocked
-    # scheduling). The VMs now use ordinary memory.
-    "transparent_hugepage=madvise"
-
     # --- mitigations for the flaky USB-SATA bridge the two 4TB HDDs sit behind.
     # It is a JMicron JMS567 that resets and throws link (UDMA-CRC) + I/O errors.
+    # Keep until the bridge/controller is replaced; smartctl_exporter now tracks
+    # the drives' CRC/media errors, which is the signal to re-evaluate.
     "usbcore.autosuspend=-1" # no USB autosuspend
     "usb-storage.delay_use=10" # give the bridge time to settle after probing
   ];

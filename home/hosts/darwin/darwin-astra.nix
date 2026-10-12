@@ -40,7 +40,7 @@ in
   modules.shell.zai.enable = false;
   modules.desktop.squirrel.enable = false;
   modules.desktop.aerospace.enable = false;
-  modules.desktop.proxy.enable = false;
+  modules.desktop.proxy.enable = true;
   # Homebrew casks provide newer Zotero and Obsidian here; a second copy from
   # Home Manager would share their data directories.
   modules.desktop.academia.enable = false;

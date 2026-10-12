@@ -286,8 +286,34 @@ Model flag normalization contract:
   working-tree paths expose different files; preserve unstaged edits before resolving the collision.
 - When merging from upstream `ryan/main`, treat upstream `idols-ai` / `ai` host changes as the
   source lineage for local `eva`. The local `eva` host is the adapted successor of upstream's AI
-  host, so safe capability improvements from upstream `idols-ai` should be migrated into `eva`
-  rather than ignored.
+  host, so upstream capability improvements should be migrated into `eva` rather than ignored.
+- The preferred merge policy is to absorb upstream refactors into local hosts when the result is
+  functionally equivalent or stronger: migrate `zellij` to `tuios`, `clash-verge` to native
+  `mihomo`, and remove obsolete NetBird/legacy hardening modules where their replacements are
+  present. Keep every locally added host, but map upstream host-specific improvements to its local
+  successor: `idols-ai`/`ai` to `eva`, and upstream Darwin/macOS improvements to `astra`.
+- The user explicitly authorizes adapting the upstream AI host's `disko`, swap, NVMe, networkd, and
+  mihomo DNS-lifecycle design to `eva`. Do not copy AI hardware identifiers or disk UUIDs blindly:
+  translate each capability to EVA's hardware and storage layout, keep bootability and required
+  persistent state intact, and validate the resulting filesystem/network/activation semantics before
+  deployment.
+- Apply this mapping as an organic refactor rather than a second parallel implementation: shared
+  module improvements land in the shared modules, upstream AI host-specific improvements are adapted
+  into `eva`, and upstream Darwin/macOS improvements are adapted into `astra`. Do not add an `ai`
+  compatibility host merely to satisfy upstream tests when the local successor is `eva`.
+- The replacement policy is functional, not cosmetic: `tuios` must provide the interactive terminal
+  workflow previously provided by zellij, native `mihomo` must replace Clash GUI/core use on Linux,
+  and obsolete NetBird or legacy hardening modules may be removed only when their active consumers
+  have a maintained replacement. Keep old state directories only when they are needed for a safe
+  migration; they must not keep the removed service active.
+- For EVA's disk migration, keep the checked-in hardware scan as the boot/runtime source of truth
+  and set Disko's NixOS integration to installer-only when its generated mounts would duplicate or
+  alter the existing UUID/subvolume layout. A Disko profile must match the observed EVA disk and
+  must not contain Ryan's LUKS, NVMe, partition, or swap identifiers.
+- For EVA networking, migrate the AI networkd routing-policy and mihomo DNS lifecycle safeguards,
+  but adapt ownership to the live topology: networkd may own the wired uplink while NetworkManager
+  remains available for EVA's roaming Wi-Fi. Never hard-code a gateway outside the address subnet;
+  DHCP/RA is preferred when the wired gateway is not verified.
 - Preserve `eva` boot, disk, filesystem, and activation semantics unless the user explicitly asks
   for those to change. For potentially disruptive upstream host changes, keep them disabled behind
   local options or record why they were not migrated.
@@ -326,14 +352,14 @@ Minimum acceptance checks for upstream `ryan/main` merges:
   Specifically check whether newly preserved paths already contain non-persistent live data that
   must be moved to `/persistent` before `switch`, and whether removed/renamed preserved paths could
   hide existing data after activation.
-- Verify `eva` and `muon` keep their intended host roles: `eva` remains boot-safe with local
-  filesystems unchanged, while `muon` keeps its multi-user additions and imports only safe shared
-  `eva` behavior.
+- Verify `eva` and `muon` keep their intended host roles: `eva` remains boot-safe after the explicit
+  AI-capability migration, with its own disks, UUIDs, filesystems, and persistent state preserved;
+  `muon` keeps its multi-user additions and imports only applicable shared `eva` behavior.
 - Verify local package mechanisms with targeted `nix eval`, including `pkgs` packages, fcitx5
   package/data wiring, `emacs-master-pgtk-with-igc`, Nutstore packages, and Doom Emacs Home Manager
   wiring.
 - Run the strongest feasible build check, normally
-  `nixos-rebuild build --impure --max-jobs 1 --cores 1 --flake .#eva`. If a build cannot complete
+  `nixos-rebuild build --impure --max-jobs 8 --cores 8 --flake .#eva`. If a build cannot complete
   due to network-only substitute or source-fetch failures, capture the exact failing derivation and
   error and do not misreport it as a configuration success. </project_merge_protocol>
 
@@ -379,10 +405,10 @@ Minimum acceptance checks for upstream `ryan/main` merges:
   `home/hosts/darwin/darwin-astra.nix`, `docs/astra-macos-host.md`). Its account name comes from the
   private `mysecrets` input (`hosts/astra/account.nix`); never write it into this public repository.
 - Build as the user, never as root: root cannot fetch the private `mysecrets` input over SSH. Use
-  `nix build --no-write-lock-file --max-jobs 1 --cores 1 --out-link result-astra .#darwinConfigurations.astra.system`,
+  `nix build --no-write-lock-file --max-jobs 8 --cores 8 --out-link result-astra .#darwinConfigurations.astra.system`,
   or `just local`, which builds and then activates. Do not use `sudo darwin-rebuild switch --flake`.
-  macOS has no cgroups, so the 16 GiB builder memory cap from the build resource limits below cannot
-  be enforced there; keep `--max-jobs 1 --cores 1` unless resource headroom has been checked.
+  macOS has no cgroups; use the same explicit `--max-jobs 8 --cores 8` cap unless a task-specific
+  resource constraint is requested.
 - Activate only when the user explicitly asks for it in the current conversation.
 - Before activating, run `brew bundle cleanup --file=<Brewfile>` and `brew bundle check` with
   `HOMEBREW_NO_AUTO_UPDATE=1` against the Brewfile that `<system>/activate` references. Homebrew
@@ -426,12 +452,9 @@ NixOS Build Resource Limits:
 
 - Every `nixos-rebuild` or `nix build` that evaluates or builds a NixOS configuration must pass
   explicit `--max-jobs` and `--cores` values no greater than `16`.
-- Default to `--max-jobs 1 --cores 1` for EVA, MUON, or any large configuration. Increase
-  concurrency only when current resource headroom has been checked and it remains within the
-  16-job/16-core ceiling.
-- Cap aggregate builder memory at `16 GiB` with a cgroup that covers the Nix daemon and its builder
-  processes. Do not treat a scope that contains only the `nixos-rebuild` client as proof of this
-  limit when a system Nix daemon owns the actual builders.
+- For this repository's current merge and validation workflow, use `--max-jobs 8 --cores 8` for
+  NixOS and Darwin builds. Do not add an aggregate cgroup memory cap unless the user explicitly
+  requests one; the explicit job/core cap is the active resource constraint.
 - Do not start another Nix evaluation or build while a constrained configuration build is active,
   unless it is demonstrably isolated within the same resource limits.
 

@@ -9,6 +9,8 @@ in
     ./12kingdoms-shoukei/wluma.nix
   ];
 
+  modules.desktop.vinput.enable = true;
+
   programs.ssh.settings."github.com".IdentityFile = "${config.home.homeDirectory}/.ssh/${hostName}";
 
   modules.desktop.gaming.enable = false;

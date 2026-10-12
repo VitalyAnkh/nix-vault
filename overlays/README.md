@@ -11,47 +11,23 @@ through [Overlays - NixOS & Flakes Book](https://nixos-and-flakes.thiscute.world
 overlays/
 ├── README.md
 ├── default.nix            # Entrypoint for all overlays
-├── computer-use-linux.nix # trycua/computer-use-linux package
-├── cua-driver.nix         # trycua/cua driver (cua-driver) package
-└── fcitx5/                # Chinese input method configuration
-    ├── README.md
-    ├── default.nix        # fcitx5 overlay definition
-    └── rime-data-flypy/   # Custom rime data for 小鹤音形输入法
-        └── share/
-            └── rime-data/
-                ├── build/
-                ├── default.custom.yaml
-                ├── default.yaml
-                ├── flypy.schema.yaml
-                ├── flypy_full全码字.txt
-                ├── flypy_sys.txt
-                ├── flypy_top.txt
-                ├── flypy_user.txt
-                ├── lua/
-                │   └── calculator_translator.lua
-                ├── rime.lua
-                ├── squirrel.custom.yaml
-                └── squirrel.yaml
+├── computer-use-linux.nix # computer-use-linux from ryan4yin/nur-packages
+├── cua-driver.nix         # cua-driver from ryan4yin/nur-packages
+└── smartctl-exporter/     # smartctl_exporter pinned to the #329 fix
+    └── default.nix
 ```
 
 ## Components
 
 ### 1. `default.nix`
 
-The entrypoint of overlays, it execute and import all overlay files in the current directory with
-the given args.
+The entrypoint imports every overlay file in this directory and applies it to the given arguments.
 
-### 2. `fcitx5`
+### 2. Package overlays
 
-fcitx5's overlay, add my customized Chinese input method - [小鹤音形输入法](https://flypy.com/)
-
-This overlay provides:
-
-- Custom rime data for 小鹤音形输入法 (Flypy input method)
-- Cross-platform support for both Linux (fcitx5-rime) and macOS (squirrel)
-- Pre-configured input method settings
-
-### 3. Package overlays
-
-- `computer-use-linux.nix`: packages `pkgs/computer-use-linux`.
-- `cua-driver.nix`: packages `pkgs/cua-driver` (used by the computer-use VMs).
+- `computer-use-linux.nix`: exposes `computer-use-linux` from the `nur-ryan4yin` flake input.
+- `cua-driver.nix`: exposes `cua-driver` from the `nur-ryan4yin` flake input (used by the
+  computer-use VMs).
+- `smartctl-exporter/`: pins `prometheus-smartctl-exporter` to the upstream commit carrying PR
+  [#329](https://github.com/prometheus-community/smartctl_exporter/pull/329) until nixpkgs provides
+  a version containing the fix; see `overlays/smartctl-exporter/default.nix`.

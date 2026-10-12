@@ -8,9 +8,8 @@ multi-cursor, surround), and a smaller moving part than a large Neovim plugin st
 
 ## Tips
 
-1. This flake sets `$EDITOR` / `$VISUAL` to **`hx`** by default. For security-sensitive edits
-   (privileged files, unfamiliar binaries, secrets), prefer **`nvim --clean`** — `$SUDO_EDITOR` uses
-   it so `sudoedit` stays minimal; invoke it yourself in other trust-boundary cases.
+1. This flake sets `$EDITOR` / `$VISUAL` / `$SUDO_EDITOR` to **`hx`** by default, for interactive
+   and privileged (`sudoedit`) edits alike. Neovim stays installed as a backup editor.
 1. Helix is **selection-first** (like Kakoune): extend a selection, then run an action (`d`, `c`,
    `y`, …). A lone cursor is a zero-width selection.
 1. Read the official docs before reinventing workflows:
@@ -20,7 +19,7 @@ multi-cursor, surround), and a smaller moving part than a large Neovim plugin st
    1. <https://docs.helix-editor.com/commands.html> — typable commands (`:` prompt).
    1. <https://docs.helix-editor.com/configuration.html> — `config.toml`, themes, remaps.
    1. <https://github.com/helix-editor/helix/wiki> — install tips, language servers, FAQ.
-1. Prefer **Zellij** for shells and panes; use **Helix** for buffers and text.
+1. Prefer **tuios** for shells and panes; use **Helix** for buffers and text.
 1. On large codebases, navigation is often **by picker** (`Space f`, symbols, workspace search) or
    **by LSP** (`g` goto mode), complementing motion-based editing.
 1. After **git** operations (`checkout`, `merge`, `pull`, `rebase`) or whenever many files changed
@@ -39,20 +38,24 @@ Run `:tutor` inside Helix, or `hx --tutor` from the shell
 
 ### Terminal related
 
-Zellij shortcuts used often (same idea as in the Neovim notes):
+tuios shortcuts used often (leader is `Ctrl + B`; same idea as in the Neovim notes):
 
-| Action                    | Zellij shortcut |
-| ------------------------- | --------------- |
-| Floating terminal         | `Ctrl + p + w`  |
-| Horizontal split terminal | `Ctrl + p + d`  |
-| Vertical split terminal   | `Ctrl + p + n`  |
+| Action            | tuios shortcut             |
+| ----------------- | -------------------------- |
+| New pane          | `n` (window mode)          |
+| Floating terminal | `Ctrl + B`, then `Alt + F` |
+| Split horizontal  | `Ctrl + B`, then `-`       |
+| Split vertical    | `Ctrl + B`, then `\`       |
+| Command palette   | `Ctrl + P`                 |
+| Launcher          | `Alt + Space`              |
+| Detach            | `Ctrl + B`, then `d`       |
 
 In Helix, `|` / `!` and variants pipe or insert shell output on selections (see **Changes**).
 
-This flake’s Helix Home Manager module keeps **almost all default keys** but adds several
-normal-mode remaps: **`Ctrl+Shift+o`** → jump backward (because Zellij uses **`Ctrl+o`** for
-Session), `Space Space` → `:reload-all`, `Space w` / `Space q` → `:w` / `:q`, `Esc` → collapse
-selection, and `$` / `0` line jumps (see `home/base/core/editors/helix/default.nix`).
+This flake's Helix Home Manager module keeps **almost all default keys** but adds several
+normal-mode remaps: **`Ctrl+Shift+o`** → jump backward (leaving `Ctrl+o` free for the shell),
+`Space Space` → `:reload-all`, `Space w` / `Space q` → `:w` / `:q`, `Esc` → collapse selection, and
+`$` / `0` line jumps (see `home/base/core/editors/helix/default.nix`).
 
 ### Command mode (`:`)
 
@@ -84,41 +87,41 @@ selection, and `$` / `0` line jumps (see `home/base/core/editors/helix/default.n
 | Word-label jump       | `gw` shows two-character labels; type a label to jump, `Esc` cancels |
 | Line / file           | `Home` / `End`; `gg` start or goto line; `G` line                    |
 | Half / full page      | `Ctrl-u` / `Ctrl-d`; `Ctrl-b` / `Ctrl-f`                             |
-| Jumplist              | `Ctrl-o` back, `Ctrl-i` forward; `Ctrl-s` save spot                  |
+| Jumplist              | `Ctrl-Shift-o` back, `Ctrl-i` forward; `Ctrl-s` save spot            |
 
 ### Selection & changes
 
-| Action                 | Keys / notes                                                                |
-| ---------------------- | --------------------------------------------------------------------------- |
-| Extend selections      | `v` select mode; motions extend instead of moving; `v` or `Esc` leaves mode |
-| Line selection         | `x` extend line; `X` line bounds; repeat or use a count for more lines      |
-| Collapse selections    | `;` collapse selections back to cursors                                     |
-| Select all / regex     | `%`; `s` regex in selections; `S` split on regex                            |
-| Multiple cursors       | `C` duplicate to next suitable line; `Alt-C` above; `,` remove one cursor   |
-| Align selections       | `&` align selection contents                                                |
-| Undo / redo            | `u` / `U`                                                                   |
-| Delete / change / yank | `d` / `c` / `y` — acts on selection                                         |
-| Replace with yank      | `R` replace selection with yanked text                                      |
-| Paste                  | `p` / `P`; registers `"` …                                                  |
-| Register prefix        | `"<char>` selects a register for yank/paste/macro operations                |
-| Insert                 | `i` `a` `I` `A` `o` `O`                                                     |
-| Repeat insert          | `.` repeat the last insertion                                               |
-| Replace selected chars | `r<char>`                                                                   |
-| Indent / format        | `>` / `<`; `=` format (LSP)                                                 |
-| Increment / decrement  | `Ctrl-a` / `Ctrl-x` on selected numbers                                     |
-| Case                   | `~` toggle; lower/upper case via grave / `Alt-grave` (see Alt caveat above) |
-| Join lines             | `J`; `Alt-J` join keeping space (see Alt caveat above)                      |
-| Toggle line comment    | `Ctrl-c`                                                                    |
-| Macro record / replay  | `Q` start/stop recording; `q` replay from the default `@` register          |
+| Action                 | Keys / notes                                                                         |
+| ---------------------- | ------------------------------------------------------------------------------------ |
+| Extend selections      | `v` select mode; motions extend instead of moving; `v` or `Esc` leaves mode          |
+| Line selection         | `x` extend line; `X` line bounds; repeat or use a count for more lines               |
+| Collapse selections    | `;` collapse selections back to cursors                                              |
+| Select all / regex     | `%`; `s` regex in selections; `S` split on regex                                     |
+| Multiple cursors       | `C` duplicate to next suitable line; `Alt-C` above; `,` keep only the primary cursor |
+| Align selections       | `&` align selection contents                                                         |
+| Undo / redo            | `u` / `U`                                                                            |
+| Delete / change / yank | `d` / `c` / `y` — acts on selection                                                  |
+| Replace with yank      | `R` replace selection with yanked text                                               |
+| Paste                  | `p` / `P`; registers `"` …                                                           |
+| Register prefix        | `"<char>` selects a register for yank/paste/macro operations                         |
+| Insert                 | `i` `a` `I` `A` `o` `O`                                                              |
+| Repeat insert          | `.` repeat the last insertion                                                        |
+| Replace selected chars | `r<char>`                                                                            |
+| Indent / format        | `>` / `<`; `=` format (LSP)                                                          |
+| Increment / decrement  | `Ctrl-a` / `Ctrl-x` on selected numbers                                              |
+| Case                   | `~` toggle; lower/upper case via grave / `Alt-grave`                                 |
+| Join lines             | `J`; `Alt-J` join keeping space                                                      |
+| Toggle line comment    | `Ctrl-c`                                                                             |
+| Macro record / replay  | `Q` start/stop recording; `q` replay from the default `@` register                   |
 
 ### Search
 
-| Action               | Keys                                                            |
-| -------------------- | --------------------------------------------------------------- |
-| Search / reverse     | `/` / `?`                                                       |
-| Next / prev match    | `n` / `N`                                                       |
-| Selection as pattern | `*` (word bounds); `Alt-*` raw selection (see Alt caveat above) |
-| Split on newlines    | `Alt-s`                                                         |
+| Action               | Keys                                     |
+| -------------------- | ---------------------------------------- |
+| Search / reverse     | `/` / `?`                                |
+| Next / prev match    | `n` / `N`                                |
+| Selection as pattern | `*` (word bounds); `Alt-*` raw selection |
+| Split on newlines    | `Alt-s`                                  |
 
 Use **extend mode** (`v`) with `n` / `N` to add matches to multi-cursors
 ([keymap](https://docs.helix-editor.com/keymap.html#select--extend-mode)).
@@ -203,21 +206,21 @@ Some bindings need an **LSP** or **tree-sitter** grammar; see notes on the keyma
 1. Neovim has a huge plugin ecosystem.
    1. Helix is newer; a stable plugin system is still evolving:
       <https://github.com/helix-editor/helix/pull/8675>
-1. Neovim has an integrated terminal (similar in spirit to VS Code’s).
-   1. Helix does not ship one; use Zellij / tmux / terminal features instead.
+1. Neovim has an integrated terminal (similar in spirit to VS Code's).
+   1. Helix does not ship one; use tuios / tmux / terminal features instead.
    1. <https://github.com/helix-editor/helix/issues/1976#issuecomment-1091074719>
    1. <https://github.com/helix-editor/helix/pull/4649>
 1. Helix has no built-in tree panel; pair with **Yazi**, ranger, or Broot and open files from there.
    1. A tree view may arrive with plugins later; many users rely on the file picker instead.
-1. Global substitution is weaker in Helix; run replacements in another pane (Zellij) or an external
+1. Global substitution is weaker in Helix; run replacements in another pane (tuios) or an external
    tool when needed.
    1. <https://github.com/helix-editor/helix/issues/196>
-   1. Neovim’s `:s` with preview remains strong for interactive refactors; external tools (e.g.
+   1. Neovim's `:s` with preview remains strong for interactive refactors; external tools (e.g.
       <https://github.com/ms-jpq/sad>) can fill gaps in Helix-centric flows.
 1. Complexity vs batteries-included tradeoffs:
    <https://github.com/helix-editor/helix/discussions/6356>
 
-Using **Helix** (and Neovim when useful) inside **Yazi** and **Zellij** keeps editing, files, and
+Using **Helix** (and Neovim when useful) inside **Yazi** and **tuios** keeps editing, files, and
 panes explicit and scriptable — different from a single IDE window, but very composable.
 
 Helix nudges you away from reproducing VS Code/JetBrains inside one process; Neovim remains there

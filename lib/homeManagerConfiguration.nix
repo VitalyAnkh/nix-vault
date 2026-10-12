@@ -50,7 +50,9 @@ let
   # on non-Linux systems.
   bwrapsOverlay =
     let
-      bwrapsModule = import (mylib.relativeToRoot "hardening/bwraps/default.nix");
+      bwrapsModule = import (mylib.relativeToRoot "hardening/bwraps/default.nix") {
+        pkgs-master = (genSpecialArgs system).pkgs-master;
+      };
     in
     builtins.head bwrapsModule.nixpkgs.overlays;
 

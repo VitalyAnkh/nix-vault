@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }:
 let
@@ -8,9 +9,9 @@ let
     config ? age && builtins.hasAttr "nix-access-tokens" (config.age.secrets or { });
 in
 {
-  # auto upgrade nix to the unstable version
-  # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/tools/package-management/nix/default.nix#L284
-  # nix.package = pkgs.nixVersions.latest;
+  # Nix 2.35 is newer than nixpkgs' stable package and is safe to use on hosts
+  # that opt into this shared module.
+  nix.package = pkgs.nixVersions.latest;
 
   # https://lix.systems/add-to-config/
   # nix.package = pkgs.lix;
@@ -49,6 +50,9 @@ in
       "/dev/net"
     ];
   };
+
+  # Avoid root-owned systemd SSH config drop-ins failing inside bubblewrap.
+  programs.ssh.systemd-ssh-proxy.enable = false;
 
   nix.channel.enable = false; # remove nix-channel related tools & configs, we use flakes instead.
 

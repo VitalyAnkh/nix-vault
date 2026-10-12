@@ -1,9 +1,25 @@
 {
+  config,
+  lib,
+  myvars,
+  ...
+}:
+let
+  # Exporters bind to this host's static LAN IPv4 (the same address
+  # VictoriaMetrics scrapes), so the socket exists only on the LAN interface —
+  # defence in depth behind the firewall allowlist. Hosts without an always-on
+  # static LAN address (the `homeOnly` laptop, DHCP VMs like akane) run no
+  # exporters.
+  hostAddr = myvars.networking.hostsAddr.${config.networking.hostName} or { };
+  lanAddr = if hostAddr.homeOnly or false then null else hostAddr.ipv4 or null;
+  hardwareToolsEnabled = config.services.smartd.enable;
+in
+{
   # enable the node exporter on all nixos hosts
   # https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/modules/services/monitoring/prometheus/exporters/node.nix
-  services.prometheus.exporters.node = {
+  services.prometheus.exporters.node = lib.mkIf (lanAddr != null) {
     enable = true;
-    listenAddress = "0.0.0.0";
+    listenAddress = lanAddr;
     port = 9100;
     # There're already a lot of collectors enabled by default
     # https://github.com/prometheus/node_exporter?tab=readme-ov-file#enabled-by-default
@@ -33,4 +49,35 @@
       "--collector.filesystem.mount-points-exclude=^(/|/persistent/)(dev|proc|sys|run/credentials/.+|run/user/.+|var/lib/docker/.+|var/lib/containers/.+|var/lib/kubelet/.+|home/[^/]+/.+)($|/)"
     ];
   };
+
+  # Drive SMART health (wear, spare, media errors, temperature, bytes written)
+  # on physical hosts. node_exporter's nvme collector only exposes
+  # node_nvme_info and namespace capacity, NOT SMART health, so this is the only
+  # source of SSD lifespan data. The exporter follows `services.smartd.enable`,
+  # which is enabled only on hosts with an explicit physical-disk policy.
+  services.prometheus.exporters.smartctl = lib.mkIf (lanAddr != null && hardwareToolsEnabled) {
+    enable = true;
+    listenAddress = lanAddr;
+    port = 9633;
+    maxInterval = "60s";
+  };
+
+  # LAN-bound exporters race networkd's address assignment at boot; without
+  # ordering they trip the start limit (seen on ai). wait-online is best-effort
+  # (120s timeout), so also retry patiently.
+  systemd.services = lib.mkIf (lanAddr != null) (
+    lib.genAttrs
+      (
+        [ "prometheus-node-exporter" ]
+        ++ lib.optionals hardwareToolsEnabled [ "prometheus-smartctl-exporter" ]
+      )
+      (_: {
+        after = [ "network-online.target" ];
+        wants = [ "network-online.target" ];
+        serviceConfig = {
+          RestartSec = "10s";
+          StartLimitIntervalSec = 0;
+        };
+      })
+  );
 }

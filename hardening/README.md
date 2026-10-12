@@ -2,13 +2,17 @@
 
 > Work in progress.
 
+Application sandboxing (nixpak/bubblewrap) and Linux hardening knowledge for this repository. For
+the repository security policy, architecture and audit status, see [`SECURITY.md`](../SECURITY.md);
+for temporary exceptions and known gaps, see [`WORKAROUNDS.md`](../WORKAROUNDS.md).
+
 ## Goal
 
 - **System Level**: Protect critical files from being accessed by untrusted applications.
   1. Such as browser cookies, SSH keys, etc.
 - **Per-App Level**: Prevent untrusted applications(such as closed-source apps) from:
   1. Accessing files they shouldn't.
-     - Such as a malicious application accessing your browser's cookies, SSH Keys, etc.
+     - Such as a malicious application accessing your browser's cookies, SSH keys, etc.
   1. Accessing the network when they don't need to.
   1. Accessing hardware devices they don't need.
 
@@ -17,7 +21,8 @@
 ### 1. **System Level**
 
 - **AppArmor** (`apparmor/`): AppArmor profiles and configuration
-- **Kernel & System Hardening** (`profiles/`): System-wide hardening profiles
+- **Kernel & process hardening** (`kernel-hardening.nix`): sysctl baseline and unused-module deny
+  list; rationale and verification live in [`SECURITY.md`](../SECURITY.md).
 
 ### 2. **Per-App Level**
 
@@ -26,53 +31,43 @@
   - QQ (Chinese messaging app) configuration
   - Telegram Desktop configuration
   - Modular system with reusable components
-- **Firejail** (legacy): SUID-based sandboxing (not used)
 - **Bubblewrap** (`bwraps/`): Direct bubblewrap configurations
   - WeChat sandboxing configuration
 
 ## Current Implementation Status
 
-| Component         | Status    | Notes                          |
-| ----------------- | --------- | ------------------------------ |
-| AppArmor Profiles | 🚧 WIP    | Basic structure in place       |
-| Nixpak Firefox    | ✅ Active | Firefox sandboxing via nixpak  |
-| Nixpak QQ         | ✅ Active | QQ application sandboxing      |
-| Nixpak Telegram   | ✅ Active | Telegram Desktop sandboxing    |
-| Bubblewrap WeChat | ✅ Active | WeChat specific sandboxing     |
-| System Profiles   | 🚧 WIP    | Hardened system configurations |
+| Component         | Status    | Notes                         |
+| ----------------- | --------- | ----------------------------- |
+| AppArmor Profiles | 🚧 WIP    | Basic structure in place      |
+| Nixpak Firefox    | ✅ Active | Firefox sandboxing via nixpak |
+| Nixpak QQ         | ✅ Active | QQ application sandboxing     |
+| Nixpak Telegram   | ✅ Active | Telegram Desktop sandboxing   |
+| Bubblewrap WeChat | ✅ Active | WeChat specific sandboxing    |
 
 ## Directory Structure
 
 ```
 hardening/
 ├── README.md
+├── kernel-hardening.nix # sysctl baseline + unused-module deny list
 ├── apparmor/           # AppArmor security profiles
 │   └── default.nix
 ├── bwraps/            # Direct bubblewrap configurations
 │   ├── default.nix
 │   └── wechat.nix
-├── nixpaks/           # Nixpak application sandboxing
-│   ├── default.nix
-│   ├── firefox.nix
-│   ├── qq.nix
-│   ├── telegram-desktop.nix
-│   └── modules/       # Reusable nixpak modules
-│       ├── custom-policy.nix
-│       ├── gui-base.nix
-│       └── network.nix
-└── profiles/          # System hardening profiles
-    └── default.nix
+└── nixpaks/           # Nixpak application sandboxing
+    ├── default.nix
+    ├── firefox.nix
+    ├── qq.nix
+    ├── telegram-desktop.nix
+    └── modules/       # Reusable nixpak modules
+        ├── custom-policy.nix
+        ├── gui-base.nix
+        └── network.nix
 ```
-
-## Kernel Hardening
-
-- NixOS Kernel Config:
-  https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/os-specific/linux/kernel/hardened/config.nix
 
 ## System Hardening
 
-- NixOS Profile:
-  https://github.com/NixOS/nixpkgs/blob/nixos-unstable/nixos/modules/profiles/hardened.nix
 - Apparmor: [roddhjav/apparmor.d](https://github.com/roddhjav/apparmor.d)
   - https://gitlab.com/apparmor/apparmor/-/wikis/Documentation
   - AppArmor.d is a set of over 1500 AppArmor profiles whose aim is to confine most Linux based
@@ -99,10 +94,9 @@ hardening/
 
 ## NOTE
 
-**Running untrusted code is never safe, kernel hardening & sandboxing cannot change this**.
-
-If you want to run untrusted code, please use a VM & an isolated network environment, which will
-provide a much higher level of security.
+**Running untrusted code is never safe, kernel hardening & sandboxing cannot change this**; run
+untrusted code in a VM on an isolated network. The threat model lives in
+[`SECURITY.md`](../SECURITY.md).
 
 ## References
 
@@ -115,5 +109,3 @@ provide a much higher level of security.
 - apparmor configs:
   - https://github.com/zramctl/dotfiles/blob/4fe177f6984154960942bb47d5a375098ec6ed6a/modules/nixos/security/apparmor.nix#L4
   - https://git.grimmauld.de/Grimmauld/grimm-nixos-laptop/src/branch/main/hardening
-- Others:
-  - Directly via `buildFHSUserEnvBubblewrap`:
