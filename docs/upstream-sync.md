@@ -98,6 +98,7 @@ git fetch ryan main
    每处差异都要能用合并中的提交解释。预期之外的差异就是需要修正的地方。
 
    - 列出要用户决定的上游改动（见“原则”），每一项都附上上游理由、替代方案和实测影响，讨论出结果再改。
+   - 逐个核对上游中涉及 ai 主机的提交：`git log --format='%h %s' <merge base>..ryan/main -- hosts/idols-ai home/hosts/linux/idols-ai.nix outputs/x86_64-linux/src/idols-ai.nix`。每个提交要么已在 eva 上生效（迁移过来，或经共享模块自动生效），要么不适用于 eva，要么在下文的合并表格中记录了用户的决定；其余的都要问用户。只看冲突和主机差异会漏掉 eva 从未跟随的改动。
 
 5. **验证。**
    - `just test`（`evalTests` 也包含 Darwin 主机的测试）。
@@ -240,6 +241,8 @@ f32d67a5（93700824）。之后在 astra 上把它与 vr 合并（78d4ade4），
 - 13 个 flake input 比上游旧。
 - 换 mihomo 时，上游删掉了 `clash-verge.desktop`
   登录自启项。用选项保留被替换的功能时，上游一并删掉的配套设置也要保留。
+- 第一轮审查只看了冲突和主机差异，漏掉了 eva 本应跟随或需要用户决定的 ai 改动：vinput、上游删除的 agent
+  CLI、Lutris/umu、Steam 的 gamescope 会话、#348 的其余部分、ctx7 的旧目录，以及更早的 binfmt 静态模拟器。按提交逐个核对（见合并流程第 4 步）之后才找出来。
 
 ### 吸收的上游重构
 
