@@ -238,6 +238,25 @@ in
     inherit (home.modules.desktop.inputSourcePro) enable;
     defaults = home.targets.darwin.defaults."com.runjuu.Input-Source-Pro";
   };
+  warp = {
+    inherit (home.modules.desktop.warp) enable settings;
+    settingsFile = lib.removePrefix home.home.homeDirectory home.modules.desktop.warp.settingsFile;
+    # Warp rewrites its settings file, so it is not a read-only Home Manager link.
+    managesMutableConfig = builtins.any (file: lib.hasPrefix ".warp" file.target) (
+      builtins.attrValues home.home.file
+    );
+    syncAfterWriteBoundary = builtins.elem "writeBoundary" home.home.activation.syncWarpSettings.after;
+    syncFailureIsWarning = lib.hasInfix "|| warnEcho" home.home.activation.syncWarpSettings.data;
+    # Sessions start the Homebrew Fish that homebrew.nix declares.
+    shellIsBrewFish =
+      home.modules.desktop.warp.settings.session.new_session_shell_override.executable
+      == "${system.homebrew.prefix}/bin/fish"
+      && builtins.elem "fish" brewNames;
+    # Warp has no fallback font, so the Nerd Font it names must be installed.
+    fontInstalled = builtins.any (
+      font: lib.hasPrefix "MapleMono-NF-CN" (lib.getName font)
+    ) system.fonts.packages;
+  };
   personalConfig = {
     gitIdentity = home.modules.git.personalIdentity.enable;
     setsGitName = home.programs.git.settings ? user.name;

@@ -47,7 +47,8 @@
       "docker"
       "docker-buildx"
       "docker-compose"
-      # Warp starts this Fish (~/.warp/settings.toml); `fish` on PATH is from Nix.
+      # Warp sessions start this Fish (modules.desktop.warp in
+      # home/hosts/darwin/darwin-astra.nix); `fish` on PATH is from Nix.
       "fish"
       # OpenMP runtime that local builds link from /opt/homebrew/opt/libomp.
       "libomp"

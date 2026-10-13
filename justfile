@@ -305,6 +305,16 @@ karabiner-test:
     print "karabiner_cli not found; skipped the rule lint"
   }
 
+# Test the Warp settings sync (macOS and Linux), with the Python the sync uses
+[group('desktop')]
+warp-test:
+  #!/usr/bin/env nu
+  let expr = r#'(builtins.getFlake (toString ./.)).inputs.nixpkgs.legacyPackages.${builtins.currentSystem}.callPackage ./home/base/gui/terminal/warp/python.nix { }'#
+  let python = (nix build --no-link --print-out-paths --impure --expr $expr | str trim)
+  with-env { PYTHONDONTWRITEBYTECODE: "1" } {
+    run-external $"($python)/bin/python3" "-m" "unittest" "discover" "-s" "home/base/gui/terminal/warp" "-p" "test_*.py"
+  }
+
 ############################################################################
 #
 #  Homelab - VM host related commands

@@ -28,6 +28,12 @@ in
   # Apps start with ABC; Control+Shift+8 switches to Shuangpin. The app is the
   # input-source-pro cask in hosts/darwin-astra/homebrew.nix.
   modules.desktop.inputSourcePro.enable = true;
+  # Warp is the cask in hosts/darwin-astra/homebrew.nix. Its sessions start the
+  # Homebrew Fish declared there; see docs/astra-macos-host.md.
+  modules.desktop.warp = {
+    enable = true;
+    settings.session.new_session_shell_override.executable = "${brewPrefix}/bin/fish";
+  };
 
   # Authentication and application-specific personal configuration stay local.
   modules.git.personalIdentity.enable = false;

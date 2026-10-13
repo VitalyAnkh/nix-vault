@@ -13,6 +13,8 @@ My current terminal emulators are:
    GPU-accelerated, and supports the Kitty graphics protocol.
 2. kitty: My secondary terminal emulator, configured in `kitty.nix`. Also supports the Kitty
    graphics protocol.
+3. warp: Warp OSS on eva and muon and the Warp cask on astra, installed by those hosts. `warp/`
+   merges a few settings into Warp's own settings file; see [warp/README.md](./warp/README.md).
 
 ## 'xterm-kitty': unknown terminal type when `ssh` into a remote host or `sudo xxx`
 

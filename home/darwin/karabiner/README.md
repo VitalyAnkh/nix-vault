@@ -195,9 +195,10 @@ device's **Modify events** setting is off. A profile without these rules, such a
 **Default profile**, gives the physical layout, because the macOS settings do not apply there
 either.
 
-Warp's global hotkey lives in `~/.warp/settings.toml`, which this module does not manage. With these
-rules active, Ctrl+Shift+E (physical Caps Lock+Shift+E) toggles all Warp windows when the file
-contains:
+Warp's global hotkey lives in `~/.warp/settings.toml`. This module does not touch that file; the
+[Warp module](../../base/gui/terminal/warp/README.md) keeps these lines in it on hosts that enable
+it. With these rules active, Ctrl+Shift+E (physical Caps Lock+Shift+E) then toggles all Warp
+windows:
 
 ```toml
 [global_hotkey.toggle_all_windows]

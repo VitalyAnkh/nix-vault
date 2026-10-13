@@ -45,6 +45,11 @@ astra 只在 `outputs/aarch64-darwin/src/astra.nix` 中覆盖 `myvars`
   `~/Applications/Home Manager Apps/Emacs.app`，未运行则启动；Emacs 在前台时发送 ⌘H 隐藏它，回到之前的 App。两个 Nix
   Vault profile 都生效，随激活时的 Karabiner 同步生效；限制与验证方法见
   [Karabiner 模块](../home/darwin/karabiner/README.md#emacs-hotkey)。
+- Warp 的设置文件 `~/.warp/settings.toml`
+  仍归 Warp 所有。[Warp 模块](../home/base/gui/terminal/warp/README.md)在激活时只把字体、全局热键和会话 shell 合并进去，Warp 运行中会立即读取。字体必须是 Nerd
+  Font（Maple Mono NF
+  CN）：tuios 和 Starship 提示符用到这些图标，而 Warp 只能设一个字体、没有后备字体，否则图标显示为
+  `?`。
 - 用户的 `~/.ssh/config` 和客户端身份保持用户管理，包括 Colima 的 Include。
 - Git 的通用工具与配置由 HM 提供；姓名、邮箱、签名和个人 include 保留在用户自己的配置中。HM 不删除
   `~/.gitconfig`，也不向 astra 注入其他主机使用者的 Git 身份。
@@ -210,7 +215,8 @@ Nix 声明 astra 需要哪些 Homebrew 包，Homebrew 负责安装和更新它�
   的脚本使用 Homebrew 的版本，二者的版本和更新节奏不同，所以不保留重复。`evalTests` 检查 `brews`
   与 Nix 包不重叠。
 - 唯一的重复是 Fish：Warp 的会话 shell（`~/.warp/settings.toml` 的
-  `session.new_session_shell_override`）是 Homebrew 的 `/opt/homebrew/bin/fish`，PATH 中的 `fish`
+  `session.new_session_shell_override`）是 Homebrew 的 `/opt/homebrew/bin/fish`，由
+  [Warp 模块](../home/base/gui/terminal/warp/README.md)在每次激活时写入；PATH 中的 `fish`
   仍来自 Nix。这里不用带版本号的 Cellar 路径，它会在 `brew upgrade fish` 后失效。
 
 激活设置：

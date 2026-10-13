@@ -155,6 +155,23 @@ in
       isLaunchAtLogin = true;
     };
   };
+  warp = {
+    enable = true;
+    settings = {
+      appearance.text.font_name = "Maple Mono NF CN";
+      global_hotkey.toggle_all_windows = {
+        enabled = true;
+        keybinding = "ctrl-shift-E";
+      };
+      session.new_session_shell_override.executable = "/opt/homebrew/bin/fish";
+    };
+    settingsFile = "/.warp/settings.toml";
+    managesMutableConfig = false;
+    syncAfterWriteBoundary = true;
+    syncFailureIsWarning = true;
+    shellIsBrewFish = true;
+    fontInstalled = true;
+  };
   personalConfig = {
     gitIdentity = false;
     setsGitName = false;

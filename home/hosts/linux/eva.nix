@@ -16,6 +16,8 @@ in
   modules.desktop.nvidia.enable = true;
 
   modules.editors.emacs.enable = true;
+  # Warp OSS comes from hosts/eva/gnome.nix; ~/.config/warp-oss is preserved.
+  modules.desktop.warp.enable = true;
 
   programs.fish.enable = true;
 
