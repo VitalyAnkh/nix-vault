@@ -13,16 +13,22 @@
 let
   name = "muon";
   base-modules = {
-    nixos-modules = map mylib.relativeToRoot [
-      # common
-      "secrets/nixos.nix"
-      "modules/nixos/desktop.nix"
-      # host specific
-      "hosts/${name}"
-      # nixos hardening
-      "hardening/nixpaks"
-      "hardening/bwraps"
-    ];
+    nixos-modules =
+      (map mylib.relativeToRoot [
+        # common
+        "secrets/nixos.nix"
+        "modules/nixos/desktop.nix"
+        # host specific
+        "hosts/${name}"
+        # nixos hardening
+        "hardening/nixpaks"
+        "hardening/bwraps"
+      ])
+      ++ [
+        # As on eva, in both variants: Ghostty, Zed and Warp name Maple Mono NF CN,
+        # and tuios and the Starship prompt need its Nerd Font icons.
+        { modules.desktop.fonts.enable = true; }
+      ];
     home-modules = map mylib.relativeToRoot [
       "home/hosts/linux/${name}.nix"
     ];
@@ -31,7 +37,6 @@ let
   modules-niri = {
     nixos-modules = [
       {
-        modules.desktop.fonts.enable = true;
         modules.desktop.wayland.enable = true;
         modules.secrets.desktop.enable = true;
         modules.secrets.preservation.enable = true;
