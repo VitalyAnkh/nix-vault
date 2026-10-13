@@ -47,6 +47,17 @@ in
   # to the journal; mail notifications stay off without an MTA.
   services.smartd.enable = true;
 
+  # Scrub the btrfs disk monthly. A scrub reads every block back and checks its
+  # checksum, so damage shows up even in files nothing reads: a manual scrub in
+  # 2026-10 found two files that had been corrupt since 2025-12. All subvolumes
+  # live on one filesystem and a scrub always covers the whole filesystem, so a
+  # single mount point is enough.
+  services.btrfs.autoScrub = {
+    enable = true;
+    interval = "monthly";
+    fileSystems = [ "/nix" ];
+  };
+
   # Upstream binds the exporters to the static LAN IPv4 in vars/networking.nix.
   # NetworkManager assigns this host its address (DHCP, Wi-Fi on eva), which need
   # not be that one, and a bound exporter then restarts forever. Keep listening

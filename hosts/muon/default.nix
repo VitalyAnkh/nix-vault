@@ -54,6 +54,14 @@ in
 
   zramSwap.memoryPercent = lib.mkForce 10;
 
+  # Monthly btrfs scrub, as on eva: a scrub covers the whole filesystem, so the
+  # one mount point stands for every subvolume on this disk.
+  services.btrfs.autoScrub = {
+    enable = true;
+    interval = "monthly";
+    fileSystems = [ "/nix" ];
+  };
+
   # Enable SSH password authentication for this host.
   # Keep root usable for remote deployment; do not inherit desktop PermitRootLogin = no.
   services.openssh.settings = {
