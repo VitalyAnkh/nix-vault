@@ -54,6 +54,11 @@ in
 
   zramSwap.memoryPercent = lib.mkForce 10;
 
+  # No daily trash purge, as on eva: the home trash under ~/.local/share is
+  # persistent here too, so the purge would delete real files.
+  systemd.services.trash-empty.enable = false;
+  systemd.timers.trash-empty.enable = false;
+
   # Monthly btrfs scrub, as on eva: a scrub covers the whole filesystem, so the
   # one mount point stands for every subvolume on this disk.
   services.btrfs.autoScrub = {

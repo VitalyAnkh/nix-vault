@@ -123,6 +123,28 @@ in
     dhcpcd.enable = false;
   };
 
+  # The shared firewall (modules/nixos/base/networking/firewall.nix) trusts only
+  # lanCidr, upstream's 192.168.5.0/24, and drops every per-service port. eva's
+  # LAN is 192.168.1.0/24, so open just the services the LAN used before:
+  # SSH, Sunshine (the ports its module opens for the default port 47989) and
+  # mDNS. Everything else from the LAN stays denied; the tailnet keeps full access.
+  networking.firewall.extraInputRules = ''
+    ip saddr 192.168.1.0/24 tcp dport { 22, 47984, 47989, 47990, 48010 } accept
+    ip saddr 192.168.1.0/24 udp dport { 5353, 47998, 47999, 48000, 48002, 48010 } accept
+  '';
+
+  # Upstream purges trash older than 30 days daily (modules/nixos/base/trash.nix).
+  # Here ~/.local/share, and with it the home trash, is persistent, so the purge
+  # would delete real files; the user empties the trash by hand.
+  systemd.services.trash-empty.enable = false;
+  systemd.timers.trash-empty.enable = false;
+
+  # Keep stopped rootless containers (and their writable layers) until the user
+  # removes them; the weekly `podman system prune -f` from
+  # modules/nixos/desktop/containers.nix would delete them. The rootful prune stays.
+  systemd.user.services.podman-prune.enable = false;
+  systemd.user.timers.podman-prune.enable = false;
+
   # networking.useNetworkd = true;
   # systemd.network.enable = true;
 

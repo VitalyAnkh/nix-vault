@@ -1,6 +1,8 @@
 # Desktops hold personal data and laptops join untrusted networks, so keep the
 # firewall enabled here (repo-wide default is on, see modules/nixos/base/ssh.nix).
-# SSH/Tailscale/LocalSend/Sunshine keep working via their own `openFirewall` options.
+# The base firewall (modules/nixos/base/networking/firewall.nix) forces the port
+# lists below and drops every per-service `openFirewall` port; LAN access comes
+# from its lanCidr rule or from host rules (hosts/eva/default.nix).
 { lib, ... }:
 {
   networking.firewall = {
