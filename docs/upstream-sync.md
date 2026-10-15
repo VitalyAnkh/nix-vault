@@ -244,6 +244,16 @@ f32d67a5（93700824）。之后在 astra 上把它与 vr 合并（78d4ade4），
 - 第一轮审查只看了冲突和主机差异，漏掉了 eva 本应跟随或需要用户决定的 ai 改动：vinput、上游删除的 agent
   CLI、Lutris/umu、Steam 的 gamescope 会话、#348 的其余部分、ctx7 的旧目录，以及更早的 binfmt 静态模拟器。按提交逐个核对（见合并流程第 4 步）之后才找出来。
 
+### 2026-10-15：合入 b4dae701
+
+在 astra 上合并（0006492d），在 eva 上验证。上游这一段主要是 Ryan 自己的主机：aquamarine 作为双 GPU
+推理主机重新启用，ai 换回 MSI B760M 主板、只剩 RTX 4090，并改为按 `en*` 前缀匹配网卡。共享部分有 mihomo 的
+DNS 与网关修复、colmena 改为在目标主机上构建（已并入 `justfile`），以及 vinput 从 v2.4.0 升到 v2.4.2（eva、muon
+使用）。逐个核对 ai 的提交后，没有需要迁到 eva 的改动：eva 早已使用 ai 现在改用的 NVENC Sunshine 设置，只有一块
+GPU，用 NetworkManager 而不是 networkd；ai 把用户加入 render 组是为 Intel NPU 上的语音识别，eva 的 vinput 经
+`/dev/nvidia*` 使用 GPU。上游没有改 Darwin 路径，`darwin.reviewed` 推进到 b4dae701。上游新增的 `idols-ai-net`
+测试求值 `ai-niri`，本地不构建 ai，因此删除。
+
 ### 吸收的上游重构
 
 | 上游改动                                                                                              | 本地结果                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
@@ -308,6 +318,8 @@ f32d67a5（93700824）。之后在 astra 上把它与 vr 合并（78d4ade4），
 | `modules/darwin/{overlays,nix-daemon,system-paths}.nix`                          | b    | 所有 Darwin 主机共用的本地模块                                                                                               |
 | `modules/darwin/README.md`                                                       | b    | 文案                                                                                                                         |
 | `secrets/darwin.nix`、`secrets/nixos.nix`                                        | b    | 私有 secrets 仓库的布局与上游不同（1a10e652 等）；secret 文件不存在时跳过，astra、eva 和 muon 的 secrets 合并前后相同        |
+| `AGENTS.md` | b | 本地的 agent 指南（oh-my-codex 与本仓库的规则），与上游的 `AGENTS.md` 无关；每次合并都保留本地版本 |
+| 上游 ai 主机的 eval 测试（`idols-ai-gpu`、`idols-ai-voice-input`、`idols-ai-net`） | b | 本地不构建 ai，eva 是它的继任者：前两个已改写为 `eva-vr`、`eva-input-method`，`idols-ai-net` 只适用于 ai 的 networkd |
 | `home/hosts/darwin`、`hosts/darwin-astra`、`outputs/aarch64-darwin`              | b    | astra 主机、fern 的 Emacs、独立 HM 输出与 eval 测试                                                                          |
 
 ### 其他修正
@@ -342,6 +354,9 @@ f32d67a5（93700824）。之后在 astra 上把它与 vr 合并（78d4ade4），
    `sudo systemctl restart mihomo.service`。控制面板在 `http://127.0.0.1:9090/ui`。
 4. 确认 `curl -I https://github.com` 和 `git ls-remote` 都正常。不行就把 backend 改回
    `clash-verge`，再切换一次。
+
+不要在 eva 和 muon 上开启 `modules.networking.mihomo.resolvedIntegration`（上游 b24f30c3）：它会启用
+systemd-resolved 并让 NetworkManager 改用它，而这两台主机只用 NetworkManager 管理 DNS。
 
 ### 待处理
 
