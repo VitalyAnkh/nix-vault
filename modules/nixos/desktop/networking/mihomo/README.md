@@ -62,12 +62,21 @@ Verge UI. Verge logs `Unregistered Clash configuration key "ipv6"` for the pin -
 still reaches the core.
 
 The gateway (`suzi`, not a host in this flake) runs the same config with a fixed set of deltas --
-`gateway-config.nu` renders it from the same `sources.yaml` and `policy.yaml`. Its output carries
-the subscriptions and the private domains, so never commit it; the secret is filled in on the box,
-not here. Its binary is a static release build under `/usr/local/bin`, not a package: update it by
-hand, validate the live config with the new core (`mihomo -t -d /etc/mihomo -f <candidate>`) before
-swapping, and keep the previous binary. The release ships no checksums, so TLS plus `-v` is the
-whole verification.
+`gateway-config.nu` renders it from the same `sources.yaml` and `policy.yaml`. The gateway uses
+nftables TProxy, disables the desktop TUN auto-route, and uses `fake-ip` DNS with `dns.ipv6: false`:
+LAN clients receive fake A mappings so mihomo retains the domain for routing and sniffing while their
+traffic uses the working IPv4 TProxy path. The gateway withholds AAAA records because LAN IPv6
+transparent handling is unreliable on this gateway. Its output carries the subscriptions and the
+private domains, so never commit it; the secret is filled in on the box, not here. Its binary is a
+static release build under `/usr/local/bin`, not a package: update it by hand, validate the live
+config with the new core (`mihomo -t -d /etc/mihomo -f <candidate>`) before swapping, and keep the
+previous binary. The release ships no checksums, so TLS plus `-v` is the whole verification.
+
+Gateway mode contract: keep nftables TProxy with both `tun.enable` and `tun.auto-route` disabled,
+and keep `dns.ipv6` disabled. The gateway currently withholds AAAA records because LAN IPv6
+transparent handling is unreliable; clients therefore use the working fake-IPv4 path. Do not combine
+LAN TProxy with the desktop TUN auto-route: in this gateway topology it can recapture fake dials and
+cause timeouts.
 
 ## Why generate
 
@@ -138,6 +147,17 @@ targets instead of writing a config the core rejects.
   `hosts/idols-ai/default.nix`), prefixed with `+` to run outside the unit sandbox. Never set link
   DNS statically to mihomo: a dead mihomo would take DNS down with it, and resolved does not fall
   back.
+- On shoukei, `modules.networking.mihomo.resolvedIntegration` enables resolved and the
+  NetworkManager resolved backend. Once DNS is listening, the service registers `127.0.0.1:1053` and
+  `~.` on `Meta`, which NetworkManager leaves unmanaged. Wi-Fi reconnects can update their own DNS
+  without overwriting this route. Stopping mihomo reverts only `Meta`; removing the TUN also removes
+  its DNS configuration, leaving the physical links' DNS available. More-specific VPN DNS routes
+  still win; another VPN claiming `~.` (including Tailscale's full DNS override) would share the
+  catch-all and must not be used concurrently. This relies on mihomo's default `Meta` device name
+  and the generator's local DNS port; apply TUN changes with a service restart so the DNS hook runs
+  for the new interface. After activation, verify normal and reconnected Wi-Fi queries return fake
+  IPs, and that stopping mihomo restores network DNS. See
+  [systemd's VPN DNS routing guide](https://github.com/systemd/systemd/blob/main/docs/RESOLVED-VPNS.md).
 
 ## Steam download region
 
