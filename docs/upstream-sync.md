@@ -185,7 +185,7 @@ SSH 完成。
      `mysecrets` 在 astra 上用 `just upp mysecrets` 单独更新。
 
    - 有些源码只能经代理下载，例如 nixpkgs 的 WeChat 来自 web.archive.org。构建前在 eva 上打开 Clash
-     Verge（TUN 模式），换成 mihomo 后则由 mihomo 负责。
+     Verge（TUN 模式），换成 mihomo 后则由 mihomo 负责。Go 包的依赖来自 proxy.golang.org，也要代理，另见“常见问题”。
    - eva 上的 Clash
      Verge 没有开启 IPv6：TUN 模式下 DNS 只返回 IPv4 地址，只能经 IPv6 访问的替代源每次查询都要重试到超时，构建明显变慢。2026-10 时的 SUSTech 镜像就是这样，eva 上 2026-08 的旧系统还在
      `substituters` 中列着它（新配置已经没有）。这时用 `--option substituters '…'`
@@ -246,13 +246,80 @@ f32d67a5（93700824）。之后在 astra 上把它与 vr 合并（78d4ade4），
 
 ### 2026-10-15：合入 b4dae701
 
-在 astra 上合并（0006492d），在 eva 上验证。上游这一段主要是 Ryan 自己的主机：aquamarine 作为双 GPU
-推理主机重新启用，ai 换回 MSI B760M 主板、只剩 RTX 4090，并改为按 `en*` 前缀匹配网卡。共享部分有 mihomo 的
-DNS 与网关修复、colmena 改为在目标主机上构建（已并入 `justfile`），以及 vinput 从 v2.4.0 升到 v2.4.2（eva、muon
-使用）。逐个核对 ai 的提交后，没有需要迁到 eva 的改动：eva 早已使用 ai 现在改用的 NVENC Sunshine 设置，只有一块
-GPU，用 NetworkManager 而不是 networkd；ai 把用户加入 render 组是为 Intel NPU 上的语音识别，eva 的 vinput 经
-`/dev/nvidia*` 使用 GPU。上游没有改 Darwin 路径，`darwin.reviewed` 推进到 b4dae701。上游新增的 `idols-ai-net`
+在 astra 上合并（0006492d），在 eva 上验证。上游这一段主要是 Ryan 自己的主机：aquamarine 作为双 GPU 推理主机重新启用，ai 换回 MSI
+B760M 主板、只剩 RTX 4090，并改为按 `en*`
+前缀匹配网卡。共享部分有 mihomo 的 DNS 与网关修复、colmena 改为在目标主机上构建（已并入
+`justfile`），以及 vinput 从 v2.4.0 升到 v2.4.2（eva、muon 使用）。逐个核对 ai 的提交后，没有需要迁到 eva 的改动：eva 早已使用 ai 现在改用的 NVENC
+Sunshine 设置，只有一块 GPU，用 NetworkManager 而不是 networkd；ai 把用户加入 render 组是为 Intel
+NPU 上的语音识别，eva 的 vinput 经 `/dev/nvidia*`
+使用 GPU。上游没有改 Darwin 路径，`darwin.reviewed` 推进到 b4dae701。上游新增的 `idols-ai-net`
 测试求值 `ai-niri`，本地不构建 ai，因此删除。
+
+### 2026-10-26：合入 b334336c
+
+在 astra 上合并（6463d716），在 eva 上验证。上游这一段有 73 个提交。共享部分：TuneD 改为内核自己的 CPU 调频（#461），vinput 的配置放进仓库（#445），dsh 改为只用 Nushell（#473、#475、#476），colmena 节点改从
+`nixosConfigurations` 重建（WA-042），k3s 的 MicroVM 客体直接运行 `nixosConfigurations`
+中的系统（#483），新测试要求 exporter 绑定局域网地址，根证书黑名单（WA-040，合并后随 input 更新删除），yazi 插件（#469），以及 hypridle 检测手柄和媒体播放。其余是 Ryan 自己的主机：aquamarine 在 NPU 上运行 Whisper（只有它用新增的
+`nixpkgs-npu` input），ai 新增 DDC/CI、OpenRGB 和主板传感器。
+
+合并之前，astra 主检出中有 10-16 到 10-19 的未提交改动：nvfetcher 源更新、astra 改用 Xcode 的编译器、Bevy 模板。astra 第 13 代和 eva 第 283 代就是用这些改动构建的。按用户决定，把它们拆成三个提交，接在合并之后。
+
+需要用户决定的改动，结果都记在下表中（2026-10-26）。逐个核对 ai 的提交后，以下改动不适用于 eva：
+
+- `neighbour-probe.nix`（WA-035）：针对 ai 的 Mesh WiFi 回程；
+- `modules.remote-builders.enable`：经 aquamarine 构建；
+- `~/models` 的持久化；
+- swapfile 从 96G 改为 32G；
+- niri 的显示器模式；
+- nvidia-gpu exporter 绑定局域网地址：eva 没有这个 exporter；
+- ai 的 OpenRGB 持久化：eva 有自己的条目。
+
+上游测试中的主机按本地情况改写：`cpu-power` 用 eva、muon 代替 `ai-niri`；`cpu-power` 和
+`microvm-guest-parity` 在 youko 不存在时跳过它（youko 需要私有 secrets）；aarch64 的 `cpu-power`
+中，shoukei 没有 `my-asahi-firmware` 时 Asahi 模块关闭，调频器是 `powersave` 而不是
+`schedutil`。上游修改的 Darwin 路径只有 conda 的删除和文档，`darwin.reviewed` 推进到 b334336c。
+
+在 eva 上验证时发现并修正：
+
+- muon 的 `preservation-users.nix` 把 eva 的 `preservation.nix` 当作函数调用，后者新增
+  `config`、`lib` 参数后 muon 无法求值。迁移提交中一并修正，并在 eva 的文件开头注明这个调用。
+- 关闭 exporter 后，`monitoring.nix`
+  仍让两个单元排在 network-online.target 之后，留下没有命令的单元，所以合并提交把它们屏蔽。
+- tuios v0.10.1 的 Go 依赖要从 proxy.golang.org 下载，eva 直连不通，见“常见问题”。
+
+合并之后单独更新了 flake
+input（11a307ac）：nixpkgs 到 2026-10-23（3ec63636），nixpkgs-darwin 到 2026-10-24（674a2028），nixpkgs-stable、nixpkgs-master、home-manager、nix-darwin、preservation 等到 10 月下旬。nix-darwin 没有改动 Homebrew 和激活。新的 nixpkgs 删除了
+`boot.initrd.systemd.enable`：systemd
+initrd 已是唯一的 initrd，仍设置这个选项的配置在构建时断言失败（eval 测试不检查断言，所以测试仍然通过）。同一提交删掉了 eva（muon 共用）、ai、aquamarine 和 shoryu 的 preservation 中的这一行，它们的 initrd 不变；preservation 也随之去掉了对应的断言。`scripts/host-facts.nix`
+用 `tryEval`
+读取这个选项，host-diff 因而仍能比较更新之前的版本。同一提交还删除了上游的 WA-040（`modules/base/security.nix`
+的根证书黑名单）：更新后 nixpkgs 的 `nixos/modules/security/ca.nix` 和 nix-darwin 的 `security.pki`
+已自行把“Comodo AAA Services root”列入黑名单，NSS
+3.131.1 也直接删除了三个 emSign 根证书；黑名单中写着证书包里已不存在的证书时，cacert 的构建会失败，所以保留本地的列表会让所有主机的 nss-cacert 构建失败。删除后被拒绝信任的根证书与之前相同，WA-040 已满足它自己写明的删除条件。本地的 udisks
+overlay（3d7ce5b5）也一并删除：它因为 udisks
+2.11.1 在本地构建 gtk-doc 和检查失败而关掉了这两项；现在 nixpkgs 的 2.11.2 已由 Hydra 带着这两项构建并缓存，保留 overlay 只会让 udisks 和依赖它的包（包括 udiskie，它的 keyring 测试在 eva 的构建沙箱中失败）都在本地重新构建。随后检查手动固定的包（7d97d1e8、68f6ac23、3d9c7194、2010e0d9）：
+
+- unstable 的 contour 已在缓存中，改回 unstable。
+- unstable 的 Zotero 10.0.4 改用二进制的 Firefox ESR 140.17.0，比固定的 10.0.2 新。ESR
+  140 已于 2026-10-13 停止安全更新，nixpkgs 因此把这个 Firefox 标为不安全，拒绝求值。固定的 10.0.2 内置 Gecko
+  140.16.0，同样停止支持，而且少一版安全修复；Zotero 10 本身面向 ESR
+  140，目前没有基于受支持内核的 Zotero。用户决定（2026-10-26）改用 10.0.4：`vars/default.nix` 的
+  `permittedInsecurePackages` 只放行
+  `firefox-esr-140-bin-unwrapped-140.17.0esr`，NixOS、nix-darwin 和独立 Home
+  Manager 的 nixpkgs 配置都读取它（fern、frieren 和独立配置也装 Zotero），并删除 `nixpkgs-zotero`
+  input。这个 Firefox 不在缓存中，Zotero 在本地构建，不编译 Firefox。
+- Warzone 2100 和 Cataclysm DDA 在 unstable 中仍没有缓存，继续用 26.05。
+- zed-editor-bin 从 1.23.2 升到 Zed 最新的稳定版 1.25.3：更新后 nixpkgs-darwin 的 zed-editor 是 1.25.3，astra 的 eval 测试要求本地固定的官方版本不旧于它。
+- 按用户决定，其余手动固定的包也升到最新版：computer-use-linux 0.7.27 和 cua-driver
+  0.38.0（只有 kana、ruby 使用），Darwin 上的 JetBrains Toolbox 3.9.0.88839，以及 Godot 用的 OpenXR
+  loader（OpenXR-SDK-Source 1.1.65）。Android cmdline-tools 已是最新版。
+- astra 构建打了补丁的 Node 24.21.0 时，inspector 测试因 127.0.0.1:9444 被一个带
+  `--remote-debugging-port=9444`
+  的 Chrome 占用而失败（Darwin 的构建与本机共用网络）。这个 Node 只因 f5d50079 的 V8 补丁才需要本地构建，上游的构建已在缓存中。按用户决定（2026-10-27）删除
+  `pkgs/nodejs` 和只为它服务的
+  `modules/darwin/overlays.nix`，改用 nixpkgs 的 Node（2010e0d9）。nixpkgs-darwin 现已缓存 Wrangler
+  4.151.1，当初需要这个补丁的 Wrangler 构建也不再在本地进行。Node 24.21.0 自带的 V8 仍有这个问题，见
+  [astra 文档](./astra-macos-host.md)。
 
 ### 吸收的上游重构
 
@@ -297,30 +364,47 @@ GPU，用 NetworkManager 而不是 networkd；ai 把用户加入 render 组是�
 | WeChat 改用 nixpkgs-master 的包（a1ec97d3，WA-007）                                                   | 采用。nixpkgs 从 web.archive.org 下载 AppImage，eva 直连时连不上，构建前要打开代理                                                                                                                                                                                                                                                                                                                                                                                                  |
 | 用 umu 取代 Lutris 和 ProtonPlus（#411）                                                              | 采用：删除 Lutris、ProtonPlus，以及只为 Lutris 保留的 `pkgs-x64` 包集（上游 13fe3245）和 Lutris 的持久化条目；eva 上的数据已按用户要求删除（2026-10-13）                                                                                                                                                                                                                                                                                                                            |
 | Steam 不再提供 gamescope 会话（#393）                                                                 | 采用：GDM 中不再有 Steam 会话；Proton 由 `extraCompatPackages` 声明，gamescope 带 `capSysNice`，可在游戏启动参数中使用                                                                                                                                                                                                                                                                                                                                                              |
+| 去掉 TuneD，CPU 调频交给内核的 P-state 驱动（#461）                                                   | 用户决定跟随（2026-10-26）。eva 原来运行 TuneD 的 balanced；配置中的 `performance` 默认值从未生效，上游 #458 查明原因是 tuned-ppd 先恢复保存的 profile。现在 GNOME 启用 power-profiles-daemon，由它提供电源模式菜单；`hosts/eva/preservation.nix` 持久化 `/var/lib/power-profiles-daemon`（muon 共用）。`/persistent` 中 2025-06 的 state.ini 选的是 performance，切换后沿用                                                                                                        |
+| 去掉 TuneD 的附带变化：TuneD 模块会开启 setuid 的 pkexec                                              | 用户决定跟随（2026-10-26）。eva 和 muon-niri 仍由 GNOME 开启它；muon 的默认配置没有图形会话，不再有 pkexec，需要 root 时用 sudo。polkit 本身仍开启（NetworkManager、udisks2 需要它）                                                                                                                                                                                                                                                                                                |
+| vinput 的配置放进仓库，daemon 读取 `~/.secrets/nushell-secrets.env`（#445）                           | 用户决定不采用，见“有意保留的差异”                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| exporter 必须绑定 vars 中的局域网地址（新测试 `exportersBoundToLan`）                                 | 用户决定在 eva、muon 上关闭 node 和 smartctl exporter：这两台的地址由 NetworkManager 分配，与 vars 中的不同；防火墙只对 youko 放行这些端口，没有主机抓取它们                                                                                                                                                                                                                                                                                                                        |
+| ai 的内存回收参数（swappiness 20、watermark_scale_factor 100、watermark_boost_factor 0）              | 用户决定迁到 eva，取代原来的 watermark_scale_factor 50。eva 与 ai 一样用 swapfile 加 zswap；muon 用 zram，不变                                                                                                                                                                                                                                                                                                                                                                      |
+| dsh 改用 nur-ryan4yin 的构建和只用 Nushell 的插件（#473、#475、#476）                                 | 用户决定保留 llm-agents 的普通 dsh，删除用不到的 `dsh-nu` input                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| 删除 conda（789b2307）                                                                                | 用户决定跟随。eva、muon 去掉 conda 和 `.conda` 的持久化（eva 的 `~/.conda` 是空的）；astra 没有装 miniforge，它的 conda 初始化代码随之删除；fern、frieren 的 miniforge cask 跟随删除                                                                                                                                                                                                                                                                                                |
+| EasyEffects 的响度预设不处理 mpv、Zoom 和腾讯会议的声音（11569839）                                   | 用户决定跟随；eva 另持久化 `~/.config/easyeffects`（设置数据库），预设所在的 `~/.local/share` 本来就已持久化                                                                                                                                                                                                                                                                                                                                                                        |
+| SSH 的局域网设置（#446、#463，WA-035）                                                                | 用户决定跟随：`192.168.*` 和 vars 中的主机名连接超时 1 秒、重试 3 次、连接复用 30 分钟；`192.168.*` 不再固定使用 `/etc/agenix/ssh-key-romantic`。这些设置仍由 `modules.ssh.personalConfig` 开关控制                                                                                                                                                                                                                                                                                 |
+| yazi 的 4 个插件和按键（#469）                                                                        | 用户决定跟随；`-` 从创建符号链接改为缩小预览                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| ai 的 DDC/CI（ddcutil、`hardware.i2c`）和 OpenRGB                                                     | 用户决定迁到 eva。OpenRGB 管理主板的 RGB Fusion（ITE 048d:5711），持久化 `/var/lib/OpenRGB` 和 `~/.config/OpenRGB`；muon 不变                                                                                                                                                                                                                                                                                                                                                       |
+| ai 的主板传感器驱动 nct6683                                                                           | 不迁移：eva 的技嘉主板需要树外的 it87 驱动                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| niri 的 NVIDIA 显存池上限（WA-039）                                                                   | 迁到 eva 和 muon，只在 `-niri` 变体中生效（`hosts/eva/nvidia-niri.nix`）                                                                                                                                                                                                                                                                                                                                                                                                            |
 
 ### 有意保留的差异
 
-| 路径                                                                             | 类别 | 原因                                                                                                                         |
-| -------------------------------------------------------------------------------- | ---- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `home/linux/gui/base/fcitx5`、`pkgs/fcitx5`                                      | b    | 本地的 fcitx5 与 Rime 包；不采用上游共享的 `home/base/gui/rime`（5e5707dd）                                                  |
-| `home/darwin/rime-squirrel.nix`                                                  | c    | 上游 5e5707dd 删除了它，改用共享的 Rime 模块；本地保留自己的方案                                                             |
-| `home/base/core/theme.nix`                                                       | b    | Catppuccin 只用于 Neovim（`autoEnable = false`），其余程序保持各自的主题                                                     |
-| `modules/base/nix.nix`                                                           | b    | 用户决定保留 `trusted-users`；上游 #335 出于安全考虑删除了它                                                                 |
-| `home/base/tui/agents/packages.nix`                                              | b    | 本地的 agent CLI 列表；dsh 用 llm-agents 的构建（上游用 nur-ryan4yin 的 shim）；Codex 用 pnpm 安装                           |
-| `home/base/tui/container.nix`、`home/base/tui/cloud`                             | b    | 按用户决定保留上游 #332 删除或注释掉的容器、K8s 与云工具                                                                     |
-| `home/base/tui/tuios/config.toml`                                                | b    | leader 键为 Ctrl+Z                                                                                                           |
-| `justfile` 的 `clean`                                                            | b    | 保留 `--older-than 7d`，不像上游 59f194f0 那样清除全部历史 generation                                                        |
-| `home/darwin/shell.nix`                                                          | c    | 上游 6218bb22 把 Homebrew 放到 PATH 最前；本地追加在后，使 Nix 包优先于 Homebrew，astra 的 PATH 顺序依赖这一点               |
-| `home/darwin/ssh.nix`                                                            | c    | 上游 b44d2770 改用系统级 SSH 配置并删除此文件；独立 HM 输出 `vitalyr@aarch64-darwin` 不经过 nix-darwin，主机别名只能来自这里 |
-| `home/darwin/default.nix`                                                        | b    | Home Manager 26.05 在 Darwin 上默认 `programs.man.package = null`，因此关闭 man 缓存                                         |
-| `home/darwin/proxy`                                                              | b    | 加了启用开关；proxychains 的链接指向 `repoRoot` 下的仓库，而不是上游的 `~/nix-config`                                        |
-| `home/darwin/karabiner`、`home/darwin/input-source-pro`、`home/darwin/README.md` | b    | astra 的键位与输入法                                                                                                         |
-| `modules/darwin/{overlays,nix-daemon,system-paths}.nix`                          | b    | 所有 Darwin 主机共用的本地模块                                                                                               |
-| `modules/darwin/README.md`                                                       | b    | 文案                                                                                                                         |
-| `secrets/darwin.nix`、`secrets/nixos.nix`                                        | b    | 私有 secrets 仓库的布局与上游不同（1a10e652 等）；secret 文件不存在时跳过，astra、eva 和 muon 的 secrets 合并前后相同        |
-| `AGENTS.md` | b | 本地的 agent 指南（oh-my-codex 与本仓库的规则），与上游的 `AGENTS.md` 无关；每次合并都保留本地版本 |
-| 上游 ai 主机的 eval 测试（`idols-ai-gpu`、`idols-ai-voice-input`、`idols-ai-net`） | b | 本地不构建 ai，eva 是它的继任者：前两个已改写为 `eva-vr`、`eva-input-method`，`idols-ai-net` 只适用于 ai 的 networkd |
-| `home/hosts/darwin`、`hosts/darwin-astra`、`outputs/aarch64-darwin`              | b    | astra 主机、fern 的 Emacs、独立 HM 输出与 eval 测试                                                                          |
+| 路径                                                                                                                                                    | 类别 | 原因                                                                                                                                                                                     |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------- | ---- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `home/linux/gui/base/fcitx5`、`pkgs/fcitx5`                                                                                                             | b    | 本地的 fcitx5 与 Rime 包；不采用上游共享的 `home/base/gui/rime`（5e5707dd）                                                                                                              |
+| `home/darwin/rime-squirrel.nix`                                                                                                                         | c    | 上游 5e5707dd 删除了它，改用共享的 Rime 模块；本地保留自己的方案                                                                                                                         |
+| `home/base/core/theme.nix`                                                                                                                              | b    | Catppuccin 只用于 Neovim（`autoEnable = false`），其余程序保持各自的主题                                                                                                                 |
+| `modules/base/nix.nix`                                                                                                                                  | b    | 用户决定保留 `trusted-users`；上游 #335 出于安全考虑删除了它                                                                                                                             |
+| `home/base/tui/agents/{packages.nix,README.md,dsh.md}`、`flake.nix`                                                                                     | b    | 本地的 agent CLI 列表；dsh 用 llm-agents 的普通构建，不用上游的 nur-ryan4yin 构建及其 Nushell 插件，因此没有 `dsh-nu` input；Codex 用 pnpm 安装                                          |
+| `home/linux/gui/base/vinput`                                                                                                                            | b    | 配置由用户自己管理，不采用上游 #445 的 `config.json`（Ryan 局域网的 ASR 服务和 DeepSeek 场景）、`aqua-provider.py` 和必需的 `EnvironmentFile`；eva 和 muon 继续持久化 `~/.config/vinput` |
+| `hosts/{eva,muon}/default.nix` 中的 exporter                                                                                                            | b    | 关闭 node 和 smartctl exporter，原因见上表                                                                                                                                               |
+| `outputs/x86_64-linux/tests/{cpu-power,microvm-guest-parity}`、`outputs/aarch64-linux/tests/cpu-power`                                                  | b    | 主机列表按本地主机改写，原因见上文“2026-10-26：合入 b334336c”                                                                                                                            |
+| `vars/default.nix` 的 `permittedInsecurePackages`，以及读取它的 `modules/nixos/base/nix.nix`、`lib/macosSystem.nix`、`lib/homeManagerConfiguration.nix` | b    | 放行 Zotero 所用的、已停止支持的 Firefox ESR 140，见上文“2026-10-26：合入 b334336c”                                                                                                      |
+| `home/base/tui/container.nix`、`home/base/tui/cloud`                                                                                                    | b    | 按用户决定保留上游 #332 删除或注释掉的容器、K8s 与云工具                                                                                                                                 |
+| `home/base/tui/tuios/config.toml`                                                                                                                       | b    | leader 键为 Ctrl+Z                                                                                                                                                                       |
+| `justfile` 的 `clean`                                                                                                                                   | b    | 保留 `--older-than 7d`，不像上游 59f194f0 那样清除全部历史 generation                                                                                                                    |
+| `home/darwin/shell.nix`                                                                                                                                 | c    | 上游 6218bb22 把 Homebrew 放到 PATH 最前；本地追加在后，使 Nix 包优先于 Homebrew，astra 的 PATH 顺序依赖这一点                                                                           |
+| `home/darwin/ssh.nix`                                                                                                                                   | c    | 上游 b44d2770 改用系统级 SSH 配置并删除此文件；独立 HM 输出 `vitalyr@aarch64-darwin` 不经过 nix-darwin，主机别名只能来自这里                                                             |
+| `home/darwin/default.nix`                                                                                                                               | b    | Home Manager 26.05 在 Darwin 上默认 `programs.man.package = null`，因此关闭 man 缓存                                                                                                     |
+| `home/darwin/proxy`                                                                                                                                     | b    | 加了启用开关；proxychains 的链接指向 `repoRoot` 下的仓库，而不是上游的 `~/nix-config`                                                                                                    |
+| `home/darwin/karabiner`、`home/darwin/input-source-pro`、`home/darwin/README.md`                                                                        | b    | astra 的键位与输入法                                                                                                                                                                     |
+| `modules/darwin/{nix-daemon,system-paths}.nix`                                                                                                          | b    | 所有 Darwin 主机共用的本地模块                                                                                                                                                           |
+| `modules/darwin/README.md`                                                                                                                              | b    | 文案                                                                                                                                                                                     |
+| `secrets/darwin.nix`、`secrets/nixos.nix`                                                                                                               | b    | 私有 secrets 仓库的布局与上游不同（1a10e652 等）；secret 文件不存在时跳过，astra、eva 和 muon 的 secrets 合并前后相同                                                                    |
+| `AGENTS.md`                                                                                                                                             | b    | 本地的 agent 指南（oh-my-codex 与本仓库的规则），与上游的 `AGENTS.md` 无关；每次合并都保留本地版本                                                                                       |
+| 上游 ai 主机的 eval 测试（`idols-ai-gpu`、`idols-ai-voice-input`、`idols-ai-net`）                                                                      | b    | 本地不构建 ai，eva 是它的继任者：前两个已改写为 `eva-vr`、`eva-input-method`，`idols-ai-net` 只适用于 ai 的 networkd                                                                     |
+| `home/hosts/darwin`、`hosts/darwin-astra`、`outputs/aarch64-darwin`                                                                                     | b    | astra 主机、fern 的 Emacs、独立 HM 输出与 eval 测试                                                                                                                                      |
 
 ### 其他修正
 
@@ -355,8 +439,8 @@ GPU，用 NetworkManager 而不是 networkd；ai 把用户加入 render 组是�
 4. 确认 `curl -I https://github.com` 和 `git ls-remote` 都正常。不行就把 backend 改回
    `clash-verge`，再切换一次。
 
-不要在 eva 和 muon 上开启 `modules.networking.mihomo.resolvedIntegration`（上游 b24f30c3）：它会启用
-systemd-resolved 并让 NetworkManager 改用它，而这两台主机只用 NetworkManager 管理 DNS。
+不要在 eva 和 muon 上开启
+`modules.networking.mihomo.resolvedIntegration`（上游 b24f30c3）：它会启用 systemd-resolved 并让 NetworkManager 改用它，而这两台主机只用 NetworkManager 管理 DNS。
 
 ### 待处理
 
@@ -367,14 +451,9 @@ systemd-resolved 并让 NetworkManager 改用它，而这两台主机只用 Netw
   `~/.secrets/nushell-secrets.nu`，未采用；私有仓库目前没有这两个文件。
 - fern/frieren 的 `codex-app` cask 已被 Homebrew 停用（替代品为 `chatgpt` cask），上游仍在使用。
 - 切换到 mihomo（见上文），需要先准备 `sources.yaml`。
-- contour、Cataclysm DDA 和 Warzone 2100 暂用 nixpkgs
-  26.05 的包（`modules/nixos/base/ssh.nix`、`home/base/gui/games.nix`）：unstable 改用 GCC
-  16 后编译不了它们，缓存里也没有。unstable 能构建后改回。
-- Zotero 暂用 vr 合并前那版 nixpkgs（`nixpkgs-zotero`
-  input，e158d9ed）中已缓存的 10.0.2（`home/base/gui/academia.nix`，eva 和 muon 的
-  `gnome.nix`）：unstable 把 Zotero 10.0.4 构建在 Firefox ESR 153 上，而 Zotero 10 面向 ESR
-  140，它的构建要删除的 AboutTranslations actor 在 ESR
-  153.4 中已经没有，构建因此失败，缓存里也没有。unstable 能构建 10.0.2 或更新的版本后删掉这个 input。Zotero 的数据库只能向新版本升级，旧版本打不开新版本升级过的数据库，所以不要换成更旧的版本（例如 26.05 的 9.0.6）。
+- Cataclysm DDA 和 Warzone 2100 暂用 nixpkgs
+  26.05 的包（`home/base/gui/games.nix`）：unstable 改用 GCC
+  16 后编译不了它们，缓存里也没有，2026-10-26 时仍是这样。unstable 能构建后改回。contour 已改回 unstable。
 - 切换 muon 前：若它的 `/var/lib/cups/printers.conf`
   存在，先停掉 CUPS（`sudo systemctl stop cups.socket cups.service`），再把整个目录复制到持久卷：`sudo cp -a /var/lib/cups/. /persistent/var/lib/cups/`。各队列的 PPD（`ppd/`）和
   `classes.conf` 也在这个目录里，只复制 `printers.conf`
@@ -385,6 +464,12 @@ systemd-resolved 并让 NetworkManager 改用它，而这两台主机只用 Netw
   `/persistent/home/<用户>/.config/context7/`（目录 0700，属主为该用户）。`~/.context7`
   不再持久化，ctx7 又不能跨绑定挂载自己移动旧的登录，不移的话登录会被遮住。eva 的 `~/.context7`
   是空的。
+- Zotero 换到受支持的 ESR 后，删掉 `vars/default.nix` 中 `permittedInsecurePackages`
+  的条目。在此之前，Zotero 所用的 Firefox ESR 140 不再有安全更新。
+- 切换 muon 前：对每个用户检查
+  `/persistent/home/<用户>/.conda`。b334336c 的合并删除了 conda，不再持久化
+  `~/.conda`（eva 的是空的）；里面有 conda 环境的用户切换后在家目录中看不到它们。数据仍在
+  `/persistent` 中；有人在用的话，切换前把它们移到别处，或者恢复这一项持久化。
 
 ## 常见问题
 
@@ -407,12 +492,24 @@ done
 
 **在 astra 上求值 eva 失败**：eva 的配置用到 IFD（例如 codex-desktop-linux、Warp 的源码），需要 x86_64-linux 构建。改到 eva 上求值。
 
+**eva 上构建 Go 包时下载依赖超时**：Go 包的依赖（`<包>-go-modules`
+派生）从 proxy.golang.org 下载，eva 直连不通（`dial tcp ...:443: i/o timeout`）。打开 Clash
+Verge 的 TUN 模式后重新构建；或者在沙箱外经 goproxy.cn 构建，再按哈希加入 store。依赖由 `go.sum`
+校验，加入 store 时又按 vendorHash 校验，所以换代理不影响结果（2026-10 的 tuios
+v0.10.1 就是这样构建的）：
+
+```bash
+drv=<失败的 go-modules 派生>; name=<派生的名字>; work=$(mktemp -d)
+nix-shell "$drv" --pure --run "export HOME=$work/home GOENV=off GOPROXY=https://goproxy.cn,direct out=$work/$name TMPDIR=$work/tmp; mkdir -p \$HOME \$TMPDIR; cd $work; genericBuild"
+nix-store --add-fixed --recursive sha256 "$work/$name"   # 应输出该派生原本的输出路径
+```
+
 **eva 构建 Firefox ESR 时被 OOM 杀掉**：eva 和 muon 设置了
 `nixpkgs.config.cudaSupport = true`，它们的 Firefox
 ESR 因此与缓存中的不同，只能本地编译；链接 libxul 约需 37
 GB 内存，与 CUDA 包同时构建时会耗尽 eva 的 60 GB。先用 `--max-jobs 1`
 单独构建它，再构建整个系统。目前只有 Zotero 用到 Firefox
-ESR，而 Zotero 暂用缓存中的 10.0.2（见“待处理”），所以现在不必编译。
+ESR，而 2026-10 起 nixpkgs 的 Zotero 用二进制的 Firefox ESR 140，所以现在不必编译。
 
 **拉取合并后 astra 求值失败**：先运行 `just merge-audit <合并提交>`（合并后又有修正提交时，用上文的
 `--ours`/`--theirs` 形式），检查合并有没有整个文件取一侧；再看 `just upstream-darwin`
