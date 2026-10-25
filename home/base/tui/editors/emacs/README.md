@@ -86,6 +86,10 @@ doom sync
 
 when in doubt, run `doom sync`!
 
+Run it from a new terminal in your home directory. Once the envvar file exists (`doom sync -e`
+creates it), every `doom sync` saves its own environment there, and GUI Emacs uses it; run inside a
+direnv devShell or an agent's shell, it would record that shell's compilers, SDK and variables.
+
 ## Testing
 
 > via `justfile` located at the root of this repo. These recipes run `doom`, so they need Doom

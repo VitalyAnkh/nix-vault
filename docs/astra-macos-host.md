@@ -86,8 +86,10 @@ astra 只在 `outputs/aarch64-darwin/src/astra.nix` 中覆盖 `myvars`
   `~/.config/emacs/.local/etc/init.d/05-doom-env.load.el`，Doom 启动时读取；该文件存在后，每次
   `doom sync` 都把运行它的进程的环境变量（`doom-env-deny`
   排除的除外）重新写入该文件。因此在终端的新登录 shell 中运行
-  `doom sync`，不要在 agent 等带有额外变量（例如令牌）的进程中运行，否则这些变量会写入该文件。`doom sync --no-env`
-  删除该文件。
+  `doom sync`，不要在 agent 等带有额外变量（例如令牌）的进程中运行，也不要在 direnv 加载了 devShell 的目录（例如本仓库）中运行，否则这些变量，以及 devShell 的
+  `CC`、`SDKROOT` 和 `PATH`，会写入该文件，GUI
+  Emacs 中的 rust-analyzer、clangd 和编译命令随后使用 devShell 的编译器和 SDK。只重新生成该文件用
+  `doom sync --reload`，运行条件相同。`doom sync --no-env` 删除该文件。
 - astra 所在网络经常连不上 GitHub 的 HTTPS，SSH 则可用。Doom 以 `DOOMGITCONFIG` 指向的文件作为
   `doom sync` 中 git 命令的全局配置，astra 的这个文件把 `https://github.com/` 改写为
   `git@github.com:`，因此 Doom 克隆和更新 GitHub 上的包时走 SSH，需要可用的 SSH 密钥；其他程序的 git 配置不受影响。
@@ -183,6 +185,22 @@ pnpm 生成的命令优先使用同目录的 `node`：`pnpm env use --global <�
 `--fetch-timeout=600000`。
 
 新增环境配置沿用上述 HM 声明：公开设置写入主机 HM 文件，工作相关的地址写入私有仓库的环境文件。不要把 token 或整份当前进程环境以明文复制进任何仓库；凭据需要时用 agenix 加密。
+
+### C/C++ 与 Rust 工具链
+
+- Nix 构建之外的 C/C++ 编译器和链接器（`cc`、`c++`、`ld`、`ar` 等）来自 Xcode Command Line
+  Tools，与本机 SDK 一致；`evalTests` 检查 Nix 不提供 C 编译器。nixpkgs 的 `clang`
+  包装器只在 Linux 上安装：在 Nix 构建之外它使用 nixpkgs 的 apple-sdk，其中去掉了 libiconv、zlib 等库，依赖
+  `libc`
+  crate 的 Rust 程序、构建脚本和过程宏因此链接失败（`library not found for -liconv`），rust-analyzer 也就无法展开后两者。
+- clangd、clang-format 等来自 Nix 的 `clang-tools`。所有主机都设置 `CLANGD_FLAGS`（见
+  `home/base/tui/editors/packages.nix`）：clangd 向 `compile_commands.json`
+  中的编译器查询头文件路径，只查询 Nix store、Nix profile 和 `/usr/bin`
+  中的编译器；否则 nixpkgs 的 clangd 包装器会加入自己的 libc++ 头文件，与 Xcode 的 SDK 混用，C++ 文件出现误报。
+- Rust 只用 HM 的 rustup，工具链在 `~/.rustup`。不要运行 rustup-init：它会在 `~/.cargo/bin`
+  再装一份 rustup 并改写 shell 配置。`~/.cargo/bin` 只放 `cargo install`
+  安装的命令。项目的 devShell 也不带 Rust 工具链和编译器，例如
+  `templates/bevy`（`nrust`）在 macOS 上只加 pkg-config 等工具。
 
 ### Homebrew
 

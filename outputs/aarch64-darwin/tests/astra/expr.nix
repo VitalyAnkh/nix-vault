@@ -169,6 +169,8 @@ in
       home.programs.zed-editor.package.drvPath == darwin.pkgs.zed-editor-bin.drvPath;
     # zed-editor-bin follows Zed's newest stable release, never older than nixpkgs' build.
     zedVersionAtLeastUpstream = lib.versionAtLeast home.programs.zed-editor.package.version upstreamPkgs.zed-editor.version;
+    # cc and ld come from Xcode's Command Line Tools: no Nix C compiler wrapper is installed.
+    nixCompilers = map lib.getName (builtins.filter (p: p ? cc) nixPackages);
   };
   emacs = {
     inherit (home.modules.editors.emacs) enable;

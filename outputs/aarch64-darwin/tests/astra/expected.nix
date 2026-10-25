@@ -89,6 +89,7 @@ in
     argocdUsesUpstream = true;
     zedUsesOfficialBinary = true;
     zedVersionAtLeastUpstream = true;
+    nixCompilers = [ ];
   };
   emacs = {
     enable = true;

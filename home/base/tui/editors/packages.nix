@@ -1,10 +1,23 @@
 {
+  config,
   lib,
   pkgs,
   pkgs-master,
   ...
 }:
 {
+  # clangd takes the headers of the compiler in compile_commands.json, if it is installed in one
+  # of these places. Otherwise nixpkgs' clangd wrapper adds its own clang's headers, which clash
+  # with Xcode's SDK and differ from those of a devShell's compiler.
+  home.sessionVariables.CLANGD_FLAGS =
+    "--query-driver="
+    + lib.concatStringsSep "," [
+      "/nix/store/*/bin/*"
+      "${config.home.profileDirectory}/bin/*"
+      "/run/current-system/sw/bin/*"
+      "/usr/bin/*" # Xcode's compilers on Darwin
+    ];
+
   home.packages = with pkgs; [
     #-- nix
     nil
@@ -58,7 +71,8 @@
     # c/c++ tools with clang-tools, the unwrapped version won't
     # add alias like `cc` and `c++`, so that it won't conflict with gcc
     # llvmPackages.clang-unwrapped
-    clang
+    # Darwin uses Xcode's cc: outside Nix builds this wrapper's SDK lacks libiconv, zlib, etc.
+    (if stdenv.hostPlatform.isLinux then clang else emptyDirectory)
     mold
     sccache
     clang-tools
