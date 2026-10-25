@@ -1,83 +1,68 @@
-# https://github.com/bevyengine/bevy/blob/v0.14.2/docs/linux_dependencies.md#nix
+# Bevy development shell: `nrust`, or `use flake <this directory>` in a project's .envrc so that
+# editors load it through direnv. It brings neither Rust nor a C compiler: rustup (Home Manager)
+# provides the toolchain, and cc is the host's (Xcode's Command Line Tools on macOS, the Home
+# Manager clang on Linux), so cargo builds the same way inside and outside the shell.
+# https://github.com/bevyengine/bevy/blob/main/docs/linux_dependencies.md#nix
 {
   description = "Bevy Game Engine - Rust Lang";
 
-  inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-    fenix = {
-      url = "github:nix-community/fenix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-  };
+  # On Linux the libraries come from this nixpkgs, but cc and glibc from the host: keep the lock at
+  # or behind the host's nixpkgs, as libraries built against a newer glibc may not link or load.
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
 
   outputs =
-    {
-      nixpkgs,
-      fenix,
-      ...
-    }:
+    { nixpkgs, ... }:
     let
       systems = [
         "x86_64-linux"
         "aarch64-linux"
         "aarch64-darwin"
       ];
-      # Helper function to generate a set of attributes for each system
-      forAllSystems = func: (nixpkgs.lib.genAttrs systems func);
+      forAllSystems = func: nixpkgs.lib.genAttrs systems (system: func nixpkgs.legacyPackages.${system});
     in
     {
       devShells = forAllSystems (
-        system:
+        pkgs:
         let
-          pkgs = import nixpkgs {
-            inherit system;
-            overlays = [ fenix.overlays.default ];
-          };
-          lib = pkgs.lib;
+          inherit (pkgs) lib;
+          isLinux = pkgs.stdenv.hostPlatform.isLinux;
+          libs = [
+            pkgs.openssl
+          ]
+          ++ lib.optionals isLinux (
+            with pkgs;
+            [
+              alsa-lib
+              udev
+              vulkan-loader
+              libx11
+              libxcursor
+              libxi
+              libxrandr
+              libxkbcommon
+              fontconfig
+              wayland
+            ]
+          );
         in
         {
-          default = pkgs.mkShell rec {
-            nativeBuildInputs = with pkgs; [
-              pkg-config
-              clang
-              # lld is much faster at linking than the default Rust linker
-              lld
-            ];
-            buildInputs =
-              with pkgs;
-              [
-                # rust toolchain
-                (pkgs.fenix.complete.withComponents [
-                  "cargo"
-                  "clippy"
-                  "rust-src"
-                  "rustc"
-                  "rustfmt"
-                ])
-                # use rust-analyzer-nightly for better type inference
-                rust-analyzer-nightly
+          default = pkgs.mkShellNoCC (
+            {
+              packages = with pkgs; [
+                pkg-config
                 cargo-watch
-                openssl
-              ]
-              # https://github.com/bevyengine/bevy/blob/v0.14.2/docs/linux_dependencies.md#nix
-              ++ (lib.optionals pkgs.stdenv.isLinux [
-                udev
-                alsa-lib
-                vulkan-loader
-                libx11
-                libxcursor
-                libxi
-                libxrandr # To use the x11 feature
-                libxkbcommon
-                fontconfig
-                wayland # To use the wayland feature
-              ])
-              ++ (pkgs.lib.optionals pkgs.stdenv.isDarwin [
-                # https://discourse.nixos.org/t/the-darwin-sdks-have-been-updated/55295/1
-                apple-sdk_15
-              ]);
-            LD_LIBRARY_PATH = lib.makeLibraryPath buildInputs;
-          };
+              ];
+              buildInputs = libs;
+            }
+            // lib.optionalAttrs isLinux {
+              # winit and wgpu open X11, Wayland and Vulkan with dlopen.
+              LD_LIBRARY_PATH = lib.makeLibraryPath libs;
+            }
+            // lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin {
+              # Darwin's stdenv sets 14.0; unset, rustc targets the same macOS as outside the shell.
+              shellHook = "unset MACOSX_DEPLOYMENT_TARGET";
+            }
+          );
         }
       );
     };
