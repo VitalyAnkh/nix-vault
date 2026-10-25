@@ -1,7 +1,7 @@
 {
   pkgs,
   llm-agents,
-  nur-ryan4yin,
+  myNurPkgs,
   ...
 }:
 let
@@ -78,11 +78,6 @@ in
       sqlite
 
       yt-dlp # youtube/bilibili/soundcloud/... video/music downloader
-
-      # need to run `conda-install` before using it
-      # need to run `conda-shell` before using command `conda`
-      # conda is not available for MacOS
-      conda
     ]
     # AI Agent Tools
     ++ [
@@ -92,6 +87,6 @@ in
       agentPackages.pi
       # dsh from nur-packages: llm-agents.nix's dsh cannot boot on nixpkgs node
       # (node-addon-require-builtin probe), this one shims it.
-      nur-ryan4yin.packages.${pkgs.stdenv.hostPlatform.system}.dsh
+      myNurPkgs.dsh
     ];
 }

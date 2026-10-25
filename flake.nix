@@ -42,7 +42,7 @@
     # https://hydra.nixos.org/jobset/nixpkgs/unstable
     # update via nix flake update nixpkgs --override-input nixpkgs github:NixOS/nixpkgs/<commit-hash>
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    # Pinned to release tag v2.4.0 (not a branch); bump deliberately when needed.
+    # Pinned to release tag v2.4.2 (not a branch); bump deliberately when needed.
     fcitx5-vinput = {
       url = "github:xifan2333/fcitx5-vinput/v2.4.2";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -59,6 +59,10 @@
     nixpkgs-patched.url = "github:ryan4yin/nixpkgs/nixos-unstable-patched";
     # get some latest packages from the master branch
     nixpkgs-master.url = "github:nixos/nixpkgs/master";
+    # ryan4yin/nixpkgs branch carrying NixOS/nixpkgs#570230 (the Intel NPU
+    # compiler and the driver change that loads it). Only aquamarine consumes it,
+    # through `pkgs-npu`; drop it once the PR merges.
+    nixpkgs-npu.url = "github:ryan4yin/nixpkgs/openvino-npu-compiler";
     # NixOS MicroVMs -- run the VMs directly on the hosts, replacing the former KubeVirt
     microvm = {
       url = "github:microvm-nix/microvm.nix";
@@ -199,6 +203,13 @@
     # AI coding agents
     llm-agents.url = "github:numtide/llm-agents.nix";
 
+    # terminal window manager / multiplexer; nixpkgs lags behind upstream,
+    # so track the upstream flake.
+    tuios = {
+      url = "github:Gaurav-Gosain/tuios/v0.10.1";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # -------------- Gaming ---------------------
 
     nix-gaming = {
@@ -259,7 +270,6 @@
       url = "github:DietrichGebert/ponytail/v5.1.0";
       flake = false;
     };
-
     ########################  My own repositories  #########################################
 
     # my private secrets, it's a private repository, you need to replace it with your own.
@@ -281,18 +291,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # for waydroid
+    # nur-ataraxiasjel.url = "github:AtaraxiaSjel/nur";
+
     # Wayland <-> X11 clipboard sync daemon for xwayland-satellite (niri)
     pyclipsync = {
       url = "github:ryan4yin/pyclipsync/v0.1.3";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    # for waydroid
-    # nur-ataraxiasjel.url = "github:AtaraxiaSjel/nur";
-    # terminal window manager / multiplexer; nixpkgs lags behind upstream,
-    # so track the upstream flake.
-    tuios = {
-      url = "github:Gaurav-Gosain/tuios/v0.9.0";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };

@@ -1,6 +1,7 @@
 {
   config,
   pkgs,
+  myvars,
   ...
 }:
 {
@@ -35,6 +36,33 @@
     powerManagement.enable = true;
   };
 
+  # Bound the driver's free-buffer pool for niri only: it never returns freed
+  # vidmem, so niri's VRAM grows past 1 GiB (WA-039). Applies at niri's next start.
+  # https://github.com/niri-wm/niri/wiki/Nvidia#high-vram-usage-fix
+  environment.etc."nvidia/nvidia-application-profiles-rc.d/50-limit-free-buffer-pool-in-wayland-compositors.json".text =
+    builtins.toJSON {
+      rules = [
+        {
+          pattern = {
+            feature = "procname";
+            matches = "niri";
+          };
+          profile = "Limit Free Buffer Pool On Wayland Compositors";
+        }
+      ];
+      profiles = [
+        {
+          name = "Limit Free Buffer Pool On Wayland Compositors";
+          settings = [
+            {
+              key = "GLVidHeapReuseRatio";
+              value = 0;
+            }
+          ];
+        }
+      ];
+    };
+
   hardware.nvidia-container-toolkit.enable = true;
   hardware.graphics = {
     enable = true;
@@ -45,7 +73,12 @@
   # GPU monitoring: CUDA btop, nvtop, and the community nvidia_gpu_exporter.
   modules.btop.package = pkgs.btop-cuda;
   environment.systemPackages = [ pkgs.nvtopPackages.full ];
-  services.prometheus.exporters.nvidia-gpu.enable = true;
+  # LAN-bound like node/smartctl in modules/nixos/base/monitoring.nix: the
+  # socket must not exist on tailscale0/br0 even if the firewall regresses.
+  services.prometheus.exporters.nvidia-gpu = {
+    enable = true;
+    listenAddress = myvars.networking.hostsAddr.ai.ipv4;
+  };
 
   services.sunshine.settings = {
     max_bitrate = 20000; # in Kbps

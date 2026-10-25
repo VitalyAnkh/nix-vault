@@ -8,46 +8,41 @@
   # Basic settings for development environment.
   #############################################################
 
-  home.packages =
-    with pkgs;
-    [
-      colmena
-      tokei
+  home.packages = with pkgs; [
+    colmena
+    tokei
 
-      # Databases
-      mycli
-      pgcli
-      sqlite
+    # Databases
+    mycli
+    pgcli
+    sqlite
 
-      # spreadsheets / data files: interactive viewer for csv, xlsx, tsv, json, sqlite
-      visidata
+    # spreadsheets / data files: interactive viewer for csv, xlsx, tsv, json, sqlite
+    visidata
 
-      # Embedded development
-      minicom
+    # Embedded development
+    minicom
 
-      # AI and media tooling
-      python313Packages.huggingface-hub
-      yt-dlp
+    # AI and media tooling
+    python313Packages.huggingface-hub
+    yt-dlp
 
-      # Terminal and general development
-      tmux
-      devbox
-      bfg-repo-cleaner
-      k6
-      pnpm
-      bun
-      meson
-      mesonlsp
-      exercism
-      wakatime-cli
-      duckdb
-      (lib.lowPrio wrangler)
-      # Darwin hosts get it here too; upstream moved it from Homebrew to Nix (e6245cad).
-      git-trim
-    ]
-    ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
-      conda
-    ];
+    # Terminal and general development
+    tmux
+    devbox
+    bfg-repo-cleaner
+    k6
+    pnpm
+    bun
+    meson
+    mesonlsp
+    exercism
+    wakatime-cli
+    duckdb
+    (lib.lowPrio wrangler)
+    # Darwin hosts get it here too; upstream moved it from Homebrew to Nix (e6245cad).
+    git-trim
+  ];
 
   programs = {
     direnv = {

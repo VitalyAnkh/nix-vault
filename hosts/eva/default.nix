@@ -58,12 +58,16 @@ in
     fileSystems = [ "/nix" ];
   };
 
-  # Upstream binds the exporters to the static LAN IPv4 in vars/networking.nix.
-  # NetworkManager assigns this host its address (DHCP, Wi-Fi on eva), which need
-  # not be that one, and a bound exporter then restarts forever. Keep listening
-  # on all addresses as before; the firewall does not open the exporter ports.
-  services.prometheus.exporters.node.listenAddress = lib.mkForce "0.0.0.0";
-  services.prometheus.exporters.smartctl.listenAddress = lib.mkForce "0.0.0.0";
+  # Upstream runs these exporters bound to the static LAN IPv4 in
+  # vars/networking.nix, for the VictoriaMetrics instance on youko. Nothing
+  # scrapes this host: its address comes from NetworkManager (DHCP, Wi-Fi on
+  # eva) and is not that one, and the firewall admits only youko to the ports.
+  services.prometheus.exporters.node.enable = lib.mkForce false;
+  services.prometheus.exporters.smartctl.enable = lib.mkForce false;
+  # monitoring.nix still orders both units after network-online.target, which
+  # without the exporters leaves units with no command; mask them instead.
+  systemd.services.prometheus-node-exporter.enable = false;
+  systemd.services.prometheus-smartctl-exporter.enable = false;
 
   # Allow SSH password authentication on eva.
   # Keep root usable for remote deployment; do not inherit desktop PermitRootLogin = no.
@@ -73,7 +77,6 @@ in
   };
 
   services.sunshine.enable = lib.mkForce true;
-  services.tuned.ppdSettings.main.default = lib.mkForce "performance";
 
   # Keep the NVIDIA root port out of PCIe power-saving paths. Repeated Xid 79
   # freezes showed the GPU disappearing from the PCIe bus, and live sampling

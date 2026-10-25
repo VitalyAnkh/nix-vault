@@ -155,7 +155,6 @@
 
     #-- Optional Requirements:
     prettier # common code formatter
-    fzf
     gdu # disk usage analyzer, required by AstroNvim
     (ripgrep.override { withPCRE2 = true; }) # recursively searches directories for a regex pattern
   ];

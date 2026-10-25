@@ -173,10 +173,14 @@ in
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "25.05"; # Did you read the comment?
 
-  # Upstream binds the exporters to the static LAN IPv4 in vars/networking.nix.
-  # NetworkManager assigns this host its address (DHCP, Wi-Fi on eva), which need
-  # not be that one, and a bound exporter then restarts forever. Keep listening
-  # on all addresses as before; the firewall does not open the exporter ports.
-  services.prometheus.exporters.node.listenAddress = lib.mkForce "0.0.0.0";
-  services.prometheus.exporters.smartctl.listenAddress = lib.mkForce "0.0.0.0";
+  # Off as on eva: nothing scrapes this host. Upstream binds these exporters to
+  # the static LAN IPv4 in vars/networking.nix for the VictoriaMetrics instance
+  # on youko, but NetworkManager assigns this host its address, and the firewall
+  # admits only youko to the ports.
+  services.prometheus.exporters.node.enable = lib.mkForce false;
+  services.prometheus.exporters.smartctl.enable = lib.mkForce false;
+  # monitoring.nix still orders both units after network-online.target, which
+  # without the exporters leaves units with no command; mask them instead.
+  systemd.services.prometheus-node-exporter.enable = false;
+  systemd.services.prometheus-smartctl-exporter.enable = false;
 }

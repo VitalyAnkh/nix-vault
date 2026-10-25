@@ -9,7 +9,7 @@ that name was decommissioned; this is a different, physical machine that reuses 
 | Part   | Model                                                 | Notes                                                   |
 | ------ | ----------------------------------------------------- | ------------------------------------------------------- |
 | Board  | Colorful CVN Z890 ARK FROZEN V20 (BIOS 1013)          | moved from `ai` on 2026-10-13, so its EFI vars come too |
-| CPU    | Intel Core Ultra 7 270K Plus                          | Arrow Lake; NPU unused here                             |
+| CPU    | Intel Core Ultra 7 270K Plus                          | Arrow Lake; the NPU serves `whisper-asr` (./asr.nix)    |
 | Memory | 2x48G JUHOR (96G), 4800 MT/s                          | the 2x16G kit stayed with `ai`                          |
 | GPU    | 2x AMD Radeon AI PRO R9700, 32G each (RDNA4, gfx1201) | 64G of VRAM total                                       |
 | Root   | Fanxiang S790 2TB                                     | was `ai`'s `/data` disk until 2026-10-13                |
@@ -26,9 +26,14 @@ Two things about this board set the ceiling for the GPU work:
   R9700 has no xGMI link between cards, and a dual-R9700 report has RCCL deadlocking with vLLM TP=2
   even with `NCCL_P2P_DISABLE=1`. See [ROCM.md](./ROCM.md).
 
-The iGPU needs no configuration: the kernel binds `i915` and
-`hardware.enableRedistributableFirmware` is on, so a monitor plugged into the board's HDMI/DP ports
-gets the text console (`multi-user.target`, no display manager) when SSH is unreachable.
+The iGPU carries display and video work: the kernel binds `i915`, and
+[hardware-intel-igpu.nix](./hardware-intel-igpu.nix) installs `intel-media-driver` (VA-API),
+`vpl-gpu-rt` (oneVPL/QSV) and `intel-compute-runtime` (OpenCL/Level-Zero), so transcoding can use
+its media engine while the R9700s stay on inference. VA-API targets `/dev/dri/renderD128`, and
+OpenVINO jobs run through `openvino-gpu <command>`; [IGPU.md](./IGPU.md) records the wrapper, the
+static-shape workaround Whisper needs on `GPU`, and the measured NPU/iGPU/CPU timings. A monitor
+plugged into the board's HDMI/DP ports still gets the text console (`multi-user.target`, no display
+manager) when SSH is unreachable.
 
 `iommu=pt` is set in [hardware-amd-gpu.nix](./hardware-amd-gpu.nix) because ROCm documents hangs on
 multi-GPU systems without IOMMU passthrough. The same file disables amdgpu runtime power management:
@@ -39,7 +44,7 @@ defect that is, the supported ROCm versions, and the inference notes.
 ## Disk layout
 
 Declarative via [disko-fs.nix](./disko-fs.nix): ESP + LUKS (`aqua-luks`) + btrfs subvolumes (`@nix`,
-`@persistent`, `@snapshots`, `@tmp`, `@swap` with a 96G swapfile), ephemeral tmpfs root, state under
+`@persistent`, `@snapshots`, `@tmp`, `@swap` with a 32G swapfile), ephemeral tmpfs root, state under
 `/persistent` via [preservation.nix](./preservation.nix). Secure Boot via lanzaboote
 ([secureboot.nix](./secureboot.nix)).
 
@@ -220,6 +225,17 @@ reinstall or a key rotation:
 
 This config enables no `modules.secrets.*` group, so aquamarine decrypts nothing today; adding a
 group is what requires the recipient step above.
+
+## Remote builds
+
+Aquamarine is the fleet's remote Nix builder: 24C/96G, plus `boot.binfmt.emulatedSystems` for
+`aarch64-linux` and `riscv64-linux`, so one machine serves all three platforms. Clients opt in with
+`modules.remote-builders.enable`, defined in `modules/nixos/base/remote-builders.nix`.
+
+The builder's login user is `root`, which the daemon trusts by default, so this host needs no
+`nix.settings.trusted-users` entry of its own. Each client's daemon authenticates with its own SSH
+host key, which is passphrase-free and root-readable; `hosts/idols-aquamarine/default.nix`
+authorizes those keys for root.
 
 ## Deploy
 

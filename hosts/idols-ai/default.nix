@@ -35,6 +35,9 @@ in
 
     ./restic.nix
 
+    # WA-035: neighbour-probe fallback for the Mesh WiFi backhaul to the homelab.
+    ./neighbour-probe.nix
+
     # others
     ./ai
   ];
@@ -43,6 +46,9 @@ in
   # Disable the whole module (zram device + its swappiness=180 sysctl tunings); this host uses a
   # disk swapfile instead, created by disko at /swap (see ./disko-fs.nix). The two must move together.
   modules.zram.enable = false;
+
+  # 32G of RAM against aquamarine's 96G, so builds go to the server first.
+  modules.remote-builders.enable = true;
 
   # zswap: compressed writeback cache in front of the disk swapfile, so cold
   # anonymous pages stay in RAM instead of hitting the SSD. Safe here: the disk
@@ -57,8 +63,28 @@ in
     maxPoolPercent = 10;
   };
 
+  # zswap has no notion of "eager": it only compresses pages that reclaim has
+  # already decided to evict (Documentation/admin-guide/mm/zswap.rst). Tuning the
+  # reclaim policy, not zswap, is what keeps a long-running desktop responsive:
+  # - swappiness 20 (kernel default 60): drop page cache first instead of
+  #   compressing the compositor's and Firefox's anonymous pages, which then come
+  #   back as a fault plus a decompress every time. Not 0: at 0 the kernel only
+  #   swaps once free+file pages drop below the high watermark, so an anon spike
+  #   ends in an OOM kill instead of overflowing into zswap.
+  # - watermark_scale_factor 100 (default 10): wake kswapd earlier so it drains
+  #   cache ahead of allocation bursts, instead of the allocating app stalling in
+  #   direct reclaim (the path behind allocstall_movable and
+  #   kswapd_low_wmark_hit_quickly, both elevated after ~20h uptime here).
+  # - watermark_boost_factor 0 (default 15000): skip the fragmentation-triggered
+  #   extra reclaim that otherwise keeps evicting cache and anon pages on an
+  #   aging system. Same value modules/nixos/base/zram.nix uses.
+  boot.kernel.sysctl = {
+    "vm.swappiness" = 20;
+    "vm.watermark_scale_factor" = 100;
+    "vm.watermark_boost_factor" = 0;
+  };
+
   services.sunshine.enable = true;
-  services.tuned.ppdSettings.main.default = lib.mkForce "performance";
 
   modules.btrbk.enable = true;
 
@@ -81,7 +107,21 @@ in
   services.smartd.enable = true;
 
   # QEMU/KVM(HostCpuOnly) for local VMs.
-  environment.systemPackages = [ pkgs.qemu_kvm ];
+  environment.systemPackages = [
+    pkgs.qemu_kvm
+    pkgs.ddcutil # external monitor control over DDC/CI (brightness, input source)
+  ];
+
+  # The external monitors answer DDC/CI on /dev/i2c-*: this loads i2c-dev and installs the
+  # udev rules that grant the i2c group and locally logged-in users access, so `ddcutil`
+  # works without sudo.
+  hardware.i2c.enable = true;
+
+  # The board's ARGB controller is a USB HID device (MSI Mystic Light, 1462:7e01). This
+  # module installs openrgb with its udev rules and runs `openrgb --server`, so the GUI and
+  # the CLI reach the board without root. `motherboard` needs no value here: it follows
+  # hardware.cpu.intel.updateMicrocode, which hardware-configuration.nix already sets.
+  services.hardware.openrgb.enable = true;
 
   # Re-evaluate after the Insta360 Link firmware or the kernel's uvcvideo changes.
   powerManagement.resumeCommands = ''

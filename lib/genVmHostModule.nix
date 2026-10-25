@@ -10,6 +10,9 @@ let
   ipv4WithMask = "${ipv4}/24";
 in
 {
+  # CPU policy belongs to physical hosts; guests do not control hardware frequency.
+  imports = [ ../modules/nixos/power.nix ];
+
   # supported file systems, so we can mount any removable disks with these filesystems
   boot.supportedFilesystems = [
     "ext4"

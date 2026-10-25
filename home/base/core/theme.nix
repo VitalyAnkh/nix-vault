@@ -1,4 +1,9 @@
-{ catppuccin, lib, ... }:
+{
+  config,
+  lib,
+  catppuccin,
+  ...
+}:
 {
   # https://github.com/catppuccin/nix
   imports = [
@@ -26,4 +31,8 @@
     # own theme here, as before.
     zed.enable = lib.mkForce false;
   };
+
+  # catppuccin/nix inlines the starship port at eval time, so nothing references
+  # the build and gc drops it; this keeps it in the home closure. See WA-036.
+  home.extraDependencies = lib.optional config.catppuccin.starship.enable config.catppuccin.sources.starship;
 }

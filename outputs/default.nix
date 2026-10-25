@@ -46,6 +46,10 @@ let
         # to use chrome, we need to allow the installation of non-free software
         config.allowUnfree = true;
       };
+      pkgs-npu = import inputs.nixpkgs-npu {
+        inherit system;
+        config.allowUnfree = true;
+      };
       pkgs-blender = import inputs.nixpkgs-blender {
         inherit system;
         config = lib.optionalAttrs (system == "x86_64-linux") {
@@ -61,6 +65,10 @@ let
       # is not configured in `flake.nix` (e.g. on machines that don't need Asahi firmware).
       my-asahi-firmware =
         if builtins.hasAttr "my-asahi-firmware" inputs then inputs."my-asahi-firmware" else null;
+
+      # NUR packages for this system, so modules use `myNurPkgs.dsh` instead of
+      # repeating `nur-ryan4yin.packages.${pkgs.stdenv.hostPlatform.system}`.
+      myNurPkgs = inputs.nur-ryan4yin.packages.${system};
     };
 
   # This is the args for all the haumea modules in this folder.
@@ -78,7 +86,6 @@ let
   nixosSystems = {
     x86_64-linux = import ./x86_64-linux (args // { system = "x86_64-linux"; });
     aarch64-linux = import ./aarch64-linux (args // { system = "aarch64-linux"; });
-    # riscv64-linux = import ./riscv64-linux (args // {system = "riscv64-linux";});
   };
   darwinSystems = {
     aarch64-darwin = import ./aarch64-darwin (args // { system = "aarch64-darwin"; });
@@ -89,32 +96,46 @@ let
   darwinSystemValues = builtins.attrValues darwinSystems;
   allSystemValues = nixosSystemValues ++ darwinSystemValues;
 
+  nixosConfigurations = lib.attrsets.mergeAttrsList (
+    map (it: it.nixosConfigurations or { }) nixosSystemValues
+  );
+
+  # Per-node deployment settings from `mylib.colmenaSystem`, keyed by host name.
+  colmenaDeployments = lib.attrsets.mergeAttrsList (map (it: it.colmena or { }) nixosSystemValues);
+
   # Raw Colmena hive (nodes + meta), evaluated below into the exposed
   # `colmenaHive` output. The nix-community Colmena rewrite only reads
   # `colmenaHive`, so the raw hive is not an output of its own.
+  #
+  # Each node is rebuilt from its `nixosConfigurations` entry: the same modules
+  # (including the one `nixpkgs.lib.nixosSystem` appends), specialArgs and
+  # system. Colmena applies `nodeNixpkgs`' overlays and config on top of the
+  # node's own, so it gets a package set with none: not the node's `pkgs`, and
+  # not `legacyPackages`, which carries the flake's own overlays.
   rawColmenaHive = {
-    meta =
-      (
-        let
-          system = "x86_64-linux";
-        in
-        {
-          # colmena's default nixpkgs & specialArgs
-          nixpkgs = import nixpkgs { inherit system; };
-          specialArgs = genSpecialArgs system;
-        }
-      )
-      // {
-        # per-node nixpkgs & specialArgs
-        nodeNixpkgs = lib.attrsets.mergeAttrsList (
-          map (it: it.colmenaMeta.nodeNixpkgs or { }) nixosSystemValues
-        );
-        nodeSpecialArgs = lib.attrsets.mergeAttrsList (
-          map (it: it.colmenaMeta.nodeSpecialArgs or { }) nixosSystemValues
-        );
-      };
+    meta = {
+      nixpkgs = import nixpkgs { system = "x86_64-linux"; };
+      nodeNixpkgs = builtins.mapAttrs (
+        name: _: import nixpkgs { inherit (nixosConfigurations.${name}.pkgs.stdenv.hostPlatform) system; }
+      ) colmenaDeployments;
+      nodeSpecialArgs = builtins.mapAttrs (
+        name: _: nixosConfigurations.${name}._module.specialArgs
+      ) colmenaDeployments;
+    };
   }
-  // lib.attrsets.mergeAttrsList (map (it: it.colmena or { }) nixosSystemValues);
+  // builtins.mapAttrs (name: deployment: {
+    imports = [
+      deployment
+      # Colmena evaluates with nixpkgs' plain lib, which lacks the version the
+      # flake's lib reports; without this the toplevel differs (`26.11pre-git`).
+      # Recorded as WA-042 in WORKAROUNDS.md.
+      {
+        system.nixos.versionSuffix = lib.trivial.versionSuffix;
+        system.nixos.revision = lib.trivial.revisionWithDefault null;
+      }
+    ]
+    ++ nixosConfigurations.${name}._module.args.modules;
+  }) colmenaDeployments;
 
   # Helper function to generate a set of attributes for each system
   forAllSystems = func: (nixpkgs.lib.genAttrs allSystemNames func);
@@ -131,9 +152,7 @@ in
   };
 
   # NixOS Hosts
-  nixosConfigurations = lib.attrsets.mergeAttrsList (
-    map (it: it.nixosConfigurations or { }) nixosSystemValues
-  );
+  inherit nixosConfigurations;
 
   # Colmena - remote deployment via SSH. The nix-community evaluator reads the
   # evaluated `colmenaHive` output built from the raw hive in the `let` block.

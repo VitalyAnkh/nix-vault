@@ -47,8 +47,6 @@ in
 
       # Disable inclusion of the version string in ASCII armored output
       no-emit-version = true;
-      # Do not write comment packets
-      no-comments = false;
       # Export the smallest key possible
       # This removes all signatures except the most recent self-signature on each user ID
       export-options = "export-minimal";

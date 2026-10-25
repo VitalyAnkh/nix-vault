@@ -43,13 +43,18 @@ small, reversible controls and narrow exceptions; benchmark before adopting expe
 | MicroVM storage | Host store shared read-only through virtiofs; guest `/etc`, `/var` and `/home` persisted in separate images                                             | Read-only store does not isolate the host-side virtiofs implementation or protect writable guest state                                                                |
 | Desktop apps    | Selected apps use nixpak/bubblewrap; Podman is rootless                                                                                                 | Rules and shared directories vary per app; user namespaces are needed for these sandboxes                                                                             |
 | Secrets         | agenix declarations here, encrypted data in the private nix-secrets repository                                                                          | Recipients and plaintext file permissions must be reviewed; root on a recipient can read its decrypted secrets                                                        |
-| Supply chain    | Locked flake inputs; explicit binary-cache trust keys; normal user is not a Nix trusted-user                                                            | A trusted cache or imported Nix module can supply code executed as root; a lock file is not a security audit                                                          |
+| Supply chain    | Locked flake inputs; explicit binary-cache trust keys on NixOS; normal user is not a Nix trusted-user                                                   | A trusted cache or imported Nix module can supply code executed as root; a lock file is not a security audit                                                          |
 | Recovery        | NixOS generations, btrbk/restic, hourly read-only snapshots of the REST store, and documented backup procedures                                         | A rollback does not undo compromised data or secrets; backup configuration alone does not prove restore works; the offsite immutable copy is still planned            |
 
 Sources: [host layout](hosts/README.md), [k3s deployment](hosts/k8s/README.md),
 [firewall](modules/nixos/base/networking/firewall.nix), [SSH](modules/nixos/base/ssh.nix),
 [Nix trust](modules/base/nix.nix), [secrets](secrets/README.md), and [backup](BACKUP.md). Cluster
 resources are maintained in the separate k8s-gitops repository.
+
+The Macs set `nix.enable = false` ([nix-core.nix](modules/darwin/nix-core.nix)), so nix-darwin
+writes no `/etc/nix/nix.conf`: the substituters, trusted keys and access-token include declared here
+do not reach them. Their Nix settings come from the Determinate installation, which this repository
+does not manage; those settings were not verified on the Macs.
 
 ## Kernel and process baseline
 
@@ -96,9 +101,9 @@ an advisory and affected kernel versions before adding CVE claims; search snippe
   enrollment and actual Secure Boot state with `sbctl status`; do not assume all hosts have it.
 - Secure Boot, signed boot images, kernel lockdown and module signature enforcement are distinct
   controls. Test custom kernels and NVIDIA/out-of-tree modules before extending enforcement.
-- AppArmor is enabled, but the explicit sudo policy is in complain mode and the default-deny/nix
-  scaffolds are disabled. Complain mode logs rather than blocks. Existing FHS-oriented abstractions
-  need Nix store path review; this is not broad enforced application confinement.
+- AppArmor is enabled, but the only explicit policy, sudo's, is in complain mode. Complain mode logs
+  rather than blocks. Existing FHS-oriented abstractions need Nix store path review; this is not
+  broad enforced application confinement.
 - Systemd service sandboxing is per-service, not a global policy. Review capabilities, writable
   paths, network access and syscall requirements before tightening an individual service.
 
@@ -157,10 +162,10 @@ checks remain necessary after deployment.
 
 ### Implementation status
 
-| Component                                                        | Status                                  | Runtime verification                                |
-| ---------------------------------------------------------------- | --------------------------------------- | --------------------------------------------------- |
-| Architecture, agent-first policy, audits and canonical API tests | In this repository                      | Only the dated observations below were checked live |
-| Explicit sysctl baseline and IPv6 exporter defence               | In `hardening/` and the shared firewall | Not deployed or verified on running hosts           |
+| Component                                                        | Status                                  | Runtime verification                                                                  |
+| ---------------------------------------------------------------- | --------------------------------------- | ------------------------------------------------------------------------------------- |
+| Architecture, agent-first policy, audits and canonical API tests | In this repository                      | Only the dated observations below were checked live                                   |
+| Explicit sysctl baseline and IPv6 exporter defence               | In `hardening/` and the shared firewall | Live on 13 reachable hosts (readback 2026-10-22); ai root-privileged items still owed |
 
 ### Baseline implementation checks
 
@@ -203,7 +208,7 @@ checks remain necessary after deployment.
 - **Remote consoles:** the libvirt VNC consoles listen on `127.0.0.1` only, and the k3s firewall
   drops 5900-5903 from pod sources. Reach a console through an SSH tunnel.
 - **Pod-to-host firewall:** two independent layers deny pod access to the credential-bearing host
-  ports (SSH, NFS, Postgres, restic, VNC, Immich, exporter/monitoring). The
+  ports (SSH, NFS, Postgres, restic, VNC, Immich, etcd, exporter/monitoring). The
   `deny-pod-to-node-admin-ports` `CiliumClusterwideNetworkPolicy` in
   [k8s-gitops#52](https://github.com/ryan4yin/k8s-gitops/pull/52) denies pod egress to
   `host`/`remote-node` on those ports at the pod's own node; the k3s nodes' nftables rule drops the
@@ -242,10 +247,45 @@ export, credential, DNS record or firmware configuration was changed during the 
 - Darwin's activation now re-applies each secret's declared ownership explicitly instead of a
   blanket `chown` over `/etc/agenix/*`, so the root-only `rclone.conf` stays root-owned. Runtime
   ownership (`ls -l /etc/agenix`) on each Darwin host still needs a check after the next activation.
-- PostgreSQL's loopback TCP listener still trusts application roles by password (Immich and the
-  exporter use it), but `postgres` and replication now require `scram-sha-256`, closing the
-  local-superuser path. Provisioning per-role passwords for full loopback `scram-sha-256` is the
-  follow-up (the Grafana datasource file already tracks this as its item 1.5).
+- PostgreSQL's loopback TCP listener still trusts every role except `postgres` without a password,
+  so any local process can log in as `immich` or `playground`. No service configured here uses that
+  path: Immich and the exporter connect over the Unix socket with peer authentication. `postgres`
+  and replication now require `scram-sha-256`, closing the local-superuser path. Provisioning
+  per-role passwords for full loopback `scram-sha-256` is the follow-up; the disabled Grafana
+  `postgres-playground` datasource also waits on a `playground` password.
+
+### Follow-up audit — 2026-10-22
+
+- Baseline readback on live hosts: the ten unprivileged sysctl keys and the esp4/esp6/rxrpc modprobe
+  deny are in effect on all 13 reachable hosts; the #399/#400/#401 nft rules, NFS export scope and
+  pg_hba rules are live. `net.core.bpf_jit_harden` and ai's exact rule order need a root readback;
+  shoukei and akane were unreachable. k3s MicroVM guests have no system profile — compare
+  `/run/current-system` with `/run/booted-system` there.
+- Exporter sockets are LAN-IPv4-bound on every scraped host except ai's NVIDIA exporter (`*:9835`),
+  a gap #373 missed; `hosts/idols-ai/hardware-nvidia.nix` now binds it and the `security-exporters`
+  eval covers every enabled exporter's `listenAddress`.
+- Runtime drift on shoryu: the libvirt domains on 5902/5903 predate #400 and still bind wildcard;
+  only the nft VNC drop protects them until the guests are redefined and restarted.
+- The pod-to-node deny lists omitted etcd's client port (2379, bound `192.168.5.114:2379`); both
+  layers now include it. 2381 (etcd metrics, scraped by in-cluster monitoring) stays reachable by
+  design.
+- ServiceAccount effective access is now measured for all 41 live ns/SA pairs (on-node probes): the
+  Kiali operator gained a self-escalation path (`update`/`patch clusterroles` on a role bound to
+  itself, no `bind`/`escalate` verb needed); Kiali and kube-state-metrics deny `get secrets -A` but
+  allow `list`/`watch`, so probe sets must pair both verbs; 16 accounts enumerate secrets
+  cluster-wide and cert-manager can delete them. Narrowing proposals target k8s-gitops.
+- k3s-test-1 pod networking has been down since the 2026-10-14 full guest cold-restart: Cilium
+  bootstraps through the VIP while the VIP requires kube-vip's lease over ClusterIP — a cycle the
+  kube-proxy-replacement switch created. The host nftables drops stay loaded, but the CLiCNP layer
+  enforces nothing while Cilium is down and the nft rule's pod-source-IP precondition is not met, so
+  the pod-to-node boundary is degraded until the cluster recovers.
+- The cluster recovered manually (VIP attached on one master, then handed back to kube-vip), and the
+  cycle itself is fixed: kube-vip's pod now overrides the kubelet-injected
+  `KUBERNETES_SERVICE_HOST/PORT` to reach its own node's apiserver (port 6443) instead of the
+  ClusterIP, so the VIP no longer needs Cilium on a cold start. A full cold start of all six guests
+  on 2026-10-24 brought the VIP back with no manual action (6/6 nodes, Cilium 6/6, kube-vip 3/3, no
+  connection to the ClusterIP), and k8s-gitops#54 is merged and reconciled. A probe from a pod
+  confirms 2379 is denied while 2381 stays open for in-cluster metric scraping.
 
 ### Sandbox and agent boundaries
 

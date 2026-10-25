@@ -36,13 +36,42 @@ in
   sourceCheckoutsPersistent = builtins.any (
     d: d.directory == "/home/${myvars.username}/src"
   ) cfg.preservation.preserveAt."/persistent".users.${myvars.username}.directories;
+
+  # A cold flake cache re-downloads the input of a `nix run <flake-ref>` at boot.
+  cachePersistent = builtins.any (
+    d: d.directory == "/home/${myvars.username}/.cache"
+  ) cfg.preservation.preserveAt."/persistent".users.${myvars.username}.directories;
+
+  # Directories the tmpfs root would otherwise drop.
+  userUnitDirsPersistent =
+    let
+      dirs = cfg.preservation.preserveAt."/persistent".users.${myvars.username}.directories;
+    in
+    builtins.all (path: builtins.any (d: d.directory == "/home/${myvars.username}/${path}") dirs) [
+      ".config/systemd/user"
+      ".config/containers/systemd"
+    ];
   rootlessPodmanEnabled = cfg.virtualisation.podman.enable;
 
-  # A server tracks the nixpkgs default (stable/LTS) kernel, not `-latest`.
-  stableKernel = cfg.boot.kernelPackages.kernel.version == eval.pkgs.linuxPackages.kernel.version;
+  latestKernel =
+    cfg.boot.kernelPackages.kernel.version == eval.pkgs.linuxPackages_latest.kernel.version;
   btopShowsRadeon = cfg.modules.btop.package == eval.pkgs.btop-rocm;
   # CAP_PERFMON inside the wrapper is what the i915 iGPU needs.
   btopReadsIgpu = cfg.modules.btop.perfmon;
+  # The iGPU takes video work off the R9700s: VA-API, oneVPL and OpenCL/Level-Zero.
+  igpuMediaStackInstalled =
+    let
+      packageNames = map (package: package.pname or "") (cfg.hardware.graphics.extraPackages or [ ]);
+    in
+    builtins.all (name: builtins.elem name packageNames) [
+      "intel-media-driver"
+      "vpl-gpu-rt"
+      "intel-compute-runtime"
+    ];
+  # OpenVINO's GPU plugin needs ocl-icd ahead of ROCm's clr loader (WA-038).
+  openvinoGpuWrapperInstalled = builtins.any (
+    package: (package.name or "") == "openvino-gpu"
+  ) cfg.environment.systemPackages;
   gpuMetricsExported = builtins.elem "drm" cfg.services.prometheus.exporters.node.enabledCollectors;
   # node_exporter rejects a repeated flag, and this list merges with the base
   # module's entries, so a duplicate restart-loops the unit.
@@ -53,6 +82,9 @@ in
 
   # Headless: no desktop session, no Home Manager.
   noHomeManager = !cfg ? home-manager.users;
+  pythonInstalled = builtins.any (
+    package: lib.hasPrefix "python3-" (package.name or "")
+  ) cfg.environment.systemPackages;
 
   # The board renames the wired NIC with the PCIe topology, so networkd matches the
   # `en*` prefix; a name-based match leaves the host without an address.

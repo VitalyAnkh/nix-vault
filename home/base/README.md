@@ -24,19 +24,22 @@ systems.
 ### Desktop Environment
 
 - **gui/**: Cross-platform GUI applications and configurations
+  - **academia.nix**: Zotero and Obsidian
   - **dev-tools.nix**: Misc development and network tools (mitmproxy, wireshark)
+  - **games.nix**: Games and game launchers (x86_64 Linux)
   - **media.nix**: Media players and utilities
   - **zed-editor.nix**: Zed editor configuration (primary GUI editor)
-  - **rime/**: Rime (flypy) customisation shared by fcitx5-rime (Linux) and Squirrel (macOS)
   - **terminal/**: Terminal emulator configurations
     - **ghostty.nix**: Ghostty terminal (default)
     - **kitty.nix**: Kitty terminal
+    - **warp/**: Warp settings merged into Warp's own settings file
+  - **work-gitconfig.nix**: Work git identity for repositories under `~/work`, linked from agenix
 
 ### Terminal Interface
 
 - **tui/**: Terminal-based interface configurations
-  - **agents/**: AI coding agents — global rules deployment, CLIs, and telemetry/auto-update
-    opt-outs
+  - **agents/**: AI coding agents — global rules and skills deployment, CLIs, and
+    telemetry/auto-update opt-outs
   - **cloud/**: Cloud development tools (Terraform, etc.)
   - **container.nix**: Container tools (Docker, Podman)
   - **dev-tools.nix**: Terminal-based development tools
