@@ -1,6 +1,7 @@
 {
   myvars,
   lib,
+  pkgs,
   disko,
   ...
 }:
@@ -25,6 +26,7 @@ in
     disko.nixosModules.default
     ./disko-fs.nix
     ./nvidia.nix
+    ./nvidia-niri.nix
     ./ai
 
     ./preservation.nix
@@ -78,6 +80,18 @@ in
 
   services.sunshine.enable = lib.mkForce true;
 
+  # External monitors answer DDC/CI on /dev/i2c-*: this loads i2c-dev and installs
+  # udev rules that grant the i2c group and locally logged-in users access, so
+  # `ddcutil` sets brightness or the input source without sudo (upstream ai).
+  environment.systemPackages = [ pkgs.ddcutil ];
+  hardware.i2c.enable = true;
+
+  # The board's ARGB controller is Gigabyte RGB Fusion, a USB HID device (ITE
+  # 048d:5711). This installs openrgb with its udev rules and runs `openrgb
+  # --server`, so the GUI and the CLI reach the board without root. `motherboard`
+  # follows hardware.cpu.amd.updateMicrocode, which loads i2c-piix4 for the SMBus.
+  services.hardware.openrgb.enable = true;
+
   # Keep the NVIDIA root port out of PCIe power-saving paths. Repeated Xid 79
   # freezes showed the GPU disappearing from the PCIe bus, and live sampling
   # previously showed corrected TLP errors before failure.
@@ -106,8 +120,22 @@ in
   };
   swapDevices = [ { device = "/swap/swapfile"; } ];
 
+  # Reclaim policy from upstream ai, which uses the same swapfile plus zswap.
+  # zswap only compresses pages that reclaim has already chosen to evict, so the
+  # reclaim policy decides how much ends up there:
+  # - swappiness 20 (kernel default 60): drop page cache before compressing
+  #   anonymous pages, which come back as a fault plus a decompress. Not 0: at 0
+  #   the kernel swaps only once free plus file pages fall below the high
+  #   watermark, so an anonymous spike ends in an OOM kill instead of zswap.
+  # - watermark_scale_factor 100 (default 10): wake kswapd earlier, so it frees
+  #   memory ahead of allocation bursts instead of the allocating application
+  #   stalling in direct reclaim.
+  # - watermark_boost_factor 0 (default 15000): skip the extra reclaim that
+  #   fragmentation triggers, which keeps evicting pages on an aging system.
   boot.kernel.sysctl = {
-    "vm.watermark_scale_factor" = lib.mkForce 50;
+    "vm.swappiness" = 20;
+    "vm.watermark_scale_factor" = 100;
+    "vm.watermark_boost_factor" = 0;
   };
 
   # Let oomd watch the whole user slice, so a runaway browser session gets cut

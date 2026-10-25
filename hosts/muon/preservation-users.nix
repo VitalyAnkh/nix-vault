@@ -1,4 +1,6 @@
 {
+  config,
+  lib,
   myvars,
   preservation,
   pkgs,
@@ -27,7 +29,13 @@ let
   # preservation.nix (muon imports hosts/eva/preservation.nix).
   # We re-evaluate that module here to avoid duplicating the directory list.
   evaPreservationConfig = import ../eva/preservation.nix {
-    inherit preservation pkgs myvars;
+    inherit
+      config
+      lib
+      preservation
+      pkgs
+      myvars
+      ;
   };
 
   baseUserPreservation =

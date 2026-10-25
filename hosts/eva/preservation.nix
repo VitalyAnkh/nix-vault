@@ -1,4 +1,8 @@
+# hosts/muon/preservation-users.nix also calls this file as a function, to copy
+# the user list: pass it any argument added here.
 {
+  config,
+  lib,
   preservation,
   pkgs,
   myvars,
@@ -105,7 +109,12 @@ in
       # logrotate state. Persist the directory: a single-file bind mount cannot
       # be replaced by logrotate's atomic rename() (EBUSY).
       "/var/lib/logrotate"
-    ];
+    ]
+    # State of daemons that not every host importing this file runs (muon).
+    # power-profiles-daemon keeps the power mode chosen in GNOME (state.ini).
+    ++ lib.optional config.services.power-profiles-daemon.enable "/var/lib/power-profiles-daemon"
+    # OpenRGB SDK server settings and profiles
+    ++ lib.optional config.services.hardware.openrgb.enable "/var/lib/OpenRGB";
     files = [
       # auto-generated machine ID
       {
@@ -497,6 +506,9 @@ in
         # Audio
         ".config/pulse"
         ".local/state/wireplumber"
+        # EasyEffects 8 keeps its settings (a KConfig database) here; presets,
+        # autoload profiles and impulse responses live under .local/share above.
+        ".config/easyeffects"
 
         # flatpak app's data
         ".var"
@@ -515,7 +527,9 @@ in
         ".config/vinput"
 
         ".config/nushell"
-      ];
+      ]
+      # OpenRGB GUI settings, profiles and plugins
+      ++ lib.optional config.services.hardware.openrgb.enable ".config/OpenRGB";
       files = [
         {
           file = ".wakatime.cfg";

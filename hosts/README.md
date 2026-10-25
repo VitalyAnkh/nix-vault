@@ -123,6 +123,10 @@ laptop is a MacBook with its own native support, so it has no use here.
 The desktops also run UPower for power-supply reporting: the laptop's battery, and peripheral
 batteries on a desktop. It only reports state, and changes no CPU or device setting.
 
+Where GNOME runs (`eva`, `eva-niri`, `muon-niri`), it also enables power-profiles-daemon for its
+power-mode menu, and [`eva/preservation.nix`](./eva/preservation.nix) keeps the chosen mode across
+reboots.
+
 ## Deploying VM Hosts
 
 The three VM hosts (`shoryu`, `shushou`, `youko`) put their VMs on the Linux bridge `br0`, with the

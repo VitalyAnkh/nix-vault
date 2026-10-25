@@ -28,6 +28,7 @@ in
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
     ./nvidia.nix
+    ../eva/nvidia-niri.nix
     ./users.nix # Multi-user configuration for muon machine
     ./xremap.nix # xremap for vitalyr only
 
