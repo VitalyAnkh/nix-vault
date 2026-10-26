@@ -78,6 +78,7 @@ let
       import inputs.nixpkgs-darwin {
         inherit system;
         config.allowUnfree = true;
+        config.permittedInsecurePackages = myvars.permittedInsecurePackages;
         overlays = [
           customOverlay
           bwrapsOverlay
@@ -87,6 +88,7 @@ let
       import nixpkgs {
         inherit system;
         config.allowUnfree = true;
+        config.permittedInsecurePackages = myvars.permittedInsecurePackages;
         overlays = [
           customOverlay
           packageTestWorkaroundsOverlay

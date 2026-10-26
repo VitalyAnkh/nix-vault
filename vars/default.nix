@@ -31,6 +31,16 @@
     # the backup ssh keys for disaster recovery
     # "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMzYT0Fpcp681eHY5FJV2G8Mve53iX3hMOLGbVvfL+TF vitalyr@romantic"
   ];
+  # Packages nixpkgs marks insecure that these hosts still install on purpose,
+  # allowed in each nixpkgs configuration (modules/nixos/base/nix.nix,
+  # lib/macosSystem.nix, lib/homeManagerConfiguration.nix). Each entry names one
+  # version, so a new version is refused until it is reviewed again.
+  permittedInsecurePackages = [
+    # Zotero 10 runs on Firefox ESR 140, end of life since 2026-10-13
+    # (nixpkgs' pkgs/by-name/zo/zotero/firefox-esr-140-bin.nix). Remove it once
+    # nixpkgs builds Zotero on a supported ESR.
+    "firefox-esr-140-bin-unwrapped-140.17.0esr"
+  ];
   # The SSH host keys of the machines whose nix-daemons build through aquamarine
   # (modules/nixos/base/remote-builders.nix).
   remoteBuilderClientKeys = [

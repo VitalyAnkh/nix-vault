@@ -1416,22 +1416,6 @@
         "type": "github"
       }
     },
-    "nixpkgs-zotero": {
-      "locked": {
-        "lastModified": 1790463110,
-        "narHash": "sha256-hKlVl12B1dF0Q5vd9dY3lIJM5mFGWYSlXwSLAqHZ1+s=",
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "e158d9ed9b51c98974c5e66e1ba1c9e0255fecaa",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "e158d9ed9b51c98974c5e66e1ba1c9e0255fecaa",
-        "type": "github"
-      }
-    },
     "nixpkgs_2": {
       "locked": {
         "lastModified": 1792839268,
@@ -1696,7 +1680,6 @@
         "nixpkgs-npu": "nixpkgs-npu",
         "nixpkgs-patched": "nixpkgs-patched",
         "nixpkgs-stable": "nixpkgs-stable_2",
-        "nixpkgs-zotero": "nixpkgs-zotero",
         "nu_scripts": "nu_scripts",
         "nur-ryan4yin": "nur-ryan4yin",
         "polybar-themes": "polybar-themes",

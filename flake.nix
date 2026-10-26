@@ -188,12 +188,6 @@
     # Blender/CUDA source rebuild; bump the rev deliberately when needed.
     nixpkgs-blender.url = "github:nixos/nixpkgs/4b8338e3113dc41bcf7695f56dc372107b7ff4c9";
 
-    # Pinned nixpkgs for Zotero (home/base/gui/academia.nix): unstable builds
-    # Zotero 10 on Firefox ESR 153, which Zotero's build cannot patch. This rev,
-    # the one this repository used before the 2026-10 merge, has a cached
-    # Zotero 10.0.2 built on ESR 140. Drop it once unstable builds Zotero again.
-    nixpkgs-zotero.url = "github:nixos/nixpkgs/e158d9ed9b51c98974c5e66e1ba1c9e0255fecaa";
-
     nixos-apple-silicon = {
       # asahi-6.17.7-2
       url = "github:nix-community/nixos-apple-silicon";

@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  myvars,
   ...
 }:
 let
@@ -19,6 +20,7 @@ in
 
   # to install chrome, you need to enable unfree packages
   nixpkgs.config.allowUnfree = lib.mkDefault true;
+  nixpkgs.config.permittedInsecurePackages = myvars.permittedInsecurePackages;
 
   # do garbage collection weekly to keep disk usage low
   nix.gc = {

@@ -3,24 +3,14 @@
   lib,
   pkgs,
   ...
-}@args:
+}:
 let
   cfg = config.vr.nixos.ssh;
-  # GCC 16, the default compiler in nixpkgs unstable, fails to build contour and
-  # the cache has no build, so take it from nixpkgs 26.05 (GCC 15). The
-  # installer flake has no nixpkgs-stable input but turns installExtraTerminfo
-  # off (nixos-installer/configuration.nix), so nothing uses this fallback;
-  # turning it back on there would build unstable's contour.
-  contour =
-    if args ? nixpkgs-stable then
-      args.nixpkgs-stable.legacyPackages.${pkgs.stdenv.buildPlatform.system}.contour
-    else
-      pkgs.pkgsBuildBuild.contour;
   terminfoPackages =
     with pkgs.pkgsBuildBuild;
     map (pkg: pkg.terminfo) [
       alacritty
-      contour # from the binding above, which takes precedence over `with`
+      contour
       foot
       ghostty
       kitty
