@@ -7,12 +7,12 @@
   xorg,
 }:
 let
-  version = "0.34.1";
+  version = "0.38.0";
 
   # Prebuilt release binary; the crate is not packaged in nixpkgs.
   asset = {
     url = "https://github.com/trycua/cua/releases/download/cua-driver-rs-v${version}/cua-driver-rs-${version}-linux-x86_64-binary.tar.gz";
-    hash = "sha256-pB/ivcvupFAdxZTAdPFrCXVyjgzHsIuQrOqFZNSPr+4=";
+    hash = "sha256-MauXCd2RznNnfkm58+dcbw0+TZYlwobJ5YJiv76mmN0=";
   };
 in
 stdenv.mkDerivation {

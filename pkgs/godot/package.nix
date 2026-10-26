@@ -14,12 +14,12 @@ let
   # Godot master bundles OpenXR 1.1.63 and uses XR_EXT_spatial_container, while
   # nixpkgs' openxr-loader is still 1.1.62. Build the loader from OpenXR-SDK-Source main.
   openxr-loader-main = openxr-loader.overrideAttrs (_old: {
-    version = "unstable-2026-09-17";
+    version = "unstable-2026-10-16";
     src = fetchFromGitHub {
       owner = "KhronosGroup";
       repo = "OpenXR-SDK-Source";
-      rev = "3ed64d0f9bb680f24b80a085091e5c8fab38f7b7";
-      hash = "sha256-eUZEultLvLpm/ycVpYxwjibs1dK3qrF8KricIIxz9OE=";
+      rev = "a9f14c416e383d05c142f5a2539a91fe3931b52a";
+      hash = "sha256-NFsbjGgraHnvOHkoDbjRJn0bssT4kjUY0srjEvvdapY=";
     };
   });
 in

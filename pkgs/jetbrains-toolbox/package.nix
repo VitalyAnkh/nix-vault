@@ -22,10 +22,10 @@ else
     finalAttrs: _: {
       # Keep this on the newest release listed by
       # https://data.services.jetbrains.com/products/releases?code=TBA&latest=true&type=release.
-      version = "3.8.1.88030";
+      version = "3.9.0.88839";
       src = fetchurl {
         url = "https://download.jetbrains.com/toolbox/jetbrains-toolbox-${finalAttrs.version}-arm64.dmg";
-        hash = "sha256-Lwe3gWiRNHbNrk6hwfp0uwdaS8twxZioXeCZeFpunHM=";
+        hash = "sha256-rxouFL5G4bvKDjEKhlApsGlNRMBiEFubhH1VfzqmZ2A=";
       };
     }
   )

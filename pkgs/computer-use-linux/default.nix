@@ -6,17 +6,17 @@
   libxkbcommon,
 }:
 let
-  version = "0.7.15";
+  version = "0.7.27";
 
   # Prebuilt release binaries; the crate is not packaged in nixpkgs.
   assets = {
     x86_64-linux = {
       target = "x86_64-unknown-linux-gnu";
-      hash = "sha256-7NBcwxAnoS3h5rTLI61XYEIO8o+co7ewOU+ksm7Zqdk=";
+      hash = "sha256-MlIXSPHHRo2ysaAgePaG+WH4ZoC26blaEqBKJgc9rjY=";
     };
     aarch64-linux = {
       target = "aarch64-unknown-linux-gnu";
-      hash = "sha256-/j6H5YyqMp4RN5Vs/22ncFXZdTy/1Dd21HjcRw1AgRo=";
+      hash = "sha256-OVX/gtLUF4ZnJTKG8U/pCL7gplX8Dyqk38LYOFbb4BE=";
     };
   };
 
