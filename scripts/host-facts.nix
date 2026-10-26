@@ -75,7 +75,13 @@ let
       blacklisted = c.boot.blacklistedKernelModules;
       initrdAvailable = c.boot.initrd.availableKernelModules;
       initrdModules = c.boot.initrd.kernelModules;
-      initrdSystemd = c.boot.initrd.systemd.enable;
+      # nixpkgs removed the option once the systemd initrd became the only one;
+      # reading the removed option throws.
+      initrdSystemd =
+        let
+          r = builtins.tryEval c.boot.initrd.systemd.enable;
+        in
+        if r.success then r.value else true;
       luks = lib.attrNames c.boot.initrd.luks.devices;
       resumeDevice = c.boot.resumeDevice;
       sysctl = c.boot.kernel.sysctl;

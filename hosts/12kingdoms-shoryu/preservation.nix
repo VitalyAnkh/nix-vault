@@ -13,7 +13,6 @@ in
   ];
 
   preservation.enable = true;
-  boot.initrd.systemd.enable = true;
 
   environment.systemPackages = [
     # `sudo gdu -x /`

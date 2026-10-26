@@ -14,8 +14,6 @@ in
   ];
 
   preservation.enable = true;
-  # pverservation required initrd using systemd.
-  boot.initrd.systemd.enable = true;
 
   environment.systemPackages = [
     # Whole-filesystem disk usage (`-x` stays on one filesystem):
