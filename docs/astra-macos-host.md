@@ -13,7 +13,6 @@
 | `hosts/darwin-astra/default.nix`       | 主机名、Nix 托管、系统 shell、PAM 和字体                                                |
 | `hosts/darwin-astra/homebrew.nix`      | Homebrew 软件清单、激活时的 Homebrew 行为及镜像设置                                     |
 | `home/hosts/darwin/darwin-astra.nix`   | HM 工作环境及本机选择                                                                   |
-| `modules/darwin/overlays.nix`          | 所有 Darwin 主机共用：仅构建期使用 Node 的包复用上游构建                                |
 | `modules/darwin/nix-daemon.nix`        | 所有 Darwin 主机共用：nix-darwin 管理 Nix 时，daemon 日志写入 `/var/log/nix-daemon.log` |
 | `modules/darwin/system-paths.nix`      | 所有 Darwin 主机共用：在 Nix 路径之后补回 `/etc/paths`、`/etc/paths.d` 中的目录         |
 | `home/darwin`、`home/base`             | 与 `fern`、`frieren` 共用的编辑器、shell、开发工具和应用配置                            |
@@ -154,10 +153,13 @@ PATH 的顺序与来源：
 Node.js 和其它声明的软件由 HM 包集合提供。Atuin 负责历史搜索，fzf 保留命令本体并关闭重复的 shell 历史绑定。Nushell 的 argx 使用命名空间导入，保留内置
 `parse`，避免干扰 fzf 初始化。Neovim 的 init.lua 先创建标准数据目录，使 Neo-tree 在新家目录中也能正常启动。
 
-Darwin 的 Node 24 由 `pkgs/nodejs/nodejs-slim_24.nix`
-应用上游 V8 哈希修复，修正工作线程的文件描述符跟踪。未修复时 Wrangler 的构建会因 `EBADF`
-失败，上游缓存中也没有 Wrangler，因此该修复对所有 Darwin 主机生效。Neovim 本身不依赖它，仍来自上游缓存；pyright 等基于 Node 的语言服务器在 astra 上本地构建。自带 Node 的包不在此列，例如 llm-agents 的 kimi-code。更新 Node 或 nixpkgs 时，需确认上游是否已包含该修复（截至 Node
-24.21.0 尚未包含），再调整本地补丁。包构建保留上游检查，并额外执行文件描述符回归测试；另有一个测试补丁（`test-net-autoselectfamily-loopback.patch`）。
+Node
+24 直接使用 nixpkgs 的构建，来自二进制缓存。2026-10-11 到 2026-10-26 期间，Darwin 上的 Node 曾带一个本地的 V8 补丁（f5d50079）：V8 对
+`std::hash` 的通用特化违反 ODR，与 libc++
+21 一起使用时会打乱工作线程的文件描述符跟踪，当时缓存中没有 Wrangler，本地构建它会因 `EBADF`
+失败。打了补丁的 Node 不在缓存中，每次 Node 升级都要本地编译，依赖它的语言服务器也随之重建。2026-10-26
+nixpkgs 已缓存 Wrangler 4.151.1，按用户决定删除了这个补丁。Node
+24.21.0 自带的 V8 仍有这个问题：本地构建依赖 Node 工作线程的项目时如果遇到 `EBADF`，原因就在这里。
 
 全局 Node CLI 的安装位置都与 Node 版本无关，命令目录都在 PATH 中：
 
@@ -282,11 +284,10 @@ brew bundle cleanup --file="$(grep -o -m1 '/nix/store/[a-z0-9]*-Brewfile' result
 
 ### 包来源与构建成本
 
-Astra 优先复用固定 nixpkgs 版本的二进制缓存。原生 Emacs 和修复后的 Node 需要本地定制构建；相同输入对应的 store 产物存在时可直接复用。`modules/darwin/overlays.nix`
-让所有 Darwin 主机上仅在构建或测试时使用 Node 的包复用上游构建：Zotero（基于 Firefox
-ESR 源码构建）、Marksman（基于 .NET 源码构建）、Furo 的静态资源、Arrow 安装检查用的 Azurite，以及 Argo
-CD 嵌入 Go 程序的静态网页资源。没有这层复用，`fern` / `frieren` 也要从源码重建 Firefox
-ESR、.NET、kitty 和数十个 Python 包。这些包的运行依赖不含 Node；nixpkgs 中运行时使用 Node 的工具仍使用修复版。
+Astra 优先复用固定 nixpkgs 版本的二进制缓存。原生 Emacs 需要本地定制构建；相同输入对应的 store 产物存在时可直接复用。`evalTests`
+检查 Node 以及 Zotero、Marksman、Furo、Arrow 的 Azurite 和 Argo
+CD 的网页资源都与上游的构建相同：本仓库的 overlay 一旦改动它们的依赖，`fern` / `frieren`
+就要从源码重建 Firefox ESR、.NET、kitty 和数十个 Python 包。
 
 所有主机都使用 nixpkgs 原始的 OpenLDAP 配方及测试设置，GnuPG、Pass 等依赖因此保持上游缓存身份：nixpkgs 已经跳过 OpenLDAP 不稳定的测试，`modules/base/overlays.nix`
 中关闭测试的覆盖随上游 e8f80990 删除，astra 原来的 `modules.darwin.upstreamOpenldap`

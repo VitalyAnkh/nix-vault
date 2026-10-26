@@ -3,13 +3,13 @@
   outputs,
 }:
 lib.genAttrs (builtins.attrNames outputs.darwinConfigurations) (_: {
-  nodejsHasV8Fix = true;
+  nodejsUsesUpstream = true;
   emacsIsNs = true;
   emacsHasAutoloadFix = true;
   androidToolsUseMacArchive = true;
   androidToolsAtLeastUpstream = true;
   jetbrainsToolboxAtLeastUpstream = true;
-  nodeBuildUsersFromUpstream = {
+  fromUpstreamCache = {
     zotero = true;
     marksman = true;
     argocdUi = true;

@@ -14,10 +14,8 @@ lib.genAttrs (builtins.attrNames outputs.darwinConfigurations) (
     isUpstream = package: upstreamPackage: package.drvPath == upstreamPackage.drvPath;
   in
   {
-    # pkgs/nodejs backports V8's std::hash fix on Darwin.
-    nodejsHasV8Fix = builtins.any (
-      patch: lib.hasSuffix "/v8-std-hash.patch" (toString patch)
-    ) pkgs.nodejs-slim_24.patches;
+    # Node is nixpkgs' own build, so it and Wrangler come from the binary cache.
+    nodejsUsesUpstream = isUpstream pkgs.nodejs-slim_24 upstreamPkgs.nodejs-slim_24;
     # pkgs/emacs builds the IGC Emacs as the NS port on Darwin and backports
     # bug#81906, without which Doom cannot generate its autoloads.
     emacsIsNs = pkgs.emacs-master-pgtk-with-igc.pname == "emacs-master-ns-with-igc";
@@ -30,9 +28,9 @@ lib.genAttrs (builtins.attrNames outputs.darwinConfigurations) (
     androidToolsAtLeastUpstream = lib.versionAtLeast pkgs.android-studio-tools.version upstreamPkgs.android-studio-tools.version;
     # pkgs/jetbrains-toolbox follows JetBrains' newest release on Darwin.
     jetbrainsToolboxAtLeastUpstream = lib.versionAtLeast pkgs.jetbrains-toolbox.version upstreamPkgs.jetbrains-toolbox.version;
-    # modules/darwin/overlays.nix: packages that need Node only to build keep
-    # their upstream builds instead of being rebuilt with the patched Node.
-    nodeBuildUsersFromUpstream = {
+    # Packages that would otherwise build Firefox ESR, .NET or dozens of Python
+    # packages from source keep their upstream (cached) builds.
+    fromUpstreamCache = {
       zotero = isUpstream pkgs.zotero upstreamPkgs.zotero;
       marksman = isUpstream pkgs.marksman upstreamPkgs.marksman;
       argocdUi = isUpstream pkgs.argocd.ui upstreamPkgs.argocd.ui;

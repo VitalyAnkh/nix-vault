@@ -7,8 +7,8 @@ b.nix} 最终会得到 pkgs.a pkgs.b
 
 定义完后，git add file 即可。
 
-与 nixpkgs 已有属性同名的文件会替换该属性，例如 `nodejs/nodejs-slim_24.nix` 替换
-`pkgs.nodejs-slim_24`。callPackage 的参数集把 nixpkgs 包集合合并在本仓库的包之后，同名时以 nixpkgs 为准：本目录的文件把这类属性声明为参数时，得到的都是 nixpkgs 中的原包，因此可以在其上
+与 nixpkgs 已有属性同名的文件会替换该属性，例如 `jetbrains-toolbox/package.nix` 替换
+`pkgs.jetbrains-toolbox`。callPackage 的参数集把 nixpkgs 包集合合并在本仓库的包之后，同名时以 nixpkgs 为准：本目录的文件把这类属性声明为参数时，得到的都是 nixpkgs 中的原包，因此可以在其上
 `overrideAttrs`。`modules/base/overlays.nix`、`lib/homeManagerConfiguration.nix` 和
 `outputs/default.nix` 三处调用都要保持这个合并顺序，否则替换同名属性的文件会无限递归。
 
@@ -130,9 +130,7 @@ rm -f ~/.local/share/nvfetcher/.shake.lock
 | `jetbrains-toolbox/package.nix`    | [JetBrains 的最新 release](https://data.services.jetbrains.com/products/releases?code=TBA&latest=true&type=release) | Darwin 的 `version` 与 `macM1` DMG 的哈希（`checksumLink` 给出 SHA-256）；Linux 沿用 nixpkgs 的版本和哈希，只把下载地址换成 `download.jetbrains.com` |
 | `godot/package.nix`                | [OpenXR-SDK-Source](https://github.com/KhronosGroup/OpenXR-SDK-Source) 的 `main`                                    | OpenXR loader 的 `rev`、`hash` 和 `version` 中的日期；Godot 本身由 nvfetcher 更新                                                                    |
 
-`nodejs/nodejs-slim_24.nix`
-沿用 nixpkgs 的 Node 版本，只加本地补丁；nixpkgs 升级 Node 后，确认每个补丁仍然需要并且能打上。`codex-desktop`
-的后端版本直接读取源码中的 `Cargo.toml`，不需要手动维护。
+`codex-desktop` 的后端版本直接读取源码中的 `Cargo.toml`，不需要手动维护。
 
 获取哈希：
 

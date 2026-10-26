@@ -31,7 +31,6 @@ in
         "modules/base/overlays.nix"
         "modules/base/fonts.nix"
         "modules/darwin/nix-daemon.nix"
-        "modules/darwin/overlays.nix"
         "modules/darwin/system-paths.nix"
         "modules/darwin/users.nix"
         "hosts/darwin-astra"
