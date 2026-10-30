@@ -321,6 +321,44 @@ overlay（3d7ce5b5）也一并删除：它因为 udisks
   4.151.1，当初需要这个补丁的 Wrangler 构建也不再在本地进行。Node 24.21.0 自带的 V8 仍有这个问题，见
   [astra 文档](./astra-macos-host.md)。
 
+### 2026-10-30：合入 def7d8f7
+
+在 astra 上合并（eef0d345），在 eva 上验证。上游这一段有 12 个提交：nixpkgs 和 nixpkgs-darwin 更新到 e62746b（2026-10-28），Avahi 的发布设置随之改为
+`settings.publish`（eva 生成的 `avahi-daemon.conf` 与之前完全相同），gitea 改用
+`ROOT_URL`；删除 WA-002（helm 不再取自 nixpkgs 25.05）和 WA-003（lanzaboote
+v1.2.0 不再需要让它的 rust-overlay 跟随本仓库）；tuios 升到 v0.11.1、ponytail 升到 v5.3.3，pyclipsync 改跟 main；Nushell 开启
+`loadSessionVariables`；重新加入 gitleaks；nvidia
+exporter 排到 network-online.target 之后；agents 规则的补充；niri 的 Steam 窗口规则（还没设标题的 Proton 窗口也全屏，ai 的输出按需开启 VRR）；删除 VS
+Code；私有 secrets 仓库的规则文件改名为
+`agenix-rules.nix`。需要用户决定的改动，结果记在下表中（2026-10-30）。
+
+逐个核对 ai 的提交：preservation 中 `boot.initrd.systemd.enable` 一行，eva 已在 11a307ac 中删除；VS
+Code 按用户决定保留；按需 VRR 不迁移：eva 的桌面是 GNOME，它的 niri 输出配置只设缩放和位置，而共享的窗口规则只在输出设置了
+`variable-refresh-rate on-demand=true` 时起作用，是否开启 VRR 取决于 eva 的显示器。
+
+其余的处理：
+
+- 根证书黑名单：上游 e8e9691f 只保留 "Comodo AAA Services
+  root"，理由是 nix-darwin 只把列表原样传下去。锁定的 nix-darwin（bb0b90db）其实会自己加上这一项，NixOS 的
+  `ca.nix` 也一样，astra 的证书包中这个根证书被标为不受信任。本地仍不设黑名单，见“有意保留的差异”。
+- shoryu 的 preservation 改用上游的版本：vr 中的是上游 1222bb25（2026-02，收紧家目录权限）之前的旧版，是早先的合并留下的。
+- 私有 secrets 仓库仍用 `secrets.nix`：agenix
+  0.18 还能找到它，但会提示这种用法已弃用，见“待处理”。`secrets/README.md` 保留本地的写法。
+
+在 eva 上验证时发现并修正：合并最初跟随上游删除了 `rust-overlay` input，eva 上的 `just test`
+因此求值失败。本地的 `pkgs/warp-terminal`
+调用 Warp 上游的 flake，要把 crane 和 rust-overlay 传给它（经
+`modules/base/overlays.nix`），所以合并提交保留这个 input。
+
+合并之后更新了 flake input（57e96049）。astra 从 GitHub 下载太慢，改在 eva 上运行，再把 `flake.lock`
+拷回 astra。两台机器下载 nixpkgs 的 tarball 时都偶尔报
+`Truncated tar archive`，原因是下载中途超时，重试即可。
+
+- nixpkgs 保持上游锁定的 e62746b0（2026-10-28），与 nixpkgs-darwin 相同。`flake.nix`
+  中它跟随 nixos-unstable，而这个分支还停在 31ecbaca（2026-10-27），直接更新反而会退回旧版本。
+- llm-agents 更新到 2026-10-30：按用户决定，dsh 从 0.2.1-rc.4 升到 rc.5，codex 升到 0.166.0，opencode2 升到 2.2.2。
+- 其余更新的有 firefox（nightly）、microvm、nixpkgs-master、nur-ryan4yin、rust-overlay、winapps 和 xremap-flake。
+
 ### 吸收的上游重构
 
 | 上游改动                                                                                              | 本地结果                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
@@ -377,6 +415,11 @@ overlay（3d7ce5b5）也一并删除：它因为 udisks
 | ai 的 DDC/CI（ddcutil、`hardware.i2c`）和 OpenRGB                                                     | 用户决定迁到 eva。OpenRGB 管理主板的 RGB Fusion（ITE 048d:5711），持久化 `/var/lib/OpenRGB` 和 `~/.config/OpenRGB`；muon 不变                                                                                                                                                                                                                                                                                                                                                       |
 | ai 的主板传感器驱动 nct6683                                                                           | 不迁移：eva 的技嘉主板需要树外的 it87 驱动                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | niri 的 NVIDIA 显存池上限（WA-039）                                                                   | 迁到 eva 和 muon，只在 `-niri` 变体中生效（`hosts/eva/nvidia-niri.nix`）                                                                                                                                                                                                                                                                                                                                                                                                            |
+| 删除 VS Code（add8ad97）                                                                              | 用户决定 eva 和 muon 保留（2026-10-30）。上游没有写理由，它 2026-08 曾为 build123d 加回 VS Code。eva 上 `~/.vscode` 和 `~/.config/Code` 共 6.9 GB、174 个扩展，最近一次使用在 2026-08。fern/frieren 的 cask 跟随删除；astra 的 VS Code 是手动安装的，不受影响                                                                                                                                                                                                                       |
+| helm 改用当前 nixpkgs（WA-002，e8e9691f）                                                             | 用户决定跟随（2026-10-30）：helm 从 3.17.3 升到 4.3.1（大版本变化，与用 Nix 之前 astra 上 Homebrew 的 4.3 一致），删除 `nixpkgs-2505` input                                                                                                                                                                                                                                                                                                                                         |
+| 重新加入 gitleaks（38d1d85e）                                                                         | 跟随：2026-10-13 用户确认跟随上游删除它，上游现在又加回                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| Nushell 开启 `loadSessionVariables`（e8e9691f）                                                       | 跟随：Home Manager 26.11 的默认值，各主机的 HM 多出 `~/.config/nushell/env.nu`                                                                                                                                                                                                                                                                                                                                                                                                      |
+| ai 的输出按需开启 VRR（def7d8f7）                                                                     | 不迁移：eva 的桌面是 GNOME，niri 只是备用；是否开启 VRR 取决于 eva 的显示器                                                                                                                                                                                                                                                                                                                                                                                                         |
 
 ### 有意保留的差异
 
@@ -392,6 +435,10 @@ overlay（3d7ce5b5）也一并删除：它因为 udisks
 | `outputs/x86_64-linux/tests/{cpu-power,microvm-guest-parity}`、`outputs/aarch64-linux/tests/cpu-power`                                                  | b    | 主机列表按本地主机改写，原因见上文“2026-10-26：合入 b334336c”                                                                                                                            |
 | `vars/default.nix` 的 `permittedInsecurePackages`，以及读取它的 `modules/nixos/base/nix.nix`、`lib/macosSystem.nix`、`lib/homeManagerConfiguration.nix` | b    | 放行 Zotero 所用的、已停止支持的 Firefox ESR 140，见上文“2026-10-26：合入 b334336c”                                                                                                      |
 | `home/base/tui/container.nix`、`home/base/tui/cloud`                                                                                                    | b    | 按用户决定保留上游 #332 删除或注释掉的容器、K8s 与云工具                                                                                                                                 |
+| `home/linux/gui/base/{vscode.nix,README.md,xdg/mime.nix}`、`README.md`、`hosts/eva/preservation.nix` 中的 VS Code                                       | b    | 用户决定保留 VS Code，上游 add8ad97 删除了它                                                                                                                                             |
+| `modules/base/security.nix`、`WORKAROUNDS.md` 的 WA-040                                                                                                 | c    | 不设根证书黑名单：锁定的 nixpkgs 的 `ca.nix` 和 nix-darwin bb0b90db 的 pki 模块都已自己加入 "Comodo AAA Services root"；上游 e8e9691f 认为 nix-darwin 只透传这个列表，与锁定的版本不符   |
+| `flake.nix` 的 `rust-overlay` input                                                                                                                     | b    | `pkgs/warp-terminal` 把它传给 Warp 上游的 flake；上游删除它，是因为 lanzaboote 不再需要跟随它                                                                                            |
+| `secrets/README.md`                                                                                                                                     | b    | 私有 secrets 仓库仍用 `secrets.nix`；上游 01d2e764 把它的私有仓库改为 `agenix-rules.nix`，并去掉了规则键的 `./` 前缀                                                                     |
 | `home/base/tui/tuios/config.toml`                                                                                                                       | b    | leader 键为 Ctrl+Z                                                                                                                                                                       |
 | `justfile` 的 `clean`                                                                                                                                   | b    | 保留 `--older-than 7d`，不像上游 59f194f0 那样清除全部历史 generation                                                                                                                    |
 | `home/darwin/shell.nix`                                                                                                                                 | c    | 上游 6218bb22 把 Homebrew 放到 PATH 最前；本地追加在后，使 Nix 包优先于 Homebrew，astra 的 PATH 顺序依赖这一点                                                                           |
@@ -470,6 +517,11 @@ overlay（3d7ce5b5）也一并删除：它因为 udisks
   `/persistent/home/<用户>/.conda`。b334336c 的合并删除了 conda，不再持久化
   `~/.conda`（eva 的是空的）；里面有 conda 环境的用户切换后在家目录中看不到它们。数据仍在
   `/persistent` 中；有人在用的话，切换前把它们移到别处，或者恢复这一项持久化。
+- 私有 secrets 仓库的规则文件：agenix 0.18 已把 `RULES` 和自动查找 `secrets.nix`
+  标为弃用，以后的版本会删除。私有仓库改名为 `agenix-rules.nix`、规则键去掉 `./`
+  前缀之后，`secrets/README.md` 再改用上游的写法（上游 01d2e764）。
+- dsh 升到 0.2.1-rc.5（57e96049）之后，web
+  profile 的插件要重新固定到 rc.5，并在下次启动的错误输出中检查有没有 `disabling profile plugin`。
 
 ## 常见问题
 
@@ -489,6 +541,27 @@ while sleep 5; do
   ps -eo pid=,etimes=,args= | awk '$3 == "git" && $4 == "ls-remote" && $2 > 15 && /github\.com/ {print $1}' | xargs -r kill
 done
 ```
+
+**eva 上求值卡在从 nix-community 下载 `-source`**：flake
+input 的源码带 narHash，Nix 会先尝试从 substituters 下载。nix-community 的缓存从 eva 访问很慢时，求值就停在这一步（2026-10-30 的一个 217
+MB 的 nixpkgs 源码就是这样）。先只用 cache.nixos.org 取回所有 input，缓存中没有的会直接从 GitHub 下载：
+
+```bash
+nix flake archive --option substituters https://cache.nixos.org
+```
+
+**从 cache.nixos.org 下载很慢**：构建时由 nix-daemon 下载，它不读取用户 shell 中的代理环境变量。可以先用
+`nix build --dry-run` 列出要下载的路径，以用户身份用 `nix copy`
+预先取回，再构建。签名由 cache.nixos.org 的密钥校验，换下载来源不影响结果：
+
+```bash
+# astra：经本机的 HTTP 代理（2026-10-30：直连约 110 KB/s，经代理约 1.5 MB/s）
+https_proxy=http://127.0.0.1:<端口> nix copy --from https://cache.nixos.org <路径>...
+# eva：上海交大的 cache.nixos.org 镜像（2026-10-30：直连约 250 KB/s，镜像约 2 MB/s）
+nix copy --from https://mirror.sjtu.edu.cn/nix-channels/store <路径>...
+```
+
+已配置的 tuna、ustc 镜像只缓存部分路径，2026-10-30 时这些路径都返回 404。CUDA 等不在 cache.nixos.org 的包仍从 nix-community 或 NVIDIA 下载。
 
 **在 astra 上求值 eva 失败**：eva 的配置用到 IFD（例如 codex-desktop-linux、Warp 的源码），需要 x86_64-linux 构建。改到 eva 上求值。
 
