@@ -42,6 +42,9 @@
     (lib.lowPrio wrangler)
     # Darwin hosts get it here too; upstream moved it from Homebrew to Nix (e6245cad).
     git-trim
+
+    # Scan git repositories and history for accidentally committed secrets.
+    gitleaks
   ];
 
   programs = {

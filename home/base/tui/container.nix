@@ -1,6 +1,5 @@
 {
   pkgs,
-  pkgs-2505,
   ...
 }:
 {
@@ -34,7 +33,7 @@
     kubebuilder
     istioctl
     clusterctl # for kubernetes cluster-api
-    pkgs-2505.kubernetes-helm
+    kubernetes-helm
     fluxcd
     argocd
 

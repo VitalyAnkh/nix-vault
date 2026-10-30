@@ -14,7 +14,6 @@ in
   ];
 
   preservation.enable = true;
-
   environment.systemPackages = [
     # Whole-filesystem disk usage (`-x` stays on one filesystem):
     #   sudo gdu -n -x /            # non-interactive, plain text
@@ -168,10 +167,6 @@ in
         # ======================================
         # IDE / Editors
         # ======================================
-
-        # vscode
-        ".vscode"
-        ".config/Code"
 
         # zed
         ".config/zed"

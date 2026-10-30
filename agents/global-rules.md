@@ -40,6 +40,9 @@ confirmation, preview, or verification.
   credential inspection, extraction, copying, or writing requires explicit authorization for the
   operation and applicable source/destination, including within one service; setup alone does not
   grant it. Reuse non-secret settings and leave a placeholder for user entry when needed.
+- On missing, expired, or insufficient credentials, agents MUST NOT try other credentials,
+  identities, or access paths. Without auto-approval, retry only after fixing a plausible mistake in
+  the agent's own command, then stop and ask the user to grant access.
 - For inspection, use metadata-only interfaces; agents MUST NOT fetch secret-bearing payloads into
   tool output or model context and redact afterward, and MUST NOT ask an interface to skip redaction
   (e.g. `--redact-secrets=false`). Terraform/OpenTofu state and outputs may contain secrets.
@@ -115,6 +118,10 @@ For an impactful change, follow these steps in order, scaled to its risk:
   provides over a new one, and reuse existing config and abstractions instead of duplicating them.
   Agents MUST NOT delete config the task did not ask about; when config merely appears unused,
   report it instead. Ask before a breaking change.
+- Minimality is not a reason to encode a local workaround for an upstream defect. Fix the owning
+  upstream project first and consume the fixed revision; if a local stopgap is genuinely unavoidable,
+  stop and ask the user before adding it. "Minimal" means the smallest change that follows existing
+  best practice, not the smallest diff at any cost.
 - Documentation should describe current behavior for readers without the conversation history; give
   each fact one home per audience and link instead of repeating. Comments explain contracts or
   non-obvious constraints, not obvious code, and preserve safety, license, and workaround
@@ -158,7 +165,8 @@ For an impactful change, follow these steps in order, scaled to its risk:
   for one-off tools, and the project's existing toolchain (e.g. its flake, `uv`, `pnpm`) for its
   dependencies; ask before creating a flake or installing another way.
 - Use `gh` for authorized GitHub operations; keep SSH for GitHub Git remotes and make sure the
-  Nix-managed `~/.ssh/config` is used.
+  Nix-managed `~/.ssh/config` is used. If SSH authentication is unavailable, stop and ask the user
+  to grant access; do not silently fall back to HTTPS or another credential.
 - Code layout: `~/codes` = personal, `~/work` = work code, `~/src/<repo>` = source checkouts.
 - Agents MUST publish only to repositories that are already public or that the user names, and MUST
   NOT publish content from private repositories or internal sources to a public repository.
@@ -210,6 +218,8 @@ For an impactful change, follow these steps in order, scaled to its risk:
 - Answer before acting. When the user asks, the answer or recommendation comes before new tool work;
   when the answer needs investigation, say in one line what you will check, then answer rather than
   reporting only the investigation.
+- When the user questions or challenges prior work, stop and answer that concern first. Do not
+  continue with other tool work or bury the answer under new changes.
 - Keep every turn steerable. Before work that will keep the user waiting, state the interpreted
   target, action, expected duration (when knowable), and artifact in one line, run it as a
   background job, and end the turn with its status and next step; let the job's completion event

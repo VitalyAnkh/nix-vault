@@ -18,6 +18,7 @@ let
         inherit system;
         config.allowUnfree = true;
       };
+
     in
     inputs
     // {
@@ -31,11 +32,6 @@ let
         pkgs-stable
         ;
 
-      pkgs-2505 = import inputs.nixpkgs-2505 {
-        inherit system;
-        # To use chrome, we need to allow the installation of non-free software
-        config.allowUnfree = true;
-      };
       pkgs-patched = import inputs.nixpkgs-patched {
         inherit system;
         # to use chrome, we need to allow the installation of non-free software
@@ -66,7 +62,7 @@ let
       my-asahi-firmware =
         if builtins.hasAttr "my-asahi-firmware" inputs then inputs."my-asahi-firmware" else null;
 
-      # NUR packages for this system, so modules use `myNurPkgs.dsh` instead of
+      # NUR packages for this system; modules use `myNurPkgs.dsh` instead of
       # repeating `nur-ryan4yin.packages.${pkgs.stdenv.hostPlatform.system}`.
       myNurPkgs = inputs.nur-ryan4yin.packages.${system};
     };

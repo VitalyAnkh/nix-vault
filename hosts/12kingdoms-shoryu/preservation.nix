@@ -1,5 +1,6 @@
 {
   preservation,
+  lib,
   pkgs,
   myvars,
   ...
@@ -13,7 +14,6 @@ in
   ];
 
   preservation.enable = true;
-
   environment.systemPackages = [
     # `sudo gdu -x /`
     pkgs.gdu
@@ -74,8 +74,8 @@ in
     let
       permission = {
         user = username;
-        group = "users";
-        mode = "0755";
+        group = lib.mkForce username;
+        mode = lib.mkForce "0750";
       };
     in
     {

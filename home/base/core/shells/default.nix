@@ -60,6 +60,9 @@ in
   # NOTE: nushell will be launched in bash, so it can inherit all the environment variables.
   programs.nushell = {
     enable = true;
+    # Adopt the 26.11 default: source Home Manager's session environment from
+    # env.nu instead of relying only on the bash-login wrapper.
+    loadSessionVariables = true;
     configFile.source = ./config.nu;
     # Nushell uses its own string grammar rather than POSIX shell escaping.
     # Override only the repository aliases inherited from home.shellAliases.
