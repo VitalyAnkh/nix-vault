@@ -30,6 +30,8 @@
     # Apps that update themselves or need the vendor's installation in /Applications,
     # plus Godot's official release (pkgs.godot builds Godot's development branch).
     casks = [
+      # adb and fastboot (Google's build); Nix does not install android-tools here.
+      "android-platform-tools"
       "godot"
       "input-source-pro"
       "karabiner-elements"
@@ -52,6 +54,8 @@
       "fish"
       # OpenMP runtime that local builds link from /opt/homebrew/opt/libomp.
       "libomp"
+      # libusb for local builds that link /opt/homebrew/opt/libusb.
+      "libusb"
       "macmon"
       "modal"
       "openconnect"
