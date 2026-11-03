@@ -30,6 +30,7 @@ in
     ./ai
 
     ./preservation.nix
+    ./openrgb
     ./proxy.nix
     #./boot.nix
     #./secureboot.nix
@@ -85,12 +86,6 @@ in
   # `ddcutil` sets brightness or the input source without sudo (upstream ai).
   environment.systemPackages = [ pkgs.ddcutil ];
   hardware.i2c.enable = true;
-
-  # The board's ARGB controller is Gigabyte RGB Fusion, a USB HID device (ITE
-  # 048d:5711). This installs openrgb with its udev rules and runs `openrgb
-  # --server`, so the GUI and the CLI reach the board without root. `motherboard`
-  # follows hardware.cpu.amd.updateMicrocode, which loads i2c-piix4 for the SMBus.
-  services.hardware.openrgb.enable = true;
 
   # Keep the NVIDIA root port out of PCIe power-saving paths. Repeated Xid 79
   # freezes showed the GPU disappearing from the PCIe bus, and live sampling

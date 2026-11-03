@@ -122,10 +122,9 @@ default `0xfff7bfff`; `0xfff7ffff` works). **verified**
 
 `amdgpu.ppfeaturemask=0xffffffff` does not address the ATPX/SMU path; it comes from a community
 tuning repository and no primary source ties it to it. **community-reported**
-([r9700-setup](https://github.com/stew675/r9700-setup/blob/HEAD/README.md)). The host's own
-`pcie_aspm=off` and `processor.max_cstate=2` are unrelated to this path too — they are set for PCIe
-link retraining and C-state exit latency, with their reasons in
-[hardware-amd-gpu.nix](./hardware-amd-gpu.nix).
+([r9700-setup](https://github.com/stew675/r9700-setup/blob/HEAD/README.md)). CPU C-state depth is no
+longer capped; the old `processor.max_cstate=2` trade-off was removed for idle power, so re-check
+inference tail latency after that change.
 
 ## Kernel parameters and module options
 
@@ -250,16 +249,16 @@ equivalent-generation consumer cards are "known to work", and never mentions
    rule, which would leave the driver registered as a PX client. Revisit if a BIOS update defines
    the `_OFF`/`_ON` methods — or now that two cards may keep ATPX out of the picture (above).
 2. `iommu=pt` stays; `iommu=off` for P2P is a community claim with no AMD statement.
-3. `hardware.amdgpu.opencl.enable = true` is the shape the host uses — the module adds both `clr`
-   and `clr.icd` — instead of a hand-written `hardware.graphics.extraPackages`.
+3. Only `rocmPackages.clr.icd` goes into `hardware.graphics.extraPackages`: the `clr` that
+   `hardware.amdgpu.opencl.enable` also adds puts its OpenCL 2.2 `libOpenCL.so.1` in
+   `/run/opengl-driver/lib`, ahead of the `ocl-icd` that OpenVINO's GPU plugin links.
 4. `rocmPackages.rocm-smi` is not wrapped for libdrm. It reads a healthy card completely; the
    `Fail to open libdrm_amdgpu.so` message only appeared while the card was wedged (see "ROCm
    userland in nixpkgs"). Expect `Card Series: N/A` until upstream names the R9700.
 5. `hardware.amdgpu.overdrive` stays off unless undervolting is wanted; if it is turned on, set
-   `ppfeaturemask = "0xfff7ffff"` (nixpkgs#564601). A oneshot unit in `hardware-amd-gpu.nix` caps
-   both cards at 250 W through hwmon `power1_cap` to keep their fans quiet, and exits non-zero when
-   a card does not take the value; the cap needs no overdrive. `amdgpu.gpu_recovery=1` is set,
-   because the driver default is auto/off except SRIOV.
+   `ppfeaturemask = "0xfff7ffff"` (nixpkgs#564601). A udev rule in `hardware-amd-gpu.nix` caps both
+   cards at 250 W through hwmon `power1_cap` to keep their fans quiet; the cap needs no overdrive.
+   `amdgpu.gpu_recovery=1` is set, because the driver default is auto/off except SRIOV.
 6. **Open:** set `HIP_VISIBLE_DEVICES` (and `ROCR_VISIBLE_DEVICES` where honoured) so the iGPU is
    never selected; for llama.cpp prefer `--split-mode layer` or an RPC/pipeline split over tensor
    parallelism, and build with `-DGGML_HIP=ON -DGPU_TARGETS=gfx1201`, no `HSA_OVERRIDE_GFX_VERSION`.

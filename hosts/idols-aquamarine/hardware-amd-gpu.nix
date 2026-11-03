@@ -35,32 +35,14 @@
     # metal a hung card stays hung until the next reboot. Nobody is here to
     # power-cycle an unattended inference host, so switch the recovery path on.
     "amdgpu.gpu_recovery=1"
-
-    # ASPM L0s/L1 on a link that carries PCIe traffic for a compute card buys
-    # little and is a known source of link retraining and timeouts; this repo
-    # already falls back to the same knob for NVMe APST problems (WA-008).
-    "pcie_aspm=off"
-
-    # Keep the CPU out of the deepest C-states. Inference waits on short PCIe and
-    # memory round-trips, and the exit latency from C6/C7 shows up as decode
-    # jitter. Costs idle power: drop this line if that matters more than tail
-    # latency.
-    "processor.max_cstate=2"
   ];
-
-  # amdgpu firmware.
-  hardware.enableRedistributableFirmware = true;
-
-  hardware.graphics = {
-    enable = true;
-  };
 
   # ROCm 10.1 is available: https://rocm.docs.amd.com/en/latest/.
   # nixpkgs still ships 7.2.x while the upgrade awaits split reviews, LLVM/OpenMP
   # fixes and compatibility work: https://github.com/NixOS/nixpkgs/pull/573885.
   # Inference containers carry their own ROCm userspace.
-  # The ROCm OpenCL ICD, which is also what HIP consumers resolve for compute.
-  hardware.amdgpu.opencl.enable = true;
+  # Not hardware.amdgpu.opencl.enable: its clr adds an OpenCL 2.2 libOpenCL.so.1 that shadows ocl-icd.
+  hardware.graphics.extraPackages = [ pkgs.rocmPackages.clr.icd ];
 
   # /dev/kfd is world-writable under nixpkgs' default udev rule, but
   # /dev/dri/renderD* is `render` 0660 and this headless host has no logged-in
@@ -78,40 +60,9 @@
   # default. amdgpu exposes the cap in microwatts and accepts anything inside [power1_cap_min,
   # power1_cap_max] — 210-300 W on these cards. The set path (amdgpu_dpm_set_power_limit) has no
   # overdrive gate, so the ppfeaturemask default stands.
-  systemd.services.amdgpu-power-cap = {
-    description = "Cap the power limit of every amdgpu card at 250 W";
-    wantedBy = [ "multi-user.target" ];
-    after = [ "systemd-modules-load.service" ];
-    path = [ pkgs.coreutils ];
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-      ExecStart = pkgs.writeShellScript "amdgpu-power-cap" ''
-        cap=250000000 # microwatts
-        want=2 # both R9700s; this host has no other amdgpu device
-        # The cards probe asynchronously, so retry briefly instead of racing the driver.
-        for _ in $(seq 1 60); do
-          capped=0
-          for hwmon in /sys/class/hwmon/hwmon*; do
-            [ "$(cat "$hwmon/name" 2>/dev/null)" = amdgpu ] || continue
-            # The subshell keeps a rejected write from printing one shell error per retry; the
-            # summary below is the line an operator needs.
-            if (echo "$cap" > "$hwmon/power1_cap") 2>/dev/null &&
-              [ "$(cat "$hwmon/power1_cap" 2>/dev/null)" = "$cap" ]; then
-              capped=$((capped + 1))
-            fi
-          done
-          if [ "$capped" -ge "$want" ]; then
-            echo "capped $capped amdgpu cards at 250 W"
-            exit 0
-          fi
-          sleep 1
-        done
-        echo "amdgpu power cap: only $capped of $want cards took the cap" >&2
-        exit 1
-      '';
-    };
-  };
+  services.udev.extraRules = ''
+    ACTION=="add", SUBSYSTEM=="hwmon", ATTR{name}=="amdgpu", ATTR{power1_cap}="250000000"
+  '';
 
   # GPU panel in btop, and utilization/VRAM in node_exporter for the shared
   # VictoriaMetrics scrape — the same shape as the Radeon iGPU hosts.
@@ -124,5 +75,8 @@
   # `[ "systemd" "logind" ]` instead of replacing it: only name the collector
   # this host adds. Repeating the base entries passes `--collector.systemd`
   # twice, which node_exporter rejects, and the unit restart-loops.
+  #
+  # The CPU/RAPL collector lives in ./hardware-intel-cpu.nix; this file only adds
+  # the AMD GPU `drm` collector.
   services.prometheus.exporters.node.enabledCollectors = [ "drm" ];
 }

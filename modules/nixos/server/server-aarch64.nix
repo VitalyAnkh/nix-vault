@@ -12,6 +12,7 @@
     (mylib.relativeToRoot "hardening/kernel-hardening.nix")
     ../base/monitoring.nix
     ../base/nix.nix
+    ../nushell-login.nix
     ../base/packages.nix
     ../base/ssh.nix
     ../base/user-group.nix

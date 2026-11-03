@@ -77,7 +77,8 @@ in
       "/opt/homebrew/sbin"
     ];
     # The HM, system and default profiles come first, in set-environment's order,
-    # and precede Homebrew.
+    # and precede Homebrew. home/darwin/shell.nix lists Homebrew again for the
+    # other Darwin hosts; a later duplicate does not change the lookup order.
     nixBeforeHomebrew =
       let
         nixPaths = [
@@ -85,9 +86,11 @@ in
           "/run/current-system/sw/bin"
           "/nix/var/nix/profiles/default/bin"
         ];
-        orderedPaths = builtins.filter (
-          path: builtins.elem path (nixPaths ++ [ "/opt/homebrew/bin" ])
-        ) home.home.sessionPath;
+        orderedPaths = lib.unique (
+          builtins.filter (
+            path: builtins.elem path (nixPaths ++ [ "/opt/homebrew/bin" ])
+          ) home.home.sessionPath
+        );
       in
       lib.take 3 home.home.sessionPath == nixPaths && orderedPaths == nixPaths ++ [ "/opt/homebrew/bin" ];
     userToolPaths = builtins.all (path: builtins.elem path home.home.sessionPath) (

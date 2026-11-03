@@ -22,7 +22,6 @@
     node-exporter.uid = 992;
     microvm.uid = 993;
     immich.uid = 994;
-    homepage.uid = 995;
     gitea.uid = 996;
     btrbk.uid = 997;
     avahi.uid = 998;
@@ -32,7 +31,6 @@
   users.groups = {
     jellyfin.gid = 974;
     wireshark.gid = 975;
-    victoriametrics-data.gid = 976;
     uinput.gid = 977;
     sftpgo.gid = 981;
     ryan.gid = 982;
@@ -43,7 +41,6 @@
     plugdev.gid = 987;
     node-exporter.gid = 989;
     immich.gid = 990;
-    homepage.gid = 991;
     grafana.gid = 992;
     gitea.gid = 993;
     fileshare.gid = 994;

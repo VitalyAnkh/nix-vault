@@ -14,4 +14,5 @@
   wivrnUsesNvidiaVulkan = true;
   wivrnStatePreserved = true;
   adbStatePreserved = true;
+  qwenStatePreserved = true;
 }

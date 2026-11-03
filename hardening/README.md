@@ -1,111 +1,145 @@
 # Linux Hardening
 
-> Work in progress.
+Deployed and interactively validated on the Linux desktop host (2026-10-31). Policy and limits:
+[SECURITY.md](../docs/SECURITY.md).
 
-Application sandboxing (nixpak/bubblewrap) and Linux hardening knowledge for this repository. For
-the repository security policy, architecture and audit status, see [`SECURITY.md`](../SECURITY.md);
-for temporary exceptions and known gaps, see [`WORKAROUNDS.md`](../WORKAROUNDS.md).
+## In this repository
 
-## Goal
+The rest of this document describes upstream's sandboxes. This fork sandboxes fewer apps (the user's
+decision in the 2026-11 merge, see [upstream-sync.md](../docs/upstream-sync.md)):
 
-- **System Level**: Protect critical files from being accessed by untrusted applications.
-  1. Such as browser cookies, SSH keys, etc.
-- **Per-App Level**: Prevent untrusted applications(such as closed-source apps) from:
-  1. Accessing files they shouldn't.
-     - Such as a malicious application accessing your browser's cookies, SSH keys, etc.
-  1. Accessing the network when they don't need to.
-  1. Accessing hardware devices they don't need.
+- Firefox, QQ and Telegram keep this repository's nixpak modules:
+  [gui-base.nix](nixpaks/modules/gui-base.nix), [host-network.nix](nixpaks/modules/host-network.nix)
+  and [custom-policy.nix](nixpaks/modules/custom-policy.nix). They use the host network and get the
+  PipeWire socket and the cameras.
+- WeChat uses upstream's framework ([wechat-policy.nix](nixpaks/modules/wechat-policy.nix) and the
+  modules it imports): pasta-isolated network, app-scoped data under
+  `~/.var/app/com.tencent.WeChat/data/wechat`.
+- Chrome, Chromium, Brave, Edge, Krita, MuseScore, the slicers, Blender, OBS, mpv, imv, Zoom, Foliate
+  and Remmina are not sandboxed. On eva, sandboxing them would cut Chrome off from local services and
+  its Codex native-messaging host, drop fcitx from XWayland apps, split mpv's `/tmp` from
+  go-musicfox, and hide `~/projects` from Blender.
+- The policy test ([tests/policy.nix](tests/policy.nix)) checks WeChat only.
 
-## Current Structure
+## Why these apps are sandboxed
 
-### 1. **System Level**
+The packaging scope is driven by blast radius and input exposure, not by treating the applications
+as malicious. These apps parse complex local or remote content, load third-party plugins (OBS), or
+hold powerful network/session privileges (Remmina); a parser, plugin or session compromise would
+otherwise inherit the user's home, session D-Bus, devices and network. Each wrapper grants only the
+ports, devices, sockets, writable directories and desktop portals needed by that app's documented
+workflow.
 
-- **AppArmor** (`apparmor/`): AppArmor profiles and configuration
-- **Kernel & process hardening** (`kernel-hardening.nix`): sysctl baseline and unused-module deny
-  list; rationale and verification live in [`SECURITY.md`](../SECURITY.md).
+## Shared boundaries
 
-### 2. **Per-App Level**
+- Cleared environment; filtered session D-Bus; private `/dev/shm`; per-app `/tmp`. Chromium-family
+  browsers share an app-specific `/tmp` so external URLs reuse one browser instance.
+- Read-only `/nix/store`; GPU and display; fonts and themes; LAN and Internet.
+- Portals for file chooser, URI opening, notifications, input methods and document exports.
+- No whole host home, system D-Bus, SSH agent, USB/serial or raw camera. Raw PipeWire is granted
+  only to MuseScore for its ALSA-via-PipeWire audio path; see [Limits](#limits).
+- Host loopback only for Firefox/Chromium; all other apps use pasta-isolated loopback. Chromium is
+  an intentional development exception. Brave Origin and Edge are backup browsers and receive no
+  media grants.
 
-- **Nixpak** (`nixpaks/`): Bubblewrap-based sandboxing for applications
-  - Firefox configuration
-  - QQ (Chinese messaging app) configuration
-  - Telegram Desktop configuration
-  - Modular system with reusable components
-- **Bubblewrap** (`bwraps/`): Direct bubblewrap configurations
-  - WeChat sandboxing configuration
+## App permissions
 
-## Current Implementation Status
+`Media` means audio playback, microphone, Camera and ScreenCast portals. Writable paths are listed
+explicitly; other files use the document portal. Every app also has private writable state.
 
-| Component         | Status    | Notes                         |
-| ----------------- | --------- | ----------------------------- |
-| AppArmor Profiles | 🚧 WIP    | Basic structure in place      |
-| Nixpak Firefox    | ✅ Active | Firefox sandboxing via nixpak |
-| Nixpak QQ         | ✅ Active | QQ application sandboxing     |
-| Nixpak Telegram   | ✅ Active | Telegram Desktop sandboxing   |
-| Bubblewrap WeChat | ✅ Active | WeChat specific sandboxing    |
+| App          | Network       | Writable paths                                                                        | Grants                                                                                         |
+| ------------ | ------------- | ------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| Firefox      | Host loopback | `~/.mozilla`, personal files, Trash, Firefox artwork                                  | Audio, browserpass, MPRIS, idle; camera/screen sharing intentionally unavailable               |
+| Chromium     | Host loopback | `~/.config/chromium`, personal files                                                  | Media, browserpass, MPRIS, idle, v12 Secret                                                    |
+| Chrome       | Isolated      | `~/.config/google-chrome`, Downloads                                                  | Media, browserpass, MPRIS, idle, v12 Secret                                                    |
+| Brave Origin | Isolated      | `~/.config/BraveSoftware/Brave-Origin`, Downloads                                     | v12 Secret                                                                                     |
+| Edge         | Isolated      | `~/.config/microsoft-edge`, Downloads                                                 | v12 Secret                                                                                     |
+| QQ           | Isolated      | Personal files, private app state                                                     | Media, notifications, tray, MPRIS, idle, accessibility                                         |
+| Telegram     | Isolated      | Personal files, private app state                                                     | Media, notifications, tray, MPRIS, idle, accessibility, Ayatana indicators                     |
+| Zoom         | Isolated      | `~/.zoom`, `zoomus.conf`, `zoom.conf`, Downloads, `Documents/Zoom`, private app state | Media, X11/XWayland, FHS, SNI tray, idle, `/dev/video0-1`, read-only `/sys/class/drm`          |
+| WeChat       | Isolated      | Documents, Downloads, app-scoped `wechat` data, private app state                     | Media, Wayland, X11 fallback, SNI tray, file chooser portal                                    |
+| Foliate      | None          | Documents/Downloads/Pictures read-only, app-scoped state                              | File chooser, OpenURI, notifications, IME, accessibility                                       |
+| Krita        | None          | Documents/Downloads/Pictures writable, app-scoped state                               | File chooser, OpenURI, print, inhibit, notifications, IME, accessibility                       |
+| Bambu Studio | Isolated      | Documents/Downloads/Pictures writable, app-scoped state                               | X11/XWayland, PulseAudio, cloud/LAN network, file chooser, notifications, IME, accessibility   |
+| OrcaSlicer   | Isolated      | Documents/Downloads/Pictures writable, app-scoped state                               | X11/XWayland, cloud/LAN network, file chooser, notifications, IME, accessibility               |
+| Remmina      | Isolated      | `~/.config/remmina`, `~/.local/share/remmina`, `~/.remmina`, Downloads                | PulseAudio, SSH agent, file chooser, OpenURI, notifications, IME, accessibility                |
+| OBS Studio   | Isolated      | `~/.config/obs-studio`, Videos/Pictures/Downloads                                     | ScreenCast, V4L2 camera (`/dev/video0-1`), PulseAudio, tray, notifications, IME, accessibility |
+| Blender      | Isolated      | `~/.config/blender`, Documents/Downloads/Pictures/Videos                              | X11/XWayland, PulseAudio, notifications, IME, accessibility                                    |
+| MuseScore    | Isolated      | `~/.config/MuseScore`, `~/.local/share/MuseScore`, Documents/Downloads/Music/Pictures | ALSA via PipeWire, ALSA sequencer, X11/XWayland, print, notifications, IME, accessibility      |
+| mpv          | Isolated      | `~/.config/mpv`, `~/.cache/mpv`, `~/.local/state/mpv`; media dirs read-only           | MPRIS, file chooser, OpenURI                                                                   |
+| imv          | None          | `$HOME` read-only                                                                     | File chooser, OpenURI                                                                          |
 
-## Directory Structure
+All browsers get read-only NSS certificates, printing, native notifications and accessibility.
 
-```
-hardening/
-├── README.md
-├── kernel-hardening.nix # sysctl baseline + unused-module deny list
-├── apparmor/           # AppArmor security profiles
-│   └── default.nix
-├── bwraps/            # Direct bubblewrap configurations
-│   ├── default.nix
-│   └── wechat.nix
-└── nixpaks/           # Nixpak application sandboxing
-    ├── default.nix
-    ├── firefox.nix
-    ├── qq.nix
-    ├── telegram-desktop.nix
-    └── modules/       # Reusable nixpak modules
-        ├── custom-policy.nix
-        ├── gui-base.nix
-        └── network.nix
-```
+## Browser secrets
 
-## System Hardening
+- Chromium family: app-scoped Secret portal only. `SecretPortalKeyProviderUseForEncryption` writes
+  v12 cookies; no `org.freedesktop.secrets` or broad keyring access.
+- If the Secret portal is unavailable, Chromium can fall back to v10. Monitor
+  `Local State.os_crypt.portal.prev_init_success`.
+- Firefox uses NSS: `key4.db` and `logins.json` for logins, `cookies.sqlite` for cookies. It has no
+  Secret portal or keyring grant. A Primary Password protects saved logins, not cookies.
+- browserpass is separate: it exposes the password store and GPG-agent socket, not cookie
+  encryption.
+- Bookmarks, history, localStorage, IndexedDB and extension data remain readable by the browser.
+  nixpak isolates them from other apps, not from browser compromise.
 
-- Apparmor: [roddhjav/apparmor.d](https://github.com/roddhjav/apparmor.d)
-  - https://gitlab.com/apparmor/apparmor/-/wikis/Documentation
-  - AppArmor.d is a set of over 1500 AppArmor profiles whose aim is to confine most Linux based
-    applications and processes.
-  - But its profiles assume an FHS filesystem, so most of them never match the Nix store paths a
-    NixOS system actually executes.
-  - Apparmor on NixOS Roadmap:
-    - https://discourse.nixos.org/t/apparmor-on-nixos-roadmap/57217
-    - https://github.com/LordGrimmauld/aa-alias-manager
-- SELinux: too complex, not recommended for personal use.
+## Limits
 
-## Application Sandboxing
+- X11: Zoom and WeChat have shared-display trust; portal permissions cannot enforce portal-only
+  capture.
+- PulseAudio grants recording authority. Read-only GPG sockets still permit signing and decryption.
+- pasta isolates loopback, not LAN access. Chromecast discovery is unverified.
+- Brave Origin and Edge intentionally have no PulseAudio, Camera, ScreenCast or MPRIS grants. They
+  are backup browsers, not media browsers.
+- Firefox camera and remote screen sharing are intentionally disabled. Firefox does not support the
+  XDG Camera/ScreenCast portal path used here, so granting camera or screen-capture access would
+  require widening the sandbox with raw `/dev/video*` or direct PipeWire access. We choose not to
+  grant that privilege.
+- Bambu Studio's nixpkgs build omits the `device_page` frontend bundle, so filament management is
+  unavailable. Its MakerWorld sidebar entry also requires the upstream `firstguide.finish = "true"`
+  workaround; the startup splash may render black under XWayland.
+- Remmina's SSH Tunnel support receives a read-only SSH agent socket and SSH client config. A
+  compromised Remmina can use the agent to sign or decrypt while the agent is running.
+- OBS, Blender, MuseScore and mpv use pasta-isolated networking. Host loopback services are not
+  reachable unless the app is changed to a host-loopback exception.
+- MuseScore receives the raw PipeWire socket so its ALSA driver can use the host `pcm.!default`
+  PipeWire plugin. PipeWire is a general media graph, so this is broader than a single audio stream:
+  a compromised MuseScore could enumerate other user-visible PipeWire media nodes. The alternative,
+  direct `/dev/snd`, confines the media graph but bypasses PipeWire device selection, per-app volume
+  and mixing.
+- OBS on Linux defaults its recording path to `$HOME`. The sandbox intentionally binds only the
+  declared home subdirectories, so recording output must target `Videos`, `Pictures` or `Downloads`;
+  a file written to the home root exists only in the sandbox's transient mount namespace.
 
-- [Bubblewrap](https://github.com/containers/bubblewrap):
-  [nixpak](https://github.com/nixpak/nixpak), more secure than firejail, but no batteries included.
-  - NixOS's FHSEnv is implemented using bubblewrap by default.
-- [Firejail](https://github.com/netblue30/firejail/tree/master/etc): A SUID security sandbox with
-  hundreds of security profiles for many common applications in the default installation.
-  - https://wiki.nixos.org/wiki/Firejail
-  - Firejail needs SUID to work, which is considered a security risk -
-    [Does firejail improve the security of my system?](https://github.com/netblue30/firejail/discussions/4601)
-- [Systemd/Hardening](https://wiki.nixos.org/wiki/Systemd/Hardening): Systemd also provides some
-  sandboxing features.
+## Validation
 
-## NOTE
+- Passed: `just fmt`, `just test`, `ai-niri` build, `shoukei-niri` eval and all wrapper builds.
+- Interactive validation passed for Firefox, Chrome, Chromium, Brave Origin, Edge, QQ, Telegram,
+  Zoom, Bambu Studio and OrcaSlicer. Chromium's host-loopback/personal-file exception and the
+  Brave/Edge no-media policy are intentional.
+- OBS Studio passed interactive validation for PipeWire screen capture, V4L2 camera capture,
+  desktop/microphone audio, local NVENC H.264 MP4 recording and local RTMP streaming. External
+  provider authentication and browser sources remain unvalidated.
+- Remmina, Blender, mpv and imv build and pass the policy suite; interactive validation is still
+  pending. MuseScore passed launch, XWayland and ALSA-to-PipeWire routing checks; audible playback
+  and user workflows still need confirmation.
+- Chromium smoke test passed: renderer sandbox, environment clearing, bind scope, disposable-profile
+  persistence and loopback policy.
+- WeChat uses the native nixpkgs-master package with nixpak as the only bwrap layer. Build/policy
+  pass; interactive Wayland validation is still pending.
+- Evidence and repeat commands: [runtime validation](tests/runtime-validation.md),
+  [policy test](tests/policy.nix), which auto-loads every suite under [tests/policy](tests/policy/).
 
-**Running untrusted code is never safe, kernel hardening & sandboxing cannot change this**; run
-untrusted code in a VM on an isolated network. The threat model lives in
-[`SECURITY.md`](../SECURITY.md).
+## Code map
 
-## References
-
-- [Harden your NixOS workstation - dataswamp](https://dataswamp.org/~solene/2022-01-13-nixos-hardened.html)
-- [Linux Insecurities - Madaidans](https://madaidans-insecurities.github.io/linux.html)
-- [Sandboxing all programs by default - NixOS Discourse](https://discourse.nixos.org/t/sandboxing-all-programs-by-default/7792)
-- [Paranoid NixOS Setup - xeiaso](https://xeiaso.net/blog/paranoid-nixos-2021-07-18/)
-- [nix-mineral](https://github.com/cynicsketch/nix-mineral): NixOS module for convenient system
-  hardening.
-- apparmor configs:
-  - https://github.com/zramctl/dotfiles/blob/4fe177f6984154960942bb47d5a375098ec6ed6a/modules/nixos/security/apparmor.nix#L4
-  - https://git.grimmauld.de/Grimmauld/grimm-nixos-laptop/src/branch/main/hardening
+- [nixpaks/](nixpaks/): wrappers and Home Manager package overlay.
+- [desktop-base.nix](nixpaks/modules/desktop-base.nix): shared runtime and XDG storage.
+- [portal-groups.nix](nixpaks/modules/portal-groups.nix),
+  [desktop-integration.nix](nixpaks/modules/desktop-integration.nix): portal and desktop service
+  grants.
+- [browser-permissions.nix](nixpaks/modules/browser-permissions.nix),
+  [chromium-browser.nix](nixpaks/modules/chromium-browser.nix): browser scopes and launcher.
+- [nixpaks/wechat.nix](nixpaks/wechat.nix): WeChat package and data setup.
+- [kernel-hardening.nix](kernel-hardening.nix), [apparmor/](apparmor/): kernel sysctl and AppArmor
+  profiles.

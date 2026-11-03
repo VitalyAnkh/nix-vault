@@ -27,6 +27,7 @@ in
 
     # hardware
     ./hardware-configuration.nix
+    ./hardware-intel-cpu.nix
     ./hardware-amd-gpu.nix
     ./hardware-intel-igpu.nix
 
@@ -35,6 +36,7 @@ in
 
     # services
     ./asr.nix
+    ./idle-suspend.nix
   ];
 
   # Bind the board's NCT6798D SuperIO, otherwise fan RPM and board temperatures
@@ -58,20 +60,16 @@ in
   # Local btrfs snapshots of @persistent (SSH host keys, /etc/secureboot, the
   # NixOS state). Same layout as the other physical hosts; no off-host target.
   modules.btrbk.enable = true;
+  modules.security.audit.enable = true;
 
   # smartd autodetects devices and logs to the journal; the smartctl exporter
   # (modules/nixos/base/monitoring.nix) is what feeds wear and media errors to
   # VictoriaMetrics.
   services.smartd.enable = true;
 
-  # The inference engine ships as an OCI image and is meant to run rootless, so
-  # `podman` is what this host uses to build and start it from the `~/src` checkout
-  # that ./preservation.nix keeps.
-  virtualisation.podman.enable = true;
-
-  # Keep the user systemd manager running after logout and start it at boot,
-  # so enabled user services can run without an active login session.
-  users.users."${myvars.username}".linger = true;
+  # The inference engine ships as an OCI image and runs under the agent
+  # profile's rootless Podman (modules/nixos/agent.nix), built from the `~/src`
+  # checkout that ./preservation.nix keeps.
 
   # Speech recognition runs on the NPU, see ./asr.nix. The driver and the
   # compiler it loads come from NixOS/nixpkgs#570230, which is unmerged, so they
@@ -81,7 +79,12 @@ in
   environment.sessionVariables.ZE_ENABLE_ALT_DRIVERS = "${lib.getLib pkgs-npu.intel-npu-driver}/lib/libze_intel_npu.so";
 
   # The daemons of the hosts that build here (modules/nixos/base/remote-builders.nix).
-  users.users.root.openssh.authorizedKeys.keys = myvars.remoteBuilderClientKeys;
+  # Their host keys have no passphrase, so they only get the daemon protocol, as
+  # nix.sshServe does. `--store daemon` hands builds to the system daemon instead
+  # of running them inside this audited login session (modules/nixos/base/auditd.nix).
+  users.users.root.openssh.authorizedKeys.keys = map (
+    key: ''restrict,command="nix-daemon --stdio --store daemon" ${key}''
+  ) myvars.remoteBuilderClientKeys;
 
   # systemd-journal - cap disk usage
   # https://www.freedesktop.org/software/systemd/man/latest/journald.conf.html
@@ -100,13 +103,20 @@ in
 
   # A `boot.kernel.sysctl` that disabled IPv6 was removed on 2026-10-14: networkd
   # re-enables it on the wired link for the `DHCP = "ipv6"`/`IPv6AcceptRA` settings
-  # below, so it never applied and the AAAA attempt already fails at once (WA-034).
+  # below, so it never applied. The gateway now hands out fake-IP AAAA records too.
 
   networking.useNetworkd = true;
   systemd.network.enable = true;
 
   # Predictable names follow the PCIe topology, so match the `en*` prefix instead of
   # a name; one wired port, so one link.
+  # `Name=` is not a valid [Match] key in systemd.link; systemd 262 ignores
+  # the whole file with "Unknown key 'Name'". Match the kernel name instead.
+  systemd.network.links."40-wake-on-lan" = {
+    matchConfig.OriginalName = "en*";
+    linkConfig.WakeOnLan = "magic";
+  };
+
   systemd.network.networks."10-lan" = {
     matchConfig.Name = [ "en*" ];
     networkConfig = {

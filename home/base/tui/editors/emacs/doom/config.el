@@ -27,11 +27,13 @@
       doom-big-font (font-spec :family "JetBrainsMono Nerd Font" :size 28))
 
 ;; Users should inject their own font logic in `after-setting-font-hook'
-;; Add font for CJK charset
+;; Add font for CJK charset. modules/base/fonts.nix installs the Source Han
+;; glyphs under their Noto CJK names.
 (defun init-cjk-fonts()
   (dolist (charset '(kana han cjk-misc bopomofo))
     (set-fontset-font (frame-parameter nil 'font)
-                      charset (font-spec :family "Source Han Sans SC"))))
+                      ;; charset (font-spec :family "Source Han Sans SC"))))
+                      charset (font-spec :family "Noto Sans CJK SC"))))
 (add-hook 'after-setting-font-hook 'init-cjk-fonts)
 
 

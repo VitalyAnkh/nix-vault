@@ -14,7 +14,7 @@ let
       {
         imports = [
           ./modules/gui-base.nix
-          ./modules/network.nix
+          ./modules/host-network.nix
           ./modules/custom-policy.nix
         ];
         app.package = telegram-desktop;

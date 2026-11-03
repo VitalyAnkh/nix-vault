@@ -2,7 +2,7 @@
   config,
   lib,
   pkgs,
-  myvars,
+  nixpkgsConfig,
   ...
 }:
 let
@@ -14,13 +14,16 @@ in
   # the latest released version until stable catches up.
   # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/tools/package-management/nix/default.nix
   nix.package = pkgs.nixVersions.latest;
+  warnings = lib.optional (lib.versionAtLeast pkgs.nixVersions.stable.version "2.35") "nixVersions.stable is 2.35+: drop the nixVersions.latest override (WA-023)";
 
   # https://lix.systems/add-to-config/
   # nix.package = pkgs.lix;
 
-  # to install chrome, you need to enable unfree packages
-  nixpkgs.config.allowUnfree = lib.mkDefault true;
-  nixpkgs.config.permittedInsecurePackages = myvars.permittedInsecurePackages;
+  # The flake's Nixpkgs policy (outputs/default.nix): unfree packages, the permitted
+  # insecure Firefox ESR, and the npm mirror for fetches inside builds. Upstream sets
+  # it in modules/base/nix.nix; nix-darwin rejects nixpkgs.config next to the
+  # nixpkgs.pkgs instance lib/macosSystem.nix creates from the same set.
+  nixpkgs.config = nixpkgsConfig;
 
   # do garbage collection weekly to keep disk usage low
   nix.gc = {

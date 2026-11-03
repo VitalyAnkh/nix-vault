@@ -5,6 +5,14 @@
 }:
 let
   agentPackages = llm-agents.packages.${pkgs.stdenv.hostPlatform.system};
+  # llm-agents.nix still exposes OpenCode V2 as `opencode2` so it can coexist
+  # with the v1 package. Re-expose its binary under the normal command name.
+  opencode = pkgs.linkFarm "opencode" [
+    {
+      name = "bin/opencode";
+      path = "${agentPackages.opencode2}/bin/opencode2";
+    }
+  ];
 in
 {
   home.packages = [
@@ -18,7 +26,9 @@ in
     # node it cannot boot on (node-addon-require-builtin probe):
     # nur-ryan4yin.packages.${pkgs.stdenv.hostPlatform.system}.dsh
     agentPackages.dsh
-    agentPackages.opencode2
+    opencode
+    # Qwen Code keeps its settings, credentials and sessions in ~/.qwen.
+    agentPackages.qwen-code
     agentPackages.pi
     # Google Antigravity CLI (`agy`); keeps its state under ~/.gemini.
     agentPackages.antigravity-cli

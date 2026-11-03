@@ -39,11 +39,12 @@ in
       ####################################################################
       #  NixOS's Configuration for Wayland based Window Manager
       ####################################################################
+      # The wlr portal comes from modules/nixos/desktop/xdg.nix, pinned to 0.8.2
+      # there (WA-046); enabling nixpkgs' 0.8.4 here as well would install two
+      # xdg-desktop-portal-wlr.service user units.
       xdg.portal = {
         enable = true;
-        wlr.enable = true;
         extraPortals = with pkgs; [
-          xdg-desktop-portal-wlr
           xdg-desktop-portal-gnome
         ];
       };

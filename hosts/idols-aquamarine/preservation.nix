@@ -24,8 +24,17 @@ in
   # If the directory/file already exists in the root filesystem you should
   # move those files/directories to /persistent first!
   preservation.preserveAt."/persistent" = {
+    # Mount in initrd: NixOS copies mode-carrying /etc entries (such as
+    # authorized_keys.d) during stage-2 activation, which runs before systemd
+    # starts. A mount created by preservation.target comes later and would hide
+    # those copies behind the previous `switch`, so key changes only applied on
+    # `switch`, never on `boot` + reboot. Preparing the mount in initrd puts
+    # /persistent/etc/ssh at /sysroot/etc/ssh before activation runs.
     directories = [
-      "/etc/ssh"
+      {
+        directory = "/etc/ssh";
+        inInitrd = true;
+      }
       "/etc/nix/inputs"
       "/etc/secureboot" # lanzaboote - secure boot (see ./secureboot.nix)
 
@@ -76,6 +85,100 @@ in
 
         ".config/systemd/user"
         ".config/containers/systemd"
+
+        # ======================================
+        # Home Manager TUI role (home/linux/tui.nix); the same paths `ai` keeps
+        # ======================================
+        ".local/state/home-manager"
+        ".local/state/nix/profiles"
+        ".local/share/nix"
+        ".config/nushell" # history
+
+        # ai agents
+        ".agents" # skills for all agents
+        ".config/agents"
+        ".codex"
+        ".dsh" # DeepSeek Harness
+        ".pi"
+        # Qwen Code keeps settings, credentials, history, sessions, and logs
+        # under ~/.qwen; keep the whole directory private and persistent.
+        {
+          directory = ".qwen";
+          mode = "0700";
+        }
+        ".config/opencode"
+        ".local/share/opencode"
+        ".local/state/opencode"
+        # Raft Computer state: server enrollment keys, agent state, traces,
+        # app storage and the installer's runtime cache. The installer itself
+        # is ~/.local/bin/raft-computer, covered by the .local/bin entry below.
+        {
+          directory = ".raft";
+          mode = "0700";
+        }
+        # ctx7 docs lookup login
+        {
+          directory = ".config/context7";
+          mode = "0700";
+        }
+
+        # editors
+        ".local/share/nvim"
+        ".local/state/nvim"
+        ".local/share/jupyter"
+
+        # tuios session state, project-tape trust store and layout templates
+        {
+          directory = ".local/state/tuios";
+          mode = "0700";
+        }
+        {
+          directory = ".local/share/tuios";
+          mode = "0700";
+        }
+        ".config/tuios"
+
+        # cloud native
+        {
+          directory = ".aws";
+          mode = "0700";
+        }
+        {
+          directory = ".aliyun";
+          mode = "0700";
+        }
+        {
+          directory = ".config/gcloud";
+          mode = "0700";
+        }
+        # GitHub CLI config, including the plaintext OAuth token in
+        # hosts.yml (0600) by explicit choice for this non-primary account.
+        # Only aqua is authorized; kana/ruby remain logged out.
+        {
+          directory = ".config/gh";
+          mode = "0700";
+        }
+        {
+          directory = ".kube";
+          mode = "0700";
+        }
+        ".terraform.d/plugin-cache"
+
+        # language package managers
+        ".npm"
+        "go"
+        ".cargo"
+        ".local/bin"
+        ".local/share/uv"
+
+        {
+          directory = ".gnupg";
+          mode = "0700";
+        }
+        {
+          directory = ".ssh";
+          mode = "0700";
+        }
       ];
     };
   };
@@ -110,6 +213,21 @@ in
       mode = lib.mkForce "0750";
     };
     "/home/${username}/.local/share".d = {
+      user = username;
+      group = lib.mkForce username;
+      mode = lib.mkForce "0750";
+    };
+    "/home/${username}/.local/state".d = {
+      user = username;
+      group = lib.mkForce username;
+      mode = lib.mkForce "0750";
+    };
+    "/home/${username}/.local/state/nix".d = {
+      user = username;
+      group = lib.mkForce username;
+      mode = lib.mkForce "0750";
+    };
+    "/home/${username}/.terraform.d".d = {
       user = username;
       group = lib.mkForce username;
       mode = lib.mkForce "0750";

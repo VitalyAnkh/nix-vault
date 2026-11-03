@@ -39,7 +39,7 @@ fallback, and a root-readable Cloudflare token in agenix.
 **Pros:** certificates become automatic and every tailnet device trusts them (today a phone without
 `ecc-ca` gets a certificate error); removes the Cloudflare token and the DNS-01 propagation
 workaround from those services; access control moves from "IP trust zone" to tailnet identity/ACL,
-which is exactly the limitation `SECURITY.md` records; `--tcp=<port>` can also expose raw TCP.
+which is exactly the limitation `docs/SECURITY.md` records; `--tcp=<port>` can also expose raw TCP.
 
 **Cons:** Serve routes by mount path on one name, or (via the nixpkgs module) as Tailscale Services
 with `tcp:<port>` endpoints only — there is no Host/SNI vhost equivalent, so path-sensitive apps
@@ -199,8 +199,7 @@ defaults become less transparent than a file you can read in the diff; your deli
 
 ## A7. attic self-hosted binary cache
 
-**Current:** substituters are the two Chinese mirrors plus numtide's cache; a cachix endpoint exists
-in the config but is unused.
+**Current:** substituters are the two Chinese mirrors plus numtide's cache.
 
 **Proposed:** `services.networking.atticd` on youko.
 
@@ -286,10 +285,10 @@ flake input is maintained separately for Secure Boot.
 the lanzaboote flake input; checksum validation of kernel and initrd; nicer menu.
 
 **Cons:** different trust model — it signs **limine itself** and validates artifacts by checksum,
-rather than shipping a firmware-verified UKI, so `SECURITY.md` and the threat model must be updated;
-key enrollment is a manual firmware dance (Setup Mode + `sbctl enroll-keys`) and is the one change
-in this repository that can leave a machine unbootable; the existing lzpt bundle may or may not be
-reusable; less NixOS mileage than systemd-boot.
+rather than shipping a firmware-verified UKI, so `docs/SECURITY.md` and the threat model must be
+updated; key enrollment is a manual firmware dance (Setup Mode + `sbctl enroll-keys`) and is the one
+change in this repository that can leave a machine unbootable; the existing lzpt bundle may or may
+not be reusable; less NixOS mileage than systemd-boot.
 
 **Reversibility:** low on the physical desktop (firmware + ESP state), high on a VM.
 
@@ -446,16 +445,6 @@ test (`checks.x86_64-linux.security-exporters`) on GitHub-hosted `ubuntu-latest`
 runners. **Pros:** parallel eval/build, no new CI infra. **Cons:** one more tool in the Justfile; CI
 already gates merges. **Recommendation:** **adopt**. **Decision:** _pending_
 
-## C4. Cleanups (no decision needed)
-
-WA-001 (smartctl pin) should be dropped once nixpkgs carries the upstream fix; the "nixfmt with
-width 100" sentence in `AGENTS.md` should be checked against the formatter `just fmt` actually
-resolves to. Checked 2026-10-21: the locked nixpkgs still ships smartctl_exporter 0.14.0, which
-lacks the #329 fix (`overlays/smartctl-exporter/`), so WA-001 stays; `just fmt` runs the dev shell's
-nixfmt 1.5.0, whose default width is 100, and `pre-commit-check` sets width 100
-(`outputs/default.nix`), so the `AGENTS.md` sentence is correct. **Recommendation:** **adopt**.
-**Decision:** _pending_
-
 ## C5. jj
 
 Personal workflow change only; no repository impact. **Recommendation:** out of scope. **Decision:**
@@ -477,7 +466,7 @@ prevent boot or login. **Recommendation for the group: evaluate in a disposable 
 | D4  | `system.nixos-init.enable`                             | `activationScripts`                                                                                              | bashless init                                                           | makes `activationScripts` a silent no-op — youko's `data-ro-backing`, `installCaddyWallpapers` and `installHomepageDashboardConfig` would stop running without an error      | lab only                     |
 | D5  | `security.pam.services.<name>.rules`                   | per-service booleans                                                                                             | freeform PAM config                                                     | upstream marks it subject to breaking changes; a mistake locks you out                                                                                                       | lab only                     |
 | D6  | `security.shadow.enable = false` + greetd              | shadow suite provides login/su                                                                                   | fewer setuid programs                                                   | assertion couples the two; changes VT login semantics                                                                                                                        | lab only                     |
-| D7  | `security.apparmor.policies`                           | `policies.sudo` already in use (`hardening/apparmor/default.nix`); the old `profiles` option is removed upstream | policy set is now data                                                  | writing profiles is real work and breakage-prone; `SECURITY.md` explicitly warns against untested profiles                                                                   | lab only                     |
+| D7  | `security.apparmor.policies`                           | `policies.sudo` already in use (`hardening/apparmor/default.nix`); the old `profiles` option is removed upstream | policy set is now data                                                  | writing profiles is real work and breakage-prone; `docs/SECURITY.md` explicitly warns against untested profiles                                                              | lab only                     |
 
 ---
 
@@ -500,27 +489,27 @@ prevent boot or login. **Recommendation for the group: evaluate in a disposable 
 Fill this in as cards are decided; the plan documents (on the `modernization-plans-wip` tag, see the
 header) should then be trimmed to **adopt** items only.
 
-| Card  | Candidate                   | Decision | Date | Note |
-| ----- | --------------------------- | -------- | ---- | ---- |
-| A1    | Tailscale Serve (partial)   |          |      |      |
-| A2    | systemd-resolved            |          |      |      |
-| A3    | systemd-networkd            |          |      |      |
-| A4    | journald upload/remote      |          |      |      |
-| A5    | zram-generator              |          |      |      |
-| A6    | nixos-facter                |          |      |      |
-| A7    | attic                       |          |      |      |
-| A8    | nix-servd + daemon features |          |      |      |
-| A9    | sched_ext                   |          |      |      |
-| B1    | limine + Secure Boot        |          |      |      |
-| B2    | boot.uki                    |          |      |      |
-| B3    | systemd-repart images       |          |      |      |
-| B4    | initrd repart               |          |      |      |
-| B5    | sysupdate                   |          |      |      |
-| B6    | measured boot / FIDO2       |          |      |      |
-| B7    | systemd-vmspawn             |          |      |      |
-| C1–C5 | tooling + cleanups          |          |      |      |
-| D1–D7 | lab-only group              |          |      |      |
-| E     | rejected set                |          |      |      |
+| Card      | Candidate                   | Decision | Date | Note |
+| --------- | --------------------------- | -------- | ---- | ---- |
+| A1        | Tailscale Serve (partial)   |          |      |      |
+| A2        | systemd-resolved            |          |      |      |
+| A3        | systemd-networkd            |          |      |      |
+| A4        | journald upload/remote      |          |      |      |
+| A5        | zram-generator              |          |      |      |
+| A6        | nixos-facter                |          |      |      |
+| A7        | attic                       |          |      |      |
+| A8        | nix-servd + daemon features |          |      |      |
+| A9        | sched_ext                   |          |      |      |
+| B1        | limine + Secure Boot        |          |      |      |
+| B2        | boot.uki                    |          |      |      |
+| B3        | systemd-repart images       |          |      |      |
+| B4        | initrd repart               |          |      |      |
+| B5        | sysupdate                   |          |      |      |
+| B6        | measured boot / FIDO2       |          |      |      |
+| B7        | systemd-vmspawn             |          |      |      |
+| C1–C3, C5 | tooling + cleanups          |          |      |      |
+| D1–D7     | lab-only group              |          |      |      |
+| E         | rejected set                |          |      |      |
 
 ## References
 
@@ -531,7 +520,7 @@ header) should then be trimmed to **adopt** items only.
   `services/system/{userborn,nix-daemon,zram-generator}.nix`,
   `services/monitoring/prometheus/exporters.nix`.
 - NixOS 26.05 release notes; Nix manual, Experimental Features.
-- Repo context: `SECURITY.md` (trust zones and control limits), `WORKAROUNDS.md` (WA-001, WA-008,
-  WA-009, WA-023), `modules/nixos/base/networking/mdns.nix`,
+- Repo context: `docs/SECURITY.md` (trust zones and control limits), `docs/WORKAROUNDS.md` (WA-001,
+  WA-008, WA-009, WA-023), `modules/nixos/base/networking/mdns.nix`,
   `hosts/12kingdoms-youko/homelab-services/caddy.nix`,
   `hosts/12kingdoms-youko/homelab-services/README.md`.

@@ -29,6 +29,7 @@ modules/
 │   └── users.nix         # macOS user management
 └── nixos/                   # NixOS-specific modules
     ├── base/               # Base NixOS configuration
+    │   ├── auditd.nix     # Audit trail for root sessions and credentials
     │   ├── btop.nix       # System resource monitor
     │   ├── btrbk.nix      # Local btrfs snapshots
     │   ├── core.nix       # Core system settings
@@ -39,11 +40,12 @@ modules/
     │   ├── networking/    # Network configuration
     │   ├── nix.nix        # Nix settings
     │   ├── packages.nix   # System packages
-    │   ├── restic-backup.nix # Encrypted off-host backups (see ../BACKUP.md)
+    │   ├── restic-backup.nix # Encrypted off-host backups (see ../docs/BACKUP.md)
     │   ├── ssh.nix        # SSH daemon configuration
     │   ├── trash.nix      # Trash retention cleanup
     │   ├── user-group.nix # User and group management
     │   └── zram.nix       # ZRAM swap configuration
+    ├── agent.nix           # `agent` profile: headless host with the TUI home role
     ├── desktop.nix         # Desktop environment configuration
     ├── desktop/            # Desktop-specific modules
     │   ├── canokey.nix    # CanoKey hardware token

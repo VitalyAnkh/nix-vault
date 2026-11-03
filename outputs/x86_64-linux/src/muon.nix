@@ -22,7 +22,6 @@ let
         "hosts/${name}"
         # nixos hardening
         "hardening/nixpaks"
-        "hardening/bwraps"
       ])
       ++ [
         # As on eva, in both variants: Ghostty, Zed and Warp name Maple Mono NF CN,

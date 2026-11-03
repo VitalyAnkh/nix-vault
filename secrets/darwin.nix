@@ -1,6 +1,5 @@
 {
   lib,
-  config,
   pkgs,
   agenix,
   mysecrets,
@@ -23,6 +22,8 @@
 
   age.identityPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
 
+  # agenix's darwin module honours `path` and applies owner and mode itself, so the
+  # secrets go straight to /etc/agenix without environment.etc links.
   age.secrets =
     let
       hasSecretFile = path: builtins.pathExists path;
@@ -50,48 +51,19 @@
     lib.mkMerge [
       (optionalSecret "vitalyr-gpg-subkeys.priv.age"
         "${mysecrets}/vitalyr-gpg-subkeys-2024-01-27.priv.age.age"
-        noaccess
+        (noaccess // { path = "/etc/agenix/vitalyr-gpg-subkeys.priv.age"; })
       )
-      (optionalSecret "rclone.conf" "${mysecrets}/rclone.conf.age" high_security)
+      (optionalSecret "rclone.conf" "${mysecrets}/rclone.conf.age" (
+        high_security // { path = "/etc/agenix/rclone.conf"; }
+      ))
       (optionalSecret "nix-access-tokens" "${mysecrets}/nix-access-tokens.age" user_readable)
-      (optionalSecret "ssh-key-romantic" "${mysecrets}/ssh-key-romantic.age" user_readable)
-      (optionalSecret "work-gitconfig" "${mysecrets}/desktop/work-gitconfig.age" user_readable)
+      (optionalSecret "ssh-key-romantic" "${mysecrets}/ssh-key-romantic.age" (
+        user_readable // { path = "/etc/agenix/ssh-key-romantic"; }
+      ))
+      # work git identity, symlinked to ~/work/.gitconfig by home-manager
+      (optionalSecret "work-gitconfig" "${mysecrets}/desktop/work-gitconfig.age" (
+        user_readable // { path = "/etc/agenix/work-gitconfig"; }
+      ))
     ];
 
-  environment.etc = lib.mkMerge [
-    (lib.optionalAttrs (builtins.hasAttr "rclone.conf" config.age.secrets) {
-      "agenix/rclone.conf".source = config.age.secrets."rclone.conf".path;
-    })
-    (lib.optionalAttrs (builtins.hasAttr "ssh-key-romantic" config.age.secrets) {
-      "agenix/ssh-key-romantic".source = config.age.secrets."ssh-key-romantic".path;
-    })
-    (lib.optionalAttrs (builtins.hasAttr "vitalyr-gpg-subkeys.priv.age" config.age.secrets) {
-      "agenix/vitalyr-gpg-subkeys.priv.age".source =
-        config.age.secrets."vitalyr-gpg-subkeys.priv.age".path;
-    })
-    (lib.optionalAttrs (builtins.hasAttr "work-gitconfig" config.age.secrets) {
-      "agenix/work-gitconfig".source = config.age.secrets."work-gitconfig".path;
-    })
-  ];
-
-  # nix-darwin ignores environment.etc mode/owner; restore the intended
-  # ownership after activation without widening root-only secrets.
-  system.activationScripts.postActivation.text = ''
-    if [ -d /etc/agenix ]; then
-      for file in ssh-key-romantic work-gitconfig; do
-        if [ -e "/etc/agenix/$file" ]; then
-          ${pkgs.coreutils}/bin/chown ${myvars.username} "/etc/agenix/$file"
-          ${pkgs.coreutils}/bin/chmod 0500 "/etc/agenix/$file"
-        fi
-      done
-      if [ -e /etc/agenix/rclone.conf ]; then
-        ${pkgs.coreutils}/bin/chown root /etc/agenix/rclone.conf
-        ${pkgs.coreutils}/bin/chmod 0500 /etc/agenix/rclone.conf
-      fi
-      if [ -e /etc/agenix/vitalyr-gpg-subkeys.priv.age ]; then
-        ${pkgs.coreutils}/bin/chown root /etc/agenix/vitalyr-gpg-subkeys.priv.age
-        ${pkgs.coreutils}/bin/chmod 0000 /etc/agenix/vitalyr-gpg-subkeys.priv.age
-      fi
-    fi
-  '';
 }

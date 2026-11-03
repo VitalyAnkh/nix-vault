@@ -30,7 +30,7 @@ let
     cp -r ${pkgs.metacubexd} $out
     chmod -R u+w $out
     substituteInPlace $out/index.html $out/200.html $out/404.html \
-      --replace '<title>MetaCubeXD</title>' '<title>MetaCubeXD · ${host}</title>'
+      --replace-fail '<title>MetaCubeXD</title>' '<title>MetaCubeXD · ${host}</title>'
     cat >> $out/config.js <<'EOF'
 
     ;(function () {
@@ -69,6 +69,14 @@ in
     # and fail with "Failed to set up credentials: No such file or directory".
     systemd.services.mihomo.unitConfig.RequiresMountsFor = builtins.dirOf configFile;
 
+    # Geodata from nixpkgs: a cold start must not fetch it (its DNS is not up yet).
+    systemd.tmpfiles.settings.mihomo-geodata = {
+      "/var/lib/private/mihomo/GeoSite.dat"."L+".argument =
+        "${pkgs.v2ray-rules-dat}/share/v2ray/geosite.dat";
+      "/var/lib/private/mihomo/geoip.metadb"."L+".argument = pkgs.dbip-country-lite.mmdb;
+      "/var/lib/private/mihomo/ASN.mmdb"."L+".argument = pkgs.dbip-asn-lite.mmdb;
+    };
+
     services.resolved.enable = lib.mkIf cfg.resolvedIntegration true;
     networking.networkmanager =
       lib.mkIf (cfg.resolvedIntegration && config.networking.networkmanager.enable)
@@ -91,7 +99,8 @@ in
       # Attach the catch-all to the TUN, leaving DHCP and more-specific VPN DNS
       # routes untouched. Removing the TUN also removes its resolved settings.
       # '+' allows the privileged D-Bus call outside mihomo's service sandbox.
-      ExecStartPost = "+${pkgs.coreutils}/bin/timeout 30 ${
+      # '-': a timed-out hook must not take the proxy down with it.
+      ExecStartPost = "-+${pkgs.coreutils}/bin/timeout 30 ${
         lib.getExe (
           pkgs.writeShellApplication {
             name = "mihomo-resolved";

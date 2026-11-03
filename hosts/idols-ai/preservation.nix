@@ -178,6 +178,12 @@ in
         ".codex"
         ".dsh" # DeepSeek Harness
         ".pi"
+        # Qwen Code keeps settings, credentials, history, sessions, and logs
+        # under ~/.qwen; keep the whole directory private and persistent.
+        {
+          directory = ".qwen";
+          mode = "0700";
+        }
         ".config/opencode"
         ".local/share/opencode"
         ".local/state/opencode"
@@ -216,7 +222,10 @@ in
         ".config/Joplin" # joplin-desktop
 
         ".local/share/jupyter"
-        ".ipython"
+        # Deliberately not persisted: ~/.ipython contains history.sqlite, and
+        # interactive sessions may contain credentials or other sensitive
+        # values. Home Manager recreates the profile config and startup helpers
+        # from the Nix store on every activation.
 
         # ======================================
         # Cloud Native

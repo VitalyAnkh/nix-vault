@@ -23,7 +23,6 @@ let
         "hosts/${name}"
         # nixos hardening
         "hardening/nixpaks"
-        "hardening/bwraps"
       ])
       ++ [
         {

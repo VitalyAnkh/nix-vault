@@ -6,6 +6,9 @@ that name was decommissioned; this is a different, physical machine that reuses 
 
 ## Hardware
 
+Manual BIOS and power-saving settings are recorded in
+[`docs/bios.md`](../../docs/bios.md#aquamarine).
+
 | Part   | Model                                                 | Notes                                                   |
 | ------ | ----------------------------------------------------- | ------------------------------------------------------- |
 | Board  | Colorful CVN Z890 ARK FROZEN V20 (BIOS 1013)          | moved from `ai` on 2026-10-13, so its EFI vars come too |
@@ -26,14 +29,52 @@ Two things about this board set the ceiling for the GPU work:
   R9700 has no xGMI link between cards, and a dual-R9700 report has RCCL deadlocking with vLLM TP=2
   even with `NCCL_P2P_DISABLE=1`. See [ROCM.md](./ROCM.md).
 
+## Idle power accounting
+
+`node_exporter` exports the RAPL package/core/uncore counters and the R9700 `hwmon` power sensors,
+so VictoriaMetrics/Grafana can show whether the host is actually idle. For a one-off breakdown:
+
+```sh
+sudo turbostat --quiet --show PkgWatt,RAMWatt,GFXWatt,CorWatt --interval 2 --iterations 5
+sudo powertop
+rocm-smi --showpower --showuse --showclocks
+```
+
+RAPL and `hwmon` only cover silicon domains. They do not include PSU, VRM, fan, NVMe or board
+losses; measuring total wall power needs a metering smart plug/PDU or a UPS with per-outlet power.
+
+### Monitoring overhead
+
+The scrape is not a meaningful load: node_exporter samples every 30 s, and the measured process cost
+is a few CPU ticks per scrape (well below 1 W even after accounting for wakeups). Grafana queries
+run on `youko`, not on this host, so opening a dashboard does not wake `aquamarine`'s CPU. Keep the
+30 s interval; lowering it would lose useful resolution for no measurable power saving.
+
+### CPU idle-power settings
+
+- `hardware-intel-cpu.nix` uses NixOS's native `boot.kernel.sysfs` option to set Intel P-state's
+  `energy_performance_preference` to `balance_power` on every CPU. This is separate from the
+  existing x86-wide `powerManagement.cpuFreqGovernor = "powersave"`: the governor chooses the
+  frequency policy, while EPP tells `intel_pstate` how aggressively to trade power for performance.
+  A runtime A/B on 2026-11-01 lowered the whole-home meter minimum from 160–170 W to 137 W, though
+  the reading occasionally returned to the old range. This is a whole-rack number, not a host-only
+  measurement.
+- `processor.max_cstate=2` is intentionally absent so the kernel can use deeper package C-states. If
+  inference tail latency becomes more important than idle power, restore that kernel parameter; it
+  was set for decode jitter, not for hardware stability. After the first deployment on 2026-11-01,
+  `intel_idle` still exposed only `POLL`/`C1`/`C2`/`C3` on BIOS 1013, so deeper CPU/package C-states
+  still need to be enabled in BIOS before this knob can save more power.
+- Safe BIOS-side changes: enable C1E, Intel Speed Shift and CPU/package C-states (limit `Auto` or
+  `C10`), and enable iGPU Render Standby/RC6. Disable unused Wi-Fi/Bluetooth, onboard audio, SATA,
+  serial ports and RGB lighting. Do not change the storage mode.
+
 The iGPU carries display and video work: the kernel binds `i915`, and
 [hardware-intel-igpu.nix](./hardware-intel-igpu.nix) installs `intel-media-driver` (VA-API),
 `vpl-gpu-rt` (oneVPL/QSV) and `intel-compute-runtime` (OpenCL/Level-Zero), so transcoding can use
-its media engine while the R9700s stay on inference. VA-API targets `/dev/dri/renderD128`, and
-OpenVINO jobs run through `openvino-gpu <command>`; [IGPU.md](./IGPU.md) records the wrapper, the
-static-shape workaround Whisper needs on `GPU`, and the measured NPU/iGPU/CPU timings. A monitor
-plugged into the board's HDMI/DP ports still gets the text console (`multi-user.target`, no display
-manager) when SSH is unreachable.
+its media engine while the R9700s stay on inference. VA-API targets `/dev/dri/renderD128`;
+[IGPU.md](./IGPU.md) records the static-shape workaround Whisper needs on `GPU`, and the measured
+NPU/iGPU/CPU timings. A monitor plugged into the board's HDMI/DP ports still gets the text console
+(`multi-user.target`, no display manager) when SSH is unreachable.
 
 `iommu=pt` is set in [hardware-amd-gpu.nix](./hardware-amd-gpu.nix) because ROCm documents hangs on
 multi-GPU systems without IOMMU passthrough. The same file disables amdgpu runtime power management:
@@ -249,3 +290,21 @@ just local               # on aquamarine itself
 The install only touches the target disk; the staging host keeps booting from its own. To undo, move
 the disk back, restore the `hosts/idols-ai/disko-fs-data.nix` module this change deleted, and
 re-enroll that machine's TPM2 slot — see `../idols-ai/README.md`.
+
+## Idle suspend
+
+`autosuspend` checks every minute and suspends into S3 after 60 minutes without an active user
+session, meaningful CPU load, or an established connection to one of the request-serving ports:
+`18080` (ASR), `63081` (llama-swap/Strata), `63083`/`63084` (MagPie), and `65002` (direct Strata).
+It calls `systemctl suspend`, so systemd sleep inhibitors are also honored. Wake-on-LAN is armed by
+the host's `systemd.network.links` configuration; see
+[`docs/wake-on-lan.md`](../../docs/wake-on-lan.md). No separate WoL service is needed.
+
+The daemon resets its idle timer after resume, so a wake does not immediately go back to sleep. To
+keep the host awake during maintenance:
+
+```bash
+systemd-inhibit --what=sleep --mode=block --who=maintenance --why="manual work" sleep infinity
+```
+
+Cancel it with Ctrl-C when finished.

@@ -13,10 +13,11 @@ sudo systemctl restart mihomo.service           # dashboard: http://127.0.0.1:90
 ```
 
 `~/.config/mihomo` holds `sources.yaml` and the generated `config.yaml`, which the service loads
-through systemd `LoadCredential`; the core's own state — geodata and cache — is in
-`/var/lib/private/mihomo` (`StateDirectory`, `DynamicUser`). The generator, `policy.yaml` and
-`gateway-config.nu` are run from here and never copied over. `just mihomo-gen` renders the config
-and validates it with the core the service runs.
+through systemd `LoadCredential`; the core's own state is in `/var/lib/private/mihomo`
+(`StateDirectory`, `DynamicUser`), where the module links geodata from nixpkgs (`v2ray-rules-dat`,
+`dbip-country-lite`, `dbip-asn-lite`), so it updates with nixpkgs, not at runtime. The generator,
+`policy.yaml` and `gateway-config.nu` are run from here and never copied over. `just mihomo-gen`
+renders the config and validates it with the core the service runs.
 
 `sources.yaml` holds everything private (subscription URLs, secret, private domains) and stays out
 of the repo and the Nix store; the module loads `config.yaml` via `LoadCredential`. Generate the
@@ -64,8 +65,8 @@ still reaches the core.
 The gateway (`suzi`, not a host in this flake) runs the same config with a fixed set of deltas --
 `gateway-config.nu` renders it from the same `sources.yaml` and `policy.yaml`. The gateway uses
 nftables TProxy, disables the desktop TUN auto-route, and uses `fake-ip` DNS with `dns.ipv6: false`:
-LAN clients receive fake A mappings so mihomo retains the domain for routing and sniffing while their
-traffic uses the working IPv4 TProxy path. The gateway withholds AAAA records because LAN IPv6
+LAN clients receive fake A mappings so mihomo retains the domain for routing and sniffing while
+their traffic uses the working IPv4 TProxy path. The gateway withholds AAAA records because LAN IPv6
 transparent handling is unreliable on this gateway. Its output carries the subscriptions and the
 private domains, so never commit it; the secret is filled in on the box, not here. Its binary is a
 static release build under `/usr/local/bin`, not a package: update it by hand, validate the live
@@ -118,8 +119,8 @@ targets instead of writing a config the core rejects.
 - WeChat resolves for itself, but its queries still cross the TUN, so `dns-hijack: any:53` catches
   them and the fake-ip table hands the name back to the rules: `mmbiz.qpic.cn` measured DIRECT.
   `multimedia.nt.qq.com.cn` stays in `fake-ip-filter` for the same reason. The exclude-process fix
-  that won clash-verge-rev#1762 is not available here: `hardening/bwraps/wechat.nix` sets
-  `unsharePid = true` and the sandbox reports uid 0, so no process name resolves.
+  that won clash-verge-rev#1762 is not available here: nixpak unshares the PID namespace and the
+  sandbox reports uid 0, so no process name resolves.
 - `find-process-mode: off` unless `PROCESS-*` rules or `tun_exclude_process` need it.
 - `tun_exclude_address`: a destination that can never be a proxy target should not pay a fake-ip
   round trip -- RFC1918, RFC 6598's `100.64.0.0/10` (where Tailscale addresses come from),

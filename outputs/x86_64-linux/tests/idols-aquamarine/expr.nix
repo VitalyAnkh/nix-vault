@@ -22,8 +22,16 @@ in
 
   # An unattended host recovers a hung card itself instead of waiting for a reboot.
   gpuRecoveryEnabled = builtins.elem "amdgpu.gpu_recovery=1" cfg.boot.kernelParams;
-  aspmDisabled = builtins.elem "pcie_aspm=off" cfg.boot.kernelParams;
-  cStatesCapped = builtins.elem "processor.max_cstate=2" cfg.boot.kernelParams;
+  deepCStatesAllowed = !(builtins.elem "processor.max_cstate=2" cfg.boot.kernelParams);
+  cpuEppConfigured =
+    lib.attrByPath [
+      "devices"
+      "system"
+      "cpu"
+      "cpu[0-9]*"
+      "cpufreq"
+      "energy_performance_preference"
+    ] null cfg.boot.kernel.sysfs == "balance_power";
 
   # Aqua uses native IPv6; the gateway returns real AAAA records instead of
   # requiring a host-local IPv4 precedence workaround.
@@ -68,11 +76,15 @@ in
       "vpl-gpu-rt"
       "intel-compute-runtime"
     ];
-  # OpenVINO's GPU plugin needs ocl-icd ahead of ROCm's clr loader (WA-038).
-  openvinoGpuWrapperInstalled = builtins.any (
-    package: (package.name or "") == "openvino-gpu"
-  ) cfg.environment.systemPackages;
+  rocmOpenclIcdOnly =
+    let
+      graphics = cfg.hardware.graphics.extraPackages;
+    in
+    builtins.elem eval.pkgs.rocmPackages.clr.icd graphics
+    && !builtins.elem eval.pkgs.rocmPackages.clr graphics;
   gpuMetricsExported = builtins.elem "drm" cfg.services.prometheus.exporters.node.enabledCollectors;
+  raplMetricsExported = builtins.elem "rapl" cfg.services.prometheus.exporters.node.enabledCollectors;
+  raplPermissionsExposed = lib.hasInfix "chgrp rapl" cfg.services.udev.extraRules;
   # node_exporter rejects a repeated flag, and this list merges with the base
   # module's entries, so a duplicate restart-loops the unit.
   collectorFlagsUnique =
@@ -80,8 +92,19 @@ in
     == builtins.length (lib.unique cfg.services.prometheus.exporters.node.enabledCollectors);
   inferenceUserCanRender = builtins.elem "render" cfg.users.users.${myvars.username}.extraGroups;
 
-  # Headless: no desktop session, no Home Manager.
-  noHomeManager = !cfg ? home-manager.users;
+  # Home Manager's own state has to survive the tmpfs root; the agent profile
+  # itself is covered by ../agent-profile.
+  homeManagerStatePersistent =
+    let
+      dirs = cfg.preservation.preserveAt."/persistent".users.${myvars.username}.directories;
+    in
+    builtins.all (path: builtins.any (d: d.directory == "/home/${myvars.username}/${path}") dirs) [
+      ".local/state/home-manager"
+      ".local/state/nix/profiles"
+      ".codex"
+      ".qwen"
+      ".config/opencode"
+    ];
   pythonInstalled = builtins.any (
     package: lib.hasPrefix "python3-" (package.name or "")
   ) cfg.environment.systemPackages;

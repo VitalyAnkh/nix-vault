@@ -49,9 +49,7 @@
     };
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-26.05";
 
-    # ryan4yin/nixpkgs fork for the `.agents/skills/nixpkgs-patched` workflow. It
-    # currently carries no patches (see WORKAROUNDS.md), but `pkgs-patched` is
-    # wired in outputs/default.nix so a temporary carry needs no flake edit.
+    # ryan4yin/nixpkgs fork for the `.agents/skills/nixpkgs-patched` workflow.
     nixpkgs-patched.url = "github:ryan4yin/nixpkgs/nixos-unstable-patched";
     # get some latest packages from the master branch
     nixpkgs-master.url = "github:nixos/nixpkgs/master";
@@ -191,24 +189,12 @@
     # AI coding agents
     llm-agents.url = "github:numtide/llm-agents.nix";
 
-    # terminal window manager / multiplexer; nixpkgs lags behind upstream,
-    # so track the upstream flake.
-    tuios = {
-      url = "github:Gaurav-Gosain/tuios/v0.11.1";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     # -------------- Gaming ---------------------
-
-    nix-gaming = {
-      url = "github:fufexan/nix-gaming";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
 
     # x86/x86_64 emulation on 16K-page ARM64 (Apple Silicon). FEX cannot run
     # natively with 16K pages, so this wraps FEX in a 4K-page muvm microVM and
     # exposes an `x86pkgs` set plus Steam/Wine launchers. Used by shoukei; see
-    # hosts/12kingdoms-shoukei and WORKAROUNDS.md (WA-021).
+    # hosts/12kingdoms-shoukei and docs/WORKAROUNDS.md (WA-021).
     #
     # Pinned to our fork of rowanG077/nix-x86-on-aarch64 at the reviewed commit
     # 5d69793a. To update, fetch upstream into the fork, review the new commits,
@@ -281,12 +267,5 @@
 
     # for waydroid
     # nur-ataraxiasjel.url = "github:AtaraxiaSjel/nur";
-
-    # Wayland <-> X11 clipboard sync daemon for xwayland-satellite (niri).
-    # Track main while the upstream fix for pkgs.system has no release tag.
-    pyclipsync = {
-      url = "github:ryan4yin/pyclipsync";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 }

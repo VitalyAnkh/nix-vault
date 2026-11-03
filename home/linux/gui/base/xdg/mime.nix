@@ -54,11 +54,14 @@
         # https://github.com/microsoft/vscode/issues/146408
         "x-scheme-handler/vscode" = [ "code-url-handler.desktop" ]; # open `vscode://` url with `code-url-handler.desktop`
         "x-scheme-handler/zoommtg" = [ "Zoom.desktop" ];
+        "x-scheme-handler/zoomus" = [ "Zoom.desktop" ];
+        "application/x-zoom" = [ "Zoom.desktop" ];
 
         # all other unknown schemes will be opened by this default application.
         # "x-scheme-handler/unknown" = editor;
 
         "x-scheme-handler/tg" = [ "org.telegram.desktop.desktop" ];
+        "x-scheme-handler/weixin" = [ "wechat.desktop" ];
 
         "audio/*" = [ "mpv.desktop" ];
         "video/*" = [ "mpv.desktop" ];

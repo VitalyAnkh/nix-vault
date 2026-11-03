@@ -4,8 +4,8 @@
   iommuPassthrough = true;
   runtimePmDisabled = true;
   gpuRecoveryEnabled = true;
-  aspmDisabled = true;
-  cStatesCapped = true;
+  deepCStatesAllowed = true;
+  cpuEppConfigured = true;
   nativeIpv6Preference = true;
   sourceCheckoutsPersistent = true;
   cachePersistent = true;
@@ -15,11 +15,13 @@
   btopShowsRadeon = true;
   btopReadsIgpu = true;
   igpuMediaStackInstalled = true;
-  openvinoGpuWrapperInstalled = true;
+  rocmOpenclIcdOnly = true;
   gpuMetricsExported = true;
+  raplMetricsExported = true;
+  raplPermissionsExposed = true;
   collectorFlagsUnique = true;
   inferenceUserCanRender = true;
-  noHomeManager = true;
+  homeManagerStatePersistent = true;
   pythonInstalled = true;
   staticAddressMatchesWiredInterface = true;
   rootIsTmpfs = true;

@@ -30,8 +30,9 @@ This repository is home to the Nix code that builds all of my systems:
 3. **NixOS servers** — three physical mini PCs running the VMs (libvirt and microVMs), the K3s test
    cluster and the self-hosted services.
 
-See [./hosts](./hosts) for the host inventory, [./outputs](./outputs) for how the flake outputs are
-composed, [./BACKUP.md](./BACKUP.md) for the backup design, and [./AGENTS.md](./AGENTS.md) for the
+See [./docs](./docs/README.md) for the documentation index, [./hosts](./hosts) for the host
+inventory, [./outputs](./outputs) for how the flake outputs are composed,
+[BACKUP.md](./docs/BACKUP.md) for the backup design, and [./AGENTS.md](./AGENTS.md) for the
 repository conventions.
 
 The Apple Silicon `astra` host has a dedicated [deployment guide](./docs/astra-macos-host.md).

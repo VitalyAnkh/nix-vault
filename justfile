@@ -329,7 +329,7 @@ col tag mode="switch":
 
 # Deploy one microVM guest: copy its runner to the physical host, then restart the
 # guest unit there. microvm.nix's sshSwitch step is not used: it switches the guest over
-# SSH and dies on the read-only virtiofs /nix/store (WA-026 in WORKAROUNDS.md).
+# SSH and dies on the read-only virtiofs /nix/store (WA-026 in docs/WORKAROUNDS.md).
 # The host is the physical machine running the guest.
 [linux]
 [group('homelab')]
@@ -362,6 +362,13 @@ youko mode="switch":
 [group('homelab')]
 aquamarine mode="switch":
   colmena apply {{mode}} --build-on-target --on '@aquamarine' --verbose --show-trace
+
+# Wake homelab hosts and wait until they answer. Defaults to all; accepts host
+# names, with `aqua` as an alias for aquamarine. Usage: just wake [host ...]
+[linux]
+[group('homelab')]
+wake *hosts:
+  python3 {{absolute_path("scripts/wake.py")}} {{hosts}}
 
 ############################################################################
 #
@@ -466,33 +473,6 @@ mihomo-gen:
   }
   print "validated -- restart: sudo systemctl restart mihomo.service"
 
-# Seed mihomo's geodata into the service's state dir, so a cold start needs no DNS.
-[linux]
-[group('services')]
-mihomo-geo:
-  #!/usr/bin/env nu
-  # Copy geodata in by hand, so a cold start never has to fetch it. The core
-  # fetches it while parsing rules, before its own DNS is up and while the link
-  # DNS points at it -- that fetch can only fail.
-  let src = ($env.HOME | path join .config mihomo)
-  let dst = "/var/lib/private/mihomo"
-  sudo mkdir -p $dst
-  mut seeded = []
-  for f in [GeoSite.dat geoip.metadb ASN.mmdb] {
-    let p = ($src | path join $f)
-    if ($p | path exists) {
-      sudo cp $p $dst
-      $seeded = ($seeded | append ($dst | path join $f))
-    } else {
-      print $"(!) ($f) is not in ($src) -- fetch it first: mihomo -t -d ($src) -f ($src)/config.yaml"
-    }
-  }
-  if ($seeded | is-not-empty) {
-    sudo chmod 644 ...$seeded
-    let names = ($seeded | path basename | str join ', ')
-    print $"seeded ($names) -- restart mihomo to pick them up"
-  }
-
 # Render the mihomo config into a Clash Verge Rev local profile on macOS.
 # sources.yaml comes from the encrypted dotfiles sync (nix-secrets `just restore`).
 [macos]
@@ -537,26 +517,16 @@ game:
 del-failed:
   kubectl delete pod --all-namespaces --field-selector="status.phase==Failed"
 
-# Start PC VR on idols-ai and route desktop audio to the headset.
+# Start PC VR on idols-ai; WirePlumber routes audio to the headset once it connects.
 [linux]
 [group('vr')]
 vr:
   systemctl --user start wivrn.service
-  systemctl --user stop wivrn-audio.service | complete | ignore
-  systemd-run --user --collect --unit=wivrn-audio nu {{absolute_path("scripts/wivrn-audio.nu")}} switch --timeout 600
 
-# Route audio to a headset that is connected right now.
-[linux]
-[group('vr')]
-vr-audio:
-  nu {{absolute_path("scripts/wivrn-audio.nu")}} switch --timeout 60
-
-# Stop PC VR when finished and restore the previous audio devices.
+# Stop PC VR when finished.
 [linux]
 [group('vr')]
 vr-stop:
-  systemctl --user stop wivrn-audio.service | complete | ignore
-  nu {{absolute_path("scripts/wivrn-audio.nu")}} restore
   systemctl --user stop wivrn.service
 
 # Show PC VR service status.

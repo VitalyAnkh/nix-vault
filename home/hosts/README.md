@@ -11,7 +11,9 @@ This directory contains host-specific Home Manager entry modules.
 
 1. Each host output should reference only one file under `home/hosts/...`.
 2. Shared home module imports should be handled in the host file itself.
-   - Linux hosts usually import `../../linux/core.nix` or `../../linux/gui.nix`.
+   - Linux desktop hosts import `../../linux/gui.nix`; upstream's `agent` hosts (ruby, kana,
+     aquamarine) import `../../linux/tui.nix`, see
+     [Host Profiles](../../hosts/README.md#host-profiles).
    - Minimal standalone TUI hosts can instead import `../../base/core` and `../../base/tui` directly
      when they should avoid broader Linux-wide packages/services.
    - Darwin hosts import `../../darwin`.

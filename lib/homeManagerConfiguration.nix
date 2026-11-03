@@ -45,17 +45,6 @@ let
     else
       (_: _: { });
 
-  # Bwraps overlay for standalone home-manager.
-  # The overlay itself is platform-safe and will expose an empty `pkgs.bwraps`
-  # on non-Linux systems.
-  bwrapsOverlay =
-    let
-      bwrapsModule = import (mylib.relativeToRoot "hardening/bwraps/default.nix") {
-        pkgs-master = (genSpecialArgs system).pkgs-master;
-      };
-    in
-    builtins.head bwrapsModule.nixpkgs.overlays;
-
   # Mirror the NixOS-side package test workarounds for standalone Home Manager package sets.
   packageTestWorkaroundsOverlay = final: prev: {
     pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [
@@ -81,7 +70,6 @@ let
         config.permittedInsecurePackages = myvars.permittedInsecurePackages;
         overlays = [
           customOverlay
-          bwrapsOverlay
         ];
       }
     else
@@ -93,7 +81,6 @@ let
           customOverlay
           packageTestWorkaroundsOverlay
           nixpaksOverlay
-          bwrapsOverlay
         ];
       };
 in

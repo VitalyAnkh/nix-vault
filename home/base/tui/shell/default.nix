@@ -10,10 +10,18 @@ let
 in
 {
   options.modules.shell = {
+    # Upstream sources ~/.secrets/nushell-secrets.nu here; this repository keeps its
+    # private shell setup in /etc/agenix/alias-for-work.nushell instead. Agent hosts turn it off
+    # (home/linux/tui.nix).
+    secrets.enable = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Source the private nushell files (the work aliases).";
+    };
     workAliases.enable =
       lib.mkEnableOption "the work aliases from ${workAliasesFile} when that file exists"
       // {
-        default = true;
+        default = cfg.secrets.enable;
       };
     zai.enable = lib.mkEnableOption "Claude Code with ZAI when ZAI_API_KEY is available" // {
       default = true;

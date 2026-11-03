@@ -41,7 +41,15 @@ in
   preservation.preserveAt."/persistent" = {
     directories = [
       "/etc/NetworkManager/system-connections"
-      "/etc/ssh"
+      # Mount in initrd: NixOS copies mode-carrying /etc entries (such as
+      # authorized_keys.d) during stage-2 activation, which runs before systemd
+      # starts. A mount created by preservation.target comes later and would hide
+      # those copies behind the previous `switch`, so key changes only applied on
+      # `switch`, never on `boot` + reboot (upstream 560a6cc2).
+      {
+        directory = "/etc/ssh";
+        inInitrd = true;
+      }
       "/etc/nix/inputs"
       "/etc/secureboot" # lanzaboote - secure boot
       # my secrets
@@ -296,6 +304,12 @@ in
         # cache together under DSH_HOME, which defaults to ~/.dsh.
         ".dsh"
         ".pi"
+        # Qwen Code keeps settings, credentials, history, sessions, and logs
+        # under ~/.qwen; keep the whole directory private and persistent.
+        {
+          directory = ".qwen";
+          mode = "0700";
+        }
         ".local/state/codex-desktop"
         # Orca ADE (llm-agents), distinct from OrcaSlicer
         ".orca"

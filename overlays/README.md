@@ -11,10 +11,7 @@ through [Overlays - NixOS & Flakes Book](https://nixos-and-flakes.thiscute.world
 overlays/
 ├── README.md
 ├── default.nix            # Entrypoint for all overlays
-├── computer-use-linux.nix # computer-use-linux from pkgs/computer-use-linux
-├── cua-driver.nix         # cua-driver from pkgs/cua-driver
-└── smartctl-exporter/     # smartctl_exporter pinned to the #329 fix
-    └── default.nix
+└── nur-ryan4yin.nix       # ryan4yin/nur-packages
 ```
 
 ## Components
@@ -25,9 +22,7 @@ The entrypoint imports every overlay file in this directory and applies it to th
 
 ### 2. Package overlays
 
-- `computer-use-linux.nix`: exposes the local `pkgs/computer-use-linux` package (this fork builds it
-  under `pkgs/` instead of taking `nur-ryan4yin`'s).
-- `cua-driver.nix`: exposes the local `pkgs/cua-driver` package (used by the computer-use VMs).
-- `smartctl-exporter/`: pins `prometheus-smartctl-exporter` to the upstream commit carrying PR
-  [#329](https://github.com/prometheus-community/smartctl_exporter/pull/329) until nixpkgs provides
-  a version containing the fix; see `overlays/smartctl-exporter/default.nix`.
+- `nur-ryan4yin.nix`: applies the `nur-ryan4yin` input's own overlay, which adds `dsh`,
+  `rime-data-flypy`, `computer-use-linux` and `cua-driver` to `pkgs`. In this fork the `pkgs/`
+  overlay in `modules/base/overlays.nix` runs afterwards, so the local `pkgs/computer-use-linux` and
+  `pkgs/cua-driver` builds replace NUR's.

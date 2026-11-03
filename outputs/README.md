@@ -49,8 +49,8 @@ them. Others name specific hosts — or a name prefix, like `k3s-api-endpoint`, 
 
 | Kind                | Tests                                                                                                                                                                                                                                                                                                                                                                                                           |
 | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Every configuration | `hostname`, `kernel`, `nix-system-features`, `security-apparmor`, `security-container-groups`, `security-exporters`, `security-firewall`, `security-k3s-kubeconfig`, `security-k3s-pod-firewall`, `security-kernel`, `security-ssh-x11`                                                                                                                                                                         |
-| Named hosts only    | `btrbk`, `cpu-power`, `home-manager`, `home-manager-xdg`, `home-configurations`, `computer-use-headless`, `k3s-api-endpoint`, `k3s-node-home-manager`, `eva-firewall-timers`, `eva-gpu`, `eva-input-method`, `eva-vr`, `idols-aquamarine`, `warp-settings`, `emacs-package`, `security-postgres-auth`, `youko-metrics`, `ups-metrics`, `mihomo-dns`, `shoukei-logind`, `colmena-parity`, `microvm-guest-parity` |
+| Every configuration | `hostname`, `kernel`, `nix-system-features`, `security-apparmor`, `security-container-groups`, `security-exporters`, `security-firewall`, `security-k3s-kubeconfig`, `security-audit`, `security-k3s-pod-firewall`, `security-kernel`, `security-ssh-auth`, `security-ssh-x11`                                                                                                                                                                         |
+| Named hosts only    | `btrbk`, `cpu-power`, `home-manager`, `home-manager-xdg`, `home-configurations`, `computer-use-headless`, `agent-profile`, `nixpak-policy`, `remote-builders`, `security-service-hardening`, `k3s-api-endpoint`, `k3s-node-home-manager`, `eva-firewall-timers`, `eva-gpu`, `eva-input-method`, `eva-vr`, `idols-aquamarine`, `warp-settings`, `emacs-package`, `security-postgres-auth`, `youko-metrics`, `youko-nix-cache-proxy`, `youko-tmpfiles`, `ups-metrics`, `mihomo-dns`, `shoukei-logind`, `colmena-parity`, `microvm-guest-parity` |
 
 `hostname` expects each configuration's `networking.hostName` to equal its name. Niri desktop
 configurations are the exception (`eva-niri` → `eva`, `muon-niri` → `muon`, `shoukei-niri` →
@@ -72,7 +72,7 @@ Problems:
       agenix secrets.
   - [ ] Maybe it's better to test every service separately, not the whole host?
 
-Full-host tests are tracked as WA-013 in [WORKAROUNDS.md](../WORKAROUNDS.md).
+Full-host tests are tracked as WA-013 in [WORKAROUNDS.md](../docs/WORKAROUNDS.md).
 `outputs/x86_64-linux/nixos-tests/idols-ruby.nix` is exported as
 `packages.x86_64-linux.ruby-nixos-tests`, but it is not a `checks` entry, so CI never builds it and
 nothing else runs it. What runs today is the eval set above with `just test`, plus one NixOS-driver
@@ -127,5 +127,5 @@ All the outputs of this flake are defined here.
 
 The tree lists the per-host sources and tests. The flake also exposes a `checks` output: every
 system has `eval-tests` and `pre-commit-check`, and `x86_64-linux` adds `security-exporters`, which
-imports the top-level `tests/security-exporters.nix`. See [`../SECURITY.md`](../SECURITY.md) for
-when to run it.
+imports the top-level `tests/security-exporters.nix`. See
+[`../docs/SECURITY.md`](../docs/SECURITY.md) for when to run it.

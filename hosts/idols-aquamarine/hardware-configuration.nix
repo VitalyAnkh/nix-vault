@@ -16,13 +16,6 @@
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
 
-  boot.kernelParams = [
-    # Carried over from `ai`, where it caps NVMe APST wake latency for the
-    # DRAM-less KINGBANK KP260 (WA-008 in WORKAROUNDS.md). This disk (Fanxiang
-    # S790) has shown no APST problem; the cap stays as idle-power insurance.
-    "nvme_core.default_ps_max_latency_us=100000"
-  ];
-
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.efi.efiSysMountPoint = "/boot";
 
@@ -65,6 +58,12 @@
   # and swap (including /swap/swapfile bind and swapDevices) are managed by disko (disko-fs.nix).
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
+
+  # CPU microcode and both the Intel iGPU and AMD GPU firmware.
+  hardware.enableRedistributableFirmware = true;
+  # Shared graphics stack for the i915 console/video path and the R9700s.
+  hardware.graphics.enable = true;
+
   powerManagement.cpuFreqGovernor = lib.mkDefault "performance"; # ondemand / powersave / performance
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }

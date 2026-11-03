@@ -9,6 +9,26 @@ let
   mylib = import ../lib { inherit lib; };
   myvars = import ../vars { inherit lib; };
 
+  # Keep npm fetches on the domestic mirror, including inside Nix builds.
+  # `rewriteURL` covers plain fetchurl calls; `npmRegistryOverrides` covers
+  # fetchNpmDeps (package-lock tarballs and registry packuments).
+  nixpkgsConfig = {
+    allowUnfree = true;
+    # Zotero's end-of-life Firefox ESR; see vars/default.nix.
+    inherit (myvars) permittedInsecurePackages;
+    # Only Huawei works here: npmmirror 404s on prefetch-npm-deps' doubled
+    # slash, and Tencent answers 567 to its concurrent fetches (WA-049).
+    npmRegistryOverrides = {
+      "registry.npmjs.org" = "https://mirrors.huaweicloud.com/repository/npm";
+    };
+    rewriteURL =
+      url:
+      if lib.hasPrefix "https://registry.npmjs.org/" url then
+        "https://registry.npmmirror.com/${lib.removePrefix "https://registry.npmjs.org/" url}"
+      else
+        url;
+  };
+
   # Add my custom lib, vars, nixpkgs instance, and all the inputs to specialArgs,
   # so that I can use them in all my nixos/home-manager/darwin modules.
   genSpecialArgs =
@@ -29,6 +49,7 @@ let
         inputs
         mylib
         myvars
+        nixpkgsConfig
         pkgs-stable
         ;
 
@@ -61,10 +82,6 @@ let
       # is not configured in `flake.nix` (e.g. on machines that don't need Asahi firmware).
       my-asahi-firmware =
         if builtins.hasAttr "my-asahi-firmware" inputs then inputs."my-asahi-firmware" else null;
-
-      # NUR packages for this system; modules use `myNurPkgs.dsh` instead of
-      # repeating `nur-ryan4yin.packages.${pkgs.stdenv.hostPlatform.system}`.
-      myNurPkgs = inputs.nur-ryan4yin.packages.${system};
     };
 
   # This is the args for all the haumea modules in this folder.
@@ -112,7 +129,11 @@ let
     meta = {
       nixpkgs = import nixpkgs { system = "x86_64-linux"; };
       nodeNixpkgs = builtins.mapAttrs (
-        name: _: import nixpkgs { inherit (nixosConfigurations.${name}.pkgs.stdenv.hostPlatform) system; }
+        name: _:
+        import nixpkgs {
+          inherit (nixosConfigurations.${name}.pkgs.stdenv.hostPlatform) system;
+          config = nixpkgsConfig;
+        }
       ) colmenaDeployments;
       nodeSpecialArgs = builtins.mapAttrs (
         name: _: nixosConfigurations.${name}._module.specialArgs
@@ -124,7 +145,7 @@ let
       deployment
       # Colmena evaluates with nixpkgs' plain lib, which lacks the version the
       # flake's lib reports; without this the toplevel differs (`26.11pre-git`).
-      # Recorded as WA-042 in WORKAROUNDS.md.
+      # Recorded as WA-042 in docs/WORKAROUNDS.md.
       {
         system.nixos.versionSuffix = lib.trivial.versionSuffix;
         system.nixos.revision = lib.trivial.revisionWithDefault null;
@@ -254,6 +275,18 @@ in
       security-exporters = import ../tests/security-exporters.nix {
         pkgs = nixpkgs.legacyPackages.${system};
         networking = myvars.networking;
+      };
+      # Load the audit rules in a VM: one rule that fails to load leaves
+      # auditing off, which evaluation cannot catch.
+      security-auditd = import ../tests/security-auditd.nix {
+        pkgs = nixpkgs.legacyPackages.${system};
+        inherit (inputs) agenix;
+      };
+      # A persisted /etc/ssh must receive the activation copy at boot, which
+      # only happens when preservation prepares the mount in initrd.
+      security-preservation-etc = import ../tests/security-preservation-etc.nix {
+        pkgs = nixpkgs.legacyPackages.${system};
+        inherit (inputs) preservation;
       };
     }
   );

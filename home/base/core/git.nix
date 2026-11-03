@@ -21,9 +21,12 @@ in
   # after ~/.config/git/config, so the user's own settings keep precedence.
   #
   #    https://git-scm.com/docs/git-config#Documentation/git-config.txt---global
-  config.home.activation.removeExistingGitconfig = lib.mkIf cfg.enable (
-    lib.hm.dag.entryBefore [ "checkLinkTargets" ] ''
-      run rm -f ${lib.escapeShellArg "${config.home.homeDirectory}/.gitconfig"}
+  # Move a stray file aside (dry-run aware) rather than deleting it.
+  config.home.activation.backupExistingGitconfig = lib.mkIf cfg.enable (
+    lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      if [[ -e ~/.gitconfig ]]; then
+        run mv $VERBOSE_ARG ~/.gitconfig ~/.gitconfig.bak
+      fi
     ''
   );
 

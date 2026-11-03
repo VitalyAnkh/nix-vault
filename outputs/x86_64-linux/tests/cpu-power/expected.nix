@@ -18,5 +18,14 @@
   noEeeWorkaround = true;
   noFrequencyCaps = true;
   guestsHaveNoCpuPolicy = true;
+  serverRaplEnabled = lib.genAttrs (builtins.filter (name: outputs.nixosConfigurations ? ${name}) [
+    "aquamarine"
+    "shoryu"
+    "shushou"
+    "youko"
+  ]) (_: true);
+  serverRaplReaderOnly = true;
+  desktopRaplDisabled = true;
+  guestsHaveNoRapl = true;
   desktopBatteryReporting = true;
 }

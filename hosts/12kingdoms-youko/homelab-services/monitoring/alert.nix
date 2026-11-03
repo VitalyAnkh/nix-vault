@@ -1,4 +1,9 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  mylib,
+  ...
+}:
 let
   hasAlertmanagerSecret =
     config ? age && config.age ? secrets && config.age.secrets ? "alertmanager.env";
@@ -41,6 +46,11 @@ in
   warnings =
     lib.optional (!hasAlertmanagerSecret)
       "aquamarine: age secret \"alertmanager.env\" missing; disabling vmalert + prometheus alertmanager.";
+
+  # nixpkgs only sets DynamicUser; vmalert talks to loopback and keeps no state.
+  systemd.services.vmalert-homelab.serviceConfig = lib.mkIf hasAlertmanagerSecret (
+    mylib.systemdHardening.mkDefaults mylib.systemdHardening.service
+  );
 
   services.prometheus.alertmanager = lib.mkIf hasAlertmanagerSecret {
     enable = true;

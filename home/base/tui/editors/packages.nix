@@ -96,6 +96,7 @@
         requests
         pyquery
         pyyaml
+        toml # TOML writing; reading uses stdlib tomllib
         protobuf # protocol buffer compiler
       ]
     ))

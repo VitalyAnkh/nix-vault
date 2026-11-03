@@ -29,14 +29,19 @@ let
   npmBin = "${config.modules.npm.prefix}/bin";
   pnpmHome = "${config.home.homeDirectory}/.local/share/pnpm";
   pnpmBin = "${pnpmHome}/bin";
-  miniforgeBin = "${config.home.homeDirectory}/miniforge3/bin";
 in
 {
   # Home Manager passes these to bash, zsh, fish and nushell.
   home.shellAliases = shellAliases;
+  # Tools installed outside Nix. Every shell, including nushell (through
+  # loadSessionVariables), prepends these to PATH.
   home.sessionPath = [
     pnpmBin
     pnpmHome
+    localBin
+    goBin
+    rustBin
+    npmBin
   ];
 
   programs.fish = {
@@ -49,23 +54,17 @@ in
   programs.bash = {
     enable = true;
     enableCompletion = true;
-    bashrcExtra = ''
-      export PATH="$PATH:${localBin}:${pnpmBin}:${pnpmHome}:${goBin}:${rustBin}:${npmBin}"
-    '';
   };
 
-  # NOTE: only works in bash/zsh, not nushell
-  # home.shellAliases = shellAliases;
-
-  # NOTE: nushell will be launched in bash, so it can inherit all the environment variables.
+  # The terminals start nushell directly; it reads Home Manager's session
+  # environment from env.nu (loadSessionVariables).
   programs.nushell = {
     enable = true;
-    # Adopt the 26.11 default: source Home Manager's session environment from
-    # env.nu instead of relying only on the bash-login wrapper.
     loadSessionVariables = true;
     configFile.source = ./config.nu;
     # Nushell uses its own string grammar rather than POSIX shell escaping.
     # Override only the repository aliases inherited from home.shellAliases.
     shellAliases = lib.mapAttrs (_: lib.mkForce) (repoAliases builtins.toJSON);
   };
+
 }

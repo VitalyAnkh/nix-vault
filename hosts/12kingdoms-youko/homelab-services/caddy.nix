@@ -1,6 +1,5 @@
 {
   mylib,
-  pkgs,
   config,
   myvars,
   wallpapers,
@@ -232,20 +231,26 @@ in
     };
   };
 
-  # caddy loads the lego-issued files at startup, so wait for the acme service;
-  # otherwise its config fails to load before the cert exists.
   systemd.services.caddy = {
+    # caddy loads the lego-issued files at startup, so wait for the acme
+    # service; otherwise its config fails to load before the cert exists.
     wants = [ "acme-writefor.fun.service" ];
     after = [ "acme-writefor.fun.service" ];
+
+    # Sandbox the LAN front door; it writes only its State/LogsDirectory.
+    serviceConfig = mylib.systemdHardening.mkDefaults mylib.systemdHardening.service // {
+      # Only 80/443. No CAP_NET_ADMIN: the module already raises the UDP buffer
+      # sysctls quic-go would force. "" resets the package unit's list.
+      AmbientCapabilities = [
+        ""
+        "CAP_NET_BIND_SERVICE"
+      ];
+      CapabilityBoundingSet = [ "CAP_NET_BIND_SERVICE" ];
+    };
   };
 
   # caddy is reached from the LAN/tailnet only; the shared firewall
   # (modules/nixos/base/networking/firewall.nix) already trusts those.
 
-  # Serve the wallpapers from the file server. `mkdir -p` here covers the
-  # whole fileserver tree; caddy's dataDir itself is created by the module.
-  system.activationScripts.installCaddyWallpapers = ''
-    mkdir -p /var/lib/caddy/fileserver/wallpapers
-    ${pkgs.rsync}/bin/rsync -avz --chmod=D2755,F644 ${wallpapers}/ /var/lib/caddy/fileserver/wallpapers/
-  '';
+  systemd.tmpfiles.rules = [ "L+ /var/lib/caddy/fileserver/wallpapers - - - - ${wallpapers}" ];
 }

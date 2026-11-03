@@ -296,7 +296,7 @@ Model flag normalization contract:
 - Ask the user before following an upstream change whose adoption is not clear-cut: removing or
   replacing tools and features the hosts use, changing defaults or the interface, trading
   convenience for security, or replacing a local setup with upstream's. First research upstream's
-  reason (commit messages, PRs, `WORKAROUNDS.md`), any replacement, and the measured effect on the
+  reason (commit messages, PRs, `docs/WORKAROUNDS.md`), any replacement, and the measured effect on the
   host (for example the live sysctl values, not only the configuration); then discuss the list with
   the user and record each outcome in `docs/upstream-sync.md`. That the local side never touched the
   lines is not by itself a reason to take such a change.
@@ -329,7 +329,7 @@ Model flag normalization contract:
   contain Ryan's LUKS, NVMe, partition, or swap identifiers. Swap follows the AI host (disk swapfile
   plus zswap, no zram) using the swapfile EVA already has on `@swap`; `muon` keeps zram until a
   swapfile there is verified. The AI host's NVMe APST parameter works around its own drive (upstream
-  `WORKAROUNDS.md` WA-008) and is not migrated.
+  `docs/WORKAROUNDS.md`, formerly WA-008) and is not migrated.
 - Preserve `eva` boot, disk, filesystem, and activation semantics unless the user explicitly asks
   for those to change. For potentially disruptive upstream host changes, keep them disabled behind
   local options or record why they were not migrated.
@@ -399,7 +399,7 @@ Minimum acceptance checks for upstream `ryan/main` merges:
 - Keep CJK diagnosis character-based. `fc-match -s 'sans:lang=zh-cn'` can list Latin UI fonts before
   CJK fonts, but the decisive check is a real Chinese codepoint, for example
   `fc-match -s 'Noto Sans:charset=4E2D'`. For this repo, the expected CJK fallback includes
-  `LXGW WenKai Screen` and `Source Han Sans SC`.
+  `LXGW WenKai Screen` and `Noto Sans CJK SC` (the Source Han glyphs under their Noto name).
 - Do not change the configured UI font from `Noto Sans` to another Latin font merely to work around
   stale cache errors. `Noto Sans` itself is acceptable as the Latin GNOME/GTK UI font as long as
   fontconfig fallback reaches the configured CJK fonts.
