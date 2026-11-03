@@ -296,10 +296,10 @@ Model flag normalization contract:
 - Ask the user before following an upstream change whose adoption is not clear-cut: removing or
   replacing tools and features the hosts use, changing defaults or the interface, trading
   convenience for security, or replacing a local setup with upstream's. First research upstream's
-  reason (commit messages, PRs, `docs/WORKAROUNDS.md`), any replacement, and the measured effect on the
-  host (for example the live sysctl values, not only the configuration); then discuss the list with
-  the user and record each outcome in `docs/upstream-sync.md`. That the local side never touched the
-  lines is not by itself a reason to take such a change.
+  reason (commit messages, PRs, `docs/WORKAROUNDS.md`), any replacement, and the measured effect on
+  the host (for example the live sysctl values, not only the configuration); then discuss the list
+  with the user and record each outcome in `docs/upstream-sync.md`. That the local side never
+  touched the lines is not by itself a reason to take such a change.
 - The preferred merge policy is to absorb upstream refactors into local hosts when the result is
   functionally equivalent or stronger. The user asked for `zellij` to `tuios`, `clash-verge` to
   native `mihomo`, and removing NetBird and the legacy hardening modules. Keep every locally added

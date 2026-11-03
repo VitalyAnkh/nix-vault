@@ -18,8 +18,8 @@ Markdown with no Nix dependency; this module only wires it into place.
   `modules.agents.skills.enable` is set, for the same reason.
 - `packages.nix`: agent CLIs (`grok`, `kimi-code`, `dsh`, `opencode`, `qwen-code`, `pi`,
   `antigravity-cli`) from the `llm-agents` flake input, plus `pkgs.ctx7` (the find-docs skill's CLI)
-  and `pkgs.mcp-grafana` (the Grafana MCP server). `opencode` is llm-agents' `opencode2` (OpenCode V2)
-  under its normal command name. Codex is installed through pnpm instead. The desktop agent apps
+  and `pkgs.mcp-grafana` (the Grafana MCP server). `opencode` is llm-agents' `opencode2` (OpenCode
+  V2) under its normal command name. Codex is installed through pnpm instead. The desktop agent apps
   (`antigravity-hub` on every platform; `grok-bot`, `orca`, `zcode` on Linux) are installed by the
   GUI layer, `home/base/gui/dev-tools.nix`.
 - `env.nix`: telemetry and auto-update opt-outs for the agents.

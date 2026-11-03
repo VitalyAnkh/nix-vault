@@ -150,6 +150,10 @@ SSH 完成。
    cd /tmp/nv-merge && git merge ryan/main
    ```
 
+   这个 worktree 中提交时不会运行 pre-commit 钩子：`core.hooksPath` 是相对路径
+   `.git/hooks`，而链接的 worktree 中 `.git` 是文件。提交前手动对改动的文件运行
+   `.pre-commit-config.yaml` 中的 nixfmt、prettier 和 typos。
+
 4. **推到 eva 的独立分支，在 eva 上用单独的 worktree 验证。** 不要动 eva 自己的
    `~/nix-vault`：那里可能有未提交的改动，或者正在运行的 agent 会话。被检出的分支不能被推送覆盖，所以推到
    `merge-incoming`，验证 worktree 检出自己的分支 `merge-verify`，每轮重置到推送的提交：

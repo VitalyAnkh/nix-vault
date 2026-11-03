@@ -15,10 +15,10 @@ decision in the 2026-11 merge, see [upstream-sync.md](../docs/upstream-sync.md))
 - WeChat uses upstream's framework ([wechat-policy.nix](nixpaks/modules/wechat-policy.nix) and the
   modules it imports): pasta-isolated network, app-scoped data under
   `~/.var/app/com.tencent.WeChat/data/wechat`.
-- Chrome, Chromium, Brave, Edge, Krita, MuseScore, the slicers, Blender, OBS, mpv, imv, Zoom, Foliate
-  and Remmina are not sandboxed. On eva, sandboxing them would cut Chrome off from local services and
-  its Codex native-messaging host, drop fcitx from XWayland apps, split mpv's `/tmp` from
-  go-musicfox, and hide `~/projects` from Blender.
+- Chrome, Chromium, Brave, Edge, Krita, MuseScore, the slicers, Blender, OBS, mpv, imv, Zoom,
+  Foliate and Remmina are not sandboxed. On eva, sandboxing them would cut Chrome off from local
+  services and its Codex native-messaging host, drop fcitx from XWayland apps, split mpv's `/tmp`
+  from go-musicfox, and hide `~/projects` from Blender.
 - The policy test ([tests/policy.nix](tests/policy.nix)) checks WeChat only.
 
 ## Why these apps are sandboxed
