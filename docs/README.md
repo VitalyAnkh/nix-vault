@@ -7,6 +7,17 @@ every human-facing document is linked here.
 `README.md` and `AGENTS.md` remain at the repository root because GitHub and coding agents require
 those entry points.
 
+## This fork
+
+- [Absorbing upstream changes](upstream-sync.md) (Chinese) — the merge procedure for `ryan/main`,
+  the decisions taken in each merge, intentional differences and pending items; Darwin review state
+  in [upstream-sync.toml](upstream-sync.toml).
+- [astra, the macOS host](astra-macos-host.md) (Chinese), and
+  [standalone Home Manager](standalone-home-manager.md).
+- eva and muon: [eva host notes](../hosts/eva/README.md) and
+  [muon host notes](../hosts/muon/README.md).
+- [Agent guidance schema](guidance-schema.md), which `AGENTS.md` follows.
+
 ## Repository
 
 - [Repository overview](../README.md) — systems, components, deployment and validation quick start.
@@ -73,8 +84,9 @@ those entry points.
   [editors](../home/base/core/editors/README.md),
   [editor glossary](../home/base/core/editors/Glossary.md),
   [Helix](../home/base/core/editors/helix/README.md),
-  [Neovim](../home/base/core/editors/neovim/README.md), [Rime](../home/base/gui/rime/README.md) and
-  [terminal](../home/base/gui/terminal/README.md).
+  [Neovim](../home/base/core/editors/neovim/README.md) and
+  [terminal](../home/base/gui/terminal/README.md). This fork keeps its own Fcitx5/Rime setup instead
+  of upstream's shared Rime module.
 - Terminal tools: [agents](../home/base/tui/agents/README.md) and
   [dsh notes](../home/base/tui/agents/dsh.md), [editors](../home/base/tui/editors/README.md),
   [encryption](../home/base/tui/encryption/README.md), [GPG](../home/base/tui/gpg/README.md) and
