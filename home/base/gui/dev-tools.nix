@@ -21,6 +21,10 @@ in
       kubectl-ai
       cursor-cli
       qrtool
+
+      # Antigravity desktop app (`antigravity`, Antigravity.app on macOS). The
+      # Antigravity IDE is a separate package, pkgs.antigravity-ide.
+      agentPackages.antigravity-hub
     ]
     # These llm-agents desktop apps are Linux-only upstream.
     ++ (lib.optionals pkgs.stdenv.hostPlatform.isLinux [

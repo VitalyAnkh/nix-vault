@@ -6,6 +6,9 @@
     PI_SKIP_VERSION_CHECK = "1";
 
     OPENCODE_DISABLE_AUTOUPDATE = "1";
+
+    # Stops agy's background self-update; it cannot replace a binary in the store.
+    AGY_CLI_DISABLE_AUTO_UPDATE = "1";
   };
 
   # home.sessionVariables wraps every value in double quotes without escaping
