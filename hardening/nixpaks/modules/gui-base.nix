@@ -47,12 +47,12 @@ in
       # nixpak binds sockets read-only, which is sufficient: connect() only needs
       # the socket inode's write bit, and the kernel's read-only-filesystem check
       # does not apply to sockets. PulseAudio is the exception (see bind.rw).
-      # Every app here is Wayland-only, so X11 stays disabled (the nixpak default,
-      # spelled out for intent) and PipeWire is shared for screensharing.
+      # X11 stays disabled unless an app needs it (QQ copies through the X11
+      # clipboard), and PipeWire is shared for screensharing.
       sockets = {
         wayland = true;
         pipewire = true;
-        x11 = false;
+        x11 = lib.mkDefault false;
       };
 
       bind.rw = [
@@ -73,6 +73,10 @@ in
         # directory is not already 0700 (e.g. pipewire-pulse has not started yet).
         # Keep this the only bind of $XDG_RUNTIME_DIR/pulse.
         (envSuffix "XDG_RUNTIME_DIR" "/pulse")
+      ]
+      ++ lib.optional config.bubblewrap.sockets.x11 [
+        (sloth.mkdir (envSuffix "XDG_RUNTIME_DIR" "/nixpak-${config.flatpak.appId}-tmp"))
+        "/tmp"
       ];
       bind.ro = [
         # Sockets only need to be connectable, and connect() works on a read-only
@@ -108,9 +112,11 @@ in
         "/dev/nvidia-uvm" # Unified virtual memory.
       ];
 
-      tmpfs = [
-        "/tmp"
-      ];
+      # A private /tmp. nixpak mounts tmpfs after all binds, so it would hide the
+      # /tmp/.X11-unix bind of `sockets.x11`; an X11 app gets a per-app directory
+      # bound over /tmp instead (a read-write bind, mounted before the read-only
+      # socket bind), as upstream's desktop-base.nix does for every app.
+      tmpfs = lib.optional (!config.bubblewrap.sockets.x11) "/tmp";
 
       env = {
         XDG_DATA_DIRS = lib.mkForce (

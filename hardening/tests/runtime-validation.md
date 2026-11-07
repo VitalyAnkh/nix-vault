@@ -32,6 +32,9 @@ Nixpak wrappers are accepted in three layers:
 | MuseScore              | Pass         | Interactive launch pass; ALSA routed to default PipeWire sink     |
 | mpv                    | Pass         | Interactive validation pending                                    |
 | imv                    | Pass         | Interactive validation pending                                    |
+| umu                    | Pass         | Wuthering Waves and Star Rail from their desktop entries          |
+| Steam                  | Pending      | Interactive validation pending; checklist below                   |
+| Heroic                 | Pending      | Interactive validation pending; checklist below                   |
 
 Intentional exceptions:
 
@@ -55,6 +58,38 @@ Known packaging limitations:
   `pcm.!default` configuration, which forwards to PipeWire; this requires the raw PipeWire socket.
   Launch and audio routing pass, but audible playback and score/print/export workflows still need
   user confirmation.
+
+## Game launcher checklist
+
+For umu, Steam and Heroic. Run umu with a game installed through the `nix-config-umu-game` skill and
+launched from its desktop entry, and Steam and Heroic with a game launched from the launcher:
+
+1. The launcher window opens and the nested pressure-vessel container starts (`ENABLE_LOG=1`, then
+   check `last-run.log` for bwrap or `/.flatpak-info` errors).
+2. Frame rate matches an unsandboxed run of the same scene with the MangoHud overlay; the game uses
+   the NVIDIA GPU, and a 32-bit game renders.
+3. Audio plays; a USB or Bluetooth controller connected before launch works, and a keyboard does not
+   appear under `/dev/input` inside the sandbox.
+4. The launcher downloads at the usual speed through pasta, and online play connects.
+5. Inside `umu-sandbox bash`: `ls -A ~` shows the contents of the host's `~/Gaming` and nothing else
+   from the host home.
+6. Running `~/Gaming/Games/<name>/run` from a host shell refuses to start.
+7. Steam lists DW-Proton and GE-Proton under a game's Compatibility tab, and
+   `umu-sandbox protontricks <appid> winecfg` opens winecfg for a game in each Steam library,
+   including one on DW-Proton.
+
+Steam and Heroic: both wrappers build and their sandboxes mount only `~/Gaming`; neither has been
+launched through its desktop entry yet. Steam is expected to lose Remote Play, LAN transfers and
+Steam Input virtual gamepads (see `hardening/README.md`), and Heroic's game shortcuts stay inside
+the sandbox.
+
+umu on dwproton-11.0-15: Wuthering Waves and Star Rail both launch from their desktop entries, and a
+controller works. Wuthering Waves' `PROTON_LOG` shows pressure-vessel starting inside the sandbox,
+DXVK and vkd3d-proton on the RTX 4090, NVAPI, fsync and pasta networking, with nothing denied by the
+sandbox. Still to check: audio, a 32-bit game, the keyboard exclusion and item 5. Wuthering Waves'
+ACE anti-cheat driver crashes `winedevice.exe` on an unimplemented `ntoskrnl.exe` function, a Wine
+gap; the game runs regardless. The first launch after a Proton update or a moved umu runtime can
+show no window for a minute while steamrt4 is prepared and the prefix upgraded.
 
 ## Browser smoke test
 
@@ -86,6 +121,20 @@ receive `org.freedesktop.secrets`. If the portal is unavailable, Chromium can fa
 v10 storage; monitor `Local State.os_crypt.portal.prev_init_success`. Firefox uses NSS storage
 instead. Browserpass separately exposes the password store and GPG-agent socket to
 Firefox/Chromium/Chrome only.
+
+## FIDO2 passthrough
+
+Passed after a reboot on `ai` (CanoKey Canary, PR #515 head): with the key present at boot, the host
+linked only its FIDO interface into `/dev/fido-hidraw`, and WebAuthn works in Firefox and Chrome.
+Chromium, plugging the key in after browser launch, and the in-sandbox keyboard-interface check are
+still pending. Full checklist:
+
+1. On the host, `ls -l /dev/fido-hidraw/` lists only the FIDO interface (`ID_FIDO_TOKEN=1`); it
+   follows plug and unplug.
+2. Firefox/Chromium: start without the key, plug it in, then register and sign in on
+   <https://webauthn.io>. Unplug and replug without restarting, then sign in again.
+3. Chrome: the same flow with the key present at launch; record whether a later plug is detected.
+4. In each sandbox, the CanoKey keyboard interface's `/dev/hidrawN` fails to open with `ENOENT`.
 
 ## Zoom
 

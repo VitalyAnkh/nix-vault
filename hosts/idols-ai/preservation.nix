@@ -222,10 +222,10 @@ in
         ".config/Joplin" # joplin-desktop
 
         ".local/share/jupyter"
-        # Deliberately not persisted: ~/.ipython contains history.sqlite, and
-        # interactive sessions may contain credentials or other sensitive
-        # values. Home Manager recreates the profile config and startup helpers
-        # from the Nix store on every activation.
+        # Deliberately not persisted: IPython keeps its history database in
+        # memory (HistoryManager.hist_file = ":memory:") and the profile config
+        # and startup helpers are recreated from the Nix store on every
+        # activation, so this directory holds no state worth preserving.
 
         # ======================================
         # Cloud Native
@@ -299,19 +299,19 @@ in
         # Games / Media
         # ======================================
 
-        "Games"
-        # .desktop entries created by games/installers (including the umu
-        # launchers the nix-config-umu-game skill generates). Home Manager
-        # rewrites its mimeapps.list symlink into the bind mount at activation,
-        # so that survives too.
+        # Home of the game sandboxes (hardening/nixpaks/modules/gaming-policy.nix).
+        # Steam, Heroic, umu and the games they launch all see it as $HOME, so
+        # their libraries, prefixes, saves and Proton builds live inside it:
+        # ~/Gaming/.local/share/Steam, ~/Gaming/.config/heroic,
+        # ~/Gaming/.local/share/umu, ~/Gaming/Games/... .
+        "Gaming"
+        # .desktop entries created on the host for sandboxed launchers. Home
+        # Manager rewrites its mimeapps.list symlink into the bind mount at
+        # activation, so that survives too.
         ".local/share/applications"
-        ".steam"
         ".config/MangoHud"
         ".config/blender"
 
-        ".local/share/umu"
-
-        ".local/share/Steam"
         # WiVRn atomically replaces its settings and pairing files, so preserve
         # the directory rather than individual files.
         {
@@ -322,12 +322,6 @@ in
           directory = ".android"; # ADB host keys for Quest USB authorization
           mode = "0700";
         }
-        ".local/state/Heroic"
-        ".config/heroic"
-
-        ".local/share/GOG.com"
-        ".local/share/StardewValley"
-        ".local/share/feral-interactive"
 
         # ======================================
         # Meeting / Remote Desktop / Recording

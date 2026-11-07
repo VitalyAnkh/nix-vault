@@ -3,18 +3,18 @@
 dsh is installed by this module (`packages.nix`) and configured at runtime, not by Nix. It boots a
 profile: an ordered stack of patch layers over an empty root entry list, where later layers win.
 
-| #   | Layer     | Path                                         | Writer          |
-| --- | --------- | -------------------------------------------- | --------------- |
-| 1   | bundles   | shipped with the profile                     | upstream        |
-| 2   | profile   | `$DSH_HOME/profiles/<name>/cordis.patch.yml` | dsh, at runtime |
-| 3   | home      | `$DSH_HOME/cordis.patch.yml`                 | you             |
-| 4   | `--patch` | whatever the launcher passes                 | you             |
+| #   | Layer   | Path                                         | Writer          |
+| --- | ------- | -------------------------------------------- | --------------- |
+| 1   | bundles | shipped with the profile                     | upstream        |
+| 2   | profile | `$DSH_HOME/profiles/<name>/cordis.patch.yml` | dsh, at runtime |
+| 3   | home    | `$DSH_HOME/cordis.patch.yml`                 | you             |
 
 `$DSH_HOME` defaults to `~/.dsh`. Settings UI changes are written to the profile patch; a home-layer
 row outranks it, so the UI rejects that setting with
-`Configuration for "..." is overridden by a home patch`. This repository therefore ships no home
-layer — profile patches are machine-local runtime state, the place for private endpoints (LAN
-servers, staging gateways) too, and Nix only installs the CLI.
+`Configuration for "..." is overridden by a home patch`. This repository ships no home layer:
+profile patches remain machine-local runtime state, the place for private endpoints (LAN servers,
+staging gateways) too. Nix installs plain `dsh` from `llm-agents`, with no package wrapper and no
+`--patch` overlay.
 
 Three behaviours that are easy to get wrong:
 

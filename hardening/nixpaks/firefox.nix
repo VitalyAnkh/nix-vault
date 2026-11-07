@@ -5,6 +5,7 @@
 # - Firefox's flatpak manifest: https://hg.mozilla.org/mozilla-central/file/tip/taskcluster/docker/firefox-flatpak/runme.sh#l151
 {
   lib,
+  pkgs,
   firefox,
   mkNixPak,
   buildEnv,
@@ -14,6 +15,10 @@
 
 let
   appId = "org.mozilla.firefox";
+  # FIDO2 security keys: the host udev rules in ./default.nix keep this
+  # directory populated, and the wrapper links /dev/hidrawN into it.
+  fidoDir = "/dev/fido-hidraw";
+  fidoBwrap = import ./modules/fido-bwrap.nix { inherit pkgs fidoDir; };
   wrapped = mkNixPak {
     config =
       {
@@ -35,6 +40,8 @@ let
         ];
 
         bubblewrap = {
+          package = fidoBwrap;
+          bind.dev = [ fidoDir ];
           # To trace all the home files Firefox accesses, you can use the following nushell command:
           #   just trace-access firefox
           # See the justfile in the root of this repository for more information.
@@ -80,6 +87,14 @@ let
 
             # dconf settings. Not verified as needed; candidate for removal.
             (sloth.concat' sloth.xdgConfigHome "/dconf")
+
+            # FIDO2 key enumeration and hotplug through libudev: the hidraw class
+            # links (their device directories come from the GPU sysfs binds), the
+            # udev database, without which the nodes count as uninitialized, and
+            # the control socket whose presence enables the udev monitor.
+            "/sys/class/hidraw"
+            "/run/udev/data"
+            "/run/udev/control"
           ];
         };
       };

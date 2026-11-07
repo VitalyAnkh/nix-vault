@@ -14,6 +14,24 @@ let
   mountStrings =
     app: builtins.filter builtins.isString (lib.flatten (with app.bubblewrap.bind; rw ++ ro ++ dev));
 
+  # Render a sloth value as the launcher would, with $VAR for environment
+  # lookups, so suites can assert on paths built from $HOME and friends.
+  renderSloth =
+    value:
+    if builtins.isString value then
+      value
+    else if value.type == "env" then
+      "$" + value.key
+    else if value.type == "concat" then
+      renderSloth value.a + renderSloth value.b
+    else if value.type == "mkdir" then
+      renderSloth value.dir
+    else
+      throw "cannot render sloth value of type ${value.type}";
+
+  # A bind entry is a path, or a [ source destination ] pair.
+  renderBind = entry: if builtins.isList entry then map renderSloth entry else renderSloth entry;
+
   forbiddenDbus =
     argument:
     lib.any (name: lib.hasInfix name argument) [
@@ -37,8 +55,11 @@ let
     path == "/dev"
     || lib.hasPrefix "/dev/video" path
     || lib.hasPrefix "/dev/bus/usb" path
+    || path == "/dev/uinput"
     || path == "/run/dbus"
-    || path == "/run/dbus/system_bus_socket";
+    || path == "/run/dbus/system_bus_socket"
+    || path == "/sys"
+    || path == "/run/udev";
 
   hasHostFontconfig = app: lib.elem [ "/etc/static/fonts" "/etc/fonts" ] app.bubblewrap.bind.ro;
 
@@ -91,6 +112,14 @@ let
       !(app.browserPermissions.secretPortal or false)
       && !(hasDbusFragment app "org.freedesktop.portal.Secret");
 
+  # FIDO2 needs both the udev-maintained node directory and the bwrap wrapper
+  # that links /dev/hidrawN into it; neither may leak to other apps.
+  fido2Check =
+    app: expected:
+    (app.browserPermissions.fido2 or false) == expected
+    && lib.elem "/dev/fido-hidraw" app.bubblewrap.bind.dev == expected
+    && (lib.getName app.bubblewrap.package == "bwrap") == expected;
+
   trayCheck =
     app: expected:
     if expected then
@@ -99,6 +128,50 @@ let
       && (app.dbus.policies."org.kde.StatusNotifierWatcher" or null) == "talk"
     else
       !app.desktopIntegration.tray;
+
+  # Checks shared by every game launcher suite (modules/gaming-policy.nix):
+  # ~/Gaming is the sandbox home and the only host home path, joysticks are
+  # the only input devices, compat tools come from the store, and the launcher
+  # grants no file chooser or document portal.
+  gamingChecks =
+    name:
+    let
+      app = load name;
+      rw = map renderBind app.bubblewrap.bind.rw;
+      source = entry: if builtins.isList entry then builtins.head entry else entry;
+      sources = binds: map (entry: source (renderBind entry)) binds;
+    in
+    {
+      sharedHome = lib.elem [ "$HOME/Gaming" "$HOME" ] rw;
+      noXdgStorage = !app.xdgStorage.enable;
+      writableScope = lib.all (
+        path: path == "$HOME/Gaming" || path == "$XDG_RUNTIME_DIR/nixpak-${app.flatpak.appId}-tmp"
+      ) (sources app.bubblewrap.bind.rw);
+      noHostHomeReads =
+        !lib.any (
+          path:
+          lib.any (prefix: lib.hasPrefix prefix path) [
+            "$HOME"
+            "$XDG_CACHE_HOME"
+            "$XDG_CONFIG_HOME"
+            "$XDG_DATA_HOME"
+            "$XDG_STATE_HOME"
+          ]
+        ) (sources app.bubblewrap.bind.ro);
+      gamepadsOnly =
+        lib.elem [
+          "/dev/gamepad-input"
+          "/dev/input"
+        ] app.bubblewrap.bind.dev
+        && !lib.elem "/dev/input" (sources app.bubblewrap.bind.dev)
+        && !lib.any (path: lib.hasPrefix "/dev/hidraw" path) (lib.flatten app.bubblewrap.bind.dev);
+      driver32 = lib.elem "/run/opengl-driver-32" app.bubblewrap.bind.ro;
+      compatToolsInStore = lib.all (lib.hasPrefix builtins.storeDir) (
+        lib.splitString ":" app.bubblewrap.env.STEAM_EXTRA_COMPAT_TOOLS_PATHS
+      );
+      openUri = app.portalGroups.openUri;
+      noFileChooser = !app.portalGroups.fileChooser;
+    };
 
   mkAppPolicy =
     name: spec:
@@ -126,9 +199,16 @@ let
         "${name}/tray" = trayCheck app (spec.tray or false);
         "${name}/browserpass" =
           (app.browserPermissions.browserpass or false) == (spec.browserpass or false);
+        "${name}/fido2" = fido2Check app (spec.fido2 or false);
         "${name}/personalFiles" =
           (app.browserPermissions.personalFiles or false) == (spec.personalFiles or false);
         "${name}/secretPortal" = secretPortalCheck app (spec.secretPortal or false);
+        # nixpak resolves "env" entries from the launcher environment.
+        "${name}/timeZonePassthrough" =
+          app.bubblewrap.env ? TZ
+          && app.bubblewrap.env.TZ.type == "env"
+          && app.bubblewrap.env ? TZDIR
+          && app.bubblewrap.env.TZDIR.type == "env";
       };
       extraChecks = lib.mapAttrs' (checkName: value: {
         name = "${name}/${checkName}";
@@ -163,6 +243,8 @@ in
     appNames
     load
     mountStrings
+    renderBind
+    gamingChecks
     withoutSecretPortal
     mkAppPolicy
     globalChecks

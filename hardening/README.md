@@ -11,7 +11,10 @@ decision in the 2026-11 merge, see [upstream-sync.md](../docs/upstream-sync.md))
 - Firefox, QQ and Telegram keep this repository's nixpak modules:
   [gui-base.nix](nixpaks/modules/gui-base.nix), [host-network.nix](nixpaks/modules/host-network.nix)
   and [custom-policy.nix](nixpaks/modules/custom-policy.nix). They use the host network and get the
-  PipeWire socket and the cameras.
+  PipeWire socket and the cameras. Firefox also gets upstream's FIDO2 passthrough
+  ([fido-bwrap.nix](nixpaks/modules/fido-bwrap.nix), the udev rules in
+  [nixpaks/default.nix](nixpaks/default.nix)); QQ gets the X11 socket for its clipboard, with a
+  per-app directory over `/tmp` instead of a tmpfs, which would hide the socket.
 - WeChat uses upstream's framework ([wechat-policy.nix](nixpaks/modules/wechat-policy.nix) and the
   modules it imports): pasta-isolated network, app-scoped data under
   `~/.var/app/com.tencent.WeChat/data/wechat`.
@@ -19,6 +22,9 @@ decision in the 2026-11 merge, see [upstream-sync.md](../docs/upstream-sync.md))
   Foliate and Remmina are not sandboxed. On eva, sandboxing them would cut Chrome off from local
   services and its Codex native-messaging host, drop fcitx from XWayland apps, split mpv's `/tmp`
   from go-musicfox, and hide `~/projects` from Blender.
+- Steam, Heroic and umu are not sandboxed either: they keep `programs.steam` (with extest and
+  protontricks) and their data in the usual home directories, and the `nix-config-umu-game` skill
+  keeps generating launchers that call the host's `umu-run`.
 - The policy test ([tests/policy.nix](tests/policy.nix)) checks WeChat only.
 
 ## Why these apps are sandboxed
@@ -35,9 +41,12 @@ workflow.
 - Cleared environment; filtered session D-Bus; private `/dev/shm`; per-app `/tmp`. Chromium-family
   browsers share an app-specific `/tmp` so external URLs reuse one browser instance.
 - Read-only `/nix/store`; GPU and display; fonts and themes; LAN and Internet.
+- Host timezone: `TZ` and `TZDIR` are passed through from the session environment.
 - Portals for file chooser, URI opening, notifications, input methods and document exports.
-- No whole host home, system D-Bus, SSH agent, USB/serial or raw camera. Raw PipeWire is granted
-  only to MuseScore for its ALSA-via-PipeWire audio path; see [Limits](#limits).
+- No whole host home, system D-Bus, SSH agent, raw USB/serial or raw camera. The only device
+  passthrough is a security key's FIDO interface for Firefox/Chromium/Chrome; see [Limits](#limits).
+  Raw PipeWire is granted only to MuseScore for its ALSA-via-PipeWire audio path; see
+  [Limits](#limits).
 - Host loopback only for Firefox/Chromium; all other apps use pasta-isolated loopback. Chromium is
   an intentional development exception. Brave Origin and Edge are backup browsers and receive no
   media grants.
@@ -47,27 +56,30 @@ workflow.
 `Media` means audio playback, microphone, Camera and ScreenCast portals. Writable paths are listed
 explicitly; other files use the document portal. Every app also has private writable state.
 
-| App          | Network       | Writable paths                                                                        | Grants                                                                                         |
-| ------------ | ------------- | ------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| Firefox      | Host loopback | `~/.mozilla`, personal files, Trash, Firefox artwork                                  | Audio, browserpass, MPRIS, idle; camera/screen sharing intentionally unavailable               |
-| Chromium     | Host loopback | `~/.config/chromium`, personal files                                                  | Media, browserpass, MPRIS, idle, v12 Secret                                                    |
-| Chrome       | Isolated      | `~/.config/google-chrome`, Downloads                                                  | Media, browserpass, MPRIS, idle, v12 Secret                                                    |
-| Brave Origin | Isolated      | `~/.config/BraveSoftware/Brave-Origin`, Downloads                                     | v12 Secret                                                                                     |
-| Edge         | Isolated      | `~/.config/microsoft-edge`, Downloads                                                 | v12 Secret                                                                                     |
-| QQ           | Isolated      | Personal files, private app state                                                     | Media, notifications, tray, MPRIS, idle, accessibility                                         |
-| Telegram     | Isolated      | Personal files, private app state                                                     | Media, notifications, tray, MPRIS, idle, accessibility, Ayatana indicators                     |
-| Zoom         | Isolated      | `~/.zoom`, `zoomus.conf`, `zoom.conf`, Downloads, `Documents/Zoom`, private app state | Media, X11/XWayland, FHS, SNI tray, idle, `/dev/video0-1`, read-only `/sys/class/drm`          |
-| WeChat       | Isolated      | Documents, Downloads, app-scoped `wechat` data, private app state                     | Media, Wayland, X11 fallback, SNI tray, file chooser portal                                    |
-| Foliate      | None          | Documents/Downloads/Pictures read-only, app-scoped state                              | File chooser, OpenURI, notifications, IME, accessibility                                       |
-| Krita        | None          | Documents/Downloads/Pictures writable, app-scoped state                               | File chooser, OpenURI, print, inhibit, notifications, IME, accessibility                       |
-| Bambu Studio | Isolated      | Documents/Downloads/Pictures writable, app-scoped state                               | X11/XWayland, PulseAudio, cloud/LAN network, file chooser, notifications, IME, accessibility   |
-| OrcaSlicer   | Isolated      | Documents/Downloads/Pictures writable, app-scoped state                               | X11/XWayland, cloud/LAN network, file chooser, notifications, IME, accessibility               |
-| Remmina      | Isolated      | `~/.config/remmina`, `~/.local/share/remmina`, `~/.remmina`, Downloads                | PulseAudio, SSH agent, file chooser, OpenURI, notifications, IME, accessibility                |
-| OBS Studio   | Isolated      | `~/.config/obs-studio`, Videos/Pictures/Downloads                                     | ScreenCast, V4L2 camera (`/dev/video0-1`), PulseAudio, tray, notifications, IME, accessibility |
-| Blender      | Isolated      | `~/.config/blender`, Documents/Downloads/Pictures/Videos                              | X11/XWayland, PulseAudio, notifications, IME, accessibility                                    |
-| MuseScore    | Isolated      | `~/.config/MuseScore`, `~/.local/share/MuseScore`, Documents/Downloads/Music/Pictures | ALSA via PipeWire, ALSA sequencer, X11/XWayland, print, notifications, IME, accessibility      |
-| mpv          | Isolated      | `~/.config/mpv`, `~/.cache/mpv`, `~/.local/state/mpv`; media dirs read-only           | MPRIS, file chooser, OpenURI                                                                   |
-| imv          | None          | `$HOME` read-only                                                                     | File chooser, OpenURI                                                                          |
+| App          | Network       | Writable paths                                                                        | Grants                                                                                               |
+| ------------ | ------------- | ------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| Firefox      | Host loopback | `~/.mozilla`, personal files, Trash, Firefox artwork                                  | Audio, browserpass, MPRIS, idle, FIDO2 key; camera/screen sharing intentionally unavailable          |
+| Chromium     | Host loopback | `~/.config/chromium`, personal files                                                  | Media, browserpass, MPRIS, idle, FIDO2 key, v12 Secret                                               |
+| Chrome       | Isolated      | `~/.config/google-chrome`, Downloads                                                  | Media, browserpass, MPRIS, idle, FIDO2 key, v12 Secret                                               |
+| Brave Origin | Isolated      | `~/.config/BraveSoftware/Brave-Origin`, Downloads                                     | v12 Secret                                                                                           |
+| Edge         | Isolated      | `~/.config/microsoft-edge`, Downloads                                                 | v12 Secret                                                                                           |
+| QQ           | Isolated      | Personal files, private app state                                                     | Media, X11 fallback, notifications, tray, MPRIS, idle, accessibility                                 |
+| Telegram     | Isolated      | Personal files, private app state                                                     | Media, notifications, tray, MPRIS, idle, accessibility, Ayatana indicators                           |
+| Zoom         | Isolated      | `~/.zoom`, `zoomus.conf`, `zoom.conf`, Downloads, `Documents/Zoom`, private app state | Media, X11/XWayland, FHS, SNI tray, idle, `/dev/video0-1`, read-only `/sys/class/drm`                |
+| WeChat       | Isolated      | Documents, Downloads, app-scoped `wechat` data, private app state                     | Media, Wayland, X11 fallback, SNI tray, file chooser portal                                          |
+| Foliate      | None          | Documents/Downloads/Pictures read-only, app-scoped state                              | File chooser, OpenURI, notifications, IME, accessibility                                             |
+| Krita        | None          | Documents/Downloads/Pictures writable, app-scoped state                               | File chooser, OpenURI, print, inhibit, notifications, IME, accessibility                             |
+| Bambu Studio | Isolated      | Documents/Downloads/Pictures writable, app-scoped state                               | X11/XWayland, PulseAudio, cloud/LAN network, file chooser, notifications, IME, accessibility         |
+| OrcaSlicer   | Isolated      | Documents/Downloads/Pictures writable, app-scoped state                               | X11/XWayland, cloud/LAN network, file chooser, notifications, IME, accessibility                     |
+| Remmina      | Isolated      | `~/.config/remmina`, `~/.local/share/remmina`, `~/.remmina`, Downloads                | PulseAudio, SSH agent, file chooser, OpenURI, notifications, IME, accessibility                      |
+| OBS Studio   | Isolated      | `~/.config/obs-studio`, Videos/Pictures/Downloads                                     | ScreenCast, V4L2 camera (`/dev/video0-1`), PulseAudio, tray, notifications, IME, accessibility       |
+| Blender      | Isolated      | `~/.config/blender`, Documents/Downloads/Pictures/Videos                              | X11/XWayland, PulseAudio, notifications, IME, accessibility                                          |
+| MuseScore    | Isolated      | `~/.config/MuseScore`, `~/.local/share/MuseScore`, Documents/Downloads/Music/Pictures | ALSA via PipeWire, ALSA sequencer, X11/XWayland, print, notifications, IME, accessibility            |
+| mpv          | Isolated      | `~/.config/mpv`, `~/.cache/mpv`, `~/.local/state/mpv`; media dirs read-only           | MPRIS, file chooser, OpenURI                                                                         |
+| imv          | None          | `$HOME` read-only                                                                     | File chooser, OpenURI                                                                                |
+| umu          | Isolated      | `~/Gaming` only, mounted as the sandbox `$HOME`                                       | X11/XWayland, PulseAudio, SNI tray, 32-bit GPU drivers, joystick evdev, sysfs, OpenURI, inhibit, IME |
+| Steam        | Isolated      | `~/Gaming` only, mounted as the sandbox `$HOME`                                       | X11/XWayland, PulseAudio, SNI tray, 32-bit GPU drivers, joystick evdev, sysfs, OpenURI, inhibit, IME |
+| Heroic       | Isolated      | `~/Gaming` only, mounted as the sandbox `$HOME`                                       | X11/XWayland, PulseAudio, SNI tray, 32-bit GPU drivers, joystick evdev, sysfs, OpenURI, inhibit, IME |
 
 All browsers get read-only NSS certificates, printing, native notifications and accessibility.
 
@@ -84,14 +96,68 @@ All browsers get read-only NSS certificates, printing, native notifications and 
 - Bookmarks, history, localStorage, IndexedDB and extension data remain readable by the browser.
   nixpak isolates them from other apps, not from browser compromise.
 
+## Game launchers
+
+Steam, Heroic and umu share [gaming-policy.nix](nixpaks/modules/gaming-policy.nix). The goal is that
+games cannot read host data, not that they are isolated from each other:
+
+- `~/Gaming` is mounted over `$HOME`; nothing else in the host home is visible. Installed games are
+  in `~/Gaming/Games`, the sandbox's `~/Games`, which is where launchers install by default. The
+  per-app XDG directories are off because games write saves straight into `$HOME`.
+- All launchers share that data, so they form one trust domain: a compromised game can change
+  another launcher's configuration. Their grants therefore stay identical.
+- `~/Gaming` is game-writable, so the host never executes a file from it. Generated umu launchers
+  run through `umu-sandbox` (see the `nix-config-umu-game` skill), Steam and Heroic launch their
+  games from inside their own sandboxes, and protontricks runs only inside the sandbox:
+  `umu-sandbox protontricks <appid> winecfg`, or
+  `umu-sandbox protontricks -c 'wine regedit' <appid>`. A host protontricks would run Wine on those
+  prefixes as the host user.
+- Replacing `programs.steam` costs its extras: no host `steam-run` or protontricks, and no `extest`
+  (needs `/dev/uinput`). Remote Play and LAN discovery need inbound connections that pasta isolation
+  does not forward; online play, the store and downloads are unaffected.
+- The launchers keep a StatusNotifier tray icon (`desktopIntegration.tray`), so closing Steam or
+  Heroic to the tray still works and the desktop shell has an icon to show. Notifications stay off.
+- Controllers: host udev rules hard-link joystick evdev nodes (not ones that also claim to be a
+  keyboard) into `/dev/gamepad-input`, mounted as the sandbox `/dev/input`. hidraw (Steam Input's
+  gyro/touchpad remapping, SDL's HIDAPI drivers) and `/dev/uinput` are not granted; uinput would let
+  a game inject input into the host session, and it is not namespaced. A real controller therefore
+  works through evdev, but Steam Input cannot create virtual gamepads. Like the FIDO2 directory,
+  `/dev/gamepad-input` is created at boot; after a first deploy with `switch`, run
+  `sudo systemd-tmpfiles --create --prefix=/dev/gamepad-input` and
+  `sudo udevadm trigger --action=add -s input` before starting a launcher.
+- The sandbox gets Flatpak's `--device=all` sysfs set without `/sys/block`, the udev database and
+  `/etc/passwd`, `/etc/group` and `/etc/machine-id`, which pressure-vessel and Wine need.
+- Proton's pressure-vessel container is a third bwrap layer (nixpak, buildFHSEnv, pressure-vessel).
+  This relies on unprivileged user namespaces and on the inner FHS root having no `/.flatpak-info`;
+  with it, pressure-vessel would switch to a Flatpak sub-sandbox it cannot get.
+- Portals see processes in the FHS layer as host apps, so no file chooser or document portal mount
+  is granted (they would return host paths and every exported document), and GameMode is
+  unavailable: `gamemoded` cannot reach PIDs in the sandbox's namespace. Desktop entries that Heroic
+  or Steam create for a game land in the sandbox's `~/.local/share/applications` (`~/Gaming/...`),
+  so the host application menu does not show them.
+
 ## Limits
 
-- X11: Zoom and WeChat have shared-display trust; portal permissions cannot enforce portal-only
-  capture.
+- X11: Zoom, WeChat, QQ and the game launchers have shared-display trust; portal permissions cannot
+  enforce portal-only capture.
 - PulseAudio grants recording authority. Read-only GPG sockets still permit signing and decryption.
 - pasta isolates loopback, not LAN access. Chromecast discovery is unverified.
 - Brave Origin and Edge intentionally have no PulseAudio, Camera, ScreenCast or MPRIS grants. They
   are backup browsers, not media browsers.
+- FIDO2 passthrough: host udev rules hard-link only hidraw nodes whose report descriptor declares
+  the FIDO usage page into `/dev/fido-hidraw`; the sandbox binds that directory plus read-only
+  `/sys/class/hidraw` and the udev database. The CanoKey's KBD and CCID interfaces, other HID
+  devices and raw USB stay outside, so the WebUSB console is unreachable by design
+  ([key policy](../docs/security-keys.md)). A compromised browser process can send raw CTAP to the
+  key; the key's PIN and touch policy remain the authentication boundary. The read-only udev
+  database exposes properties of all host devices, much of which is already readable via the sysfs
+  device binds.
+- FIDO2 hotplug relies on udev events, which only reach the host network namespace. Firefox and
+  Chromium therefore detect keys plugged in after launch; pasta-isolated Chrome needs the key
+  present before launch. `/dev/fido-hidraw` is created at boot. When first deploying with `switch`
+  instead of a reboot, run `sudo systemd-tmpfiles --create --prefix=/dev/fido-hidraw`, then replug
+  the key (or `sudo udevadm trigger --action=add -s hidraw`) and fully restart the browsers: a
+  browser started while the directory was missing has no bind for it.
 - Firefox camera and remote screen sharing are intentionally disabled. Firefox does not support the
   XDG Camera/ScreenCast portal path used here, so granting camera or screen-capture access would
   require widening the sandbox with raw `/dev/video*` or direct PipeWire access. We choose not to
@@ -122,10 +188,14 @@ All browsers get read-only NSS certificates, printing, native notifications and 
   desktop/microphone audio, local NVENC H.264 MP4 recording and local RTMP streaming. External
   provider authentication and browser sources remain unvalidated.
 - Remmina, Blender, mpv and imv build and pass the policy suite; interactive validation is still
-  pending. MuseScore passed launch, XWayland and ALSA-to-PipeWire routing checks; audible playback
-  and user workflows still need confirmation.
+  pending. umu runs Wuthering Waves and Star Rail from their desktop entries on the RTX 4090, with a
+  working controller; audio and the in-sandbox isolation check are pending. MuseScore passed launch,
+  XWayland and ALSA-to-PipeWire routing checks; audible playback and user workflows still need
+  confirmation.
 - Chromium smoke test passed: renderer sandbox, environment clearing, bind scope, disposable-profile
   persistence and loopback policy.
+- FIDO2 browser passthrough is enabled for Firefox/Chromium/Chrome only. WebAuthn with the CanoKey
+  passed in Firefox and Chrome; Chromium and plugging the key in after launch still need validation.
 - WeChat uses the native nixpkgs-master package with nixpak as the only bwrap layer. Build/policy
   pass; interactive Wayland validation is still pending.
 - Evidence and repeat commands: [runtime validation](tests/runtime-validation.md),
@@ -134,12 +204,18 @@ All browsers get read-only NSS certificates, printing, native notifications and 
 ## Code map
 
 - [nixpaks/](nixpaks/): wrappers and Home Manager package overlay.
-- [desktop-base.nix](nixpaks/modules/desktop-base.nix): shared runtime and XDG storage.
+- [desktop-base.nix](nixpaks/modules/desktop-base.nix),
+  [xdg-storage.nix](nixpaks/modules/xdg-storage.nix): shared runtime and per-app XDG storage.
+- [gaming-policy.nix](nixpaks/modules/gaming-policy.nix), [nixpaks/umu.nix](nixpaks/umu.nix),
+  [nixpaks/steam.nix](nixpaks/steam.nix), [nixpaks/heroic.nix](nixpaks/heroic.nix): game launcher
+  sandbox and the three launcher wrappers.
 - [portal-groups.nix](nixpaks/modules/portal-groups.nix),
   [desktop-integration.nix](nixpaks/modules/desktop-integration.nix): portal and desktop service
   grants.
 - [browser-permissions.nix](nixpaks/modules/browser-permissions.nix),
-  [chromium-browser.nix](nixpaks/modules/chromium-browser.nix): browser scopes and launcher.
+  [fido-bwrap.nix](nixpaks/modules/fido-bwrap.nix),
+  [chromium-browser.nix](nixpaks/modules/chromium-browser.nix): browser scopes, FIDO2 passthrough
+  wrapper and launcher.
 - [nixpaks/wechat.nix](nixpaks/wechat.nix): WeChat package and data setup.
 - [kernel-hardening.nix](kernel-hardening.nix), [apparmor/](apparmor/): kernel sysctl and AppArmor
   profiles.

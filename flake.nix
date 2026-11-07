@@ -267,5 +267,11 @@
 
     # for waydroid
     # nur-ataraxiasjel.url = "github:AtaraxiaSjel/nur";
+
+    # Wayland <-> X11 clipboard sync for xwayland-satellite (niri).
+    pyclipsync = {
+      url = "github:ryan4yin/pyclipsync";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 }

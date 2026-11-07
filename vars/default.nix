@@ -1,5 +1,13 @@
 { lib }:
+let
+  # Hardware security key (CanoKey/YubiKey) resident SSH keys: they log in like
+  # the main keys, and they are the only keys pam_rssh accepts for sudo on
+  # servers through the forwarded agent (modules/nixos/server/ssh-agent-sudo.nix).
+  # None registered yet; setup in docs/security-keys.md.
+  canokeySshKeys = [ ];
+in
 {
+  inherit canokeySshKeys;
   username = "vitalyr";
   userfullname = "VitalyR";
   useremail = "vr@vitalyr.com";
@@ -27,7 +35,13 @@
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAI7hWDjjuTEXcd1pckYak39KkQWtuI/jvVeDgAz0CwP vitalyr@eva"
     # ssh key on rex, Lenovo Y9000P
     "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC84JOgYyYEbDQ8+jFE86xw8CIkRaek5ksgib0U4v3UIuPDimdjAmp+6ffg/f2ceP0XeG6sPJu4EKyvpK6YH80MqBRmJg8zEWViaICpge3E9Hhi7zW5KwYMlAICIR/bvkdXhP03heazPT9IbtAOoYNKyCgHRJ78suU1MwNzPcdG8TIFcye9BT1iDTtfCYp4TSo3W6opqAnoOKhafbAbh0bUpXpkC7ns+vBRBiI/lSwCpUJqogjycAfyZLTF3sa9I083to4D5FxOT80vTOaNE/9/H0+C4ogaBOVC0owz0LqUbSLwU/XWJHDBzmzyiJvrK6iEP8Y9Ud6XiEU5qGBCAYk2L08AgeMVDeXmkvvWZ/OTdwUU7978lMex+aMjWGGOoOyCaQ3+PnMInVKBF0ikPNIU3cJbWB/ZEm5fig+25rI0yBYwotRjEjoLrhOxpR+mn+6UifFyf1m3gZWFVCdLjeKtw42D9B52+om25A38/czD+UqrRh8zCu2FxrthOZ0woDM= vitalyr"
-  ];
+  ]
+  ++ canokeySshKeys;
+  # Security key U2F registrations for sudo (modules/nixos/desktop/canokey.nix);
+  # sudo keeps asking for the password while this is empty. Key handles and
+  # public keys only, so they are safe to commit. Registration:
+  # docs/security-keys.md.
+  canokeyU2fKeys = [ ];
   secondaryAuthorizedKeys = [
     # the backup ssh keys for disaster recovery
     # "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMzYT0Fpcp681eHY5FJV2G8Mve53iX3hMOLGbVvfL+TF vitalyr@romantic"
