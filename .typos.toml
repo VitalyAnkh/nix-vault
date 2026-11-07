@@ -69,6 +69,9 @@ extend-ignore-re = [
   # dictionary wants "HAS".
   "HSA",
 ]
+# Abbreviated Git commit hashes (ba149b5e, 0704ba5e): lowercase hex with at least
+# one digit, so ordinary words are still checked.
+extend-ignore-identifiers-re = ["^[0-9a-f]*[0-9][0-9a-f]*$"]
 
 [default.extend-words]
 # PCIe Advanced Error Reporting and status field abbreviations.
