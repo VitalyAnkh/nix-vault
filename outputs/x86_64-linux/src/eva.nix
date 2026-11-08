@@ -13,6 +13,8 @@
 }@args:
 let
   name = "eva";
+  # eva's settings that stay out of this public repository.
+  privateHostModule = "${inputs.mysecrets}/hosts/${name}/nixos.nix";
   base-modules = {
     nixos-modules =
       (map mylib.relativeToRoot [
@@ -33,7 +35,8 @@ let
           modules.desktop.gaming.enable = true;
           modules.desktop.canokey.enable = true;
         }
-      ];
+      ]
+      ++ lib.optional (builtins.pathExists privateHostModule) privateHostModule;
     home-modules = map mylib.relativeToRoot [
       "home/hosts/linux/${name}.nix"
     ];

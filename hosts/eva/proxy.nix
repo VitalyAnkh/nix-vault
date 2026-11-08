@@ -13,7 +13,8 @@
 # ~/.config/mihomo/sources.yaml (subscriptions, secret), and it does not start
 # without it. These hosts have no sources.yaml yet, so Clash Verge stays the
 # default; set `vr.proxy.backend = "mihomo"` once the config can be generated
-# (steps in docs/upstream-sync.md).
+# (steps in docs/upstream-sync.md). "none" leaves the proxy to another module;
+# eva's comes from its private host module in the secrets input.
 #
 # NOTE: There is a known pitfall with mihomo's fake-IP for IPv6
 # (fake-ip-range6: fdfe:dcba:9876::/64): TCP connections to IPv6 fake-IPs are
@@ -36,9 +37,10 @@ in
     type = lib.types.enum [
       "clash-verge"
       "mihomo"
+      "none"
     ];
     default = "clash-verge";
-    description = "The TUN proxy on this host: Clash Verge, or upstream's native mihomo service.";
+    description = "The TUN proxy: Clash Verge, upstream's mihomo, or none (another module's).";
   };
 
   config = lib.mkMerge [
