@@ -482,6 +482,15 @@ CLI 的小版本）、nixpkgs-master、nixpkgs-stable、home-manager、firefox�
 `doom sync`。经本机代理访问 github.com 时约三分之一的连接被断开，一次 `nix flake update`
 中任何一次下载失败都会整体失败，所以逐个 input 更新并重试。
 
+验证期间上游又有两个提交，一并合入（085c91c0，ryan/main ad3923df）：
+
+- a7787198：没有 Home
+  Manager 的服务器主机（`modules/nixos/server`）启用 NixOS 的 nushell 模块，关掉每次开机都会出现的欢迎横幅。
+- ad3923df：上游的 agent 主机（`home/linux/tui.nix`：aquamarine、ruby、kana）改用各自的 `gh`
+  登录，经 HTTPS 访问 GitHub。本地的 `home/base/core/git.nix` 保留
+  `modules.git.personalIdentity`，加上上游的 `modules.git.githubSsh`，两者都开启时才把
+  `https://github.com/VitalyAnkh` 改写为 SSH。eva、muon、astra 不导入 `tui.nix`，不受影响。
+
 ### 吸收的上游重构
 
 | 上游改动                                                                                              | 本地结果                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
