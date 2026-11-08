@@ -491,6 +491,12 @@ CLI 的小版本）、nixpkgs-master、nixpkgs-stable、home-manager、firefox�
   `modules.git.personalIdentity`，加上上游的 `modules.git.githubSsh`，两者都开启时才把
   `https://github.com/VitalyAnkh` 改写为 SSH。eva、muon、astra 不导入 `tui.nix`，不受影响。
 
+同一轮中按用户要求（2026-11-08）改变了 eva 的代理：`outputs/x86_64-linux/src/eva.nix` 在私有 secrets
+input 中有 `hosts/eva/nixos.nix` 时导入它。这个私有模块提供 eva 的代理，并把 `vr.proxy.backend`
+设为新增的 `none`，`hosts/eva/proxy.nix` 因此不再安装 Clash
+Verge 的服务和登录自启。两套代理都有 TUN，同时运行会争抢路由、DNS 和 GNOME 的系统代理设置。`hosts/eva/preservation.nix`
+中 Clash Verge 的数据目录保留，需要时把私有模块中的 backend 改回 `clash-verge` 即可。muon 不变。
+
 ### 吸收的上游重构
 
 | 上游改动                                                                                              | 本地结果                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
@@ -700,6 +706,8 @@ CLI 的小版本）、nixpkgs-master、nixpkgs-stable、home-manager、firefox�
   passthrough”一节检查沙箱中的 Firefox（`org.mozilla.firefox`）能否用安全密钥登录：`ls -l /dev/fido-hidraw/`
   只列出 FIDO 接口，<https://webauthn.io> 上能注册和登录，拔插后无须重启 Firefox。`/dev/fido-hidraw`
   在开机时创建，用 boot 加重启切换就不用另外处理。同时确认 QQ 复制文字后不退出，粘贴到其他应用正常。
+- 切换 eva 后，确认私有模块提供的代理能开启 TUN，`curl -I https://github.com` 和 `git ls-remote`
+  都正常。GNOME 的系统代理原来指向 Clash Verge 的 7897 端口，要由新的客户端改写。
 - 要用安全密钥代替 sudo 的密码或登录 SSH 时，按 [security-keys.md](./security-keys.md)
   注册，把结果填入 `vars/default.nix` 的 `canokeyU2fKeys`、`canokeySshKeys`。
 
