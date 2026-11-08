@@ -15,6 +15,12 @@ in
       default = true;
     };
 
+  options.modules.git.githubSsh.enable = lib.mkOption {
+    type = lib.types.bool;
+    default = true;
+    description = "Rewrite https://github.com/VitalyAnkh remotes to SSH with the owner's key.";
+  };
+
   # `programs.git` will generate the config file: ~/.config/git/config
   # to make git use this config file, `~/.gitconfig` should not exist!
   # Without the personal identity, ~/.gitconfig stays user-managed: Git reads it
@@ -70,7 +76,7 @@ in
       log.date = "iso"; # use iso format for date
 
       # replace https with ssh
-      url = lib.mkIf cfg.enable {
+      url = lib.mkIf (cfg.enable && config.modules.git.githubSsh.enable) {
         "ssh://git@github.com/VitalyAnkh" = {
           insteadOf = "https://github.com/VitalyAnkh";
         };
