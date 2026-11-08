@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs-master,
   ...
 }:
 # TUN proxy for eva and muon.
@@ -47,7 +46,9 @@ in
     (lib.mkIf (cfg.backend == "clash-verge") {
       programs.clash-verge = {
         enable = true;
-        package = pkgs-master.clash-verge-rev;
+        # The default pkgs.clash-verge-rev: unstable caught up with the 2.5.2
+        # that 9ee947dc took from nixpkgs-master, and master now fails to build
+        # it (aws-lc-sys wants a system AWS-LC since nixpkgs #577681).
         autoStart = false;
         serviceMode = true;
         tunMode = true;
