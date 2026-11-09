@@ -761,10 +761,10 @@
     "mysecrets": {
       "flake": false,
       "locked": {
-        "lastModified": 1794141139,
-        "narHash": "sha256-hEeS/Ic5GUjEN3RUvd5LrsjPW1Gpz9/RipoVaaUmZ4Y=",
+        "lastModified": 1794228715,
+        "narHash": "sha256-C3AkzoA5ir1UaaDNnWt45MkwE5lhyf5ZoR39P7nR+t0=",
         "ref": "refs/heads/main",
-        "rev": "e5c8c9d175529bce4ee7a345a2c9377fe48d93cc",
+        "rev": "7ac30725526d68a250a9e723c3b1deb9760c9c52",
         "shallow": true,
         "type": "git",
         "url": "ssh://git@github.com/VitalyAnkh/vr-nix-secrets.git"
