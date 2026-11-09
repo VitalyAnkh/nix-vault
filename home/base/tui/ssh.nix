@@ -42,6 +42,10 @@ in
     enable = lib.mkDefault true;
 
     enableDefaultConfig = false;
+    # Host entries kept out of this public repository (work machines, for
+    # example) go into ~/.ssh/config.d. Home Manager writes the Include ahead
+    # of every block, so their options win over the `Host *` defaults below.
+    includes = [ "~/.ssh/config.d/*" ];
     # Keep this one definition: Nix merges a `settings."<pattern>"` attribute
     # path into `settings = ...` only while that value stays an attrset literal,
     # so the generated LAN patterns are merged inside it with `//` instead.
