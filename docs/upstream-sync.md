@@ -497,6 +497,28 @@ input 中有 `hosts/eva/nixos.nix` 时导入它。这个私有模块提供 eva �
 Verge 的服务和登录自启。两套代理都有 TUN，同时运行会争抢路由、DNS 和 GNOME 的系统代理设置。`hosts/eva/preservation.nix`
 中 Clash Verge 的数据目录保留，需要时把私有模块中的 backend 改回 `clash-verge` 即可。muon 不变。
 
+### 2026-11-10：合入 96fc0e35
+
+在 astra 上合并（9fd8b7f2），在 eva 上验证。上游这一段只有 3 个提交，合并没有冲突，也没有修改 Darwin 的路径和 ai 主机的文件：
+
+- abda12c0（#522）：CanoKey 模块让 polkit 的认证弹窗也接受触摸密钥，并新增 WA-050：nixpkgs 只在全局开启
+  `security.pam.u2f.enable` 时为 pam_u2f 放开 `polkit-agent-helper@`
+  的设备沙箱，而这里只对 sudo 和 polkit 单独开启。两项都只在 `myvars.canokeyU2fKeys`
+  非空时生效；本地的列表为空，eva 的 polkit 仍只用密码，`just host-diff`
+  中 eva、muon 没有变化。以后注册了密钥，sudo 和 polkit 都会接受触摸，登录和锁屏仍用密码。
+- 7c2f52c9：mihomo 的策略让 `services.googleapis.cn` 走代理，避免 Google
+  Play 选到大陆的 CDN 再经境外代理下载。eva 用私有模块提供的代理，muon 用 Clash
+  Verge，都不运行 mihomo，换成 mihomo 后才生效。
+- 96fc0e35（#523）：agents 的全局规则、评测和 skill 文档。本地默认不把它们装到主机上（`modules.agents.globalRules.enable`、`modules.agents.skills.enable`
+  关闭），只是仓库中的文档。
+
+没有需要用户决定的改动。`darwin.reviewed` 推进到 96fc0e35。
+
+合并之后在 astra 上更新了 flake
+input。nixpkgs 和 nixpkgs-darwin 仍停在上游也锁定的 e62746b0：WA-046 的断言没有变，Hydra 上 aarch64-darwin 的 mold 最近一次成功构建仍是 10-21 的（见“待处理”）。更新的有 home-manager、llm-agents（dsh 仍是 0.2.2-rc.1，web
+profile 的插件不受影响；qwen-code、pi、antigravity-cli 是小版本）、nixpkgs-master、nixpkgs-stable、firefox（nightly）、nicpkgs、nixos-apple-silicon、nur-ryan4yin、rust-overlay 和 xremap-flake。这天 astra 和 eva 从 GitHub 下载都只有约 40–110
+KB/s，nixpkgs-master 直连下载三次都中途断开，改用“常见问题”中固定修订预取的办法。
+
 ### 吸收的上游重构
 
 | 上游改动                                                                                              | 本地结果                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
@@ -720,6 +742,20 @@ input 失败**：用 SSH 预取同一修订，narHash 相同，之后求值会�
 ```bash
 nix flake prefetch 'git+ssh://git@github.com/<owner>/<repo>?rev=<rev>&shallow=1'
 ```
+
+**`nix flake update` 下载 nixpkgs 时反复报
+`Truncated tar archive`**：下载太慢、中途断开时，每次重试都重新解析分支，跟随的分支（例如
+`master`）移动后又要从头下载新的修订。先固定修订预取，几个 input 可以并行，astra 上可以经代理：
+
+```bash
+rev=$(curl -s -H 'Accept: application/vnd.github.sha' https://api.github.com/repos/NixOS/nixpkgs/commits/master)
+https_proxy=http://127.0.0.1:<端口> nix flake prefetch --json github:nixos/nixpkgs/$rev > /tmp/master.json
+```
+
+分支没有移动的 input（例如 `nixos-26.05`），预取之后直接 `nix flake update <input>`
+就会命中缓存。已经移动的，把预取输出的 `locked` 加上 `narHash`（取输出中的 `hash`）写入 `flake.lock`
+中这个 input 的 `locked`，`original` 不变；之后 `nix flake lock`
+不再改动文件，说明写得正确（2026-11-10 的 nixpkgs-master 就是这样更新的）。
 
 **eva 上求值卡在 `git ls-remote`**：`builtins.fetchGit`（例如 Warp 的 Cargo
 git 依赖）缓存的 ref 过期后（默认一小时）要重新查询远程的 HEAD。github.com 不通时，每个查询要等两分多钟才超时，然后改用过期的缓存。求值期间可以结束运行超过 15 秒的查询，效果相同：
