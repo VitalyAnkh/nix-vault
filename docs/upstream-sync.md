@@ -519,6 +519,18 @@ input。nixpkgs 和 nixpkgs-darwin 仍停在上游也锁定的 e62746b0：WA-046
 profile 的插件不受影响；qwen-code、pi、antigravity-cli 是小版本）、nixpkgs-master、nixpkgs-stable、firefox（nightly）、nicpkgs、nixos-apple-silicon、nur-ryan4yin、rust-overlay 和 xremap-flake。这天 astra 和 eva 从 GitHub 下载都只有约 40–110
 KB/s，nixpkgs-master 直连下载三次都中途断开，改用“常见问题”中固定修订预取的办法。
 
+在 eva 上验证：`just test` 通过；`just host-diff da123f4f eva muon` 中 muon 没有变化，eva 只有
+`NAUTILUS_4_EXTENSION_DIR` 指向的 `system-path` 换了哈希。eva、muon 的闭包与之前相比：
+
+- llm-agents 的 CLI 是小版本：antigravity-cli、antigravity-hub、antigravity-ide（2.5.5 →
+  2.6.0）、orca、pi、qwen-code。
+- firefox nightly，xremap 0.15.18。
+- `home/linux/gui/base/creative.nix`
+  取自 nixpkgs-stable（26.05）的程序版本不变，依赖有变化：wine 新依赖 samba，kicad 新依赖 wxwidgets，ldtk 的 appimage-run 新依赖 libmikmod。
+- 内核、initrd 和内核参数不变，可以在线切换。
+
+eva 第一次构建时，cache.numtide.com 上的 orca、qwen-code、antigravity-hub 下载反复中途断开，这天 eva 访问境外的 TLS 握手约一半失败；astra 上的 qwen-code 也是这样。改用“常见问题”中断点续传的办法取回。
+
 ### 吸收的上游重构
 
 | 上游改动                                                                                              | 本地结果                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
@@ -786,6 +798,21 @@ nix copy --from https://mirror.sjtu.edu.cn/nix-channels/store <路径>...
 ```
 
 已配置的 tuna、ustc 镜像只缓存部分路径，2026-10-30 时这些路径都返回 404。CUDA 等不在 cache.nixos.org 的包仍从 nix-community 或 NVIDIA 下载。
+
+**大的 NAR 反复下载到一半断开**（`Failure when receiving data from the peer`、`HTTP error 206`）：Nix 每次重试都从断点开始，但五次之后就放弃。改用
+`curl -C -` 断点续传到一个本地的文件缓存，再从那里导入，签名照常校验，结果与正常下载相同：
+
+```bash
+c=/tmp/narcache; h=<存储路径的哈希>; src=https://cache.numtide.com   # 或 narinfo 所在的缓存
+mkdir -p $c/nar; printf 'StoreDir: /nix/store\n' > $c/nix-cache-info
+curl -sf -o $c/$h.narinfo $src/$h.narinfo
+url=$(sed -n 's/^URL: //p' $c/$h.narinfo)          # cache.numtide.com 的 narinfo 没有 FileSize，用 HEAD 的 Content-Length 判断是否下完
+until curl -sf -C - --speed-limit 5000 --speed-time 60 -o $c/$url $src/$url; do sleep 3; done
+nix copy --no-recursive --from file://$c /nix/store/$h-<名字>
+```
+
+`--no-recursive` 只导入这一个路径，它引用的路径要已经在 store 中（看 narinfo 的
+`References`）；不加的话，Nix 会去本地缓存中找这些引用而失败。
 
 **在 astra 上求值 eva 失败**：eva 的配置用到 IFD（例如 codex-desktop-linux、Warp 的源码），需要 x86_64-linux 构建。改到 eva 上求值。
 
