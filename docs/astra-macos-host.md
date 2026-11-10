@@ -49,7 +49,11 @@ astra 只在 `outputs/aarch64-darwin/src/astra.nix` 中覆盖 `myvars`
   Font（Maple Mono NF
   CN）：tuios 和 Starship 提示符用到这些图标，而 Warp 只能设一个字体、没有后备字体，否则图标显示为
   `?`。
-- 用户的 `~/.ssh/config` 和客户端身份保持用户管理，包括 Colima 的 Include。
+- 用户的 `~/.ssh/config`
+  和客户端身份保持用户管理，包括 Colima 的 Include。工作开发机的条目只在私有仓库（`mysecrets`
+  输入）的 `ssh/work.conf` 中维护：astra 的 `~/.ssh/config.d/work`
+  是指向本机检出中这个文件的软链接，由 `~/.ssh/config` 里的 `Include ~/.ssh/config.d/*`
+  读入，修改后立即生效；eva 由私有模块在激活时安装同一个文件。
 - Git 的通用工具与配置由 HM 提供；姓名、邮箱、签名和个人 include 保留在用户自己的配置中。HM 不删除
   `~/.gitconfig`，也不向 astra 注入其他主机使用者的 Git 身份。
 - GPG 密钥与信任库保持可写，Pass 不指定原作者的加密/签名密钥。
