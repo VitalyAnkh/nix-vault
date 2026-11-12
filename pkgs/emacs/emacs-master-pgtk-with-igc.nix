@@ -11,6 +11,20 @@ let
   source-emacs = source-emacs-master-igc;
   isDarwin = stdenv.hostPlatform.isDarwin;
   baseEmacs = if isDarwin then emacs31 else emacs31-pgtk;
+  # No local patches. Of nixpkgs' Emacs patches only the native-comp one is
+  # applied: it adds the store paths of libgccjit, binutils and (on Darwin) the
+  # SDK to native-comp-driver-options, without which native compilation fails.
+  # The IGC source already has the fixes nixpkgs backports to Emacs 31 as CVE
+  # patches (master abc802ee and 044b0203), and nothing here uses the
+  # Nixpkgs-only early-default library. A patch nixpkgs adds later stops the
+  # evaluation until it is listed here.
+  appliedPatches = [ "native-comp-driver-options-30.patch" ];
+  skippedPatches = [
+    "CVE-2024-53920.patch"
+    "CVE-2026-108976.patch"
+    "load-the-early-default-library-after-early-init.el.patch"
+  ];
+  patchName = patch: patch.name or (baseNameOf (toString patch));
 in
 # Keep the historical package attribute for Home Manager and emacs-lsp-booster.
 (baseEmacs.override (
@@ -45,25 +59,14 @@ in
         builtins.substring 0 8 source-emacs.version
     }";
     inherit (source-emacs) src;
-    # nixpkgs' patches and postPatch apply to the IGC pin; its native-comp patch
-    # adds the toolchain and SDK paths to Emacs' own driver options.
     patches =
-      # The IGC source already has the flymake trust check that nixpkgs backports to
-      # Emacs 30 and 31 as CVE-2024-53920.patch, which therefore no longer applies.
-      builtins.filter (patch: !lib.hasSuffix "-CVE-2024-53920.patch" (toString patch)) old.patches
-      ++ [
-        # The IGC branch lacks master's fix for bug#81906 (commit 008a667120): the
-        # obsolete `make-autoload`, which Doom uses to generate autoloads, fails on
-        # every autoload cookie. Drop it once the pin includes that commit.
-        ./make-autoload-arglist.patch
-      ]
-      ++ lib.optionals isDarwin [
-        # Local patch, written against IGC's `struct frame **emacsframe`: answer
-        # AXValue/AXSelectedText from the queried window's own buffer via
-        # make_buffer_string, where the pinned nsterm.m uses the selected frame and
-        # copies raw bytes across the buffer gap. Drop it once upstream fixes this.
-        ./ns-accessibility-buffer-text.patch
-      ];
+      let
+        unknown = lib.subtractLists (appliedPatches ++ skippedPatches) (map patchName old.patches);
+      in
+      assert lib.assertMsg (
+        unknown == [ ]
+      ) "emacs: decide whether the IGC source needs nixpkgs' new patches: ${toString unknown}";
+      builtins.filter (patch: builtins.elem (patchName patch) appliedPatches) old.patches;
     postPatch = old.postPatch + ''
       grep -qF 'AC_INIT([GNU Emacs], [${version}],' configure.ac || {
         echo "emacs: version ${version} does not match AC_INIT in configure.ac:" >&2

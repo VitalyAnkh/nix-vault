@@ -5,7 +5,7 @@
 lib.genAttrs (builtins.attrNames outputs.darwinConfigurations) (_: {
   nodejsUsesUpstream = true;
   emacsIsNs = true;
-  emacsHasAutoloadFix = true;
+  emacsPatches = [ "native-comp-driver-options-30.patch" ];
   androidToolsUseMacArchive = true;
   androidToolsAtLeastUpstream = true;
   jetbrainsToolboxAtLeastUpstream = true;

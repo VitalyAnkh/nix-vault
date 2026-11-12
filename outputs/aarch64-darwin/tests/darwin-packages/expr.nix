@@ -16,11 +16,11 @@ lib.genAttrs (builtins.attrNames outputs.darwinConfigurations) (
   {
     # Node is nixpkgs' own build, so it and Wrangler come from the binary cache.
     nodejsUsesUpstream = isUpstream pkgs.nodejs-slim_24 upstreamPkgs.nodejs-slim_24;
-    # pkgs/emacs builds the IGC Emacs as the NS port on Darwin and backports
-    # bug#81906, without which Doom cannot generate its autoloads.
+    # pkgs/emacs builds the IGC Emacs as the NS port on Darwin.
     emacsIsNs = pkgs.emacs-master-pgtk-with-igc.pname == "emacs-master-ns-with-igc";
-    emacsHasAutoloadFix = builtins.any (
-      patch: lib.hasSuffix "/make-autoload-arglist.patch" (toString patch)
+    # No local patches; of nixpkgs' patches only the native-comp one.
+    emacsPatches = map (
+      patch: patch.name or (baseNameOf (toString patch))
     ) pkgs.emacs-master-pgtk-with-igc.patches;
     # pkgs/android-studio-tools installs Google's macOS command-line tools archive.
     androidToolsUseMacArchive = builtins.any (lib.hasInfix "/commandlinetools-mac") pkgs.android-studio-tools.src.urls;

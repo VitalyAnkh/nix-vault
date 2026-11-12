@@ -103,9 +103,10 @@ astra 只在 `outputs/aarch64-darwin/src/astra.nix` 中覆盖 `myvars`
   pin 或 nixpkgs），即使 `emacs-version` 不变，也要在激活后重新运行一次
   `doom sync`：否则新 Emacs 加载旧构建的 `comp.el`，其中 libgccjit 的 `-B`
   路径属于旧工具链，所有原生编译都报 `error invoking gcc driver`，`.eln` 缓存为空。
-- `pkgs/emacs` 补回 IGC 分支缺少的 bug#81906 上游修复，否则所有 `doom` 命令都报
-  `cl-assertion-failed: ((> (point) output-start))`；在 Darwin 上它还带有读取辅助功能文本的本地修复。这些补丁的原因与移除条件见
-  [Emacs 模块说明](../home/base/tui/editors/emacs/README.md)。
+- `pkgs/emacs` 不带本地补丁，nixpkgs 的 Emacs 补丁中只应用原生编译所需的
+  `native-comp-driver-options-30.patch`，原因见
+  [Emacs 模块说明](../home/base/tui/editors/emacs/README.md)。以前 `doom` 命令报
+  `cl-assertion-failed: ((> (point) output-start))`（bug#81906），IGC 分支自 cd6e1d54 起已包含上游的修复。
 
 `modules.editors.emacs.daemon.enable = false`：使用普通 GUI 启动，不自动接管用户 Emacs
 daemon；Emacs 全局快捷键打开的是 `Emacs.app`。可用 `emacs -Q` 验证纯净启动。

@@ -60,18 +60,9 @@ patch, `doom sync` fails with `(wrong-type-argument listp "9.7")` while generati
 init file. Drop the patch once the pinned Doom reads these records itself: the build fails when the
 patch no longer applies.
 
-The Emacs package in `pkgs/emacs` carries a backport of the fix for Emacs bug#81906, which the IGC
-branch lacks. Without it, the obsolete `make-autoload` fails on every autoload cookie; Doom uses it
-to generate its autoloads, so every `doom` command fails with
-`cl-assertion-failed: ((> (point) output-start))`.
-
-On macOS, `pkgs/emacs` also applies `ns-accessibility-buffer-text.patch`, a local fix with no
-upstream reference. Without it, Emacs answers the accessibility attributes `AXValue` and
-`AXSelectedText` from the selected frame rather than the queried window, takes the region from the
-global PRIMARY selection, and copies raw buffer bytes, so an accessibility client such as VoiceOver
-can receive another window's text or bytes from the buffer gap. The patch reads the queried window's
-own buffer and region through the buffer-substring helper. Drop it once the pinned Emacs source
-handles these attributes the same way; the build fails when the patch no longer applies.
+The Emacs package in `pkgs/emacs` carries no local patches. Of nixpkgs' Emacs patches it applies
+only `native-comp-driver-options-30.patch`, which native compilation needs; the reasons for skipping
+the others are in `pkgs/emacs/emacs-master-pgtk-with-igc.nix`.
 
 `daemon.enable` defaults to `true` on macOS and `false` on Linux. It controls the launchd agent on
 macOS and the Home Manager Emacs user service on Linux. With the daemon disabled, start Emacs
