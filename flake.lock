@@ -242,13 +242,13 @@
         "shallow": true,
         "submodules": true,
         "type": "git",
-        "url": "https://github.com/doomemacs/doomemacs"
+        "url": "https://github.com/doomemacs/core"
       },
       "original": {
         "shallow": true,
         "submodules": true,
         "type": "git",
-        "url": "https://github.com/doomemacs/doomemacs"
+        "url": "https://github.com/doomemacs/core"
       }
     },
     "fcitx5-vinput": {

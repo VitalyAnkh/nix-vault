@@ -4,7 +4,7 @@
 #
 # Emacs Tutorials:
 #  1. Official: <https://www.gnu.org/software/emacs/tour/index.html>
-#  2. Doom Emacs: <https://github.com/doomemacs/doomemacs/blob/master/docs/index.org>
+#  2. Doom Emacs: <https://github.com/doomemacs/core/blob/master/docs/index.org>
 #
 {
   config,

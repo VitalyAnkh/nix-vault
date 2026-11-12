@@ -15,12 +15,12 @@
 
 ## Useful Links
 
-- Framework: <https://github.com/doomemacs/doomemacs>
+- Framework: <https://github.com/doomemacs/core>
   - key bindings:
     - source code:
-      <https://github.com/doomemacs/doomemacs/blob/master/modules/config/default/%2Bevil-bindings.el>
-    - docs: <https://github.com/doomemacs/doomemacs/blob/master/modules/editor/evil/README.org>
-  - module index: <https://github.com/doomemacs/doomemacs/blob/master/docs/modules.org>
+      <https://github.com/doomemacs/core/blob/master/modules/config/default/%2Bevil-bindings.el>
+    - docs: <https://github.com/doomemacs/core/blob/master/modules/editor/evil/README.org>
+  - module index: <https://github.com/doomemacs/core/blob/master/docs/modules.org>
 - LSP Client: <https://github.com/manateelazycat/lsp-bridge>
 - Emacs Wiki: <https://www.emacswiki.org/emacs/SiteMap>
 - Awesome Emacs: <https://github.com/emacs-tw/awesome-emacs#lsp-client>
