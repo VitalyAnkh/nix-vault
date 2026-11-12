@@ -35,10 +35,6 @@
           }
           // extra;
         });
-      noaccess = {
-        mode = "0000";
-        owner = "root";
-      };
       high_security = {
         mode = "0500";
         owner = "root";
@@ -49,10 +45,6 @@
       };
     in
     lib.mkMerge [
-      (optionalSecret "vitalyr-gpg-subkeys.priv.age"
-        "${mysecrets}/vitalyr-gpg-subkeys-2024-01-27.priv.age.age"
-        (noaccess // { path = "/etc/agenix/vitalyr-gpg-subkeys.priv.age"; })
-      )
       (optionalSecret "rclone.conf" "${mysecrets}/rclone.conf.age" (
         high_security // { path = "/etc/agenix/rclone.conf"; }
       ))

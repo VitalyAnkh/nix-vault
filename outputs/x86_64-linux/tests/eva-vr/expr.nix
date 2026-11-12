@@ -39,5 +39,4 @@ in
   wivrnUsesNvidiaVulkan = cfg.services.wivrn.monadoEnvironment.__VK_LAYER_NV_optimus == "NVIDIA_only";
   wivrnStatePreserved = privatelyPreserved ".config/wivrn";
   adbStatePreserved = privatelyPreserved ".android";
-  qwenStatePreserved = privatelyPreserved ".qwen";
 }

@@ -304,12 +304,6 @@ in
         # cache together under DSH_HOME, which defaults to ~/.dsh.
         ".dsh"
         ".pi"
-        # Qwen Code keeps settings, credentials, history, sessions, and logs
-        # under ~/.qwen; keep the whole directory private and persistent.
-        {
-          directory = ".qwen";
-          mode = "0700";
-        }
         ".local/state/codex-desktop"
         # Orca ADE (llm-agents), distinct from OrcaSlicer
         ".orca"

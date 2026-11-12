@@ -1,8 +1,6 @@
 {
   disko,
   myvars,
-  lib,
-  pkgs-npu,
   ...
 }:
 #############################################################
@@ -35,7 +33,7 @@ in
     ./secureboot.nix
 
     # services
-    ./asr.nix
+    ./asr
     ./idle-suspend.nix
   ];
 
@@ -71,13 +69,6 @@ in
   # profile's rootless Podman (modules/nixos/agent.nix), built from the `~/src`
   # checkout that ./preservation.nix keeps.
 
-  # Speech recognition runs on the NPU, see ./asr.nix. The driver and the
-  # compiler it loads come from NixOS/nixpkgs#570230, which is unmerged, so they
-  # are taken from that branch as `pkgs-npu`; the stock driver cannot find the
-  # compiler, the patched one loads it from its own store path. The service sets
-  # this itself -- the session variable is for manual runs.
-  environment.sessionVariables.ZE_ENABLE_ALT_DRIVERS = "${lib.getLib pkgs-npu.intel-npu-driver}/lib/libze_intel_npu.so";
-
   # The daemons of the hosts that build here (modules/nixos/base/remote-builders.nix).
   # Their host keys have no passphrase, so they only get the daemon protocol, as
   # nix.sshServe does. `--store daemon` hands builds to the system daemon instead
@@ -107,6 +98,12 @@ in
 
   networking.useNetworkd = true;
   systemd.network.enable = true;
+
+  # Rootless Podman's user units wait for the system network-online.target before
+  # starting containers. Nothing else starts that target on this networkd host
+  # since the LAN exporters moved to FreeBind sockets, so the user wait unit timed
+  # out after 90s and held llama-swap and magpie back on every boot.
+  systemd.targets.network-online.wantedBy = [ "multi-user.target" ];
 
   # Predictable names follow the PCIe topology, so match the `en*` prefix instead of
   # a name; one wired port, so one link.

@@ -35,7 +35,7 @@ in
       {
         source = "${mysecrets}/public/vitalyr-gpg-keys-2024-11-25.pub";
         trust = 5;
-      } # ultimate trust, my own keys.
+      } # ultimate trust, my own key.
     ];
 
     # This configuration is based on the tutorial below, it allows for a robust setup

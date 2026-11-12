@@ -1105,22 +1105,6 @@
         "type": "github"
       }
     },
-    "nixpkgs-npu": {
-      "locked": {
-        "lastModified": 1793367951,
-        "narHash": "sha256-qRbpvGIGAc+CtEsntW+GSd4EXzoZiQ+dx/+BdosI+zA=",
-        "owner": "ryan4yin",
-        "repo": "nixpkgs",
-        "rev": "0839ff0038235af8c4818faec0fb31faff81639e",
-        "type": "github"
-      },
-      "original": {
-        "owner": "ryan4yin",
-        "ref": "openvino-npu-compiler",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
     "nixpkgs-patched": {
       "locked": {
         "lastModified": 1793459509,
@@ -1426,7 +1410,6 @@
         "nixpkgs-blender": "nixpkgs-blender",
         "nixpkgs-darwin": "nixpkgs-darwin",
         "nixpkgs-master": "nixpkgs-master",
-        "nixpkgs-npu": "nixpkgs-npu",
         "nixpkgs-patched": "nixpkgs-patched",
         "nixpkgs-stable": "nixpkgs-stable_2",
         "nu_scripts": "nu_scripts",
@@ -1439,7 +1422,8 @@
         "rust-overlay": "rust-overlay_3",
         "wallpapers": "wallpapers",
         "winapps": "winapps",
-        "xremap-flake": "xremap-flake"
+        "xremap-flake": "xremap-flake",
+        "nixpkgs-small": "nixpkgs-small"
       }
     },
     "rust-overlay": {
@@ -1744,6 +1728,22 @@
       "original": {
         "owner": "Supreeeme",
         "repo": "xwayland-satellite",
+        "type": "github"
+      }
+    },
+    "nixpkgs-small": {
+      "locked": {
+        "lastModified": 1794378162,
+        "narHash": "sha256-gJGP/BWdmF1pbjAzbuICPSeGkMncAiDt9PRe7L13664=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "c24da8b1d51f447e8faedcb5cb823b3f84346a60",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixos-unstable-small",
+        "repo": "nixpkgs",
         "type": "github"
       }
     }

@@ -27,8 +27,6 @@ in
     # nur-ryan4yin.packages.${pkgs.stdenv.hostPlatform.system}.dsh
     agentPackages.dsh
     opencode
-    # Qwen Code keeps its settings, credentials and sessions in ~/.qwen.
-    agentPackages.qwen-code
     agentPackages.pi
     # Google Antigravity CLI (`agy`); keeps its state under ~/.gemini.
     agentPackages.antigravity-cli

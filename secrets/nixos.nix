@@ -68,10 +68,6 @@ let
       // extra;
     };
 
-  noaccess = {
-    mode = "0000";
-    owner = "root";
-  };
   high_security = {
     mode = "0500";
     owner = "root";
@@ -138,14 +134,6 @@ in
     (mkIf cfg.desktop.enable {
       age.secrets = mkMerge [
         # ---------------------------------------------
-        # No discretionary access; privileged root can still bypass file modes.
-        # ---------------------------------------------
-
-        # .age means the decrypted file is still encrypted by age(via a passphrase)
-        (optionalSecretFrom "vitalyr-gpg-subkeys.priv.age" [
-          "${mysecrets}/vitalyr-gpg-subkeys-2024-01-27.priv.age.age"
-        ] noaccess)
-        # ---------------------------------------------
         # only root can read this file.
         # ---------------------------------------------
 
@@ -197,10 +185,6 @@ in
             user = myvars.username;
           }
         )
-
-        (optionalEtcFrom "agenix/vitalyr-gpg-subkeys.priv.age" "vitalyr-gpg-subkeys.priv.age" [
-          "${mysecrets}/vitalyr-gpg-subkeys-2024-01-27.priv.age.age"
-        ] { mode = "0000"; })
 
         # The following secrets are used by home-manager modules
         # So we need to make then readable by the user

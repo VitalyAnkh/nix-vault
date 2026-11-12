@@ -68,6 +68,11 @@ extend-ignore-re = [
   # ROCm's `HSA_OVERRIDE_GFX_VERSION` (Heterogeneous System Architecture); the
   # dictionary wants "HAS".
   "HSA",
+
+  # OpenPGP/GnuPG's `fpr` record and `FPR` for fingerprint; the checker wants
+  # "for"/"far"/"fps".
+  "fpr",
+  "FPR",
 ]
 # Abbreviated Git commit hashes (ba149b5e, 0704ba5e): lowercase hex with at least
 # one digit, so ordinary words are still checked.
