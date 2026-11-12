@@ -531,6 +531,82 @@ KB/s，nixpkgs-master 直连下载三次都中途断开，改用“常见问题�
 
 eva 第一次构建时，cache.numtide.com 上的 orca、qwen-code、antigravity-hub 下载反复中途断开，这天 eva 访问境外的 TLS 握手约一半失败；astra 上的 qwen-code 也是这样。改用“常见问题”中断点续传的办法取回。
 
+### 2026-11-12：合入 1bef53bf
+
+在 astra 上合并（a18fa900），在 eva 上验证。上游这一段有 9 个提交，其中两个只更新 `flake.lock`：
+
+- c05181f9：删除 Qwen Code。用户决定跟随（2026-11-12）：agents 模块不再安装它，eva 不再持久化
+  `~/.qwen`。eva 的 `~/.qwen`
+  是空的，astra 上没有这个目录，shell 历史中也没有用过它；muon 一直没有切换到持久化 `~/.qwen`
+  的generation。
+- 093f3ad8、a6fd893c、c703b590：aquamarine 的 NPU 改用 NixOS 自带的模块，软件包取自新增的
+  `nixpkgs-small` input（nixos-unstable-small），替代
+  `nixpkgs-npu`（WA-037）。只有 aquamarine 用到它。
+- 0dcbbb02、c909b134、d5ee0b16（#524–#526）：Ryan 注册了两把新的 CanoKey，各主机的 SSH 只认其中的常驻 FIDO2 密钥，各主机自己的 SSH 密钥和旧的 GPG 子密钥退役，pass 改用 CanoKey 上的 OpenPGP 密钥。这些是 Ryan 自己的密钥，本地不跟随（见下表）。跟随的部分：
+  - 删除部署旧 GPG 子密钥的 secret。私有仓库没有这个文件，原本就被跳过，没有变化。
+  - `home/base/tui/gpg/README.md` 采用上游的重写，换成本仓库的路径、邮箱和密钥说明。
+  - 上游不再在 `modules/base/nix.nix` 中设置 `nixpkgs.config`（本地原本就只在
+    `modules/nixos/base/nix.nix` 中设置），新增的 Darwin 测试 `nixpkgs-config` 在本地通过。
+  - frieren、shoukei、ai 的 GitHub `IdentityFile`
+    删除只涉及上游的主机，eva、muon 各用自己的 GitHub 密钥，不变。
+
+需要用户决定的只有 Qwen Code。`darwin.reviewed`
+推进到 1bef53bf：Darwin 路径上的 d5ee0b16（GPG 子密钥的 secret）已跟随，0dcbbb02 中 frieren 的
+`IdentityFile` 不适用于 astra。
+
+合并之后的改动：
+
+- flake input：firefox、llm-agents（dsh 0.2.2-rc.1 →
+  rc.2，见“待处理”）、nixos-apple-silicon、nixpkgs-master、nu_scripts、nur-ryan4yin、rust-overlay 更新到最新。nixpkgs 和 nixpkgs-darwin 仍停在上游也锁定的 e62746b0。doomemacs 已是 master 的最新提交 7ccac7f6。GitHub 把
+  `doomemacs/doomemacs` 改名为
+  `doomemacs/core`，input 和文档中的链接改为新名字；锁定的修订和 narHash 不变，从新地址重新拉取得到同一个 store 路径。
+- 用户要求更新 Emacs：IGC 的 pin 从 974872b2（2026-10-16）更新到 cd6e1d54（2026-11-12）。用户同时要求尽量不给 Emacs 打补丁（2026-11-13），现在只应用 nixpkgs 的
+  `native-comp-driver-options-30.patch`：它把 libgccjit、binutils 和 Darwin SDK 的 store 路径写进
+  `native-comp-driver-options`，没有它原生编译无法运行。去掉的补丁：
+  - 本地回移的 bug#81906 修复：新源码已包含（008a667120）。
+  - nixpkgs 的
+    `CVE-2024-53920.patch`、`CVE-2026-108976.patch`：新源码已包含（abc802ee、044b0203）；后者原来没有过滤，构建在 patchPhase 失败。
+  - nixpkgs 的 early-default 补丁：只为 nixpkgs 的 `emacsWithPackages` 加载 `early-default`
+    库，本仓库和 Doom 都不用。
+  - astra 上读取辅助功能文本的本地补丁（`ns-accessibility-buffer-text.patch`）：上游没有对应的修复，也不是为具体需求加的，Emacs 回到上游的行为（VoiceOver 等辅助功能客户端读取
+    `AXValue`、`AXSelectedText` 时取选中的 frame）。
+
+  nixpkgs 以后新增 Emacs 补丁时求值会失败，确认后再归入应用或跳过的列表。astra 激活后要在新的登录 shell 中运行
+  `doom sync`。
+
+- 用户要求所有主机安装 Bambu
+  Studio（3D 打印切片软件）。eva、muon 原来用 nixpkgs-master 的源码构建（02.08.00.50），它缺少
+  `device_page` 网页资源，耗材管理打不开（见 `hardening/README.md`）。按用户决定，x86_64 改用
+  `pkgs/bambu-studio` 打包的官方 AppImage（02.09.01.70，Ubuntu
+  24.04 版），由 nvfetcher 跟踪 GitHub 的最新发布，其中带有
+  `resources/web/device_page`。AppImage 链接 WebKitGTK
+  4.1 却没有附带，FHS 环境补上它，以及 glib-networking 和 GStreamer 插件（与 nixpkgs 的构建相同）；原来的
+  `GDK_DPI_SCALE=0.8` 保留。astra 用 Homebrew 的 `bambu-studio`
+  cask（同一版本），它不会自行更新，与 godot 一样用 `brew upgrade`
+  升级。astra 上 nvfetcher 读 GitHub
+  API 时遇到 403（未认证请求的额度用完），改在 eva 上运行 nvfetcher，再把结果合入 `pkgs/_sources`。
+
+在 eva 上验证：`just test` 通过；`just host-diff 248ac728 eva muon`
+中 eva、muon 只少了 qwen-code 和各用户 `~/.qwen` 的持久化，eva 另有 `NAUTILUS_4_EXTENSION_DIR`
+指向的 `system-path` 换了哈希。eva、muon 都构建通过，与 eva 正在运行的 gen 290 相比：
+
+- Bambu Studio 02.08.00.50 →
+  02.09.01.70（AppImage 与 FHS 环境）。源码构建带来的 wxwidgets、boost、assimp、nanum 字体随之离开闭包。`bambu-studio --help`
+  在 eva 上能运行，动态库都能加载；图形界面没有在 eva 的桌面上启动测试。
+- Emacs 974872b2 → cd6e1d54；dsh 0.2.2-rc.1 →
+  rc.2，antigravity、grok、kimi-code、pi、opencode 是小版本；qwen-code 和 `~/.qwen` 的挂载删除。
+- 内核、initrd 和内核参数不变，可以在线切换。Emacs 的 store 路径变了，切换后要在新的登录 shell 中运行
+  `doom sync`。
+
+在 astra 上构建 astra 通过，astra、fern、frieren 的 `system.drvPath`
+都能求值。与 astra 正在运行的 gen 19 相比：Emacs 974872b2 → cd6e1d54，dsh 和 agent
+CLI 同上，qwen-code 删除；Brewfile 多了 `bambu-studio`
+cask，它的 DMG 已提前下载到 Homebrew 的缓存。Emacs 构建日志中的
+`loaddefs-gen: load error for tramp-adb`（`void-variable tramp-local-host-names`）只在 Darwin 上出现，旧 pin 的构建也有：上游的
+`tramp-integration.el` 在 Darwin 上加载时就读取这个变量，不影响构建。激活 astra 前照常检查
+`brew bundle cleanup` 和 `check`；激活后运行 `doom sync`，并把 dsh web
+profile 的插件固定到rc.2（见“待处理”）。
+
 ### 吸收的上游重构
 
 | 上游改动                                                                                              | 本地结果                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
@@ -595,7 +671,7 @@ eva 第一次构建时，cache.numtide.com 上的 orca、qwen-code、antigravity
 | 桌面应用的 nixpak 沙箱（#490、#491、#493–#497）                                                       | 用户决定不跟随（2026-11-04），只有 WeChat 改用上游的框架（下一行）。Firefox、QQ、Telegram 保留本地的模块（主机网络、PipeWire、摄像头），Chrome、Edge、Brave、Chromium、Blender、OBS、Krita、MuseScore、两个切片软件、mpv、imv、Zoom、Foliate、Remmina 不进沙箱。在 eva 上实测：Chrome 进沙箱后访问不了 127.0.0.1，Codex 扩展的本机程序会失效，保存的密码可能解不开；走 XWayland 的应用丢失 fcitx（`XMODIFIERS` 被清掉）；mpv 的独立 `/tmp` 使 go-musicfox 连不上它；Blender 看不到 `~/projects`；pasta 给沙箱的网段与 eva 的局域网重叠 |
 | WeChat 改用 nixpkgs 的原生包和 nixpak（#492）                                                         | 用户决定跟随（2026-11-04）。原来的 bwrap 包装依赖 nixpkgs 的 AppImage，nixpkgs 11-01 起 WeChat 改为 .deb 包后无法构建。数据从 `~/Documents/WeChat_Data/home` 改到 `~/.var/app/com.tencent.WeChat/data/wechat`（`~/.var` 已持久化），切换前要迁移，见“待处理”。上游只在 niri 上验证过，GNOME 下的输入法要在切换后确认                                                                                                                                                                                                                   |
 | npm 镜像（af084f1e、c4c75a2d）                                                                        | 用户决定只在 Nix 构建中使用（华为镜像，只在缓存未命中、需要下载时起作用，输出路径不变）；`~/.npmrc` 仍用 npm 官方源                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| Qwen Code，opencode2 改名为 opencode（432de267）                                                      | 用户决定跟随：只保留 `opencode` 命令；eva 持久化 `~/.qwen`（0700）                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| Qwen Code，opencode2 改名为 opencode（432de267）                                                      | 用户决定跟随：只保留 `opencode` 命令。上游随后删除 Qwen Code（c05181f9），用户决定跟随（2026-11-12），eva 不再持久化 `~/.qwen`                                                                                                                                                                                                                                                                                                                                                                                                         |
 | IPython 的帮助函数，关闭历史并不再持久化 `~/.ipython`（#510）                                         | 用户决定只加帮助函数、保留历史（`home/base/tui/editors/default.nix` 关掉上游的 `ipython_config.py`）；eva 继续持久化 `~/.ipython`                                                                                                                                                                                                                                                                                                                                                                                                      |
 | OpenRGB 开机和唤醒后关灯（#502、#508）                                                                | 用户决定 eva 跟随（`hosts/eva/openrgb/`）；eva 原来没有 profile，灯效是主板固件的默认值                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | `/etc/ssh` 在 initrd 中挂载（560a6cc2）                                                               | 用户决定 eva、muon 跟随（muon 共用 eva 的 preservation）。原来 `/etc/ssh` 在激活脚本写入 `authorized_keys.d` 之后才挂载，用 boot + 重启切换时 Nix 中公钥的改动不生效                                                                                                                                                                                                                                                                                                                                                                   |
@@ -609,6 +685,7 @@ eva 第一次构建时，cache.numtide.com 上的 orca、qwen-code、antigravity
 | CanoKey 用于 sudo 和 SSH 登录（#516、7cfda39c）                                                       | 模块跟随；`vars` 中的密钥列表为空，sudo 和 SSH 登录不变，注册密钥后再填入                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | 桌面主机对 `hostsAddr` 的别名都转发 SSH agent（7cfda39c）                                             | 不跟随：它服务于服务器上的 pam_rssh，而这些主机没有 CanoKey 的 SSH 密钥；转发到 muon 等多用户主机时，那里的 root 能用 astra 的 agent 签名                                                                                                                                                                                                                                                                                                                                                                                              |
 | substituters 加入 ryan4yin.cachix.org 及其公钥（dfa53c71、35155906）                                  | 不跟随：本地不用 NUR 中依赖它的包（dsh 来自 llm-agents，computer-use-linux、cua-driver 来自 `pkgs/`），而信任它的公钥等于信任它签名的任何路径                                                                                                                                                                                                                                                                                                                                                                                          |
+| Ryan 的新 CanoKey，各主机 SSH 密钥和旧 GPG 子密钥退役（#524–#526）                                    | 不跟随：这些是 Ryan 自己的密钥。`vars`、GnuPG、pass 和 SSH 保留本仓库的密钥；`"*"` 不加 `~/.ssh/canokey-*` 的 `IdentityFile`；macOS 不为 FIDO2 密钥改用 nixpkgs 的 openssh，astra 本地没有注册 CanoKey                                                                                                                                                                                                                                                                                                                                 |
 
 ### 有意保留的差异
 
@@ -640,7 +717,8 @@ eva 第一次构建时，cache.numtide.com 上的 orca、qwen-code、antigravity
 | `hardening/nixpaks`、`hardening/tests/policy-lib.nix`、`home/linux/gui/base/{browsers,creative,media,misc}.nix`、`xdg/autostart.nix`                | b    | 用户决定不扩大沙箱：只有 WeChat 用上游的框架，Firefox、QQ、Telegram 用本地的模块（`gui-base.nix`、`host-network.nix`、`custom-policy.nix`），策略测试只检查 WeChat，原因见上表           |
 | `home/linux/gui/base/gaming.nix`、`modules/nixos/desktop/gaming.nix`、`.agents/skills/nix-config-umu-game`、`hosts/eva/preservation.nix` 的游戏目录 | b    | 用户决定不把 Steam、Heroic、umu 放进沙箱（2026-11-07）：保留 `programs.steam`（extest、protontricks）、现有的数据目录和 2026-11-04 时的 umu 启动器 skill                                 |
 | `hardening/nixpaks/modules/gui-base.nix` 的 `/tmp`                                                                                                  | b    | 开 X11 的应用（QQ）用每个应用自己的目录，其余仍用 tmpfs，原因见上文“2026-11-07：合入 2b8274de”                                                                                           |
-| `home/base/tui/ssh.nix`                                                                                                                             | b    | `hostsAddr` 的别名不转发 SSH agent（上游 7cfda39c），原因见上表                                                                                                                          |
+| `home/base/tui/ssh.nix`                                                                                                                             | b    | `hostsAddr` 的别名不转发 SSH agent（上游 7cfda39c），`"*"` 不加 CanoKey 的 `IdentityFile`，macOS 不改用 nixpkgs 的 openssh（上游 0dcbbb02），原因见上表                                  |
+| `home/linux/gui/base/creative.nix` 的 `bambu-studio`、`pkgs/bambu-studio`                                                                           | b    | x86_64 用官方 AppImage（带 `device_page`），不用 nixpkgs 的源码构建，见上文“2026-11-12：合入 1bef53bf”                                                                                   |
 | `modules/nixos/base/nix.nix` 的 `nixpkgs.config`                                                                                                    | c    | 上游设在共享的 `modules/base/nix.nix` 中，nix-darwin 拒绝它与 `nixpkgs.pkgs` 同时出现                                                                                                    |
 | `home/base/tui/editors/default.nix`                                                                                                                 | b    | 保留 IPython 的历史，关掉上游的 `ipython_config.py`                                                                                                                                      |
 | `home/base/tui/shell/default.nix` 的 `modules.shell.secrets.enable`                                                                                 | c    | 上游用它控制是否读取 `~/.secrets/nushell-secrets.nu`；本地没有这个文件，这个选项改为控制工作 alias（`/etc/agenix/alias-for-work.nushell`），agent 主机关闭                               |
@@ -715,8 +793,10 @@ eva 第一次构建时，cache.numtide.com 上的 orca、qwen-code、antigravity
 - 私有 secrets 仓库的规则文件：agenix 0.18 已把 `RULES` 和自动查找 `secrets.nix`
   标为弃用，以后的版本会删除。私有仓库改名为 `agenix-rules.nix`、规则键去掉 `./`
   前缀之后，`secrets/README.md` 再改用上游的写法（上游 01d2e764）。
-- dsh 升到 0.2.1-rc.5（57e96049）之后，web
-  profile 的插件要重新固定到 rc.5，并在下次启动的错误输出中检查有没有 `disabling profile plugin`。
+- astra 激活 dsh 0.2.2-rc.2（2026-11-12 的 input 更新）之后，web
+  profile 中精确依赖 0.2.2-rc.1 的插件（六个 `@deepseek-ai/dsh-*`
+  和本地的 dsh-bridge-browser）要重新固定到 rc.2，并在下次启动的错误输出中检查有没有
+  `disabling profile plugin`；按版本范围依赖的插件不受影响。eva 的 web profile 没有安装插件。
 - 切换 eva 前，在 WeChat 没有运行时迁移它的数据（2026-11-04 的合并改用 nixpak 的 WeChat）。旧的数据在
   `~/Documents/WeChat_Data`：`home/.xwechat`（登录和设置）和
   `xwechat_files`（聊天文件，`home/xwechat_files` 是指向它的绝对链接）。新的 HOME 是
