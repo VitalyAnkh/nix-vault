@@ -7,9 +7,13 @@
   ...
 }:
 let
+  # x86_64 uses the official AppImage (pkgs/bambu-studio), which includes the
+  # device_page web bundle that nixpkgs' source build omits.
+  bambu-studio-base =
+    if pkgs.stdenv.hostPlatform.isx86_64 then pkgs.bambu-studio else pkgs-master.bambu-studio;
   bambu-studio = pkgs.symlinkJoin {
-    name = "bambu-studio-${pkgs-master.bambu-studio.version}";
-    paths = [ pkgs-master.bambu-studio ];
+    name = "bambu-studio-${bambu-studio-base.version}";
+    paths = [ bambu-studio-base ];
     nativeBuildInputs = [ pkgs.makeWrapper ];
     postBuild = ''
       # Work around wxWidgets HiDPI text clipping under fractional scaling.

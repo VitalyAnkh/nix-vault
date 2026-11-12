@@ -41,3 +41,10 @@ fetch.url = "https://www.jianguoyun.com/static/exe/installer/nutstore_linux_src_
 src.webpage = "https://api.github.com/repos/warpdotdev/Warp/commits/master"
 src.regex = "\\A\\s*\\{\\s*\"sha\"\\s*:\\s*\"([0-9a-f]{40})\""
 fetch.github = "warpdotdev/Warp"
+
+[source-bambu-studio]
+# The release assets add a build timestamp to the tag, so take the asset path
+# ("v<tag>/BambuStudio_ubu24-v<tag>-<build>") from the latest release.
+src.webpage = "https://api.github.com/repos/bambulab/BambuStudio/releases/latest"
+src.regex = "releases/download/(v[0-9.]+/BambuStudio_ubu24-v[0-9.]+-[0-9]+)\\.AppImage"
+fetch.url = "https://github.com/bambulab/BambuStudio/releases/download/$ver.AppImage"

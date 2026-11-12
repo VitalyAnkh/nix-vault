@@ -218,10 +218,13 @@ Nix 声明 astra 需要哪些 Homebrew 包，Homebrew 负责安装和更新它�
 每个工具只保留一个来源，按以下规则选择：
 
 - **cask**：会自行更新、需要厂商安装器或系统扩展的 GUI 应用。
-  - 除 Godot 外，这些应用都会自行更新（cask 标记为
+  - 除 Godot 和 Bambu Studio 外，这些应用都会自行更新（cask 标记为
     `auto_updates`）。HM 复制的应用在每次激活时同步回 Nix 的版本，与应用内更新互相覆盖；固定的 nixpkgs 版本通常也落后于厂商发布。
   - Godot 是例外：cask 安装官方发布的正式版，不会自行更新；仓库的
     `pkgs.godot`（`pkgs/godot`）则从 Godot 开发分支的源码构建。
+  - Bambu Studio 同样不会自行更新（有新版本时只提示去下载），用 `brew upgrade --cask bambu-studio`
+    升级。nixpkgs 的 `bambu-studio` 只在 Linux 上构建；Linux 主机用 `pkgs/bambu-studio`
+    打包的官方AppImage。
   - Karabiner-Elements 的虚拟键盘是 DriverKit 系统扩展，需由厂商安装器放入
     `/Applications`。固定版本的 nix-darwin `services.karabiner-elements` 所启动的
     `karabiner_grabber`、`karabiner_observer` 在当前 Karabiner-Elements 中已不存在。键位仍由
@@ -249,7 +252,7 @@ Nix 声明 astra 需要哪些 Homebrew 包，Homebrew 负责安装和更新它�
 | 设置                                              | 值        | 原因                                                                                                                                                                                                                                                                                                           |
 | ------------------------------------------------- | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `onActivation.cleanup`                            | `"check"` | 激活开始时检查：存在清单外的包时，激活在修改系统之前失败并列出它们，不卸载任何包，所以每个 Homebrew 包都在清单中声明。`"uninstall"` 和 `"zap"` 会卸载清单外的全部包，`"zap"` 还会删除 cask 的数据，例如 `~/Library/Application Support/Zotero`、`~/.warp` 和 `~/.config/karabiner`，清单遗漏一项就会丢失数据。 |
-| `onActivation.autoUpdate`、`onActivation.upgrade` | `false`   | 激活结果可重复，switch 不改变已安装的版本。除 Godot 外的 cask 由应用自行更新；Godot 和 formula 用 `brew upgrade` 显式升级。                                                                                                                                                                                    |
+| `onActivation.autoUpdate`、`onActivation.upgrade` | `false`   | 激活结果可重复，switch 不改变已安装的版本。除 Godot 和 Bambu Studio 外的 cask 由应用自行更新；这两个 cask 和 formula 用 `brew upgrade` 显式升级。                                                                                                                                                              |
 | `onActivation.extraEnv`                           | USTC 镜像 | 激活通过 `sudo --user` 运行 `brew bundle`，sudo 会重置环境，用户 shell 中的变量不会传入。HM 从同一处导出这些变量，交互使用与激活使用相同的镜像。                                                                                                                                                               |
 | `global.brewfile`                                 | `true`    | 设置 `HOMEBREW_BUNDLE_FILE`，`brew bundle check` 和 `brew bundle cleanup` 直接使用生成的 Brewfile。                                                                                                                                                                                                            |
 | shell 集成                                        | 关闭      | 不运行 `brew shellenv`，避免 Homebrew 排到 Nix 之前；Homebrew 的路径和变量由 HM 按上文顺序声明。                                                                                                                                                                                                               |

@@ -10,8 +10,9 @@
       # "zap" would remove unlisted packages instead (zap also deletes cask data such
       # as ~/Library/Application Support/Zotero).
       cleanup = "check";
-      # Versions change only on request: the casks other than godot update
-      # themselves; godot and formulae are upgraded with `brew upgrade`.
+      # Versions change only on request: the casks other than godot and
+      # bambu-studio update themselves; those two and formulae are upgraded
+      # with `brew upgrade`.
       autoUpdate = false;
       upgrade = false;
       # Activation runs `brew bundle` through sudo, which drops the user's
@@ -32,6 +33,8 @@
     casks = [
       # adb and fastboot (Google's build); Nix does not install android-tools here.
       "android-platform-tools"
+      # Bambu Lab's slicer; nixpkgs builds it for Linux only.
+      "bambu-studio"
       "godot"
       "input-source-pro"
       "karabiner-elements"

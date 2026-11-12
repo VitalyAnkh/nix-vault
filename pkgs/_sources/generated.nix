@@ -6,6 +6,14 @@
   dockerTools,
 }:
 {
+  source-bambu-studio = {
+    pname = "source-bambu-studio";
+    version = "v02.09.01.70/BambuStudio_ubu24-v02.09.01.70-20261103183404";
+    src = fetchurl {
+      url = "https://github.com/bambulab/BambuStudio/releases/download/v02.09.01.70/BambuStudio_ubu24-v02.09.01.70-20261103183404.AppImage";
+      sha256 = "sha256-Zo2rsb5Tx1gYnta8iZNShd6l4K9GIWVGsbr9aILpr/A=";
+    };
+  };
   source-codex-desktop-linux = {
     pname = "source-codex-desktop-linux";
     version = "11d027be63f4e1ba5ddded514f7632db2ead9485";
