@@ -35,6 +35,8 @@
       "android-platform-tools"
       # Bambu Lab's slicer; nixpkgs builds it for Linux only.
       "bambu-studio"
+      # Mozilla's release build; the Linux hosts install Firefox from Nix.
+      "firefox"
       "godot"
       "input-source-pro"
       "karabiner-elements"
