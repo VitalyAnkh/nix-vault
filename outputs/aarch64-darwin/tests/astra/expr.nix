@@ -46,6 +46,7 @@ in
     # Apps that this configuration relies on, or leaves to Homebrew, are declared.
     declaresHostApps = builtins.all (cask: builtins.elem cask caskNames) [
       "firefox"
+      "firefox@developer-edition"
       "input-source-pro"
       "karabiner-elements"
       "obsidian"

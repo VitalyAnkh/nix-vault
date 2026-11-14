@@ -132,6 +132,7 @@ in
     casks = [
       "squirrel-app" # input method for Chinese, rime-squirrel
       "firefox"
+      "firefox@developer-edition"
       "google-chrome"
       "microsoft-edge"
 

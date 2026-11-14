@@ -37,6 +37,7 @@
       "bambu-studio"
       # Mozilla's release build; the Linux hosts install Firefox from Nix.
       "firefox"
+      "firefox@developer-edition"
       "godot"
       "input-source-pro"
       "karabiner-elements"

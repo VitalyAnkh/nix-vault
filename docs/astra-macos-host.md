@@ -225,8 +225,9 @@ Nix 声明 astra 需要哪些 Homebrew 包，Homebrew 负责安装和更新它�
   - Bambu Studio 同样不会自行更新（有新版本时只提示去下载），用 `brew upgrade --cask bambu-studio`
     升级。nixpkgs 的 `bambu-studio` 只在 Linux 上构建；Linux 主机用 `pkgs/bambu-studio`
     打包的官方AppImage。
-  - Firefox 用 Mozilla 正式版的 cask，会自行更新；Linux 主机的 Firefox 来自 Nix。browserpass 的 Firefox 本机消息配置由 HM 写入
-    `~/Library/Application Support/Mozilla/NativeMessagingHosts`，在 Firefox 中装上 browserpass 扩展即可使用 pass。
+  - Firefox 用 Mozilla 的 `firefox` cask，开发者版用
+    `firefox@developer-edition`，都会自行更新；Linux 主机的这两个浏览器来自 Nix。browserpass 的 Firefox 本机消息配置由 HM 写入
+    `~/Library/Application Support/Mozilla/NativeMessagingHosts`，两个 Firefox 共用，装上 browserpass 扩展即可使用 pass。
   - Karabiner-Elements 的虚拟键盘是 DriverKit 系统扩展，需由厂商安装器放入
     `/Applications`。固定版本的 nix-darwin `services.karabiner-elements` 所启动的
     `karabiner_grabber`、`karabiner_observer` 在当前 Karabiner-Elements 中已不存在。键位仍由
