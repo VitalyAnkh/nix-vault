@@ -33,6 +33,8 @@
     casks = [
       # adb and fastboot (Google's build); Nix does not install android-tools here.
       "android-platform-tools"
+      # Google's IDE; its setup wizard installs the SDK in ~/Library/Android/sdk.
+      "android-studio"
       # Bambu Lab's slicer; nixpkgs builds it for Linux only.
       "bambu-studio"
       # Mozilla's release build; the Linux hosts install Firefox from Nix.

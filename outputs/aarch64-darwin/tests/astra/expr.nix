@@ -45,6 +45,7 @@ in
       ) (builtins.attrNames system.homebrew.onActivation.extraEnv);
     # Apps that this configuration relies on, or leaves to Homebrew, are declared.
     declaresHostApps = builtins.all (cask: builtins.elem cask caskNames) [
+      "android-studio"
       "firefox"
       "firefox@developer-edition"
       "input-source-pro"

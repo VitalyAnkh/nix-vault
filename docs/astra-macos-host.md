@@ -228,6 +228,9 @@ Nix 声明 astra 需要哪些 Homebrew 包，Homebrew 负责安装和更新它�
   - Firefox 用 Mozilla 的 `firefox` cask，开发者版用
     `firefox@developer-edition`，都会自行更新；Linux 主机的这两个浏览器来自 Nix。browserpass 的 Firefox 本机消息配置由 HM 写入
     `~/Library/Application Support/Mozilla/NativeMessagingHosts`，两个 Firefox 共用，装上 browserpass 扩展即可使用 pass。
+  - Android Studio 用 Google 的 cask，会自行更新；首次启动的向导把 SDK 装到
+    `~/Library/Android/sdk`。SDK 自带的 `platform-tools` 与 `android-platform-tools`
+    cask 的 adb 版本不同时，两者会互相结束对方的 adb 服务，PATH 上只留一个。
   - Karabiner-Elements 的虚拟键盘是 DriverKit 系统扩展，需由厂商安装器放入
     `/Applications`。固定版本的 nix-darwin `services.karabiner-elements` 所启动的
     `karabiner_grabber`、`karabiner_observer` 在当前 Karabiner-Elements 中已不存在。键位仍由
