@@ -18,7 +18,10 @@ let
     postBuild = ''
       # Work around wxWidgets HiDPI text clipping under fractional scaling.
       # https://github.com/bambulab/BambuStudio/issues/4959
-      wrapProgram $out/bin/bambu-studio --set GDK_DPI_SCALE 0.8
+      # Avoid WebKit DMA-BUF rendering failures on NVIDIA (blank embedded pages).
+      wrapProgram $out/bin/bambu-studio \
+        --set GDK_DPI_SCALE 0.8 \
+        --set WEBKIT_DISABLE_DMABUF_RENDERER 1
     '';
   };
 in
