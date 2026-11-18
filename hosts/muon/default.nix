@@ -35,6 +35,7 @@ in
     # Use eva's preservation configuration for muon as well
     ../eva/preservation.nix
     ../eva/proxy.nix
+    ../eva/watchdog.nix
     ./preservation-users.nix
     #./boot.nix
     #./secureboot.nix

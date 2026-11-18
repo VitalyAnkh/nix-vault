@@ -32,6 +32,7 @@ in
     ./preservation.nix
     ./openrgb
     ./proxy.nix
+    ./watchdog.nix
     #./boot.nix
     #./secureboot.nix
     ./gnome.nix
