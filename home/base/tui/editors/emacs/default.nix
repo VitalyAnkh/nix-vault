@@ -58,8 +58,8 @@ in
       default = true;
     };
     daemon.enable = mkEnableOption "the Emacs daemon with the user session" // {
-      default = pkgs.stdenv.isDarwin;
-      defaultText = literalExpression "pkgs.stdenv.isDarwin";
+      default = pkgs.stdenv.hostPlatform.isDarwin;
+      defaultText = literalExpression "pkgs.stdenv.hostPlatform.isDarwin";
     };
   };
 
@@ -136,7 +136,7 @@ in
       '';
     })
 
-    (mkIf (cfg.daemon.enable && pkgs.stdenv.isLinux) {
+    (mkIf (cfg.daemon.enable && pkgs.stdenv.hostPlatform.isLinux) {
       services.emacs = {
         enable = true;
         package = emacsPkg;
@@ -148,7 +148,7 @@ in
       };
     })
 
-    (mkIf (cfg.daemon.enable && pkgs.stdenv.isDarwin) {
+    (mkIf (cfg.daemon.enable && pkgs.stdenv.hostPlatform.isDarwin) {
       launchd.enable = true;
       launchd.agents.emacs = {
         enable = true;

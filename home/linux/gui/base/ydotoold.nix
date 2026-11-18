@@ -28,7 +28,7 @@ in
     };
   };
 
-  config = lib.mkIf (cfg.enable && pkgs.stdenv.isLinux) {
+  config = lib.mkIf (cfg.enable && pkgs.stdenv.hostPlatform.isLinux) {
     home.packages = [ pkgs.ydotool ];
     home.sessionVariables.YDOTOOL_SOCKET = clientSocketPath;
     systemd.user.sessionVariables.YDOTOOL_SOCKET = clientSocketPath;

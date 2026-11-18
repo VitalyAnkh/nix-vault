@@ -17,7 +17,7 @@ in
       # Mozilla's Developer Edition build (`firefox-devedition`), with its own profile.
       firefox.packages.${system}.firefox-devedition-bin
     ]
-    ++ lib.optionals pkgs.stdenv.isx86_64 [
+    ++ lib.optionals pkgs.stdenv.hostPlatform.isx86_64 [
       pkgs.roxy-browser
     ];
 

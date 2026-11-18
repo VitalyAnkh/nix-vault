@@ -38,7 +38,7 @@
 
     #-- json like
     terraform-ls
-    (if stdenv.isLinux then jsonnet else emptyDirectory)
+    (if stdenv.hostPlatform.isLinux then jsonnet else emptyDirectory)
     jsonnet-language-server
     taplo # TOML language server / formatter / validator
     yaml-language-server
@@ -67,7 +67,7 @@
     checkmake
     # c/c++ compiler, required by nvim-treesitter!
     # gcc
-    (if stdenv.isLinux then gdb else emptyDirectory)
+    (if stdenv.hostPlatform.isLinux then gdb else emptyDirectory)
     # c/c++ tools with clang-tools, the unwrapped version won't
     # add alias like `cc` and `c++`, so that it won't conflict with gcc
     # llvmPackages.clang-unwrapped
@@ -128,7 +128,7 @@
     jdt-language-server
 
     #-- zig
-    (if stdenv.isLinux then zls else emptyDirectory)
+    (if stdenv.hostPlatform.isLinux then zls else emptyDirectory)
 
     #-- lua
     stylua
@@ -152,10 +152,10 @@
 
     # -*- Lisp like Languages -*-#
     guile
-    (if stdenv.isLinux then racket-minimal else emptyDirectory)
+    (if stdenv.hostPlatform.isLinux then racket-minimal else emptyDirectory)
     fnlfmt # fennel
     (
-      if pkgs.stdenv.isLinux && pkgs.stdenv.hostPlatform.isx86 then
+      if pkgs.stdenv.hostPlatform.isLinux && pkgs.stdenv.hostPlatform.isx86 then
         pkgs-master.akkuPackages.scheme-langserver
       else
         pkgs.emptyDirectory
@@ -166,7 +166,7 @@
     tinymist
 
     #-- verilog / systemverilog
-    (if stdenv.isLinux then verible else emptyDirectory)
+    (if stdenv.hostPlatform.isLinux then verible else emptyDirectory)
 
     #-- Optional Requirements:
     prettier # common code formatter

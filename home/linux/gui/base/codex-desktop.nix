@@ -21,7 +21,7 @@ in
 
   config = mkMerge [
     {
-      modules.desktop.codexDesktop.enable = mkDefault pkgs.stdenv.isx86_64;
+      modules.desktop.codexDesktop.enable = mkDefault pkgs.stdenv.hostPlatform.isx86_64;
       modules.desktop.codexDesktop.computerUse.enable = mkDefault true;
     }
 

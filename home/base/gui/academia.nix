@@ -5,7 +5,7 @@
   ...
 }:
 let
-  supported = pkgs.stdenv.isDarwin || pkgs.stdenv.isx86_64;
+  supported = pkgs.stdenv.hostPlatform.isDarwin || pkgs.stdenv.hostPlatform.isx86_64;
 in
 {
   options.modules.desktop.academia.enable = lib.mkEnableOption "Zotero and Obsidian" // {

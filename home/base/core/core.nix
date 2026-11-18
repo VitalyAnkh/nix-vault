@@ -60,7 +60,7 @@
 
       # other core cli tools are installed at system-level
     ]
-    ++ lib.optionals stdenv.isLinux [ traceroute ];
+    ++ lib.optionals stdenv.hostPlatform.isLinux [ traceroute ];
 
   # A modern replacement for ‘ls’
   # useful in bash/zsh prompt, not in nushell.

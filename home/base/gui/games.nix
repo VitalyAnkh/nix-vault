@@ -5,7 +5,7 @@
   ...
 }:
 let
-  isX86_64Linux = pkgs.stdenv.isLinux && pkgs.stdenv.isx86_64;
+  isX86_64Linux = pkgs.stdenv.hostPlatform.isLinux && pkgs.stdenv.hostPlatform.isx86_64;
   osuLazerBin = pkgs."osu-lazer-bin" or null;
 in
 {
