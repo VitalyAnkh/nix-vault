@@ -61,8 +61,9 @@ init file. Drop the patch once the pinned Doom reads these records itself: the b
 patch no longer applies.
 
 The Emacs package in `pkgs/emacs` carries no local patches. Of nixpkgs' Emacs patches it applies
-only `native-comp-driver-options-30.patch`, which native compilation needs; the reasons for skipping
-the others are in `pkgs/emacs/emacs-master-pgtk-with-igc.nix`.
+`native-comp-driver-options-30.patch`, which native compilation needs, and the `.dir-locals.el`
+code-execution fix with its regression fix (bug#82213), which the IGC branch does not have yet; the
+reasons for skipping the others are in `pkgs/emacs/emacs-master-pgtk-with-igc.nix`.
 
 `daemon.enable` defaults to `true` on macOS and `false` on Linux. It controls the launchd agent on
 macOS and the Home Manager Emacs user service on Linux. With the daemon disabled, start Emacs

@@ -10,7 +10,7 @@ lib.genAttrs [ "eva" "muon" ] (
   {
     # Linux keeps the PGTK build of the IGC Emacs.
     inherit (emacs) pname;
-    # No local patches; of nixpkgs' patches only the native-comp one.
+    # No local patches; of nixpkgs' patches the native-comp and .dir-locals.el ones.
     patches = map (patch: patch.name or (baseNameOf (toString patch))) emacs.patches;
   }
 )

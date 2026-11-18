@@ -11,14 +11,22 @@ let
   source-emacs = source-emacs-master-igc;
   isDarwin = stdenv.hostPlatform.isDarwin;
   baseEmacs = if isDarwin then emacs31 else emacs31-pgtk;
-  # No local patches. Of nixpkgs' Emacs patches only the native-comp one is
-  # applied: it adds the store paths of libgccjit, binutils and (on Darwin) the
-  # SDK to native-comp-driver-options, without which native compilation fails.
+  # No local patches. Of nixpkgs' Emacs patches only these are applied:
+  # - native-comp: adds the store paths of libgccjit, binutils and (on Darwin)
+  #   the SDK to native-comp-driver-options, without which native compilation
+  #   fails;
+  # - the .dir-locals.el code-execution fix (bug#82213) and its regression fix,
+  #   emacs-31 commits 205ae0b0 and 5bf385da that master and igc3 do not have
+  #   yet. Skip both once the IGC source contains them: patchPhase then fails.
   # The IGC source already has the fixes nixpkgs backports to Emacs 31 as CVE
   # patches (master abc802ee and 044b0203), and nothing here uses the
   # Nixpkgs-only early-default library. A patch nixpkgs adds later stops the
   # evaluation until it is listed here.
-  appliedPatches = [ "native-comp-driver-options-30.patch" ];
+  appliedPatches = [
+    "native-comp-driver-options-30.patch"
+    "fix-arbitrary-code-execution-in-dot-dir-locals-dot-el-handling.patch"
+    "fix-regression-after--fix-arbitrary-code-execution-in-dot-dir-locals-dot-el-handling.patch"
+  ];
   skippedPatches = [
     "CVE-2024-53920.patch"
     "CVE-2026-108976.patch"

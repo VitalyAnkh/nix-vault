@@ -18,7 +18,7 @@ lib.genAttrs (builtins.attrNames outputs.darwinConfigurations) (
     nodejsUsesUpstream = isUpstream pkgs.nodejs-slim_24 upstreamPkgs.nodejs-slim_24;
     # pkgs/emacs builds the IGC Emacs as the NS port on Darwin.
     emacsIsNs = pkgs.emacs-master-pgtk-with-igc.pname == "emacs-master-ns-with-igc";
-    # No local patches; of nixpkgs' patches only the native-comp one.
+    # No local patches; of nixpkgs' patches the native-comp and .dir-locals.el ones.
     emacsPatches = map (
       patch: patch.name or (baseNameOf (toString patch))
     ) pkgs.emacs-master-pgtk-with-igc.patches;

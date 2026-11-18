@@ -69,8 +69,10 @@ nixfmt _sources/generated.nix
 更新 `source-emacs-master-igc` 后，`emacs/emacs-master-pgtk-with-igc.nix` 的 `version` 必须与新源码
 `configure.ac` 中 `AC_INIT` 的版本一致，否则 `postPatch`
 会让构建失败。`emacs/emacs-master-pgtk-with-igc.nix`
-不带本地补丁，nixpkgs 的 Emacs 补丁中只应用原生编译所需的
-`native-comp-driver-options-30.patch`，其余列在 `skippedPatches`
+不带本地补丁。nixpkgs 的 Emacs 补丁中，它应用原生编译所需的
+`native-comp-driver-options-30.patch`，以及 `.dir-locals.el`
+任意代码执行的修复和它的回归修复（bug#82213，emacs-31 分支的 205ae0b0、5bf385da；IGC 分支还没有，包含之后要移到
+`skippedPatches`，否则 patchPhase 失败）。其余列在 `skippedPatches`
 中：IGC 源码已经包含 nixpkgs 以 CVE 补丁回移的修复，early-default 是本仓库不用的 nixpkgs 扩展。nixpkgs 新增 Emacs 补丁时求值会失败，确认 IGC 源码是否需要它，再把它加入
 `appliedPatches` 或 `skippedPatches`。`emacs-lsp-booster` 的 `version` 同样要与源码的 `Cargo.toml`
 一致，可以查看 `_sources` 中复制的 `Cargo.lock`。新的 Emacs 激活后，在新登录 shell 中重新运行
