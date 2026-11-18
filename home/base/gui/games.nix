@@ -20,8 +20,6 @@ in
       # and the cache has no build; 26.05 builds them with GCC 15.
       pkgs-stable.warzone2100
       pkgs-stable.cataclysm-dda-git
-      zeroad-unwrapped
-      zeroad-data
     ])
     ++ lib.optional (osuLazerBin != null) osuLazerBin
   );
