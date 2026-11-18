@@ -37,6 +37,7 @@ in
     grokBeforeCompletion = true;
     homebrewCompletionsAppended = true;
     zshCompinitOnce = true;
+    androidHome = "/Library/Android/sdk";
   };
   prompt = {
     format = "$username$hostname$directory$kubernetes$all";

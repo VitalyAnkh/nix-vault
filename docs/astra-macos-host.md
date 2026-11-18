@@ -228,9 +228,17 @@ Nix 声明 astra 需要哪些 Homebrew 包，Homebrew 负责安装和更新它�
   - Firefox 用 Mozilla 的 `firefox` cask，开发者版用
     `firefox@developer-edition`，都会自行更新；Linux 主机的这两个浏览器来自 Nix。browserpass 的 Firefox 本机消息配置由 HM 写入
     `~/Library/Application Support/Mozilla/NativeMessagingHosts`，两个 Firefox 共用，装上 browserpass 扩展即可使用 pass。
-  - Android Studio 用 Google 的 cask，会自行更新；首次启动的向导把 SDK 装到
-    `~/Library/Android/sdk`。SDK 自带的 `platform-tools` 与 `android-platform-tools`
-    cask 的 adb 版本不同时，两者会互相结束对方的 adb 服务，PATH 上只留一个。
+  - Android Studio 用 Google 的 cask，会自行更新。SDK 在 `~/Library/Android/sdk`，HM 把它设为
+    `ANDROID_HOME`，Android Studio 之外运行的 Gradle 和 SDK 工具也用它。SDK 由 Android Studio 的 SDK
+    Manager 或 `sdkmanager --sdk_root="$ANDROID_HOME"`
+    安装和更新，不归 Nix 管理；2026-11-18 装了 platform、sources 37.2，build-tools
+    37.0.0，platform-tools，emulator，cmdline-tools 和 37.2 的 arm64 Google
+    Play 系统镜像，并建了模拟器 `Medium_Phone_API_37.2`。Nix 提供的 `sdkmanager`、`avdmanager`
+    按自己在 store 中的位置推断 SDK 目录：`sdkmanager` 要带 `--sdk_root`；`avdmanager`
+    不接受它，会去扫描整个 `/nix/store`，要用 SDK 中的
+    `$ANDROID_HOME/cmdline-tools/latest/bin/avdmanager`。SDK 的 `platform-tools` 与
+    `android-platform-tools`
+    cask 的 adb 版本不同时，两者会互相结束对方的 adb 服务；PATH 上只有 cask 的 adb。
   - Karabiner-Elements 的虚拟键盘是 DriverKit 系统扩展，需由厂商安装器放入
     `/Applications`。固定版本的 nix-darwin `services.karabiner-elements` 所启动的
     `karabiner_grabber`、`karabiner_observer` 在当前 Karabiner-Elements 中已不存在。键位仍由

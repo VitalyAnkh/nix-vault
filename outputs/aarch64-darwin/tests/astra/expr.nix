@@ -128,6 +128,10 @@ in
     homebrewCompletionsAppended = lib.hasInfix "fpath+=(/opt/homebrew/share/zsh/site-functions)" home.programs.zsh.initContent;
     # Only Home Manager's .zshrc runs compinit, not /etc/zshrc as well.
     zshCompinitOnce = !system.programs.zsh.enableGlobalCompInit && home.programs.zsh.enableCompletion;
+    # Gradle outside Android Studio finds the SDK that Android Studio installs.
+    androidHome = lib.removePrefix home.home.homeDirectory (
+      home.home.sessionVariables.ANDROID_HOME or ""
+    );
   };
   # The prompt starts with user@host; the kubectl context follows the directory.
   prompt = {

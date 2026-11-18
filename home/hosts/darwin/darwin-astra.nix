@@ -119,6 +119,9 @@ in
       HOMEBREW_CELLAR = "${brewPrefix}/Cellar";
       # On Apple Silicon, Homebrew's repository is its prefix.
       HOMEBREW_REPOSITORY = brewPrefix;
+      # The SDK that Android Studio and `sdkmanager --sdk_root` install, for Gradle
+      # and the SDK tools run outside Android Studio.
+      ANDROID_HOME = "${homeDir}/Library/Android/sdk";
       # GitHub's HTTPS endpoint is often unreachable from astra's networks while SSH
       # works. Doom runs the git commands of `doom sync` with this global git
       # configuration, so its GitHub clones and updates use SSH.
