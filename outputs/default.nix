@@ -17,7 +17,7 @@ let
     # Zotero's end-of-life Firefox ESR; see vars/default.nix.
     inherit (myvars) permittedInsecurePackages;
     # Only Huawei works here: npmmirror 404s on prefetch-npm-deps' doubled
-    # slash, and Tencent answers 567 to its concurrent fetches (WA-049).
+    # slash, and Tencent answers 567 to its concurrent fetches.
     npmRegistryOverrides = {
       "registry.npmjs.org" = "https://mirrors.huaweicloud.com/repository/npm";
     };
@@ -61,10 +61,6 @@ let
       pkgs-master = import inputs.nixpkgs-master {
         inherit system;
         # to use chrome, we need to allow the installation of non-free software
-        config.allowUnfree = true;
-      };
-      pkgs-small = import inputs.nixpkgs-small {
-        inherit system;
         config.allowUnfree = true;
       };
       pkgs-blender = import inputs.nixpkgs-blender {

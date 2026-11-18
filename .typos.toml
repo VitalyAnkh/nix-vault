@@ -73,6 +73,11 @@ extend-ignore-re = [
   # "for"/"far"/"fps".
   "fpr",
   "FPR",
+
+  # PCIe Advanced Error Reporting (rasdaemon's `aer` collector and metrics); the
+  # dictionary wants "are".
+  "aer",
+  "AER",
 ]
 # Abbreviated Git commit hashes (ba149b5e, 0704ba5e): lowercase hex with at least
 # one digit, so ordinary words are still checked.

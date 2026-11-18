@@ -745,16 +745,17 @@
         "spectrum": "spectrum"
       },
       "locked": {
-        "lastModified": 1793281488,
-        "narHash": "sha256-ErGIqtoWEX9KKC8NFtJDx2pGGG02Cr6LGxrvzLd2sqA=",
+        "lastModified": 1794529892,
+        "narHash": "sha256-m5iXk3ILiCuRpCgqYWNiGVFmu8YLh2FNxxaZj/Auc10=",
         "owner": "microvm-nix",
         "repo": "microvm.nix",
-        "rev": "b7bd556974fa8a171b5b639200e81d52244dfde4",
+        "rev": "194a254693f49af939a2b53d04982bd4b276fdb3",
         "type": "github"
       },
       "original": {
         "owner": "microvm-nix",
         "repo": "microvm.nix",
+        "rev": "194a254693f49af939a2b53d04982bd4b276fdb3",
         "type": "github"
       }
     },
@@ -961,16 +962,17 @@
         ]
       },
       "locked": {
-        "lastModified": 1794382742,
-        "narHash": "sha256-dCttiJMmGw71BAHvH9GObiNkumz+Q0FUe/XRNCq1M4M=",
+        "lastModified": 1794910092,
+        "narHash": "sha256-acu4eioYHfOOUAhWL9765/h/2f2/PGmVmZmiZ7YPKZQ=",
         "owner": "nix-community",
         "repo": "nixos-apple-silicon",
-        "rev": "5de1c7ae865d645a3ebcc7d2ba5a13b9b50c0c16",
+        "rev": "ce7d0925860cf29d686b24ea5798f3a02676b4f7",
         "type": "github"
       },
       "original": {
         "owner": "nix-community",
         "repo": "nixos-apple-silicon",
+        "rev": "ce7d0925860cf29d686b24ea5798f3a02676b4f7",
         "type": "github"
       }
     },
@@ -1117,22 +1119,6 @@
       "original": {
         "owner": "ryan4yin",
         "ref": "nixos-unstable-patched",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
-    "nixpkgs-small": {
-      "locked": {
-        "lastModified": 1794378162,
-        "narHash": "sha256-gJGP/BWdmF1pbjAzbuICPSeGkMncAiDt9PRe7L13664=",
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "c24da8b1d51f447e8faedcb5cb823b3f84346a60",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nixos",
-        "ref": "nixos-unstable-small",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -1427,7 +1413,6 @@
         "nixpkgs-darwin": "nixpkgs-darwin",
         "nixpkgs-master": "nixpkgs-master",
         "nixpkgs-patched": "nixpkgs-patched",
-        "nixpkgs-small": "nixpkgs-small",
         "nixpkgs-stable": "nixpkgs-stable_2",
         "nu_scripts": "nu_scripts",
         "nur-ryan4yin": "nur-ryan4yin",
