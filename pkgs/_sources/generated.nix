@@ -82,10 +82,10 @@
   };
   source-roxy-browser = {
     pname = "source-roxy-browser";
-    version = "4.0.8";
+    version = "4.1.2";
     src = fetchurl {
-      url = "https://lumibrowser.oss-cn-shenzhen.aliyuncs.com/public/package/app/Linux/x64/4.0.8/RoxyBrowser_x64_4.0.8.deb";
-      sha256 = "sha256-evAIOnQuAdL3fdJnWw+XYbn0LdoMb4IcXhWFMNWKM1k=";
+      url = "https://lumibrowser.oss-cn-shenzhen.aliyuncs.com/public/package/app/Linux/x64/4.1.2/RoxyBrowser_x64_4.1.2.deb";
+      sha256 = "sha256-48ETPvdBMEb3j5Ad98MJ62Ia4W9IISba57LZiwsYAJ0=";
     };
   };
   source-warp-terminal = {
