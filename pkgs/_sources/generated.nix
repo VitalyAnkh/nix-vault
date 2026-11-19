@@ -84,8 +84,8 @@
     pname = "source-roxy-browser";
     version = "4.1.2";
     src = fetchurl {
-      url = "https://lumibrowser.oss-cn-shenzhen.aliyuncs.com/public/package/app/Linux/x64/4.1.2/RoxyBrowser_x64_4.1.2.deb";
-      sha256 = "sha256-48ETPvdBMEb3j5Ad98MJ62Ia4W9IISba57LZiwsYAJ0=";
+      url = "https://sgp1.vultrobjects.com/roxybrowseross/private/package/app/Linux/x64/4.1.2/RoxyBrowser_x64_4.1.2.deb";
+      sha256 = "sha256-pJRQCz7lXQ5ImcGgkO0roI6fN6QJnCGGYVvYKkur7ew=";
     };
   };
   source-warp-terminal = {

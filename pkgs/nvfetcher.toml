@@ -27,7 +27,9 @@ fetch.github = "ilysenko/codex-desktop-linux"
 [source-roxy-browser]
 src.httpheader = "https://dl.roxybrowser.com/app-download/Linux-64-latest"
 src.regex = "RoxyBrowser_x64_([0-9]+\\.[0-9]+\\.[0-9]+)\\.deb"
-fetch.url = "https://lumibrowser.oss-cn-shenzhen.aliyuncs.com/public/package/app/Linux/x64/$ver/RoxyBrowser_x64_$ver.deb"
+# The latest-download link redirects here; the old Aliyun OSS path now serves
+# another file for every version.
+fetch.url = "https://sgp1.vultrobjects.com/roxybrowseross/private/package/app/Linux/x64/$ver/RoxyBrowser_x64_$ver.deb"
 
 [source-nutstore-client]
 src.manual = "6.4.3"
