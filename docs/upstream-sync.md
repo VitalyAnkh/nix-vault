@@ -607,6 +607,86 @@ cask，它的 DMG 已提前下载到 Homebrew 的缓存。Emacs 构建日志中�
 `brew bundle cleanup` 和 `check`；激活后运行 `doom sync`，并把 dsh web
 profile 的插件固定到rc.2（见“待处理”）。
 
+### 2026-11-18：合入 2c3db10b
+
+在 astra 上合并（2757c78c），在 eva 上验证。上游这一段有 16 个提交，没有修改 Darwin 的路径和 ai 主机的文件：
+
+- bd2b8594（#528）：桌面主机和物理服务器在内核 panic 20 秒后重启（默认的 `kernel.panic=0`
+  会一直停住），journald 每 5 秒落盘，并用 `RuntimeWatchdogSec=30s`
+  启用主板的硬件看门狗。上游还没有验证看门狗在休眠时会不会暂停计时（WA-052）。用户决定（2026-11-18）跟随前两项，eva、muon 暂不启用看门狗（`hosts/eva/watchdog.nix`，见“待处理”）：eva 的 SP5100
+  TCO 看门狗现在没有启用（`state=inactive`），eva 曾深度休眠 9.5 小时（2026-10-27），休眠时若继续计时，30 秒后主机就会被重置。
+- 667fd76c（#532）中的 Nix
+  store 维护：物理主机（`modules.hardwareTools.enable`）构建时剩余空间低于 20 GiB 就 GC 到 50
+  GiB，每周的 GC 失败后重试，开机清空中断的构建留在 `/nix/var/nix/builds`
+  的目录。用户决定跟随（2026-11-18）。eva 的 `/nix` 剩 494
+  GB，阈值目前不会触发；GC 只删除没有被引用的路径。同一提交的 PostgreSQL 备份和备份配额只涉及 Ryan 的服务器。
+- ac3f775e：删除 `nix.package = pkgs.nixVersions.latest`（WA-023）。新 nixpkgs 的
+  `nixVersions.stable` 已是 2.35.6，Nix 的版本不降低。
+- 6ca74dcd：xdg-desktop-portal-wlr 不再固定为 0.8.2，WA-046 的断言删除；只影响 niri 下 Zoom 的屏幕共享。
+- f02b0656（#533）、7e28766a（#534）：删除 `nixpkgs-small`
+  input；microvm 和 nixos-apple-silicon 固定到上游审查过的提交。
+- 9b1a716a（#529）、6b425fe0（#530）、6bd97ddf、480c486e、2c3db10b：Ryan 服务器的 panic 设置、监控和 youko 的缓存代理。共享的
+  `modules/nixos/base/monitoring.nix`
+  只在运行 rasdaemon 的主机上加 rasdaemon 的 exporter，只在开启 node
+  exporter 的主机上发布部署状态；eva、muon 两者都没有（见上文 `exportersBoundToLan` 一行）。
+- 0d32ba60、41c6e490：Steam 的 nixpak 修复（WA-051）。本地的 Steam 不进沙箱（用户 2026-11-07 的决定），`hardening/nixpaks/steam.nix`
+  及其策略测试保持删除。
+- 0ee47985：mihomo 的 LinkedIn 规则，eva、muon 换成 mihomo 后生效。
+
+需要用户决定的是看门狗和 Nix store 维护。`darwin.reviewed`
+推进到 2c3db10b（这一段没有 Darwin 路径的改动）。
+
+合并之后的改动：
+
+- flake
+  input 全部更新到最新（f13aa22d）。nixpkgs（nixos-unstable，04906337，11-17）和 nixpkgs-darwin（nixpkgs-unstable，e21fec32，11-16）不再停在 e62746b0：WA-046 的断言随上游删除；nixpkgs-unstable 的 mold
+  3.0.0 以及 helix、neovim、nix-index、mycli 都已有 aarch64-darwin 的缓存。上游的 nixpkgs-darwin 仍是 e62746b0。doomemacs 从 7ccac7f6 更新到 759fb66e（11-17）。
+- 用户要求更新 Emacs（652e905b）：IGC 的 pin 从 cd6e1d54 更新到 f0c53b81（2026-11-17）。nvfetcher 在提取 emacs-lsp-booster 的
+  `Cargo.lock` 时失败（旧的提取结果已被 GC），没有写入改动；改为 `nix flake prefetch`
+  新修订，把修订和哈希写入
+  `pkgs/_sources`，结果相同。新 nixpkgs 加入了 emacs-31 分支的 205ae0b0（bug#82213：`.dir-locals.el`
+  处理中的任意代码执行）和它的回归修复 5bf385da。master 和 igc3 都还没有这两个提交，补丁能直接打上，所以与 native-comp 的补丁一起应用；IGC 源码包含它们之后 patchPhase 会失败，届时移到
+  `skippedPatches`。
+- 新 nixpkgs 的 Zed 和 JetBrains Toolbox 比手动固定的版本新，astra 的 eval 测试因此失败：Zed 1.26.2
+  → 1.28.1，JetBrains Toolbox 3.9.0.88839 → 3.9.1.89198（6b9d1f9a）。
+- 新 nixpkgs 把 GTK 2 标为 broken（将在 NixOS 27.05 之前删除），eva、muon 因为
+  `pkgs/nutstore-nautilus` 依赖它而求值失败。坚果云的 Nautilus 插件源码只在 Nautilus
+  3 及以前才包含 GTK 的头文件，并不调用 GTK、GDK、ATK 的函数，只是 `configure.ac` 要求有 GDK
+  2 和 ATK。去掉这两项检查后（3684c05e），插件只链接 libnautilus-extension、GIO、GObject 和 GLib，导出的符号与原来相同，在 eva 上能用 dlopen 加载；GTK
+  2 的 GDK 也不再被载入 Nautilus（GTK 4）的进程。切换后在 Nautilus 中确认坚果云的右键菜单仍在。
+- nixpkgs 删除了 0
+  A.D.（`zeroad-unwrapped`，依赖已停止支持的 SpiderMonkey）。它是本地加的游戏，用户决定删除（2026-11-18，141a51af）：eva 上没有它的配置和存档，shell 历史中的几次运行都在排查崩溃。
+- 新 nixpkgs 的 `cargoSetupHook` 默认让 crate 链接 Nixpkgs 的 aws-lc、OpenSSL、zstd 等 C 库（设置
+  `AWS_LC_SYS_USE_SYSTEM`
+  等变量）。Warp 上游的 flake 没有提供 AWS-LC，aws-lc-sys 的构建脚本因此失败；`pkgs/warp-terminal`
+  设置 `dontCargoUseSystemLibs`，与之前一样编译 vendored 的副本（2e1baee8）。
+- RoxyBrowser 原来的阿里云 OSS 地址现在对任何版本都返回同一个不是 `.deb`
+  的文件，与记录的哈希不符，eva、muon 的构建失败。厂商的最新版链接重定向到它在 Vultr 的对象存储，`pkgs/nvfetcher.toml`
+  改用那里，并跟随到最新的 4.1.2（fa8944cb、8c2281eb）。那里从 eva 下载很慢，在 astra 上经代理下载、核对（`Version: 4.1.2`，数据段通过
+  `xz -t`）后加入 eva 的 store。
+- 新 nixpkgs 对 `stdenv.isLinux`、`stdenv.isDarwin` 给出弃用警告，本地的写法改为
+  `stdenv.hostPlatform.*`（7cb08ecb），与上游一致；求值结果不变。
+- 用户要求装好 Android 开发环境（2026-11-18）：Android SDK 装在 `~/Library/Android/sdk`，HM 把它设为
+  `ANDROID_HOME`（9d593a13）。装了哪些包、怎样建模拟器见
+  [astra 文档](./astra-macos-host.md)的 Homebrew 一节；模拟器 `Medium_Phone_API_37.2`
+  无窗口启动后 37 秒开机完成（Android 17，API 37，16 KB 页）。
+- 用户也要求装好 iOS 开发环境。App Store 的 Xcode 27.2 要求 macOS
+  26.6 以上，astra 是 26.5.1；用户自己在系统设置中升级到 macOS 26.7.3，见“待处理”。
+
+在 eva 上验证：eva、muon、eva-niri、muon-niri 都能求值，`just test`
+通过；`just host-diff 66c1ee58 eva muon` 中两台的内核从 7.2.11 升到 7.3.4，新增
+`kernel.panic=20`，各用户少了 0 A.D. 和 Home Manager 的 GTK 2 输入法缓存（HM 在 GTK
+2 被标为 broken 时不再生成它），eva 多了 GNOME 51 的核心应用
+`gnome-extensions-app`，muon 多了 colord（新 nixpkgs 开启打印时默认启用它，eva 原来就由 GNOME 启用）；其余是 store 路径的哈希变化。Nix 为 2.35.6，物理主机的 store 维护、journald 每 5 秒落盘和关闭的看门狗都按预期生效。eva 构建通过，与正在运行的 gen
+292 相比：内核和 initrd 7.2.11 → 7.3.4，NVIDIA open
+615.78.08 为新内核重新编译，内核参数和 fstab 不变；GNOME 50 → 51（gnome-shell、mutter 51.1），mesa
+26.2.5 → 26.3.0，Emacs cd6e1d54 → f0c53b81，Firefox 开发者版 161.0b2 →
+161.0b4。内核变了，所以按用户决定（2026-11-19）只写入启动项（gen
+293），由用户在 eva 的计算任务结束后重启；重启后在新的登录 shell 中运行 `doom sync`，并检查 GNOME
+51 下用户自己安装的 Shell 扩展是否仍可用。
+
+在 astra 上构建 astra 通过（qvsshscp），Darwin 的 eval 测试通过；Warp、RoxyBrowser 的修正不改变 astra 的输出路径。astra 没有激活。
+
 ### 吸收的上游重构
 
 | 上游改动                                                                                              | 本地结果                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
@@ -686,6 +766,8 @@ profile 的插件固定到rc.2（见“待处理”）。
 | 桌面主机对 `hostsAddr` 的别名都转发 SSH agent（7cfda39c）                                             | 不跟随：它服务于服务器上的 pam_rssh，而这些主机没有 CanoKey 的 SSH 密钥；转发到 muon 等多用户主机时，那里的 root 能用 astra 的 agent 签名                                                                                                                                                                                                                                                                                                                                                                                              |
 | substituters 加入 ryan4yin.cachix.org 及其公钥（dfa53c71、35155906）                                  | 不跟随：本地不用 NUR 中依赖它的包（dsh 来自 llm-agents，computer-use-linux、cua-driver 来自 `pkgs/`），而信任它的公钥等于信任它签名的任何路径                                                                                                                                                                                                                                                                                                                                                                                          |
 | Ryan 的新 CanoKey，各主机 SSH 密钥和旧 GPG 子密钥退役（#524–#526）                                    | 不跟随：这些是 Ryan 自己的密钥。`vars`、GnuPG、pass 和 SSH 保留本仓库的密钥；`"*"` 不加 `~/.ssh/canokey-*` 的 `IdentityFile`；macOS 不为 FIDO2 密钥改用 nixpkgs 的 openssh，astra 本地没有注册 CanoKey                                                                                                                                                                                                                                                                                                                                 |
+| panic 后重启、journald 落盘和硬件看门狗（#528）                                                       | 用户决定（2026-11-18）跟随前两项；eva、muon 暂不启用硬件看门狗（`hosts/eva/watchdog.nix`），等休眠测试，见“待处理”                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| 物理主机的 Nix store 维护（#532）                                                                     | 用户决定跟随（2026-11-18）：构建时剩余空间低于 20 GiB 就 GC 到 50 GiB，GC 失败重试，开机清空 `/nix/var/nix/builds`                                                                                                                                                                                                                                                                                                                                                                                                                     |
 
 ### 有意保留的差异
 
@@ -813,8 +895,17 @@ profile 的插件固定到rc.2（见“待处理”）。
 
   切换后启动 WeChat，确认仍是登录状态、聊天记录在，以及 GNOME 下能用 fcitx 输入中文（上游只在 niri 上验证过）。
 
-- nixpkgs 和 nixpkgs-darwin 停在 e62746b0（2026-11-04 的输入更新）：nixos-unstable 的 xdg-desktop-portal-wlr 已是 0.8.5，WA-046 的断言会让桌面主机求值失败；nixpkgs-unstable 在 Darwin 上构建 mold
-  3.0.0 失败。上游重新测试 Zoom、去掉 0.8.2 的固定（或调整断言），mold 修好之后，再更新这两个 input。
+- eva、muon 的硬件看门狗（`hosts/eva/watchdog.nix`，2026-11-18）：方便时在 eva 上休眠几分钟（超过 30 秒），确认唤醒后没有被重置；然后删除这个模块，切换后确认
+  `cat /sys/class/watchdog/watchdog0/state` 为 `active`，再休眠一次。被重置的话就保留这个模块。
+- astra 的 iOS 开发环境（2026-11-18）：用户在“系统设置 > 通用 > 软件更新”中把 macOS 从 26.5.1 升级到 Tahoe
+  26.7.3 并重启。之后检查 Nix 是否完好（`/etc/zshrc`、`/etc/bashrc` 仍是 nix-darwin 的，`/nix`
+  已挂载，nix-daemon 在运行，`/etc/static` 一致），用 `mas get 497799835` 从 App Store 安装 Xcode
+  27.2（需要登录 App Store），然后在 `hosts/darwin-astra/homebrew.nix` 中声明
+  `homebrew.masApps.Xcode = 497799835`；`xcode-select -s /Applications/Xcode.app`，接受许可，运行
+  `xcodebuild -runFirstLaunch`，下载 iOS 模拟器（`xcodebuild -downloadPlatform iOS`）。这些
+  `xcodebuild` 命令要在没有 `DEVELOPER_DIR`
+  的环境中运行：本仓库的 direnv 把它指向 Nix 的 apple-sdk。Xcode 装好后，astra 的 eval 测试和
+  [astra 文档](./astra-macos-host.md)中“C/C++ 编译器来自 Command Line Tools”的说法要相应更新。
 - 切换 muon 前：对每个用户检查
   `~/.ssh/authorized_keys`。2026-11-04 的合并后 sshd 不再读取家目录中的公钥，只认 Nix 中声明的（`users.users.<用户>.openssh.authorizedKeys`）；muon 仍允许密码登录。
 - 切换 eva 后，按 [runtime-validation.md](../hardening/tests/runtime-validation.md) 的“FIDO2
