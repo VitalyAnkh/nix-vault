@@ -59,6 +59,10 @@ if upstreamPackage == null then
 else
   upstreamPackage.overrideAttrs (old: {
     pname = "warp-terminal";
+    # Since nixpkgs 26.11, cargoSetupHook links aws-lc, OpenSSL, zstd and other C
+    # libraries from Nixpkgs. aws-lc-sys then needs a system AWS-LC, which Warp's
+    # flake does not provide, and the build fails. Keep the vendored copies.
+    dontCargoUseSystemLibs = true;
 
     meta = (old.meta or { }) // {
       description = "Warp is an agentic development environment, born out of the terminal";
