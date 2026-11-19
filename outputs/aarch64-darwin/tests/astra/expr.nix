@@ -51,6 +51,7 @@ in
       "input-source-pro"
       "karabiner-elements"
       "obsidian"
+      "uuremote"
       "warp"
       "zotero"
     ];

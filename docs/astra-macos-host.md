@@ -246,6 +246,11 @@ Nix 声明 astra 需要哪些 Homebrew 包，Homebrew 负责安装和更新它�
   - 仓库的 `pkgs/warp-terminal` 只构建 Linux 版本，Darwin 上没有可用的包。
   - Zotero 的数据库随版本单向升级，两个来源的 Zotero 共用 `~/Zotero`
     时，旧版本无法打开新版本升级过的数据库。因此 HM 不安装 Zotero 和 Obsidian。
+  - 网易UU远程用 `uuremote` cask，会自行更新；fern 和 frieren 通过 `modules/darwin/apps.nix`
+    安装同一个 cask。厂商的 pkg 安装器除了
+    `/Applications/UURemote.app`，还装入以 root 运行的 LaunchDaemon `com.netease.uuremote.daemon`
+    和每个登录会话的 LaunchAgent
+    `com.netease.uuremote.agent`，前者开机运行，后者在登录时运行，退出后都由 launchd 重启；不想让它常驻时，在“系统设置 > 通用 > 登录项与扩展”中关闭它的后台运行。要让别的设备控制这台 Mac，需在“系统设置 > 隐私与安全性”中给它“屏幕录制”和“辅助功能”权限；只用它控制别的设备时不需要。
 - **Nix**：命令行工具、字体，以及需要固定版本或本地补丁的应用，例如 Emacs、kitty、Zed。版本由
   `flake.lock` 固定，各主机一致，可随 generation 回滚；PATH 中 Nix 排在 Homebrew 之前。字体由
   `fonts.packages` 提供，不使用字体 cask，例如 `ibm-plex` 已包含 Mono、Sans、Sans SC 和 Serif。

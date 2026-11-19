@@ -45,6 +45,8 @@
       "karabiner-elements"
       "microsoft-edge"
       "obsidian"
+      # NetEase UU Remote (网易UU远程); its pkg installs a launch daemon and agent.
+      "uuremote"
       "warp"
       "wechatwebdevtools"
       "zotero"

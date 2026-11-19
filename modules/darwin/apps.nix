@@ -156,6 +156,7 @@ in
       # "discord" # update too frequently, use the web version instead
       # "windows-app"
       "moonlight" # remote desktop client (Sunshine/Moonlight game-stream based)
+      "uuremote" # NetEase UU Remote (网易UU远程), remote desktop
       # "rustdesk" # meeting
       # "tencent-meeting"
       "zoom" # meeting
