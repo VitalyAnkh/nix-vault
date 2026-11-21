@@ -58,9 +58,10 @@ in
         ServerAliveCountMax = 3;
         HashKnownHosts = false;
         UserKnownHostsFile = "~/.ssh/known_hosts";
-        ControlMaster = "no";
+        # A connection reused within 30 s needs no new touch.
+        ControlMaster = "auto";
         ControlPath = "~/.ssh/master-%r@%n:%p";
-        ControlPersist = "no";
+        ControlPersist = "30s";
       };
 
       "github.com" = lib.mkIf cfg.enable {

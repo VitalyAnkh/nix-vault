@@ -30,7 +30,8 @@ tool that is simple enough, functional enough, and widely adopted.
 Currently I use both age & GnuPG:
 
 1. Age for secrets encryption, it's simple and easy to use.
-2. GnuPG for password-store, because pass, browserpass and Android Password Store all speak OpenPGP.
+2. GnuPG for password-store, because pass, browserpass and Android Password Store all speak OpenPGP,
+   and for Git commit signing and signed or encrypted email.
 
 SSH does not go through GnuPG (no `[A]` subkey); upstream keeps a FIDO2 SSH key on each CanoKey
 instead.
@@ -41,7 +42,8 @@ instead.
   no secret key in any computer's keyring;
   [`scripts/gpg_canokey.py`](../../../../scripts/gpg_canokey.py) generates such a key, switches the
   password store to it and loads the cards, all in throwaway keyrings on tmpfs. The procedure is in
-  [hardware security keys](../../../../docs/security-keys.md#pass-openpgp).
+  [hardware security keys](../../../../docs/security-keys.md#pass-openpgp), with publishing the
+  public key and using the cards from OpenKeychain on Android.
 - This fork imports VitalyR's own public key (`default.nix`) and encrypts the password store to it
   (`../password-store/default.nix`); no CanoKey holds it yet.
 
@@ -289,7 +291,8 @@ But in OpenPGP:
       embarrassing.
     - Anyone can upload a key to the key server, and claim that it is the key of a certain
       person(such as Linus), which is very insecure.
-  - **key server** is not recommend to use.
+  - **key server** is not recommend to use. keys.openpgp.org is the exception: it publishes a user
+    ID only after mailing that address, and lets the owner remove it.
 - GnuPG will generate revocation certificate when generating
   keypair(`~/.gnupg/openpgp-revocs.d/<fingerprint>.rev`), anyone can import this certificate to
   revoke the keypair. But OpenPGP standard **DO NOT provide a way to distribute this certificate to
