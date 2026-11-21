@@ -235,10 +235,10 @@
     "doomemacs": {
       "flake": false,
       "locked": {
-        "lastModified": 1794949266,
-        "narHash": "sha256-JrPG0Dfwee6CootN+yZZzI+EWxH98wrDzCU5vHnyvHY=",
+        "lastModified": 1795203177,
+        "narHash": "sha256-B25DxDaUaBdNXfQKN5GILKSiWhrmx9wHtyIFIZ/wgFI=",
         "ref": "refs/heads/master",
-        "rev": "759fb66e33132f85e8cb7ac7f0fefeb360d1a8c0",
+        "rev": "eab52d2fe5e58303696e129717553ec5bf031bb0",
         "shallow": true,
         "submodules": true,
         "type": "git",
