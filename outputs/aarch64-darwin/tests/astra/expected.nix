@@ -21,6 +21,7 @@ in
     sharesMirrors = true;
     declaresHostApps = true;
     declaresHostFormulae = true;
+    masApps = [ ];
     brewsAlsoFromNix = [ "fish" ];
     casksAlsoFromNix = [ ];
     taps = [ ];
@@ -38,6 +39,7 @@ in
     homebrewCompletionsAppended = true;
     zshCompinitOnce = true;
     androidHome = "/Library/Android/sdk";
+    javaHome = true;
   };
   prompt = {
     format = "$username$hostname$directory$kubernetes$all";

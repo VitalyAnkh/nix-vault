@@ -60,6 +60,9 @@ in
       "libomp"
       "postgresql@17"
     ];
+    # No App Store app is declared: one `masApps` entry makes `brew bundle cleanup`
+    # report every undeclared one, and cleanup = "check" aborts activation.
+    masApps = builtins.attrNames system.homebrew.masApps;
     # Each tool has one source; only Warp's Fish is also provided by Nix.
     brewsAlsoFromNix = lib.intersectLists nixNames brewNames;
     casksAlsoFromNix = lib.intersectLists nixNames caskNames;
@@ -133,6 +136,14 @@ in
     androidHome = lib.removePrefix home.home.homeDirectory (
       home.home.sessionVariables.ANDROID_HOME or ""
     );
+    # macOS has no JDK of its own, so JAVA_HOME names the installed one, and only
+    # that one: a second JDK in home.packages makes buildEnv's demo/ files collide.
+    javaHome =
+      (home.home.sessionVariables.JAVA_HOME or null) == darwin.pkgs.jdk25.home
+      &&
+        lib.filter (package: lib.hasInfix "-jdk-" (package.name or "")) home.home.packages == [
+          darwin.pkgs.jdk25
+        ];
   };
   # The prompt starts with user@host; the kubectl context follows the directory.
   prompt = {

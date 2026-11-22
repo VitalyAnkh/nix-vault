@@ -122,6 +122,13 @@ in
       # The SDK that Android Studio and `sdkmanager --sdk_root` install, for Gradle
       # and the SDK tools run outside Android Studio.
       ANDROID_HOME = "${homeDir}/Library/Android/sdk";
+      # macOS ships only a `java` stub that tells you to install a runtime, and
+      # Android Studio's JBR is inside its bundle, so the SDK's Java tools
+      # (sdkmanager, avdmanager) and Gradle need a JDK named here. This is the one
+      # the shared editor packages already install, so `java` and JAVA_HOME agree;
+      # Gradle 8.14.6 runs on it. A project whose Android Gradle plugin rejects this
+      # JDK sets its own `org.gradle.java.home` or toolchain.
+      JAVA_HOME = pkgs.jdk25.home;
       # GitHub's HTTPS endpoint is often unreachable from astra's networks while SSH
       # works. Doom runs the git commands of `doom sync` with this global git
       # configuration, so its GitHub clones and updates use SSH.

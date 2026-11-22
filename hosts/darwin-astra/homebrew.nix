@@ -52,6 +52,11 @@
       "zotero"
     ];
 
+    # No `masApps`, not even for Xcode: with one entry, `brew bundle cleanup` starts
+    # listing every App Store app that is not declared, and cleanup = "check" then
+    # aborts activation. Declaring them all would also reinstall any the user later
+    # removes. docs/astra-macos-host.md lists the App Store apps and Xcode's setup.
+
     # Only tools that Nix does not provide here: Nix precedes Homebrew on PATH.
     brews = [
       "cloudflared"

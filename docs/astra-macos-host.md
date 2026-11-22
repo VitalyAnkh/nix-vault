@@ -195,8 +195,9 @@ pnpm 生成的命令优先使用同目录的 `node`：`pnpm env use --global <�
 
 ### C/C++ 与 Rust 工具链
 
-- Nix 构建之外的 C/C++ 编译器和链接器（`cc`、`c++`、`ld`、`ar` 等）来自 Xcode Command Line
-  Tools，与本机 SDK 一致；`evalTests` 检查 Nix 不提供 C 编译器。nixpkgs 的 `clang`
+- Nix 构建之外的 C/C++ 编译器和链接器（`cc`、`c++`、`ld`、`ar` 等）来自 Xcode（2026-11-22 起
+  `xcode-select` 指向 `/Applications/Xcode.app`，在此之前是单独的 Command Line Tools，`/usr/bin`
+  中的入口不变），与本机 SDK 一致；`evalTests` 检查 Nix 不提供 C 编译器。nixpkgs 的 `clang`
   包装器只在 Linux 上安装：在 Nix 构建之外它使用 nixpkgs 的 apple-sdk，其中去掉了 libiconv、zlib 等库，依赖
   `libc`
   crate 的 Rust 程序、构建脚本和过程宏因此链接失败（`library not found for -liconv`），rust-analyzer 也就无法展开后两者。
@@ -238,7 +239,14 @@ Nix 声明 astra 需要哪些 Homebrew 包，Homebrew 负责安装和更新它�
     不接受它，会去扫描整个 `/nix/store`，要用 SDK 中的
     `$ANDROID_HOME/cmdline-tools/latest/bin/avdmanager`。SDK 的 `platform-tools` 与
     `android-platform-tools`
-    cask 的 adb 版本不同时，两者会互相结束对方的 adb 服务；PATH 上只有 cask 的 adb。
+    cask 的 adb 版本不同时，两者会互相结束对方的 adb 服务；PATH 上只有 cask 的 adb。JDK 用共享的
+    `home/base/tui/editors/packages.nix` 已有的 `jdk25`，HM 把它设为 `JAVA_HOME`：macOS 自带的
+    `java` 只是提示去安装运行时的占位程序，Android Studio 的 JBR 在它自己的应用包里，而 SDK 的
+    `sdkmanager`、`avdmanager` 和 Gradle 都需要一个 JDK。只能有这一个：`home.packages`
+    里出现第二个 JDK 时，buildEnv 会因为两份 `demo/nbproject/…/build.properties`
+    冲突而失败（2026-11-22 加 `jdk21` 时遇到过），astra 的 eval 测试因此检查 `home.packages` 中只有
+    `jdk25`。`gradle --version` 在它上面是 Gradle 8.14.6、Launcher JVM 25.0.3；某个项目的 Android
+    Gradle 插件不接受这个版本时，由项目自己设 `org.gradle.java.home` 或 toolchain。
   - Karabiner-Elements 的虚拟键盘是 DriverKit 系统扩展，需由厂商安装器放入
     `/Applications`。固定版本的 nix-darwin `services.karabiner-elements` 所启动的
     `karabiner_grabber`、`karabiner_observer` 在当前 Karabiner-Elements 中已不存在。键位仍由
@@ -251,6 +259,22 @@ Nix 声明 astra 需要哪些 Homebrew 包，Homebrew 负责安装和更新它�
     `/Applications/UURemote.app`，还装入以 root 运行的 LaunchDaemon `com.netease.uuremote.daemon`
     和每个登录会话的 LaunchAgent
     `com.netease.uuremote.agent`，前者开机运行，后者在登录时运行，退出后都由 launchd 重启；不想让它常驻时，在“系统设置 > 通用 > 登录项与扩展”中关闭它的后台运行。要让别的设备控制这台 Mac，需在“系统设置 > 隐私与安全性”中给它“屏幕录制”和“辅助功能”权限；只用它控制别的设备时不需要。
+- **Mac App Store 的应用**：astra 不用 `homebrew.masApps`，一个都不声明，`evalTests`
+  检查它为空。`masApps` 在 `cleanup = "check"` 下是全有全无的：清单里只要有一条 `mas`
+  行，`brew bundle cleanup` 就会把所有未声明的 App
+  Store 应用列为“待卸载”并以 1 退出，激活随之中止（2026-11-22 实测：声明 Xcode 后，QQ、Telegram、MarginNote
+  5、Shadowrocket、iMovie、库乐队、Developer 全部被列出；清单中没有 `mas`
+  行时退出码为 0）。把它们全部声明则有另一个代价：以后删掉其中任何一个，下次激活会用 `mas install`
+  重装它。所以 App Store 的应用由用户自己在 App Store 中安装和更新，下面只记录 Xcode 的配置步骤。
+  - 2026-11-22：macOS 升到 27.2.1 后从 App Store 装了 Xcode 27.2（id 497799835），并执行
+    `xcode-select -s /Applications/Xcode.app`、`xcodebuild -license accept`、`xcodebuild -runFirstLaunch`。iOS
+    27.2 的 SDK 和模拟器运行时随 Xcode 一起装好，不需要再 `xcodebuild -downloadPlatform iOS`；用
+    `xcrun simctl list runtimes` 确认列出 iOS 27.2。
+  - 这些 `xcodebuild`、`xcrun` 命令要在没有 `DEVELOPER_DIR` 和 `SDKROOT`
+    的环境中运行：本仓库的 direnv 把它们指向 Nix 的 apple-sdk，干净的登录 shell 不受影响。
+  - 工具链验收：`xcrun --sdk iphoneos clang -arch arm64` 和
+    `xcrun --sdk iphonesimulator swiftc -target arm64-apple-ios18.0-simulator` 都能编译，
+    `xcrun simctl boot` 能把 `iPhone 18 Pro` 模拟器启动到 `Booted`。
 - **Nix**：命令行工具、字体，以及需要固定版本或本地补丁的应用，例如 Emacs、kitty、Zed。版本由
   `flake.lock` 固定，各主机一致，可随 generation 回滚；PATH 中 Nix 排在 Homebrew 之前。字体由
   `fonts.packages` 提供，不使用字体 cask，例如 `ibm-plex` 已包含 Mono、Sans、Sans SC 和 Serif。
