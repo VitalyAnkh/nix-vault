@@ -687,6 +687,76 @@ profile 的插件固定到rc.2（见“待处理”）。
 
 在 astra 上构建 astra 通过（qvsshscp），Darwin 的 eval 测试通过；Warp、RoxyBrowser 的修正不改变 astra 的输出路径。astra 没有激活。
 
+### 2026-11-22：合入 9fbed400
+
+在 astra 上合并（af4a64ae），在 eva 上验证。上游这一段有 5 个提交，没有修改 Darwin 的路径和 ai 主机的文件：
+
+- a9d38491（#535）：新增共享的
+  `home/base/gui/git-signing.nix`，用 CanoKey 上的 OpenPGP 密钥签名所有提交（`~/work/`
+  下的仓库除外）；`home/base/tui/ssh.nix` 的 `Host *` 从 `ControlMaster=no`、`ControlPersist=no`
+  改为 `auto`、`30s`，30 秒内的重复连接不必再摸一次密钥。两项都由用户拍板（2026-11-22）：
+  - 不采用 `git-signing.nix`。`home/base/gui` 由 `mylib.scanPaths`
+    整个目录导入，这个文件一进来，eva、muon、astra 都会用上游作者自己的指纹 BB8DFBAC… 签名提交，而 astra 上
+    `gpg -K` 没有任何私钥、`gpg --card-status` 也没有 OpenPGP 卡，每次提交都会失败。本地的
+    `home/base/core/git.nix` 继续 `signing.format = null`，`home/base/README.md`
+    中对应的条目也不要。以后要用自己的密钥签名时见 [security-keys.md](./security-keys.md)。
+  - 跟随 SSH 的改动。本地的局域网主机早就是 `ControlPersist=30m`（WA-035 的 `lanHost`），`Host *`
+    的 30 秒与之一致；代价是这 30 秒内本账号的其它进程可以复用已认证的连接。本地不用 CanoKey 的 FIDO2
+    SSH 密钥，所以同一文件中上游的 `IdentityFile`
+    和 macOS 改用 nixpkgs 的 openssh 仍不采用（见“有意保留的差异”）。
+- 1bc8d252（#536）、8cb31f44（#537）：aquamarine 加入朋友的 tailnet（新增
+  `hosts/idols-aquamarine/tailscale.nix`），以及 llama-swap 改为 systemd 用户单元的说明。只涉及 Ryan 的主机。
+- 7576a30c：youko 的 blackbox
+  exporter 改用 TCP 探测 transmission，避免触发它的暴力破解锁定。只涉及 Ryan 的服务器。
+- 9fbed400：dsh 的 agent 文档补充了 patch 行按名字匹配、以及缺少服务层级的说明。本地的 `dsh.md`
+  有自己的改动，三方合并后两边都在。
+
+4 处冲突：`flake.lock` 的 `mysecrets`
+取本地（指向本仓库自己的 secrets 仓库），`home/base/tui/ssh.nix` 保留本地的
+`modules.ssh.personalConfig` 选项和 `~/.ssh/config.d` 的 include，`home/base/README.md`
+去掉 git-signing 的条目，`home/base/tui/gpg/README.md` 两边都保留。`just merge-audit`
+只列出这 4 个文件和不采用的 `git-signing.nix`，没有 drops non-conflicting hunks。`darwin.reviewed`
+推进到 9fbed400（这一段没有 Darwin 路径的改动）。
+
+合并之后的改动：
+
+- 用户要求 doomemacs 和 Emacs 都更新到最新（334ad4ea）：doomemacs 759fb66e →
+  eab52d2f（2026-11-20），Emacs 的 IGC pin f0c53b81 → 4e5a6458（2026-11-21）。新源码的
+  `configure.ac` 仍是
+  `AC_INIT 32.0.50`；igc3 也仍然没有 emacs-31 的 205ae0b0 和 5bf385da（GitHub 的 compare 对两者都是 diverged），所以
+  `.dir-locals.el` 的两个补丁继续应用，`skippedPatches` 不动。nvfetcher 的 `-f` 要用不带 `source-`
+  前缀的名字（`-f emacs-master-igc`）：写成 `source-emacs-master-igc`
+  时它不匹配任何包，静默地什么都不更新，`_sources` 没有任何改动。
+- 用户要求装好 iOS 和 Android 开发环境（7dab9035）：
+  - 用户自己把 macOS 升到 27.2.1（不是上一轮计划的 26.7.3），并从 App Store 装了 Xcode
+    27.2。升级后 Nix 完好：`/nix` 已挂载、nix-daemon 在运行、`/etc/zshrc`
+    仍是 nix-darwin 的、`/run/current-system` 仍是 gen 21。装好后执行了
+    `xcode-select -s /Applications/Xcode.app`、`xcodebuild -license accept`、`xcodebuild -runFirstLaunch`。iOS
+    27.2 的 SDK 和模拟器运行时随 Xcode 一起装好，`xcodebuild -downloadPlatform iOS`
+    不再需要；`xcrun --sdk iphoneos clang` 和 `xcrun --sdk iphonesimulator swiftc`
+    都能编译，`iPhone 18 Pro` 模拟器无窗口启动到 `Booted`。
+  - Xcode 不写进 `homebrew.masApps`。先写成 `masApps.Xcode = 497799835` 时，`brew bundle cleanup`
+    把 7 个未声明的 App Store 应用（QQ、Telegram、MarginNote
+    5、Shadowrocket、iMovie、库乐队、Developer）列为“待卸载”并以 1 退出，激活会在 Homebrew 这步中止；去掉清单里的
+    `mas` 行后退出码为 0。全部声明则会在用户删掉其中任一个之后、于下次激活 `mas install`
+    重装它，还要把个人应用清单写进公开仓库。按用户决定（2026-11-22）一个都不声明，eval测试改为检查
+    `masApps` 为空，安装与配置步骤写在 [astra 文档](./astra-macos-host.md)。
+  - Android 的 SDK 和模拟器是上一轮装的，这一轮补上 `JAVA_HOME`：macOS 自带的 `java`
+    只是提示去安装运行时的占位程序，Android Studio 的 JBR 25 在它自己的应用包里，而
+    `sdkmanager`、`avdmanager` 和 Gradle 都需要一个 JDK，`JAVA_HOME`
+    原来是空的。按用户决定（2026-11-22）用最新的 JDK，也就是共享的
+    `home/base/tui/editors/packages.nix` 里已有的 `jdk25`，不另外装一个：先写成 `jdk21` 时
+    `home-manager-path` 构建失败，buildEnv 报两份
+    `demo/nbproject/jfc/FileChooserDemo/build.properties` 冲突（zulu
+    21.0.11 与 25.0.3）。`gradle --version` 在 jdk25 上是 Gradle 8.14.6、Launcher JVM
+    25.0.3，没有报错。
+- `glab`（GitLab
+  CLI）改由 Nix 提供（d22b81ec）：它原来是用户 2026-11-21 用 Homebrew 装的，不在 astra 的清单中，激活会因为
+  `cleanup = "check"` 中止。按用户决定（2026-11-22）加到共享的 `home/base/core/git.nix` 中 `pkgs.gh`
+  旁边（nixpkgs 1.130.0），并卸掉 Homebrew 的 1.131.0；`~/.config/glab-cli`
+  仍由用户自己管理，没有动。
+- astra 的 eval 测试增加 `masApps` 和 `javaHome` 两项，详见 [astra 文档](./astra-macos-host.md)。
+
 ### 吸收的上游重构
 
 | 上游改动                                                                                              | 本地结果                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
@@ -800,6 +870,8 @@ profile 的插件固定到rc.2（见“待处理”）。
 | `home/linux/gui/base/gaming.nix`、`modules/nixos/desktop/gaming.nix`、`.agents/skills/nix-config-umu-game`、`hosts/eva/preservation.nix` 的游戏目录 | b    | 用户决定不把 Steam、Heroic、umu 放进沙箱（2026-11-07）：保留 `programs.steam`（extest、protontricks）、现有的数据目录和 2026-11-04 时的 umu 启动器 skill                                 |
 | `hardening/nixpaks/modules/gui-base.nix` 的 `/tmp`                                                                                                  | b    | 开 X11 的应用（QQ）用每个应用自己的目录，其余仍用 tmpfs，原因见上文“2026-11-07：合入 2b8274de”                                                                                           |
 | `home/base/tui/ssh.nix`                                                                                                                             | b    | `hostsAddr` 的别名不转发 SSH agent（上游 7cfda39c），`"*"` 不加 CanoKey 的 `IdentityFile`，macOS 不改用 nixpkgs 的 openssh（上游 0dcbbb02），原因见上表                                  |
+| `home/base/gui/git-signing.nix`                                                                                                                     | c    | 上游 a9d38491 用 CanoKey 上的 OpenPGP 密钥签名所有提交，密钥指纹写死为上游作者自己的；本地没有 OpenPGP 私钥和卡，照搬会让每次提交失败（2026-11-22 用户决定）                             |
+| `home/base/core/git.nix` 的 `glab`                                                                                                                  | b    | 用户要求命令行的 GitLab CLI 由 Nix 提供（2026-11-22），上游只装 `gh`                                                                                                                     |
 | `home/linux/gui/base/creative.nix` 的 `bambu-studio`、`pkgs/bambu-studio`                                                                           | b    | x86_64 用官方 AppImage（带 `device_page`），不用 nixpkgs 的源码构建，见上文“2026-11-12：合入 1bef53bf”；另设 `WEBKIT_DISABLE_DMABUF_RENDERER=1`，NVIDIA 上内嵌网页不再空白               |
 | `home/linux/gui/base/browsers.nix`、`hosts/darwin-astra/homebrew.nix`、`modules/darwin/apps.nix` 的 Firefox Developer Edition                       | b    | 用户要求所有主机安装它（2026-11-14）：Linux 用 Nightly 所在的 `firefox` input 提供的 `firefox-devedition-bin`，macOS 用 Mozilla 的 cask `firefox@developer-edition`                      |
 | `hosts/darwin-astra/homebrew.nix`、`modules/darwin/apps.nix` 的 `uuremote`                                                                          | b    | 用户要求 macOS 主机安装网易UU远程（2026-11-20），用 Homebrew 的 cask                                                                                                                     |
@@ -898,15 +970,8 @@ profile 的插件固定到rc.2（见“待处理”）。
 
 - eva、muon 的硬件看门狗（`hosts/eva/watchdog.nix`，2026-11-18）：方便时在 eva 上休眠几分钟（超过 30 秒），确认唤醒后没有被重置；然后删除这个模块，切换后确认
   `cat /sys/class/watchdog/watchdog0/state` 为 `active`，再休眠一次。被重置的话就保留这个模块。
-- astra 的 iOS 开发环境（2026-11-18）：用户在“系统设置 > 通用 > 软件更新”中把 macOS 从 26.5.1 升级到 Tahoe
-  26.7.3 并重启。之后检查 Nix 是否完好（`/etc/zshrc`、`/etc/bashrc` 仍是 nix-darwin 的，`/nix`
-  已挂载，nix-daemon 在运行，`/etc/static` 一致），用 `mas get 497799835` 从 App Store 安装 Xcode
-  27.2（需要登录 App Store），然后在 `hosts/darwin-astra/homebrew.nix` 中声明
-  `homebrew.masApps.Xcode = 497799835`；`xcode-select -s /Applications/Xcode.app`，接受许可，运行
-  `xcodebuild -runFirstLaunch`，下载 iOS 模拟器（`xcodebuild -downloadPlatform iOS`）。这些
-  `xcodebuild` 命令要在没有 `DEVELOPER_DIR`
-  的环境中运行：本仓库的 direnv 把它指向 Nix 的 apple-sdk。Xcode 装好后，astra 的 eval 测试和
-  [astra 文档](./astra-macos-host.md)中“C/C++ 编译器来自 Command Line Tools”的说法要相应更新。
+- astra 的 iOS 开发环境已完成（2026-11-22，见上文“2026-11-22：合入 9fbed400”）。剩下的是实际写一个 iOS 应用时才会遇到的事：签名用的开发者账号和
+  `xcodebuild -allowProvisioningUpdates` 还没试过。
 - 切换 muon 前：对每个用户检查
   `~/.ssh/authorized_keys`。2026-11-04 的合并后 sshd 不再读取家目录中的公钥，只认 Nix 中声明的（`users.users.<用户>.openssh.authorizedKeys`）；muon 仍允许密码登录。
 - 切换 eva 后，按 [runtime-validation.md](../hardening/tests/runtime-validation.md) 的“FIDO2
