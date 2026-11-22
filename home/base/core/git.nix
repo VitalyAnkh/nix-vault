@@ -36,11 +36,15 @@ in
     ''
   );
 
-  # GitHub CLI tool
+  # The GitHub and GitLab CLI tools
   # https://cli.github.com/manual/
-  # Keep its configuration user-managed and persisted rather than replacing it
+  # https://gitlab.com/gitlab-org/cli
+  # Keep their configuration user-managed and persisted rather than replacing it
   # with a Home Manager-generated file on every activation.
-  config.home.packages = [ pkgs.gh ];
+  config.home.packages = [
+    pkgs.gh
+    pkgs.glab
+  ];
 
   config.programs.git = {
     enable = true;
