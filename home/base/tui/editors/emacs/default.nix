@@ -109,7 +109,18 @@ in
 
       home.activation.installDoomEmacs = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
         run mkdir -p ${lib.escapeShellArg "${config.xdg.configHome}/emacs"}
-        run ${pkgs.rsync}/bin/rsync -avz --chmod=D2755,F744 \
+        # Mirror the pinned source instead of copying over it, so a file the pin
+        # no longer ships cannot survive a Doom update. `doom-module-load-path`
+        # searches ~/.config/emacs/modules before sources/doom+/modules, so a
+        # modules/<group>/<name>/ tree from a layout older than the doom+ split
+        # shadows the submodule's module of the same name and breaks startup with
+        # (void-function set-popup-rules!). Kept: Doom's own state (.local) and
+        # the profile declarations the user generates (profiles.el). `profiles/`
+        # only gets delete protection, because the pinned source ships files in it.
+        run ${pkgs.rsync}/bin/rsync -avz --delete --chmod=D2755,F744 \
+          --exclude=/.local \
+          --exclude=/profiles.el \
+          --filter='protect /profiles/***' \
           ${lib.escapeShellArg "${doomSource}/"} ${lib.escapeShellArg "${config.xdg.configHome}/emacs/"}
 
         # librime for emacs-rime

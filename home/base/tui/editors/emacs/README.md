@@ -42,8 +42,10 @@ modules.editors.emacs = {
 };
 ```
 
-`doom.enable` defaults to `true`. It installs Doom dependencies, copies the pinned Doom source to
-the Emacs configuration directory, links `~/.config/doom` to the configuration in
+`doom.enable` defaults to `true`. It installs Doom dependencies, mirrors the pinned Doom source into
+the Emacs configuration directory (removing files the pinned source no longer ships, except Doom's
+own `.local` state and the profile declarations the user generates: `profiles.el` and the files
+under `profiles/`), links `~/.config/doom` to the configuration in
 `~/projects/dev/emacs-projects/doom`, and adds Doom's `bin` directory to PATH in Bash, Zsh and Fish.
 Emacs starts from `~/.emacs.d`, `~/.emacs` or `~/.emacs.el` instead whenever one of them exists;
 activation removes an empty `~/.emacs.d`, which Emacs creates when it runs before Doom is installed,
@@ -53,6 +55,16 @@ dependencies and PATH.
 Doom's modules live in its git submodule `sources/doom+`. GitHub tarballs omit submodules, so the
 `doomemacs` flake input is a git input with `submodules=1`; without the modules, Doom loads only its
 core and none of the modules enabled in `init.el`.
+
+Mirroring matters because of how Doom resolves modules. `doom-module-load-path` (`lisp/doom.el`)
+searches `~/.config/doom/modules`, then `~/.config/emacs/modules`, then
+`~/.config/emacs/sources/doom+/modules`, and the first match wins. A `modules/<group>/<name>/` tree
+left in `~/.config/emacs` by a layout older than the `sources/doom+` split therefore shadows the
+submodule's module of the same name, while its stale autoload files no longer define what its
+`config.el` calls; startup then fails with
+`Error in a Doom module: modules/ui/popup/config.el, (void-function set-popup-rules!)`. After
+activation, `~/.config/emacs/modules` should contain only `doom/`; run `doom sync` once activation
+has removed such a tree.
 
 The copied Doom source carries `doom-straight-dependency-versions.patch`. The Doom configuration
 unpins straight.el, whose build cache records each dependency with its minimum version; without the
