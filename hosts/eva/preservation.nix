@@ -285,7 +285,21 @@ in
         ".agents"
         ".config/agents"
         ".claude"
+        # `grok` CLI. The Grok Bot desktop app below is a different program.
         ".grok"
+        # Grok Bot desktop app (llm-agents `grok-bot`). It keeps two trees, both
+        # of which it creates 0700: the Electron user data directory, named
+        # after the app's productName, holds the login session, and ~/.grokbot
+        # is its own data root (marked by .grokbot-data-root-v1). Its Chromium
+        # cache under ~/.cache is covered by the preserved `.cache` above.
+        {
+          directory = ".config/Grok Bot";
+          mode = "0700";
+        }
+        {
+          directory = ".grokbot";
+          mode = "0700";
+        }
         ".config/codex-desktop"
         ".config/Codex"
         ".codex"
