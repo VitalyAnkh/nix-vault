@@ -34,6 +34,9 @@ let
           modules.secrets.preservation.enable = true;
           modules.desktop.gaming.enable = true;
           modules.desktop.canokey.enable = true;
+          # Unofficial NetEase UU Remote host. Installs the `uuremote-native`
+          # user service; it only goes online after `uuremote-server login`.
+          modules.desktop.uuRemote.enable = true;
         }
       ]
       ++ lib.optional (builtins.pathExists privateHostModule) privateHostModule;

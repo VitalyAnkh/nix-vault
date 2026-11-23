@@ -27,6 +27,13 @@ let
         # As on eva, in both variants: Ghostty, Zed and Warp name Maple Mono NF CN,
         # and tuios and the Starship prompt need its Nerd Font icons.
         { modules.desktop.fonts.enable = true; }
+        {
+          # muon is shared by many users, so the UU Remote host is available but
+          # never started on its own: no `uuremote-native` user unit is
+          # registered. Whoever wants it follows
+          # modules/nixos/desktop/networking/uu-remote/README.md.
+          modules.desktop.uuRemote.installOnly = true;
+        }
       ];
     home-modules = map mylib.relativeToRoot [
       "home/hosts/linux/${name}.nix"

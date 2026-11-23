@@ -64,8 +64,9 @@ those entry points.
 
 - [NixOS and nix-darwin modules](../modules/README.md), including
   [Darwin modules](../modules/darwin/README.md),
-  [Mihomo networking](../modules/nixos/desktop/networking/mihomo/README.md) and
-  [Sunshine](../modules/nixos/desktop/networking/sunshine/README.md).
+  [Mihomo networking](../modules/nixos/desktop/networking/mihomo/README.md),
+  [Sunshine](../modules/nixos/desktop/networking/sunshine/README.md) and
+  [UU Remote host](../modules/nixos/desktop/networking/uu-remote/README.md).
 - [Home Manager modules](../home/README.md).
 - [Flake outputs and tests](../outputs/README.md).
 - [Secrets management](../secrets/README.md).

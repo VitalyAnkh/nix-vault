@@ -186,6 +186,18 @@
     # AI coding agents
     llm-agents.url = "github:numtide/llm-agents.nix";
 
+    # -------------- Remote desktop -------------
+
+    # Unofficial Linux host for NetEase UU Remote, built from source (Rust).
+    # Exposes the `uu-remote-linux` package and `nixosModules.default`, which
+    # also carries the package's own overlay. Wired up through
+    # `modules.desktop.uuRemote` (modules/nixos/desktop/networking/uu-remote):
+    # enabled on eva, package-only on the shared muon.
+    uu-remote-linux = {
+      url = "github:VallierDev/uu-remote-linux";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # -------------- Gaming ---------------------
 
     # x86/x86_64 emulation on 16K-page ARM64 (Apple Silicon). FEX cannot run

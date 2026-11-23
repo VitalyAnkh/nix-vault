@@ -474,6 +474,16 @@ in
         ".config/sunshine"
         ".config/freerdp"
 
+        # Unofficial NetEase UU Remote host (modules.desktop.uuRemote). Holds
+        # config.json (0600: account token plus this machine's device identity),
+        # host_settings.json, env.conf and the recovery records. Keep it private
+        # and strictly per host: two hosts carrying the same device identity
+        # keep kicking each other out of the room.
+        {
+          directory = ".config/uuremote";
+          mode = "0700";
+        }
+
         ".config/remmina"
         ".local/share/remmina"
 
