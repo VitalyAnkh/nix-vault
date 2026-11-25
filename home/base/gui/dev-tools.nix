@@ -1,23 +1,13 @@
 {
   lib,
   llm-agents,
-  magpie,
   pkgs,
   ...
 }:
 let
   agentPackages = llm-agents.packages.${pkgs.stdenv.hostPlatform.system};
-  # magpie sends a daily usage event (an install id, its version and the ids of
-  # the agents, providers and models it is used with) unless told not to; like
-  # the other agent opt-outs in home/base/tui/agents/env.nix. Set for the
-  # systemd user manager as well, since the desktop app is started from the
-  # app grid, not from a login shell.
-  magpieEnv.MAGPIE_NO_STATS = "1";
 in
 {
-  home.sessionVariables = lib.mkIf pkgs.stdenv.hostPlatform.isLinux magpieEnv;
-  systemd.user.sessionVariables = lib.mkIf pkgs.stdenv.hostPlatform.isLinux magpieEnv;
-
   # Agent CLIs from llm-agents live in home/base/tui/agents/packages.nix; the
   # desktop agent apps stay here, out of the TUI-only configurations.
   home.packages =
@@ -41,10 +31,9 @@ in
       agentPackages.grok-bot
       agentPackages.orca
       agentPackages.zcode
-      # magpie's desktop app (window, tray, TUI, web UI and CLI in one
-      # `magpie` binary), from its own release flake: llm-agents does not
-      # package it. Its state is ~/.config/magpie, keys included.
-      magpie.packages.${pkgs.stdenv.hostPlatform.system}.magpie
+      # magpie is the fourth of these, but llm-agents does not package it and
+      # it owns a user service and an autostart entry, so all of its wiring
+      # lives in home/linux/gui/base/magpie.nix instead.
     ])
     ++ (lib.optionals pkgs.stdenv.hostPlatform.isLinux [
       mitmproxy

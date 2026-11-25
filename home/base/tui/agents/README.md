@@ -37,15 +37,57 @@ settings that bite.
 [magpie](https://github.com/yetone/magpie) picks which model each agent on the machine talks to and
 runs one local gateway for all of them. llm-agents does not package it, so the `magpie` flake input
 points at its own release flake (`github:yetone/magpie-releases`), which wraps the project's signed
-release binaries; nothing is compiled, and the pin moves with `nix flake update magpie`. Installed
-on Linux only, from `home/base/gui/dev-tools.nix` -- one `magpie` binary that is the window, the
-tray icon, the TUI (`magpie tui`), the web UI and the CLI.
+release binaries; nothing is compiled, and the pin moves with `nix flake update magpie`. One
+`magpie` binary is the window, the menu-bar icon, the TUI (`magpie tui`), the web UI and the CLI.
+All of its wiring is `home/linux/gui/base/magpie.nix` (`modules.desktop.magpie`), Linux-only.
 
-A magpie that runs from `/nix/store` leaves updating to Nix instead of replacing its own binary, and
-writes its stable profile path (not the store path) into the desktop and autostart entries it
-creates, so they survive a garbage collection.
+A magpie that runs from `/nix/store` leaves updating to Nix instead of replacing its own binary.
 
-Its state is `~/.config/magpie`, deliberately flat: `providers.json` (API keys), `logins.json` and
+Installing it starts nothing and reaches nothing: the gateway has no models until
+`magpie provider add <preset> <key>` or a subscription sign-in on the Providers page.
+
+### The user service and the autostart entry
+
+magpie can put itself in two places that Home Manager owns, so the module declares both instead:
+
+| Option                             | File it owns                            | Equivalent command      |
+| ---------------------------------- | --------------------------------------- | ----------------------- |
+| `modules.desktop.magpie.daemon`    | `~/.config/systemd/user/magpie.service` | `magpie daemon install` |
+| `modules.desktop.magpie.autostart` | `~/.config/autostart/magpie.desktop`    | `magpie autostart on`   |
+
+Do not run those two commands on these hosts: the files are read-only store symlinks, and neither
+directory is preserved, so anything magpie wrote there by hand is lost at the next boot anyway.
+`magpie daemon status`, `restart`, `stop` and `start` keep working, as does
+`systemctl --user restart magpie`.
+
+**The two are mutually exclusive**, and the module asserts it. Both serve the gateway, and it binds
+a fixed loopback port (127.0.0.1:3425), so the pair would take turns failing on it; upstream's own
+`daemon install` refuses to run while autostart is on.
+
+eva runs the service (`daemon.enable`), because GNOME has no tray there and an autostarted
+`magpie tray` would be an invisible process; the window opened from the app grid reuses the running
+gateway. The service is off by default for the hosts several people share: one fixed port cannot
+serve a service per logged-in user, so on muon the second user's would find it taken. Without
+`users.users.<name>.linger = true` on the host, systemd starts the service at the user's first login
+rather than at boot.
+
+Two details that cost a measurement, so do not re-derive them by guessing:
+
+- the autostart entry runs `magpie tray` (the menu-bar icon alone), **not** the `magpie %u` of the
+  package's own desktop entry, which opens the window as well;
+- magpie writes the path of the build it ran from into the entries it creates -- a store path, which
+  a garbage collection removes after an upgrade. The declared entry is rewritten by every switch and
+  kept alive by the generation that owns it.
+
+The service's `Environment=` carries only `PATH`, spelled out because the user manager's own PATH is
+imported from the graphical session at login and would be missing from a unit that starts at boot.
+Keep credentials out of it: upstream makes its generated unit readable by its owner alone because
+the environment it captures can hold a proxy password, while a unit in the store is world-readable.
+magpie reads its own secrets from the 0600 files below.
+
+### State
+
+`~/.config/magpie` is deliberately flat: `providers.json` (API keys), `logins.json` and
 `plugin-auth.json` (subscription sign-ins), `caller-keys.json` -- all 0600 -- plus `settings.json`,
 the usage and routing history, and `stash.json`/`applied.json`, which record what magpie changed in
 each agent's own config and are what it needs to put those settings back. It is preserved on the
@@ -53,19 +95,13 @@ tmpfs-root hosts (`hosts/eva/preservation.nix`); `~/.cache/magpie` (the Bun it r
 model catalogs) and `~/.local/state/magpie/app.log` fall under the already preserved `.cache` and
 `.local/state`.
 
-Two caveats on those hosts:
-
-- `magpie daemon install` writes a systemd **user** unit to `~/.config/systemd/user/magpie.service`,
-  and `magpie autostart on` an entry under `~/.config/autostart`. Neither directory is preserved
-  (Home Manager owns both), so both are lost at the next boot; the desktop app serves the gateway
-  itself, and the command is cheap to repeat. Do not persist those directories to work around it.
-- Never copy `~/.config/magpie` to another machine: the keys and sign-ins in it are per machine, and
-  `install-id` identifies this one.
+Never copy `~/.config/magpie` to another machine: the keys and sign-ins in it are per machine, and
+`install-id` identifies this one.
 
 magpie sends one usage event a day (an install id, its version, and the ids of the agents, providers
-and models in use). `MAGPIE_NO_STATS = "1"` beside its package turns that off, in both
-`home.sessionVariables` and `systemd.user.sessionVariables`, because the app is started from the
-desktop rather than from a login shell.
+and models in use). The module sets `MAGPIE_NO_STATS = "1"` to turn that off, in both
+`home.sessionVariables` and `systemd.user.sessionVariables`, because magpie is started from the
+desktop or by its user unit rather than from a login shell.
 
 ## Deployed rule targets
 
