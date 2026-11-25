@@ -44,13 +44,13 @@
   };
   source-emacs-master-igc = {
     pname = "source-emacs-master-igc";
-    version = "898bbc7d9f950cc4105d4a0ea8602ea59df5ad84";
+    version = "8dc2fb9fd831b287956affefb7d22063d70b438a";
     src = fetchFromGitHub {
       owner = "emacs-mirror";
       repo = "emacs";
-      rev = "898bbc7d9f950cc4105d4a0ea8602ea59df5ad84";
+      rev = "8dc2fb9fd831b287956affefb7d22063d70b438a";
       fetchSubmodules = false;
-      sha256 = "sha256-BZjAhloFJ4tNtEYno/lzeHHwK3KZsOp58XQSiFe7mpg=";
+      sha256 = "sha256-V3xUb854lNdG/KmcBiBYIKCEg8mC2gQH0UjbdQXqQlo=";
     };
   };
   source-godot-master = {

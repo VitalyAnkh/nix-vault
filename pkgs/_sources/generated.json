@@ -72,12 +72,12 @@
       "name": null,
       "owner": "emacs-mirror",
       "repo": "emacs",
-      "rev": "898bbc7d9f950cc4105d4a0ea8602ea59df5ad84",
-      "sha256": "sha256-BZjAhloFJ4tNtEYno/lzeHHwK3KZsOp58XQSiFe7mpg=",
+      "rev": "8dc2fb9fd831b287956affefb7d22063d70b438a",
+      "sha256": "sha256-V3xUb854lNdG/KmcBiBYIKCEg8mC2gQH0UjbdQXqQlo=",
       "sparseCheckout": [],
       "type": "github"
     },
-    "version": "898bbc7d9f950cc4105d4a0ea8602ea59df5ad84"
+    "version": "8dc2fb9fd831b287956affefb7d22063d70b438a"
   },
   "source-godot-master": {
     "cargoLock": null,
