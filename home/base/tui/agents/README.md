@@ -21,13 +21,51 @@ Markdown with no Nix dependency; this module only wires it into place.
   (the Grafana MCP server). `opencode` is llm-agents' `opencode2` (OpenCode V2) under its normal
   command name. Codex is installed through pnpm instead. The desktop agent apps (`antigravity-hub`
   on every platform; `grok-bot`, `orca`, `zcode` on Linux) are installed by the GUI layer,
-  `home/base/gui/dev-tools.nix`.
-- `env.nix`: telemetry and auto-update opt-outs for the agents.
+  `home/base/gui/dev-tools.nix`, together with magpie (Linux), which llm-agents does not package and
+  which comes from its own release flake input, `magpie`.
+- `env.nix`: telemetry and auto-update opt-outs for the agents. magpie's (`MAGPIE_NO_STATS`) sits
+  beside its package in `dev-tools.nix`, also set for the systemd user manager so that the app
+  started from the desktop sees it.
 
 dsh is installed by this module (the `llm-agents` build; upstream uses nur-ryan4yin's shim) but
 configured at runtime, not by Nix: profile patches live in
 `~/.dsh/profiles/<name>/cordis.patch.yml`. See [dsh.md](./dsh.md) for the layer order and the
 settings that bite.
+
+## magpie
+
+[magpie](https://github.com/yetone/magpie) picks which model each agent on the machine talks to and
+runs one local gateway for all of them. llm-agents does not package it, so the `magpie` flake input
+points at its own release flake (`github:yetone/magpie-releases`), which wraps the project's signed
+release binaries; nothing is compiled, and the pin moves with `nix flake update magpie`. Installed
+on Linux only, from `home/base/gui/dev-tools.nix` -- one `magpie` binary that is the window, the
+tray icon, the TUI (`magpie tui`), the web UI and the CLI.
+
+A magpie that runs from `/nix/store` leaves updating to Nix instead of replacing its own binary, and
+writes its stable profile path (not the store path) into the desktop and autostart entries it
+creates, so they survive a garbage collection.
+
+Its state is `~/.config/magpie`, deliberately flat: `providers.json` (API keys), `logins.json` and
+`plugin-auth.json` (subscription sign-ins), `caller-keys.json` -- all 0600 -- plus `settings.json`,
+the usage and routing history, and `stash.json`/`applied.json`, which record what magpie changed in
+each agent's own config and are what it needs to put those settings back. It is preserved on the
+tmpfs-root hosts (`hosts/eva/preservation.nix`); `~/.cache/magpie` (the Bun it runs plugins on,
+model catalogs) and `~/.local/state/magpie/app.log` fall under the already preserved `.cache` and
+`.local/state`.
+
+Two caveats on those hosts:
+
+- `magpie daemon install` writes a systemd **user** unit to `~/.config/systemd/user/magpie.service`,
+  and `magpie autostart on` an entry under `~/.config/autostart`. Neither directory is preserved
+  (Home Manager owns both), so both are lost at the next boot; the desktop app serves the gateway
+  itself, and the command is cheap to repeat. Do not persist those directories to work around it.
+- Never copy `~/.config/magpie` to another machine: the keys and sign-ins in it are per machine, and
+  `install-id` identifies this one.
+
+magpie sends one usage event a day (an install id, its version, and the ids of the agents, providers
+and models in use). `MAGPIE_NO_STATS = "1"` beside its package turns that off, in both
+`home.sessionVariables` and `systemd.user.sessionVariables`, because the app is started from the
+desktop rather than from a login shell.
 
 ## Deployed rule targets
 

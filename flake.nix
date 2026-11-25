@@ -185,6 +185,15 @@
 
     # AI coding agents
     llm-agents.url = "github:numtide/llm-agents.nix";
+    # magpie, the per-agent model switcher and local gateway. Not in
+    # llm-agents: its own release flake wraps the signed release binaries
+    # (nothing is compiled) and is bumped on every upstream release. A magpie
+    # run from /nix/store leaves updating to Nix. Installed on the Linux
+    # desktops from home/base/gui/dev-tools.nix.
+    magpie = {
+      url = "github:yetone/magpie-releases";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # -------------- Remote desktop -------------
 

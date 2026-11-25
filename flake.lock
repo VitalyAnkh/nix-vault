@@ -742,6 +742,26 @@
         "type": "github"
       }
     },
+    "magpie": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1795594787,
+        "narHash": "sha256-f/5JEfdQLfsIRiy4oUgA4I4wyqbAwWPCDZLCMAAlfH8=",
+        "owner": "yetone",
+        "repo": "magpie-releases",
+        "rev": "4cb95521ec2ceb474b203258c3c23198cbb6c091",
+        "type": "github"
+      },
+      "original": {
+        "owner": "yetone",
+        "repo": "magpie-releases",
+        "type": "github"
+      }
+    },
     "mattpocock-skills": {
       "flake": false,
       "locked": {
@@ -1420,6 +1440,7 @@
         "i-have-adhd": "i-have-adhd",
         "lanzaboote": "lanzaboote",
         "llm-agents": "llm-agents",
+        "magpie": "magpie",
         "mattpocock-skills": "mattpocock-skills",
         "microvm": "microvm",
         "mysecrets": "mysecrets",

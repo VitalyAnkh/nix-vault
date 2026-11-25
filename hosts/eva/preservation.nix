@@ -319,6 +319,15 @@ in
         ".dsh"
         ".pi"
         ".local/state/codex-desktop"
+        # magpie (its own release flake). ~/.config/magpie holds the providers
+        # and API keys, subscription sign-ins and caller keys (0600 files),
+        # the gateway's usage and routing history, and what it changed in
+        # each agent's own config, which it needs to put those back. Its
+        # cache and log are under the preserved .cache and .local/state.
+        {
+          directory = ".config/magpie";
+          mode = "0700";
+        }
         # Orca ADE (llm-agents), distinct from OrcaSlicer
         ".orca"
         ".config/Orca"
