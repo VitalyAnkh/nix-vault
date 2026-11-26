@@ -765,11 +765,9 @@ profile 的插件固定到rc.2（见“待处理”）。
   `modules.nix.lanCache.enable` 控制，shoukei 和 macOS 笔记本（新增的
   `modules/darwin/nix-lan-cache.nix`）关掉它，这些笔记本离开 Ryan 家里的网络后不再依赖它。本地从未使用这个缓存（见下表 58d1af8f 一行），所以
   `modules/base/nix.nix` 保留本地的 substituters 和
-  `trusted-users`，只声明这个选项。它在本地不起作用，声明它只是为了让上游的 shoukei 和 Darwin 设置能够求值。astra
-  的模块清单是手写白名单（`outputs/aarch64-darwin/src/astra.nix`），并不包含
+  `trusted-users`，只声明这个选项。它在本地不起作用，声明它只是为了让上游的 shoukei 和 Darwin 设置能够求值。astra 的模块清单是手写白名单（`outputs/aarch64-darwin/src/astra.nix`），并不包含
   `modules/darwin/nix-lan-cache.nix`，所以 astra 上这个选项取声明的默认值
-  `true`，而上游自己的 Darwin
-  主机（fern、frieren，通过 `scanPaths` 导入整个 `modules/darwin`）取
+  `true`，而上游自己的 Darwin 主机（fern、frieren，通过 `scanPaths` 导入整个 `modules/darwin`）取
   `false`。两者没有实际区别，因为本地的 `modules/base/nix.nix` 不读这个选项：astra 合并前后系统里的
   `substituters` 和 `trusted-public-keys` 逐字相同（2026-11-26 实测）。
 - 4b0db015（#539）：`just dsh-web lan` 改为监听 `vars/networking.nix`
@@ -795,10 +793,10 @@ non-conflicting hunks，上游也没有删除文件。`darwin.reviewed`
   `.dir-locals.el` 的两个补丁继续应用。
 - astra 到 GitHub 的 TLS 连接这天仍然断续，`nix flake update` 在 astra 上因 “Truncated tar
   archive” 失败，改在 eva 上运行（见上文“在 astra 上合并，在 eva 上验证”），再把 `flake.lock`
-  拷回 astra。astra 的构建也因此先取不到 Emacs 的源码 FOD 和 numtide 缓存里的三个路径——nix-daemon
-  不走本机的代理，而客户端走。解法是在客户端带 `https_proxy` 取：源码用
-  `nix-prefetch-url --unpack --name source --print-path <归档 URL> <base32>`，它会复现出同一个 FOD
-  路径；缓存路径用 `nix copy --from <cache> <path>`（签名照常校验）。取完之后构建一次通过。
+  拷回 astra。astra 的构建也因此先取不到 Emacs 的源码 FOD 和 numtide 缓存里的三个路径——nix-daemon 不走本机的代理，而客户端走。解法是在客户端带
+  `https_proxy` 取：源码用
+  `nix-prefetch-url --unpack --name source --print-path <归档 URL> <base32>`，它会复现出同一个 FOD 路径；缓存路径用
+  `nix copy --from <cache> <path>`（签名照常校验）。取完之后构建一次通过。
 
 ### 吸收的上游重构
 
@@ -869,7 +867,7 @@ non-conflicting hunks，上游也没有删除文件。`darwin.reviewed`
 | OpenRGB 开机和唤醒后关灯（#502、#508）                                                                | 用户决定 eva 跟随（`hosts/eva/openrgb/`）；eva 原来没有 profile，灯效是主板固件的默认值                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | `/etc/ssh` 在 initrd 中挂载（560a6cc2）                                                               | 用户决定 eva、muon 跟随（muon 共用 eva 的 preservation）。原来 `/etc/ssh` 在激活脚本写入 `authorized_keys.d` 之后才挂载，用 boot + 重启切换时 Nix 中公钥的改动不生效                                                                                                                                                                                                                                                                                                                                                                   |
 | SSH 关闭 keyboard-interactive、不读家目录的公钥（#489）                                               | 跟随；eva、muon 仍强制允许密码登录，密码登录不受影响                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| substituters 改为国内镜像优先并加入 youko 的缓存代理（58d1af8f）                                      | 不跟随：`nix-cache.writefor.fun` 是 Ryan 局域网的服务，不应信任；上游同时去掉了 nix-community，而 eva 的 CUDA 包依赖它                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| substituters 改为国内镜像优先并加入 youko 的缓存代理（58d1af8f）                                      | 不跟随：`nix-cache.writefor.fun` 是 Ryan 家中 youko 上的 nginx 透明回源缓存。这不是信任问题——Nix 仍按原始缓存的签名校验，代理无法塞进伪造路径；真正的原因是离开 Ryan 的局域网后它没有加速作用、会把本机拉取了哪些路径暴露给他、且它下线时会拖慢甚至卡住构建。上游同时去掉了 nix-community，而 eva 的 CUDA 包依赖它                                                                                                                                                                                                                     |
 | 沙箱中的浏览器使用 FIDO2 安全密钥（#515）                                                             | 用户决定移植到本地的 Firefox 沙箱（2026-11-07）。eva、muon 的 udev 规则把 FIDO 接口的 hidraw 节点硬链接到 `/dev/fido-hidraw`（开机时创建），Firefox 只看到这个目录、`/sys/class/hidraw` 和 udev 数据库，密钥的键盘接口和其他 HID 设备都看不到。Firefox Nightly、Chrome、Edge 不在沙箱中，本来就能用安全密钥                                                                                                                                                                                                                            |
 | QQ 的沙箱开 X11（34e984fb）                                                                           | 用户决定跟随（2026-11-07）。QQ 因此能连接 Xwayland，读取其他 X11 窗口的内容和键盘输入，与 WeChat 相同                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | niri 恢复 pyclipsync（ba149b5e、2b8274de）                                                            | 跟随：2026-11-04 随上游删除，上游随后发现 QQ 在 niri 上复制仍需要它                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
