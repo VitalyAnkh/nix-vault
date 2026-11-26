@@ -1,11 +1,21 @@
 {
   pkgs,
   config,
+  lib,
   myvars,
   ...
 }:
 {
-  nix.settings = {
+  # Upstream gates its LAN cache proxy on youko behind this option. This fork never lists that
+  # cache (docs/upstream-sync.md), so the option changes nothing here; it is declared so that
+  # upstream's host settings (shoukei, modules/darwin/nix-lan-cache.nix) keep evaluating.
+  options.modules.nix.lanCache.enable = lib.mkOption {
+    type = lib.types.bool;
+    default = true;
+    description = "Prefer the LAN nix cache proxy on youko; disable on laptops that leave the home network.";
+  };
+
+  config.nix.settings = {
     # enable flakes globally
     experimental-features = [
       "nix-command"
