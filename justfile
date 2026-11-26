@@ -452,11 +452,20 @@ dsh-web listen="local":
   # to stop at the LAN: without no_proxy the llama-swap endpoint (aquamarine,
   # 192.168.5.101) goes through it too. Node reads only lowercase `no_proxy` and
   # matches exact hosts, not CIDR; curl and Go do honor CIDR.
+  #
+  # Local: eva and astra run their proxy on 7911, not on mihomo's (and Clash
+  # Verge's) 7897, which only muon still uses. no_proxy keeps the caller's own
+  # entries instead of replacing them, and drops Ryan's LAN hosts.
+  let proxy = "http://127.0.0.1:7911"
+  let no_proxy = (
+    [$env.no_proxy? $env.NO_PROXY? "localhost,127.0.0.1,::1,[::1],10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"]
+    | compact --empty | str join "," | split row "," | uniq | str join ","
+  )
   with-env {
-    HTTPS_PROXY: "http://127.0.0.1:7897"
-    HTTP_PROXY: "http://127.0.0.1:7897"
-    no_proxy: "localhost,127.0.0.1,::1,[::1],192.168.5.100,192.168.5.101,192.168.5.178,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
-    NO_PROXY: "localhost,127.0.0.1,::1,[::1],192.168.5.100,192.168.5.101,192.168.5.178,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+    HTTPS_PROXY: $proxy
+    HTTP_PROXY: $proxy
+    no_proxy: $no_proxy
+    NO_PROXY: $no_proxy
   } { ^dsh --profile web --no-open ...$host_args }
 
 # Render the mihomo config from this repo and validate it with the live core.

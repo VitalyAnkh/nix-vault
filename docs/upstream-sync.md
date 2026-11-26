@@ -774,7 +774,14 @@ profile 的插件固定到rc.2（见“待处理”）。
   中本机的静态地址（明文HTTP），三方合并进小写的 `justfile`。不带参数的 `just dsh-web`
   不变。`vars/networking.nix` 中 eva 的地址属于有线网卡 `enp15s0`，而 eva 现在用无线网卡
   `wlp14s0`，那个地址不在 eva 上（2026-11-26 实测），所以在 eva 上 `lan`
-  模式会绑定失败；要用时先改正 eva 的条目。
+  模式会绑定失败。用户决定不用 `lan`
+  模式（2026-11-26），这一段按上游原样保留，eva 的条目也不改：eva 的无线地址由 DHCP 分配，租约记录里先后有过三个网段，写进 vars 也会过期；本地其他地方只用
+  `hostsAddr` 的主机名（`home/base/tui/ssh.nix`），不用其中的 IP。
+- 同一个 recipe 里，上游给 dsh 设的代理是 `127.0.0.1:7897`，这是 mihomo（以及 Clash
+  Verge）的混合端口。eva 和 astra 的代理在 7911，7897 在两台上都不通（2026-11-26 实测），所以
+  `just dsh-web`
+  中 dsh 的网页抓取一直连不上代理。本地改为 7911，见下面“有意保留的差异”。eva 的 DNS 返回 fake-ip（`api.github.com`
+  解析为 198.18.0.12），上游设代理的理由在 eva 上成立；astra 的 DNS 返回真实地址，不设代理也能直连，设了也无害。
 
 唯一的冲突是 `modules/base/nix.nix`。`just merge-audit` 只列出它和 `justfile`（上游改的是大写的
 `Justfile`，审计把小写的文件算作只有本地改过；结果正是本地版本加上上游这一段），没有 drops
@@ -899,6 +906,7 @@ non-conflicting hunks，上游也没有删除文件。`darwin.reviewed`
 | `secrets/README.md`                                                                                                                                 | b    | 私有 secrets 仓库仍用 `secrets.nix`；上游 01d2e764 把它的私有仓库改为 `agenix-rules.nix`，并去掉了规则键的 `./` 前缀                                                                     |
 | `home/base/tui/tuios/config.toml`                                                                                                                   | b    | leader 键为 Ctrl+Z                                                                                                                                                                       |
 | `justfile` 的 `clean`                                                                                                                               | b    | 保留 `--older-than 7d`，不像上游 59f194f0 那样清除全部历史 generation                                                                                                                    |
+| `justfile` 的 `dsh-web`                                                                                                                             | b    | 代理用 eva、astra 的 7911，不用上游的 7897（muon 的 Clash Verge 仍在 7897，在 muon 上运行时连不上代理）；`no_proxy` 合并已有条目，去掉 Ryan 局域网的地址                                 |
 | `home/darwin/ssh.nix`                                                                                                                               | c    | 上游 b44d2770 改用系统级 SSH 配置并删除此文件；独立 HM 输出 `vitalyr@aarch64-darwin` 不经过 nix-darwin，主机别名只能来自这里                                                             |
 | `home/darwin/default.nix`                                                                                                                           | b    | Home Manager 26.05 在 Darwin 上默认 `programs.man.package = null`，因此关闭 man 缓存                                                                                                     |
 | `home/darwin/proxy`                                                                                                                                 | b    | 加了启用开关；proxychains 的链接指向 `repoRoot` 下的仓库，而不是上游的 `~/nix-config`                                                                                                    |
