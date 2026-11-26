@@ -453,9 +453,16 @@ dsh-web listen="local":
   # 192.168.5.101) goes through it too. Node reads only lowercase `no_proxy` and
   # matches exact hosts, not CIDR; curl and Go do honor CIDR.
   #
-  # Local: eva and astra run their proxy on 7911, not on mihomo's (and Clash
-  # Verge's) 7897, which only muon still uses. no_proxy keeps the caller's own
-  # entries instead of replacing them, and drops Ryan's LAN hosts.
+  # Local: the fake-ip reason above is stale. dsh 0.2.1-rc.2 dropped the
+  # public-address check (upgrade guide web-fetch-private-destinations), so a
+  # fetch behind a TUN proxy works as is. The variables still matter because dsh
+  # takes its proxy only from them, never from the macOS or GNOME system proxy:
+  # eva's proxy is a TUN and needs none, but astra's is a system proxy, so
+  # without them dsh reaches only sites that need no proxy. Both listen on 7911,
+  # not on mihomo's (and Clash Verge's) 7897, which only muon still uses; an
+  # unreachable proxy fails every request dsh makes, model API calls included.
+  # no_proxy keeps the caller's own entries instead of replacing them, and drops
+  # Ryan's LAN hosts.
   let proxy = "http://127.0.0.1:7911"
   let no_proxy = (
     [$env.no_proxy? $env.NO_PROXY? "localhost,127.0.0.1,::1,[::1],10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"]
