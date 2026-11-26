@@ -757,6 +757,49 @@ profile 的插件固定到rc.2（见“待处理”）。
   仍由用户自己管理，没有动。
 - astra 的 eval 测试增加 `masApps` 和 `javaHome` 两项，详见 [astra 文档](./astra-macos-host.md)。
 
+### 2026-11-26：合入 4b0db015
+
+在 astra 上合并（a734e1de），在 eva 上验证。上游这一段有 2 个提交，没有修改 ai 主机的文件：
+
+- 19883924（#538）：youko 的局域网缓存代理（`nix-cache.writefor.fun`）改由
+  `modules.nix.lanCache.enable` 控制，shoukei 和 macOS 笔记本（新增的
+  `modules/darwin/nix-lan-cache.nix`）关掉它，这些笔记本离开 Ryan 家里的网络后不再依赖它。本地从未使用这个缓存（见下表 58d1af8f 一行），所以
+  `modules/base/nix.nix` 保留本地的 substituters 和
+  `trusted-users`，只声明这个选项。它在本地不起作用，声明它只是为了让上游的 shoukei 和 Darwin 设置能够求值。astra
+  的模块清单是手写白名单（`outputs/aarch64-darwin/src/astra.nix`），并不包含
+  `modules/darwin/nix-lan-cache.nix`，所以 astra 上这个选项取声明的默认值
+  `true`，而上游自己的 Darwin
+  主机（fern、frieren，通过 `scanPaths` 导入整个 `modules/darwin`）取
+  `false`。两者没有实际区别，因为本地的 `modules/base/nix.nix` 不读这个选项：astra 合并前后系统里的
+  `substituters` 和 `trusted-public-keys` 逐字相同（2026-11-26 实测）。
+- 4b0db015（#539）：`just dsh-web lan` 改为监听 `vars/networking.nix`
+  中本机的静态地址（明文HTTP），三方合并进小写的 `justfile`。不带参数的 `just dsh-web`
+  不变。`vars/networking.nix` 中 eva 的地址属于有线网卡 `enp15s0`，而 eva 现在用无线网卡
+  `wlp14s0`，那个地址不在 eva 上（2026-11-26 实测），所以在 eva 上 `lan`
+  模式会绑定失败；要用时先改正 eva 的条目。
+
+唯一的冲突是 `modules/base/nix.nix`。`just merge-audit` 只列出它和 `justfile`（上游改的是大写的
+`Justfile`，审计把小写的文件算作只有本地改过；结果正是本地版本加上上游这一段），没有 drops
+non-conflicting hunks，上游也没有删除文件。`darwin.reviewed`
+推进到 4b0db015：这一段的 Darwin 改动只有 `modules/darwin/nix-lan-cache.nix`，与上游相同。
+
+合并之后，按用户要求把 llm-agents、antigravity、doomemacs 和 Emacs 更新到最新：
+
+- llm-agents d70dfebd → a8e2ca87（2026-11-26），其中 `antigravity-cli` 1.5.16 →
+  1.5.17、`antigravity-hub` 2.34.0 → 2.35.2；随它更新的还有它自己的 `treefmt-nix`。
+- nixpkgs-master 856327e3 → e9917741（2026-11-26），Antigravity IDE（`antigravity-ide-fhs`）2.7.0 →
+  2.9.0。nixpkgs 的 #589441（修复 Linux 上 agent 无法启动）还没有合并，而且依赖另一个未合并的 PR，暂不移植。
+- doomemacs 已是最新：`doomemacs/core` 的 HEAD 仍是锁定的 8b9b1ea1。
+- Emacs 的 IGC pin 8dc2fb9f → aae371b6。新源码的 `configure.ac` 仍是
+  `AC_INIT 32.0.50`，`lisp/files.el` 中仍没有 `set-auto-mode--from-matching-alist-entry`，所以
+  `.dir-locals.el` 的两个补丁继续应用。
+- astra 到 GitHub 的 TLS 连接这天仍然断续，`nix flake update` 在 astra 上因 “Truncated tar
+  archive” 失败，改在 eva 上运行（见上文“在 astra 上合并，在 eva 上验证”），再把 `flake.lock`
+  拷回 astra。astra 的构建也因此先取不到 Emacs 的源码 FOD 和 numtide 缓存里的三个路径——nix-daemon
+  不走本机的代理，而客户端走。解法是在客户端带 `https_proxy` 取：源码用
+  `nix-prefetch-url --unpack --name source --print-path <归档 URL> <base32>`，它会复现出同一个 FOD
+  路径；缓存路径用 `nix copy --from <cache> <path>`（签名照常校验）。取完之后构建一次通过。
+
 ### 吸收的上游重构
 
 | 上游改动                                                                                              | 本地结果                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |

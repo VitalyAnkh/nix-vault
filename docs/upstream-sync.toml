@@ -2,7 +2,7 @@
 
 [darwin]
 # Newest ryan/main commit whose Darwin changes have been reviewed, and ported where needed, on astra.
-reviewed = "9fbed400dc9f6c54283e15db6d66c9a8017b4024"
+reviewed = "4b0db015d35033c922e0368e77b12724ed1e530d"
 # Git pathspecs whose upstream changes only affect Darwin hosts.
 paths = [
   "modules/darwin",
