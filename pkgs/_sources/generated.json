@@ -79,6 +79,21 @@
     },
     "version": "aae371b6843078fc7738e5f567e2f220f7155961"
   },
+  "source-feishu": {
+    "cargoLock": null,
+    "date": null,
+    "extract": null,
+    "name": "source-feishu",
+    "passthru": null,
+    "pinned": false,
+    "src": {
+      "name": null,
+      "sha256": "sha256-fHRM4QHin1DY0PwJl4i2TLOJ3eMXgXin/On/zb8pbhM=",
+      "type": "url",
+      "url": "https://sf3-cn.feishucdn.com/obj/ee-appcenter/fc38d53a/Feishu-linux_x64-7.72.23.deb"
+    },
+    "version": "fc38d53a/Feishu-linux_x64-7.72.23"
+  },
   "source-godot-master": {
     "cargoLock": null,
     "date": null,

@@ -53,6 +53,14 @@
       sha256 = "sha256-l/3MUrNvrbhX9ldLb5prV1eo6GVJp7QmJP6sY8sOjOo=";
     };
   };
+  source-feishu = {
+    pname = "source-feishu";
+    version = "fc38d53a/Feishu-linux_x64-7.72.23";
+    src = fetchurl {
+      url = "https://sf3-cn.feishucdn.com/obj/ee-appcenter/fc38d53a/Feishu-linux_x64-7.72.23.deb";
+      sha256 = "sha256-fHRM4QHin1DY0PwJl4i2TLOJ3eMXgXin/On/zb8pbhM=";
+    };
+  };
   source-godot-master = {
     pname = "source-godot-master";
     version = "4d10419cacd6d3009976e8f9fd3abd970fd58018";

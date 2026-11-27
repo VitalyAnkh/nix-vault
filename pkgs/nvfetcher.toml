@@ -50,3 +50,11 @@ fetch.github = "warpdotdev/Warp"
 src.webpage = "https://api.github.com/repos/bambulab/BambuStudio/releases/latest"
 src.regex = "releases/download/(v[0-9.]+/BambuStudio_ubu24-v[0-9.]+-[0-9]+)\\.AppImage"
 fetch.url = "https://github.com/bambulab/BambuStudio/releases/download/$ver.AppImage"
+
+[source-feishu]
+# The official download API returns a signed link whose path carries a
+# per-release directory, so take "<dir>/Feishu-linux_x64-<version>" and fetch
+# it from the unsigned CDN mirror that nixpkgs' update script also uses.
+src.webpage = "https://www.feishu.cn/api/package_info?platform=10"
+src.regex = "ee-appcenter/([0-9a-f]+/Feishu-linux_x64-[0-9.]+)\\.deb"
+fetch.url = "https://sf3-cn.feishucdn.com/obj/ee-appcenter/$ver.deb"
