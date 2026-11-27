@@ -1,4 +1,9 @@
-{ config, myvars, ... }:
+{
+  config,
+  pkgs,
+  myvars,
+  ...
+}:
 let
   hostName = "eva";
   mkSymlink = config.lib.file.mkOutOfStoreSymlink;
@@ -19,6 +24,10 @@ in
   # GNOME has no tray here, so an autostarted `magpie tray` would be an
   # invisible process. The window opened from the app grid uses this gateway.
   modules.desktop.magpie.daemon.enable = true;
+
+  # The official Feishu client, at its current release (pkgs/feishu). Not
+  # sandboxed; its data directory is preserved in hosts/eva/preservation.nix.
+  home.packages = [ pkgs.feishu ];
 
   modules.editors.emacs.enable = true;
   # Warp OSS comes from hosts/eva/gnome.nix; ~/.config/warp-oss is preserved.

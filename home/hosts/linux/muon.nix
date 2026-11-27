@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, pkgs, ... }:
 let
   hostName = "muon";
 in
@@ -9,6 +9,8 @@ in
   modules.desktop.niri.enable = false;
   modules.desktop.nvidia.enable = true;
   modules.editors.emacs.enable = true;
+  # Feishu, as on eva (pkgs/feishu); muon shares eva's preserved directories.
+  home.packages = [ pkgs.feishu ];
   # Warp OSS comes from hosts/muon/gnome.nix; ~/.config/warp-oss is preserved.
   modules.desktop.warp.enable = true;
   # Voice input (fcitx5-vinput), as on eva; one-time model setup in

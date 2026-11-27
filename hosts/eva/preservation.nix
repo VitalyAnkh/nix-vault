@@ -483,6 +483,16 @@ in
         ".config/sunshine"
         ".config/freerdp"
 
+        # Feishu (pkgs/feishu). Run in a scratch home, it keeps its settings,
+        # login state and local databases in ~/.config/LarkShell and its
+        # Chromium caches in ~/.cache/LarkShell, which the preserved .cache
+        # above covers, as .pki covers its NSS database. Keep it private like
+        # other Chromium user data directories.
+        {
+          directory = ".config/LarkShell";
+          mode = "0700";
+        }
+
         # Unofficial NetEase UU Remote host (modules.desktop.uuRemote). Holds
         # config.json (0600: account token plus this machine's device identity),
         # host_settings.json, env.conf and the recovery records. Keep it private
