@@ -37,6 +37,9 @@ in
         psmisc # killall/pstree/prtstat/fuser/...
         ethtool
         pv # pipe view
+        # `bwrap`, which tools that sandbox the code they run (Lean's `lake check`)
+        # expect on PATH. Unprivileged user namespaces stay on, so no setuid wrapper.
+        bubblewrap
 
         # System-wide interpreter; Home Manager's python313 on desktops is a separate profile.
         python313

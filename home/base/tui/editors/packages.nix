@@ -110,6 +110,10 @@
     # pkgs-master.clippy # rust linter
     rustup
     elan
+    # `lake check` builds the project in a bwrap sandbox that hides /run, and with
+    # it the NixOS system profile, so the toolchain's wrappers (nixpkgs' elan
+    # writes them with `dirname`) find coreutils only in this per-user profile.
+    (if stdenv.hostPlatform.isLinux then coreutils-full else emptyDirectory)
 
     #-- golang
     go
